@@ -37,9 +37,11 @@
     <string name="sanitizer_google_play_store_name" translatable="false">Google Play Store</string>
     <string name="sanitizer_google_search_name">Google Search</string>
     <string name="sanitizer_heise" translatable="false">heise online</string>
+    <string name="sanitizer_ikea_name" translatable="false">IKEA</string>
     <string name="sanitizer_instagram_name" translatable="false">Instagram</string>
     <string name="sanitizer_jdoqocy_name" translatable="false">Jdoqocy</string>
     <string name="sanitizer_jodel_name" translatable="false">Jodel</string>
+    <string name="sanitizer_kogan_name" translatable="false">Kogan</string>
     <string name="sanitizer_lazada" translatable="false">Lazada</string>
     <string name="sanitizer_linksynergy_name" translatable="false">LinkSynergy</string>
     <string name="sanitizer_mydealz_parameters_name">MyDealz Parameters</string>
