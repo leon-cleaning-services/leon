@@ -101,7 +101,7 @@ jobs:
         run: sed -i 's/versionName = .*/versionName = "'$(awk '/versionName =/{print substr($3,2,length($3)-2)+1}' app/build.gradle.kts)'"/g' app/build.gradle.kts
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: '[skip ci] Increment version code & name for next release'
           branch: main
