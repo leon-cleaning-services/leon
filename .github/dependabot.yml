@@ -3,22 +3,12 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "saturday"
-      time: "09:00"
-      timezone: "Europe/Berlin"
-    reviewers:
-      - "svenjacobs"
+      interval: "monthly"
     assignees:
       - "svenjacobs"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "saturday"
-      time: "09:00"
-      timezone: "Europe/Berlin"
-    reviewers:
-      - "svenjacobs"
+      interval: "monthly"
     assignees:
       - "svenjacobs"
