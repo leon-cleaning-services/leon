@@ -24,11 +24,11 @@ import io.kotest.matchers.shouldBe
 class FlipkartSanitizerTest :
 	WordSpec(
 		{
+			val sanitizer = FlipkartSanitizer()
 
 			"invoke" should {
 
 				"remove Flipkart parameters" {
-					val sanitizer = FlipkartSanitizer()
 
 					val result = sanitizer(
 						"https://www.flipkart.com/msi-gf63-thin-core-i5-10th-gen-8-gb-512-gb-ss" +
@@ -44,6 +44,13 @@ class FlipkartSanitizerTest :
 					result shouldBe "https://www.flipkart.com/msi-gf63-thin-core-i5-10th-gen-8-gb-512" +
 						"-gb-ssd-windows-10-home-4-graphics-nvidia-geforce-rtx-3050-144-hz-10uc-607in" +
 						"-gaming-laptop/p/itm92565651dc3ed"
+				}
+			}
+
+			"matchesDomain" should {
+
+				"match *.flipkart.com" {
+					sanitizer.matchesDomain("https://aa.flipkart.com") shouldBe true
 				}
 			}
 		},
