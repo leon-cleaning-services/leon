@@ -19,7 +19,7 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.flipkart
 
 import android.content.Context
-import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.domain.matchesDomainRegex
 import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
@@ -37,5 +37,5 @@ class FlipkartSanitizer :
 		name = context.getString(R.string.sanitizer_flipkart_name),
 	)
 
-	override fun matchesDomain(input: String) = input.matchesDomain("flipkart.com")
+	override fun matchesDomain(input: String) = input.matchesDomainRegex(".*\\.flipkart\\.com")
 }
