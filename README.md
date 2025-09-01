@@ -21,8 +21,10 @@ _Painting by [Mondstern](https://mastodon.green/@mondstern/111993655182793928) (
 
 ## Installation
 
-- [F-Droid](https://www.f-droid.org/packages/com.svenjacobs.app.leon/)
-- [Google Play Store](https://play.google.com/store/apps/details?id=com.svenjacobs.app.leon)
+- [F-Droid](https://www.f-droid.org/packages/com.svenjacobs.app.leon/)  
+  Signed through F-Droid. Find hashes of certificates [here](https://f-droid.org/en/docs/Release_Channels_and_Signing_Keys/).
+- [Google Play Store](https://play.google.com/store/apps/details?id=com.svenjacobs.app.leon)  
+  SHA256 of signing certificate: `5B:D0:A8:62:7A:04:EB:8F:C1:F1:45:C6:A6:2B:7F:E5:7C:31:E3:87:05:1E:C8:8B:B2:FB:08:22:5B:6C:D2:0B`
 
 ## How to use
 
