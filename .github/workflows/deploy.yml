@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           show-progress: false
@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Increment version code
         run: sed -i 's/versionCode = [0-9]*/versionCode = '$(awk '/versionCode =/{print $3=$3+1}' app/build.gradle.kts)'/g' app/build.gradle.kts
