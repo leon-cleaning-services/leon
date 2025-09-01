@@ -40,7 +40,7 @@ kotlinx-collections-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immut
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 mikepenz-aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "mikepenz-aboutlibraries" }
-mockk = "io.mockk:mockk:1.14.4"
+mockk = "io.mockk:mockk:1.14.5"
 slack-compose-lint-checks = "com.slack.lint.compose:compose-lint-checks:1.4.2"
 
 [bundles]
