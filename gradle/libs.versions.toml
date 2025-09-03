@@ -4,7 +4,7 @@ androidx-activity = "1.10.1"
 androidx-compose-bom = "2025.08.01" # https://developer.android.com/jetpack/compose/bom/bom-mapping
 androidx-lifecycle = "2.9.2"
 kotest = "5.9.1"
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 kotlinx-coroutines = "1.10.2"
 mikepenz-aboutlibraries = "12.2.4"
 
