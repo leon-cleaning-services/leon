@@ -18,6 +18,8 @@
 
 @file:Suppress("UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 val catalogs = extensions.getByType<VersionCatalogsExtension>()
 val libs: VersionCatalog = catalogs.named("libs")
 
@@ -46,10 +48,6 @@ android {
 		targetCompatibility = JavaVersion.VERSION_17
 	}
 
-	kotlinOptions {
-		jvmTarget = "17"
-	}
-
 	buildFeatures {
 		compose = true
 	}
@@ -58,6 +56,12 @@ android {
 		unitTests.all {
 			it.useJUnitPlatform()
 		}
+	}
+}
+
+kotlin {
+	compilerOptions {
+		jvmTarget = JvmTarget.JVM_17
 	}
 }
 
