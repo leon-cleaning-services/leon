@@ -19,6 +19,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
 	id("com.android.application")
@@ -87,14 +88,6 @@ android {
 		targetCompatibility = JavaVersion.VERSION_17
 	}
 
-	kotlinOptions {
-		jvmTarget = "17"
-		freeCompilerArgs = listOf(
-			"-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-			"-opt-in=kotlin.RequiresOptIn",
-		)
-	}
-
 	buildFeatures {
 		compose = true
 		buildConfig = true
@@ -112,6 +105,16 @@ android {
 
 	androidResources {
 		generateLocaleConfig = true
+	}
+}
+
+kotlin {
+	compilerOptions {
+		jvmTarget = JvmTarget.JVM_17
+		freeCompilerArgs.addAll(
+			"-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+			"-opt-in=kotlin.RequiresOptIn",
+		)
 	}
 }
 
