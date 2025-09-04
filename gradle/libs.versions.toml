@@ -53,6 +53,6 @@ androidx-compose = [
 [plugins]
 adarshr-test-logger = "com.adarshr.test-logger:4.0.0"
 ben-manes-versions = "com.github.ben-manes.versions:0.52.0"
-kotlinter = "org.jmailen.kotlinter:5.1.1"
+kotlinter = "org.jmailen.kotlinter:5.2.0"
 triplet-play = "com.github.triplet.play:3.12.1"
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "mikepenz-aboutlibraries" }
