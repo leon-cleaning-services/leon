@@ -19,6 +19,7 @@
 package com.svenjacobs.app.leon.ui.screens.main
 
 import android.app.Activity
+import android.content.ClipData
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -56,9 +57,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -101,7 +105,7 @@ fun MainScreen(
 	val coroutineScope = rememberCoroutineScope()
 	val isDarkTheme = isSystemInDarkTheme()
 	val context = LocalContext.current
-	val clipboard = LocalClipboardManager.current
+	val clipboard = LocalClipboard.current
 	val shareTitle = stringResource(R.string.share)
 	val openTitle = stringResource(R.string.open)
 	val copiedToClipboardMessage = stringResource(R.string.clipboard_message)
@@ -171,8 +175,10 @@ fun MainScreen(
 	}
 
 	fun copyToClipboard(result: Result.Success) {
-		clipboard.setText(AnnotatedString(result.cleanedText))
 		coroutineScope.launch {
+			clipboard.setClipEntry(
+				ClipData.newPlainText(result.cleanedText, result.cleanedText).toClipEntry(),
+			)
 			snackbarHostState.showSnackbar(copiedToClipboardMessage)
 		}
 	}
@@ -213,14 +219,15 @@ fun MainScreen(
 							isUrlDecodeEnabled = uiState.isUrlDecodeEnabled,
 							isExtractUrlEnabled = uiState.isExtractUrlEnabled,
 							onImportFromClipboardClick = {
-								val text = clipboard.getText()?.toString()
+								coroutineScope.launch {
+									val text =
+										clipboard.getClipEntry()?.clipData?.getItemAt(0)?.text?.toString()
 
-								if (text.isNullOrBlank()) {
-									coroutineScope.launch {
+									if (text.isNullOrBlank()) {
 										snackbarHostState.showSnackbar(clipboardEmptyMessage)
+									} else {
+										viewModel.setText(text)
 									}
-								} else {
-									viewModel.setText(text)
 								}
 							},
 							onShareClick = ::openShareMenu,
