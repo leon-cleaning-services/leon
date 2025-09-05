@@ -28,8 +28,8 @@ import com.svenjacobs.app.leon.R
 sealed class Screen(
 	val route: String,
 	val icon: ImageVector,
-	@StringRes val label: Int,
-	@StringRes val iconContentDescription: Int,
+	@param:StringRes val label: Int,
+	@param:StringRes val iconContentDescription: Int,
 ) {
 	data object Main : Screen(
 		route = "main",
