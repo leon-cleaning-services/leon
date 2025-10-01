@@ -1,5 +1,6 @@
 [![Build & Verify](https://github.com/svenjacobs/leon/actions/workflows/build.yml/badge.svg)](https://github.com/svenjacobs/leon/actions/workflows/build.yml) [![Deploy](https://github.com/svenjacobs/leon/actions/workflows/deploy.yml/badge.svg)](https://github.com/svenjacobs/leon/actions/workflows/deploy.yml) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-50-orange.svg?style=flat-square)](#contributors-)
+[![Reproducble Build Status](https://shields.rbtlog.dev/simple/com.svenjacobs.app.leon)](https://shields.rbtlog.dev/com.svenjacobs.app.leon)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Léon - The URL Cleaner** is an Android application which removes tracking and other obsolete
@@ -23,6 +24,8 @@ _Painting by [Mondstern](https://mastodon.green/@mondstern/111993655182793928) (
 
 - [F-Droid](https://www.f-droid.org/packages/com.svenjacobs.app.leon/)  
   Signed through F-Droid. Find hashes of certificates [here](https://f-droid.org/en/docs/Release_Channels_and_Signing_Keys/).
+- [IzzyOnDroid](https://apt.izzysoft.de/packages/com.svenjacobs.app.leon)  
+  SHA256 of signing certificate: `3e:94:e0:c5:89:4c:17:5f:7f:15:f5:17:d4:46:fe:e0:71:10:12:b1:b1:e7:62:ed:0c:b5:b2:8c:2c:20:13:5d`
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.svenjacobs.app.leon)  
   SHA256 of signing certificate: `5B:D0:A8:62:7A:04:EB:8F:C1:F1:45:C6:A6:2B:7F:E5:7C:31:E3:87:05:1E:C8:8B:B2:FB:08:22:5B:6C:D2:0B`
 
