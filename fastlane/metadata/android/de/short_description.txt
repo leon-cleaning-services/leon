@@ -1,0 +1,1 @@
+Entfernt Tracking und andere redundante Parameter aus Weblinks zum Teilen
