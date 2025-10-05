@@ -142,6 +142,7 @@ dependencies {
 	implementation(libs.bundles.androidx.compose)
 	implementation(libs.androidx.compose.material3)
 	implementation(libs.androidx.compose.material3.window.size)
+	implementation(libs.androidx.compose.material.icons.core)
 	implementation(libs.androidx.activity.compose)
 	implementation(libs.androidx.lifecycle.viewmodel.compose)
 	implementation(libs.androidx.navigation.compose)

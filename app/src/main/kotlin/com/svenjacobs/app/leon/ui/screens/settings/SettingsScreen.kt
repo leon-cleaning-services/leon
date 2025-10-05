@@ -26,10 +26,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -147,7 +147,7 @@ private fun Content(
 						TextField(
 							modifier = Modifier
 								.fillMaxWidth()
-								.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+								.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
 							value = actionAfterClean.text(),
 							onValueChange = {},
 							readOnly = true,
