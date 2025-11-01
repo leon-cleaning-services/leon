@@ -38,7 +38,7 @@ jobs:
 
       - name: Build changelog
         id: github_release
-        uses: mikepenz/release-changelog-builder-action@v5
+        uses: mikepenz/release-changelog-builder-action@v6
         with:
           configurationJson: |
             {
