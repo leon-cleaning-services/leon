@@ -6,7 +6,7 @@ androidx-lifecycle = "2.9.4"
 kotest = "6.0.4"
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
-mikepenz-aboutlibraries = "12.2.4"
+mikepenz-aboutlibraries = "13.1.0"
 
 [libraries]
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
@@ -41,7 +41,7 @@ kotlinx-collections-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immut
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 mikepenz-aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "mikepenz-aboutlibraries" }
-mockk = "io.mockk:mockk:1.14.5"
+mockk = "io.mockk:mockk:1.14.6"
 slack-compose-lint-checks = "com.slack.lint.compose:compose-lint-checks:1.4.2"
 
 [bundles]
@@ -56,4 +56,4 @@ adarshr-test-logger = "com.adarshr.test-logger:4.0.0"
 ben-manes-versions = "com.github.ben-manes.versions:0.53.0"
 kotlinter = "org.jmailen.kotlinter:5.2.0"
 triplet-play = "com.github.triplet.play:3.12.1"
-aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "mikepenz-aboutlibraries" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "mikepenz-aboutlibraries" }

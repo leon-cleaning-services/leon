@@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
-import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.m3.chipColors
 import com.mikepenz.aboutlibraries.ui.compose.m3.libraryColors
@@ -42,7 +42,7 @@ fun SettingsLicensesScreen(modifier: Modifier = Modifier, onBackClick: () -> Uni
 			)
 		},
 	) { contentPadding ->
-		val libs by rememberLibraries()
+		val libs by produceLibraries()
 
 		LibrariesContainer(
 			modifier = Modifier
@@ -50,8 +50,8 @@ fun SettingsLicensesScreen(modifier: Modifier = Modifier, onBackClick: () -> Uni
 				.fillMaxSize(),
 			libraries = libs,
 			colors = LibraryDefaults.libraryColors(
-				backgroundColor = MaterialTheme.colorScheme.background,
-				contentColor = MaterialTheme.colorScheme.onBackground,
+				libraryBackgroundColor = MaterialTheme.colorScheme.background,
+				libraryContentColor = MaterialTheme.colorScheme.onBackground,
 				versionChipColors = LibraryDefaults.chipColors(),
 				licenseChipColors = LibraryDefaults.chipColors(),
 			),
