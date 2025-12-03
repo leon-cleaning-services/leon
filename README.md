@@ -7,7 +7,7 @@
 parameters from a URL before sharing. Its usage is simple, integrating into Android's standard
 sharing mechanism.
 
-Léon runs on Android 5.0 and later, is open source and does not contain any tracking or advertising
+Léon runs on Android 6.0 and later, is open source and does not contain any tracking or advertising
 frameworks. Léon does not collect any data about you.
 
 The benefits of removing tracking parameters are:
@@ -23,11 +23,14 @@ _Painting by [Mondstern](https://mastodon.green/@mondstern/111993655182793928) (
 ## Installation
 
 - [F-Droid](https://www.f-droid.org/packages/com.svenjacobs.app.leon/)  
-  Signed through F-Droid. Find hashes of certificates [here](https://f-droid.org/en/docs/Release_Channels_and_Signing_Keys/).
+  Signed through F-Droid. Find hashes of
+  certificates [here](https://f-droid.org/en/docs/Release_Channels_and_Signing_Keys/).
 - [IzzyOnDroid](https://apt.izzysoft.de/packages/com.svenjacobs.app.leon)  
-  SHA256 of signing certificate: `3e:94:e0:c5:89:4c:17:5f:7f:15:f5:17:d4:46:fe:e0:71:10:12:b1:b1:e7:62:ed:0c:b5:b2:8c:2c:20:13:5d`
+  SHA256 of signing certificate:
+  `3E:94:E0:C5:89:4C:17:5F:7F:15:F5:17:D4:46:FE:E0:71:10:12:B1:B1:E7:62:ED:0C:B5:B2:8C:2C:20:13:5D`
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.svenjacobs.app.leon)  
-  SHA256 of signing certificate: `5B:D0:A8:62:7A:04:EB:8F:C1:F1:45:C6:A6:2B:7F:E5:7C:31:E3:87:05:1E:C8:8B:B2:FB:08:22:5B:6C:D2:0B`
+  SHA256 of signing certificate:
+  `5B:D0:A8:62:7A:04:EB:8F:C1:F1:45:C6:A6:2B:7F:E5:7C:31:E3:87:05:1E:C8:8B:B2:FB:08:22:5B:6C:D2:0B`
 
 ## How to use
 
