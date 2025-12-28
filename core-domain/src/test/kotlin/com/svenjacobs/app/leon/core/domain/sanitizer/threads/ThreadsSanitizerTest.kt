@@ -28,10 +28,16 @@ class ThreadsSanitizerTest :
 
 			"invoke" should {
 
-				"remove all parameters" {
+				"remove all parameters from threads.net" {
 					sanitizer(
 						"https://www.threads.net/t/CufR4M8yNdJ/?igshid=NTc4MTIwNjQ2YQ==",
 					) shouldBe "https://www.threads.net/t/CufR4M8yNdJ/"
+				}
+
+				"remove all parameters from threads.com" {
+					sanitizer(
+						"https://www.threads.com/@chpapa/post/DSzhvqtkuyg?xmt=AQF0J2-TPDkD-qhbXb7usPu3mcJy6Tz8R0LhCkenCCvSOg",
+					) shouldBe "https://www.threads.com/@chpapa/post/DSzhvqtkuyg"
 				}
 			}
 
@@ -39,6 +45,10 @@ class ThreadsSanitizerTest :
 
 				"match threads.net" {
 					sanitizer.matchesDomain("https://threads.net") shouldBe true
+				}
+
+				"match threads.com" {
+					sanitizer.matchesDomain("https://www.threads.com") shouldBe true
 				}
 			}
 		},
