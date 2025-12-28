@@ -37,5 +37,6 @@ class ThreadsSanitizer :
 		name = context.getString(R.string.sanitizer_threads),
 	)
 
-	override fun matchesDomain(input: String) = input.matchesDomain("threads.net")
+	override fun matchesDomain(input: String) =
+		input.matchesDomain("threads.net") || input.matchesDomain("threads.com")
 }
