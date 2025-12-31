@@ -60,6 +60,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.sessionids.SessionIdsSaniti
 import com.svenjacobs.app.leon.core.domain.sanitizer.shopee.ShopeeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.spiegel.SpiegelSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.spotify.SpotifySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.substack.SubstackSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.theguardian.TheGuardianSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.threads.ThreadsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.tiktok.TiktokSanitizer
@@ -122,6 +123,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
 				ShopeeSanitizer(),
 				SpiegelSanitizer(),
 				SpotifySanitizer(),
+				SubstackSanitizer(),
 				TheGuardianSanitizer(),
 				ThreadsSanitizer(),
 				TiktokSanitizer(),

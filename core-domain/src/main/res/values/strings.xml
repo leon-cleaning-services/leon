@@ -57,6 +57,7 @@
     <string name="sanitizer_shopee" translatable="false">Shopee</string>
     <string name="sanitizer_spiegel_name" translatable="false">Spiegel</string>
     <string name="sanitizer_spotify_name" translatable="false">Spotify</string>
+    <string name="sanitizer_substack" translatable="false">Substack</string>
     <string name="sanitizer_theguardian" translatable="false">The Guardian</string>
     <string name="sanitizer_threads" translatable="false">Threads</string>
     <string name="sanitizer_tiktok_name" translatable="false">TikTok</string>
