@@ -87,10 +87,10 @@ class ContainerInitializer : DistinctInitializer<Unit> {
 			sanitizers = persistentListOf(
 				AliexpressSanitizer(),
 				AmazonProductSanitizer(),
-				AutoTraderSanitizer(),
 				AmazonSanitizer(),
 				AolSearchSanitizer(),
 				AtAnalyticsSanitizer(),
+				AutoTraderSanitizer(),
 				CarGurusSanitizer(),
 				ChangeSanitizer(),
 				CxAnalyticsSanitizer(),
