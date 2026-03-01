@@ -1,5 +1,5 @@
 [versions]
-android-gradle-plugin = "8.13.0"
+android-gradle-plugin = "9.0.1"
 androidx-activity = "1.12.0"
 androidx-compose-bom = "2026.02.01" # https://developer.android.com/jetpack/compose/bom/bom-mapping
 androidx-lifecycle = "2.10.0"
