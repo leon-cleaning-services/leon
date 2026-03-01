@@ -25,7 +25,6 @@ val libs: VersionCatalog = catalogs.named("libs")
 
 plugins {
 	id("com.android.library")
-	kotlin("android")
 	id("org.jetbrains.kotlin.plugin.compose")
 }
 
@@ -78,9 +77,9 @@ dependencies {
 	api(libs.findLibrary("kotlin.stdlib.jdk8").get())
 	api(libs.findBundle("androidx.compose").get())
 
-	testApi(libs.findLibrary("kotest.runner.junit5").get())
-	testApi(libs.findLibrary("kotest.assertions.core").get())
-	testApi(libs.findLibrary("mockk").get())
+	testImplementation(libs.findLibrary("kotest.runner.junit5").get())
+	testImplementation(libs.findLibrary("kotest.assertions.core").get())
+	testImplementation(libs.findLibrary("mockk").get())
 
-	androidTestApi(composeBom)
+	androidTestImplementation(composeBom)
 }

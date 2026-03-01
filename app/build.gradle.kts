@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
 	id("com.android.application")
-	kotlin("android")
 	kotlin("plugin.parcelize")
 	id("org.jetbrains.kotlin.plugin.compose")
 	alias(libs.plugins.aboutlibraries)
