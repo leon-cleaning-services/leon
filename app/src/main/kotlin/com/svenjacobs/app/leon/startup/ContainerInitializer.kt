@@ -21,6 +21,8 @@ package com.svenjacobs.app.leon.startup
 import android.content.Context
 import com.svenjacobs.app.leon.core.domain.inject.DomainContainer
 import com.svenjacobs.app.leon.core.domain.sanitizer.aliexpress.AliexpressSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.autotrader.AutoTraderSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.cargurus.CarGurusSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.amazon.AmazonProductSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.amazon.AmazonSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.aol.AolSearchSanitizer
@@ -85,9 +87,11 @@ class ContainerInitializer : DistinctInitializer<Unit> {
 			sanitizers = persistentListOf(
 				AliexpressSanitizer(),
 				AmazonProductSanitizer(),
+				AutoTraderSanitizer(),
 				AmazonSanitizer(),
 				AolSearchSanitizer(),
 				AtAnalyticsSanitizer(),
+				CarGurusSanitizer(),
 				ChangeSanitizer(),
 				CxAnalyticsSanitizer(),
 				EbaySanitizer(),

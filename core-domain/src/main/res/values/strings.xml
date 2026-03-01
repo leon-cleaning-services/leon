@@ -18,10 +18,12 @@
 
 <resources>
     <string name="sanitizer_aliexpress_name" translatable="false">AliExpress</string>
+    <string name="sanitizer_autotrader_name" translatable="false">AutoTrader</string>
     <string name="sanitizer_amazon_name" translatable="false">Amazon</string>
     <string name="sanitizer_amazon_product_name">Amazon Products</string>
     <string name="sanitizer_aol_search_name">AOL Search</string>
     <string name="sanitizer_at_analytics_name" translatable="false">AT Analytics</string>
+    <string name="sanitizer_cargurus_name" translatable="false">CarGurus</string>
     <string name="sanitizer_change_name" translatable="false">Change</string>
     <string name="sanitizer_cx_name" translatable="false">CX Analytics</string>
     <string name="sanitizer_ebay_name" translatable="false">eBay</string>
