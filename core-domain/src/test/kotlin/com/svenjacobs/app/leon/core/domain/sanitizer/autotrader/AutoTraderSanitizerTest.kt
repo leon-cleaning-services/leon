@@ -56,7 +56,6 @@ class AutoTraderSanitizerTest :
 						"https://www.autotrader.co.uk/car-details/202602280303309",
 					) shouldBe true
 				}
-
 			}
 		},
 	)
