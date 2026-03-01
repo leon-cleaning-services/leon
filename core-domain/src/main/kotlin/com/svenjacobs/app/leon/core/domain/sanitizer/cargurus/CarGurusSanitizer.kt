@@ -37,6 +37,5 @@ class CarGurusSanitizer :
 		name = context.getString(R.string.sanitizer_cargurus_name),
 	)
 
-	override fun matchesDomain(input: String) =
-		input.matchesDomainRegex("cargurus\\.co\\.uk/")
+	override fun matchesDomain(input: String) = input.matchesDomainRegex("cargurus\\.co\\.uk/")
 }
