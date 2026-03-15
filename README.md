@@ -1,5 +1,5 @@
 [![Build & Verify](https://github.com/svenjacobs/leon/actions/workflows/build.yml/badge.svg)](https://github.com/svenjacobs/leon/actions/workflows/build.yml) [![Deploy](https://github.com/svenjacobs/leon/actions/workflows/deploy.yml/badge.svg)](https://github.com/svenjacobs/leon/actions/workflows/deploy.yml) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-54-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-55-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Léon - The URL Cleaner** is an Android application which removes tracking and other obsolete
@@ -153,6 +153,7 @@ recommended and cutting-edge technologies, patterns and libraries such as:
       <td align="center" valign="top" width="14.28%"><a href="https://kowalcj0.github.io/"><img src="https://avatars.githubusercontent.com/u/910451?v=4?s=100" width="100px;" alt="Janusz Kowalczyk"/><br /><sub><b>Janusz Kowalczyk</b></sub></a><br /><a href="https://github.com/leon-cleaning-services/leon/commits?author=kowalcj0" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/anthonylau"><img src="https://avatars.githubusercontent.com/u/4386608?v=4?s=100" width="100px;" alt="Anthony Lau"/><br /><sub><b>Anthony Lau</b></sub></a><br /><a href="https://github.com/leon-cleaning-services/leon/commits?author=anthonylau" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://projects.tchh.in/"><img src="https://avatars.githubusercontent.com/u/57601627?v=4?s=100" width="100px;" alt="Mr. RB"/><br /><sub><b>Mr. RB</b></sub></a><br /><a href="https://github.com/leon-cleaning-services/leon/commits?author=rsb-23" title="Code">💻</a> <a href="https://github.com/leon-cleaning-services/leon/issues?q=author%3Arsb-23" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://android.izzysoft.de/"><img src="https://avatars.githubusercontent.com/u/6781438?v=4?s=100" width="100px;" alt="Izzy"/><br /><sub><b>Izzy</b></sub></a><br /><a href="#maintenance-IzzySoft" title="Maintenance">🚧</a></td>
     </tr>
   </tbody>
 </table>
