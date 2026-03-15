@@ -499,6 +499,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "rsb-23",
+      "name": "Mr. RB",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57601627?v=4",
+      "profile": "https://projects.tchh.in/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
