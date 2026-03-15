@@ -1,5 +1,5 @@
 [![Build & Verify](https://github.com/svenjacobs/leon/actions/workflows/build.yml/badge.svg)](https://github.com/svenjacobs/leon/actions/workflows/build.yml) [![Deploy](https://github.com/svenjacobs/leon/actions/workflows/deploy.yml/badge.svg)](https://github.com/svenjacobs/leon/actions/workflows/deploy.yml) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-52-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-53-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Léon - The URL Cleaner** is an Android application which removes tracking and other obsolete
@@ -151,6 +151,7 @@ recommended and cutting-edge technologies, patterns and libraries such as:
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jmbreuer"><img src="https://avatars.githubusercontent.com/u/1792037?v=4?s=100" width="100px;" alt="Joe Breuer"/><br /><sub><b>Joe Breuer</b></sub></a><br /><a href="https://github.com/leon-cleaning-services/leon/commits?author=jmbreuer" title="Code">💻</a> <a href="https://github.com/leon-cleaning-services/leon/issues?q=author%3Ajmbreuer" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://danlamanna.com"><img src="https://avatars.githubusercontent.com/u/608229?v=4?s=100" width="100px;" alt="Dan LaManna"/><br /><sub><b>Dan LaManna</b></sub></a><br /><a href="https://github.com/leon-cleaning-services/leon/commits?author=danlamanna" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://kowalcj0.github.io/"><img src="https://avatars.githubusercontent.com/u/910451?v=4?s=100" width="100px;" alt="Janusz Kowalczyk"/><br /><sub><b>Janusz Kowalczyk</b></sub></a><br /><a href="https://github.com/leon-cleaning-services/leon/commits?author=kowalcj0" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/anthonylau"><img src="https://avatars.githubusercontent.com/u/4386608?v=4?s=100" width="100px;" alt="Anthony Lau"/><br /><sub><b>Anthony Lau</b></sub></a><br /><a href="https://github.com/leon-cleaning-services/leon/commits?author=anthonylau" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
