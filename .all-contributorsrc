@@ -472,6 +472,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "danlamanna",
+      "name": "Dan LaManna",
+      "avatar_url": "https://avatars.githubusercontent.com/u/608229?v=4",
+      "profile": "http://danlamanna.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -479,6 +488,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "leon",
-  "projectOwner": "svenjacobs",
+  "projectOwner": "leon-cleaning-services",
   "commitType": "docs"
 }
