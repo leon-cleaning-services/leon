@@ -19,8 +19,8 @@
 package com.svenjacobs.app.leon.core.domain.action
 
 enum class ActionAfterClean {
-	DoNothing,
-	OpenShareMenu,
-	CopyToClipboard,
-	OpenUrl,
+    DoNothing,
+    OpenShareMenu,
+    CopyToClipboard,
+    OpenUrl,
 }

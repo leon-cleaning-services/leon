@@ -34,27 +34,27 @@ import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 
 @Composable
 fun SettingsLicensesScreen(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
-	Scaffold(
-		modifier = modifier.fillMaxSize(),
-		topBar = {
-			TopAppBar(
-				onBackClick = onBackClick,
-			)
-		},
-	) { contentPadding ->
-		val libs by produceLibraries()
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                onBackClick = onBackClick,
+            )
+        },
+    ) { contentPadding ->
+        val libs by produceLibraries()
 
-		LibrariesContainer(
-			modifier = Modifier
-				.padding(contentPadding)
-				.fillMaxSize(),
-			libraries = libs,
-			colors = LibraryDefaults.libraryColors(
-				libraryBackgroundColor = MaterialTheme.colorScheme.background,
-				libraryContentColor = MaterialTheme.colorScheme.onBackground,
-				versionChipColors = LibraryDefaults.chipColors(),
-				licenseChipColors = LibraryDefaults.chipColors(),
-			),
-		)
-	}
+        LibrariesContainer(
+            modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxSize(),
+            libraries = libs,
+            colors = LibraryDefaults.libraryColors(
+                libraryBackgroundColor = MaterialTheme.colorScheme.background,
+                libraryContentColor = MaterialTheme.colorScheme.onBackground,
+                versionChipColors = LibraryDefaults.chipColors(),
+                licenseChipColors = LibraryDefaults.chipColors(),
+            ),
+        )
+    }
 }

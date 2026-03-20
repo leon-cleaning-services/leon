@@ -56,211 +56,211 @@ import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
 
 @Composable
 fun SettingsScreen(
-	onNavigateToSettingsSanitizers: () -> Unit,
-	onNavigateToSettingsLicenses: () -> Unit,
-	modifier: Modifier = Modifier,
-	viewModel: SettingsScreenViewModel = viewModel(),
+    onNavigateToSettingsSanitizers: () -> Unit,
+    onNavigateToSettingsLicenses: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SettingsScreenViewModel = viewModel(),
 ) {
-	val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-	Content(
-		modifier = modifier,
-		isLoading = uiState.isLoading,
-		browserEnabled = uiState.browserEnabled,
-		customTabsEnabled = uiState.customTabsEnabled,
-		actionAfterClean = uiState.actionAfterClean,
-		onSanitizersClick = onNavigateToSettingsSanitizers,
-		onLicensesClick = onNavigateToSettingsLicenses,
-		onBrowserSwitchCheckedChange = viewModel::onBrowserSwitchCheckedChange,
-		onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
-		onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
-	)
+    Content(
+        modifier = modifier,
+        isLoading = uiState.isLoading,
+        browserEnabled = uiState.browserEnabled,
+        customTabsEnabled = uiState.customTabsEnabled,
+        actionAfterClean = uiState.actionAfterClean,
+        onSanitizersClick = onNavigateToSettingsSanitizers,
+        onLicensesClick = onNavigateToSettingsLicenses,
+        onBrowserSwitchCheckedChange = viewModel::onBrowserSwitchCheckedChange,
+        onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
+        onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
+    )
 }
 
 @Composable
 private fun Content(
-	isLoading: Boolean,
-	browserEnabled: Boolean,
-	customTabsEnabled: Boolean,
-	actionAfterClean: ActionAfterClean,
-	onSanitizersClick: () -> Unit,
-	onLicensesClick: () -> Unit,
-	onBrowserSwitchCheckedChange: (Boolean) -> Unit,
-	onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
-	onActionAfterCleanClick: (ActionAfterClean) -> Unit,
-	modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    browserEnabled: Boolean,
+    customTabsEnabled: Boolean,
+    actionAfterClean: ActionAfterClean,
+    onSanitizersClick: () -> Unit,
+    onLicensesClick: () -> Unit,
+    onBrowserSwitchCheckedChange: (Boolean) -> Unit,
+    onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
+    onActionAfterCleanClick: (ActionAfterClean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-	Box(
-		modifier = modifier.fillMaxSize(),
-	) {
-		if (isLoading) {
-			CircularProgressIndicator(
-				modifier = Modifier.align(Alignment.Center),
-			)
-		} else {
-			Column(
-				modifier = Modifier.padding(16.dp),
-			) {
-				OutlinedButton(
-					modifier = Modifier.fillMaxWidth(),
-					onClick = onSanitizersClick,
-				) {
-					Text(stringResource(R.string.sanitizers))
-				}
+    Box(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+            )
+        } else {
+            Column(
+                modifier = Modifier.padding(16.dp),
+            ) {
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onSanitizersClick,
+                ) {
+                    Text(stringResource(R.string.sanitizers))
+                }
 
-				OutlinedButton(
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(top = 16.dp),
-					onClick = onLicensesClick,
-				) {
-					Text(stringResource(R.string.licenses))
-				}
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    onClick = onLicensesClick,
+                ) {
+                    Text(stringResource(R.string.licenses))
+                }
 
-				SwitchRow(
-					modifier = Modifier.padding(top = 16.dp),
-					text = stringResource(R.string.register_as_browser),
-					checked = browserEnabled,
-					onCheckedChange = onBrowserSwitchCheckedChange,
-				)
+                SwitchRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(R.string.register_as_browser),
+                    checked = browserEnabled,
+                    onCheckedChange = onBrowserSwitchCheckedChange,
+                )
 
-				SwitchRow(
-					modifier = Modifier.padding(top = 16.dp),
-					text = stringResource(R.string.open_in_custom_tabs),
-					checked = customTabsEnabled,
-					onCheckedChange = onCustomTabsSwitchCheckedChange,
-					enabled = !isDefaultBrowser(LocalContext.current),
-				)
+                SwitchRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(R.string.open_in_custom_tabs),
+                    checked = customTabsEnabled,
+                    onCheckedChange = onCustomTabsSwitchCheckedChange,
+                    enabled = !isDefaultBrowser(LocalContext.current),
+                )
 
-				Column(
-					modifier = Modifier.padding(top = 8.dp),
-				) {
-					var expanded by rememberSaveable { mutableStateOf(false) }
+                Column(
+                    modifier = Modifier.padding(top = 8.dp),
+                ) {
+                    var expanded by rememberSaveable { mutableStateOf(false) }
 
-					Text(stringResource(R.string.action_after_clean))
+                    Text(stringResource(R.string.action_after_clean))
 
-					ExposedDropdownMenuBox(
-						modifier = Modifier.padding(top = 8.dp),
-						expanded = expanded,
-						onExpandedChange = { expanded = !expanded },
-					) {
-						TextField(
-							modifier = Modifier
-								.fillMaxWidth()
-								.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-							value = actionAfterClean.text(),
-							onValueChange = {},
-							readOnly = true,
-							trailingIcon = {
-								ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-							},
-							colors = ExposedDropdownMenuDefaults.textFieldColors(),
-						)
+                    ExposedDropdownMenuBox(
+                        modifier = Modifier.padding(top = 8.dp),
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                            value = actionAfterClean.text(),
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        )
 
-						ExposedDropdownMenu(
-							modifier = Modifier.exposedDropdownSize(),
-							expanded = expanded,
-							onDismissRequest = { expanded = false },
-						) {
-							DropdownMenuItem(
-								text = { Text(stringResource(R.string.do_nothing)) },
-								onClick = {
-									expanded = false
-									onActionAfterCleanClick(ActionAfterClean.DoNothing)
-								},
-							)
+                        ExposedDropdownMenu(
+                            modifier = Modifier.exposedDropdownSize(),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.do_nothing)) },
+                                onClick = {
+                                    expanded = false
+                                    onActionAfterCleanClick(ActionAfterClean.DoNothing)
+                                },
+                            )
 
-							DropdownMenuItem(
-								text = { Text(stringResource(R.string.open_share_menu)) },
-								onClick = {
-									expanded = false
-									onActionAfterCleanClick(ActionAfterClean.OpenShareMenu)
-								},
-							)
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.open_share_menu)) },
+                                onClick = {
+                                    expanded = false
+                                    onActionAfterCleanClick(ActionAfterClean.OpenShareMenu)
+                                },
+                            )
 
-							DropdownMenuItem(
-								text = { Text(stringResource(R.string.open_url)) },
-								onClick = {
-									expanded = false
-									onActionAfterCleanClick(ActionAfterClean.OpenUrl)
-								},
-							)
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.open_url)) },
+                                onClick = {
+                                    expanded = false
+                                    onActionAfterCleanClick(ActionAfterClean.OpenUrl)
+                                },
+                            )
 
-							DropdownMenuItem(
-								text = { Text(stringResource(R.string.copy_to_clipboard)) },
-								onClick = {
-									expanded = false
-									onActionAfterCleanClick(ActionAfterClean.CopyToClipboard)
-								},
-							)
-						}
-					}
-				}
-			}
-		}
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.copy_to_clipboard)) },
+                                onClick = {
+                                    expanded = false
+                                    onActionAfterCleanClick(ActionAfterClean.CopyToClipboard)
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
 
-		Text(
-			modifier = Modifier
-				.align(Alignment.BottomEnd)
-				.padding(
-					bottom = 8.dp,
-					end = 8.dp,
-				),
-			text = "v${BuildConfig.VERSION_NAME}",
-			style = MaterialTheme.typography.bodySmall,
-		)
-	}
+        Text(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    bottom = 8.dp,
+                    end = 8.dp,
+                ),
+            text = "v${BuildConfig.VERSION_NAME}",
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
 }
 
 @Composable
 private fun SwitchRow(
-	text: String,
-	checked: Boolean,
-	onCheckedChange: (Boolean) -> Unit,
-	modifier: Modifier = Modifier,
-	enabled: Boolean = true,
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
-	Row(
-		modifier = modifier.fillMaxWidth(),
-		verticalAlignment = Alignment.CenterVertically,
-	) {
-		Text(
-			modifier = Modifier
-				.padding(end = 8.dp)
-				.weight(1f),
-			text = text,
-		)
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .weight(1f),
+            text = text,
+        )
 
-		Switch(
-			checked = checked,
-			onCheckedChange = onCheckedChange,
-			enabled = enabled,
-		)
-	}
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            enabled = enabled,
+        )
+    }
 }
 
 @Composable
 private fun ActionAfterClean.text(): String = when (this) {
-	ActionAfterClean.DoNothing -> stringResource(R.string.do_nothing)
-	ActionAfterClean.OpenShareMenu -> stringResource(R.string.open_share_menu)
-	ActionAfterClean.OpenUrl -> stringResource(R.string.open_url)
-	ActionAfterClean.CopyToClipboard -> stringResource(R.string.copy_to_clipboard)
+    ActionAfterClean.DoNothing -> stringResource(R.string.do_nothing)
+    ActionAfterClean.OpenShareMenu -> stringResource(R.string.open_share_menu)
+    ActionAfterClean.OpenUrl -> stringResource(R.string.open_url)
+    ActionAfterClean.CopyToClipboard -> stringResource(R.string.copy_to_clipboard)
 }
 
 @Composable
 @DayNightPreviews
 private fun ContentPreview() {
-	AppTheme {
-		Content(
-			isLoading = false,
-			browserEnabled = false,
-			customTabsEnabled = false,
-			actionAfterClean = ActionAfterClean.OpenShareMenu,
-			onSanitizersClick = {},
-			onLicensesClick = {},
-			onBrowserSwitchCheckedChange = {},
-			onCustomTabsSwitchCheckedChange = {},
-			onActionAfterCleanClick = {},
-		)
-	}
+    AppTheme {
+        Content(
+            isLoading = false,
+            browserEnabled = false,
+            customTabsEnabled = false,
+            actionAfterClean = ActionAfterClean.OpenShareMenu,
+            onSanitizersClick = {},
+            onLicensesClick = {},
+            onBrowserSwitchCheckedChange = {},
+            onCustomTabsSwitchCheckedChange = {},
+            onActionAfterCleanClick = {},
+        )
+    }
 }

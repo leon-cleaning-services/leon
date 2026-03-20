@@ -22,17 +22,17 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class SalesforceParametersSanitizerTest :
-	WordSpec(
-		{
-			val sanitizer = SalesforceParametersSanitizer()
+    WordSpec(
+        {
+            val sanitizer = SalesforceParametersSanitizer()
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove sfmc_activityid parameter as per #302" {
-					sanitizer(
-						"https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2",
-					) shouldBe "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/"
-				}
-			}
-		},
-	)
+                "remove sfmc_activityid parameter as per #302" {
+                    sanitizer(
+                        "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2",
+                    ) shouldBe "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/"
+                }
+            }
+        },
+    )

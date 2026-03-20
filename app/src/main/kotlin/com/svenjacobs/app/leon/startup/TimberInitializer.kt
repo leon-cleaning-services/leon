@@ -24,9 +24,9 @@ import timber.log.Timber
 
 class TimberInitializer : DistinctInitializer<Unit> {
 
-	override fun create(context: Context) {
-		if (BuildConfig.DEBUG) {
-			Timber.plant(Timber.DebugTree())
-		}
-	}
+    override fun create(context: Context) {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+    }
 }

@@ -30,18 +30,18 @@ import kotlinx.coroutines.runBlocking
 @Suppress("unused")
 class AppInitializer : Initializer<Unit> {
 
-	override fun create(context: Context) {
-		val stethoHelper = StethoHelper()
+    override fun create(context: Context) {
+        val stethoHelper = StethoHelper()
 
-		stethoHelper.initialize(context)
+        stethoHelper.initialize(context)
 
-		runBlocking {
-			AppDataStoreManager.setVersionCode(BuildConfig.VERSION_CODE)
-		}
-	}
+        runBlocking {
+            AppDataStoreManager.setVersionCode(BuildConfig.VERSION_CODE)
+        }
+    }
 
-	override fun dependencies() = listOf(
-		ContainerInitializer::class.java,
-		TimberInitializer::class.java,
-	)
+    override fun dependencies() = listOf(
+        ContainerInitializer::class.java,
+        TimberInitializer::class.java,
+    )
 }

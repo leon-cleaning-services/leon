@@ -32,24 +32,23 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class SanitizerRepositoryImpl(
-	private val dataStoreManager: SanitizerDataStoreManager = SanitizerDataStoreManager,
-	private val sanitizers: SanitizersCollection = Sanitizers,
+    private val dataStoreManager: SanitizerDataStoreManager = SanitizerDataStoreManager,
+    private val sanitizers: SanitizersCollection = Sanitizers,
 ) : SanitizerRepository {
 
-	override val state: Flow<ImmutableList<SanitizerState>>
-		get() = dataStoreManager.data.map { pref ->
-			sanitizers.map { sanitizer ->
-				SanitizerState(
-					id = sanitizer.id,
-					enabled = pref[dataStoreManager.preferencesKey(sanitizer.id.value)] ?: true,
-				)
-			}.toImmutableList()
-		}
+    override val state: Flow<ImmutableList<SanitizerState>>
+        get() = dataStoreManager.data.map { pref ->
+            sanitizers.map { sanitizer ->
+                SanitizerState(
+                    id = sanitizer.id,
+                    enabled = pref[dataStoreManager.preferencesKey(sanitizer.id.value)] ?: true,
+                )
+            }.toImmutableList()
+        }
 
-	override suspend fun isEnabled(id: SanitizerId): Boolean =
-		dataStoreManager.isSanitizerEnabled(id.value).first() ?: true
+    override suspend fun isEnabled(id: SanitizerId): Boolean = dataStoreManager.isSanitizerEnabled(id.value).first() ?: true
 
-	override suspend fun setEnabled(id: SanitizerId, enabled: Boolean) {
-		dataStoreManager.setSanitizerEnabled(id.value, enabled)
-	}
+    override suspend fun setEnabled(id: SanitizerId, enabled: Boolean) {
+        dataStoreManager.setSanitizerEnabled(id.value, enabled)
+    }
 }

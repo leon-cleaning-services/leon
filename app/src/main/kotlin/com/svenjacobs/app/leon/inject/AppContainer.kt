@@ -23,6 +23,6 @@ import com.svenjacobs.app.leon.datastore.SanitizerDataStoreManager
 
 object AppContainer {
 
-	val AppDataStoreManager: AppDataStoreManager by lazy { AppDataStoreManager() }
-	val SanitizerDataStoreManager: SanitizerDataStoreManager by lazy { SanitizerDataStoreManager() }
+    val AppDataStoreManager: AppDataStoreManager by lazy { AppDataStoreManager() }
+    val SanitizerDataStoreManager: SanitizerDataStoreManager by lazy { SanitizerDataStoreManager() }
 }

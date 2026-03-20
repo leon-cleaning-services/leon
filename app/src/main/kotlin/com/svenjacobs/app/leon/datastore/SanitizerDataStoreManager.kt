@@ -33,24 +33,24 @@ import kotlinx.coroutines.flow.map
  * Manages [Sanitizer] specific preferences stored via [DataStore].
  */
 class SanitizerDataStoreManager(private val context: Context = AppContext) {
-	private val Context.dataStore by preferencesDataStore(name = "sanitizers")
+    private val Context.dataStore by preferencesDataStore(name = "sanitizers")
 
-	internal fun preferencesKey(id: String) = booleanPreferencesKey(name = "sanitizer_$id")
+    internal fun preferencesKey(id: String) = booleanPreferencesKey(name = "sanitizer_$id")
 
-	val data: Flow<Preferences>
-		get() = context.dataStore.data
+    val data: Flow<Preferences>
+        get() = context.dataStore.data
 
-	suspend fun setSanitizerEnabled(id: String, enabled: Boolean) {
-		val key = preferencesKey(id)
-		context.dataStore.edit {
-			it[key] = enabled
-		}
-	}
+    suspend fun setSanitizerEnabled(id: String, enabled: Boolean) {
+        val key = preferencesKey(id)
+        context.dataStore.edit {
+            it[key] = enabled
+        }
+    }
 
-	fun isSanitizerEnabled(id: String): Flow<Boolean?> {
-		val key = preferencesKey(id)
-		return context.dataStore.data.map {
-			it[key]
-		}
-	}
+    fun isSanitizerEnabled(id: String): Flow<Boolean?> {
+        val key = preferencesKey(id)
+        return context.dataStore.data.map {
+            it[key]
+        }
+    }
 }

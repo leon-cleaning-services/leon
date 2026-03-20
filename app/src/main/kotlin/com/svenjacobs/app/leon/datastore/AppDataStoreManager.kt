@@ -34,65 +34,65 @@ import kotlinx.coroutines.flow.map
  * Manages app specific preferences stored via [DataStore].
  */
 class AppDataStoreManager(private val context: Context = AppContext) {
-	private val Context.dataStore by preferencesDataStore(name = "settings")
+    private val Context.dataStore by preferencesDataStore(name = "settings")
 
-	suspend fun setVersionCode(versionCode: Int) {
-		context.dataStore.edit {
-			it[KEY_VERSION_CODE] = versionCode
-		}
-	}
+    suspend fun setVersionCode(versionCode: Int) {
+        context.dataStore.edit {
+            it[KEY_VERSION_CODE] = versionCode
+        }
+    }
 
-	suspend fun setActionAfterClean(actionAfterClean: ActionAfterClean) {
-		context.dataStore.edit {
-			it[KEY_ACTION_AFTER_CLEAN] = actionAfterClean.name
-		}
-	}
+    suspend fun setActionAfterClean(actionAfterClean: ActionAfterClean) {
+        context.dataStore.edit {
+            it[KEY_ACTION_AFTER_CLEAN] = actionAfterClean.name
+        }
+    }
 
-	val actionAfterClean: Flow<ActionAfterClean?> =
-		context.dataStore.data.map { preferences ->
-			runCatching {
-				preferences[KEY_ACTION_AFTER_CLEAN]?.let(ActionAfterClean::valueOf)
-			}.getOrNull()
-		}
+    val actionAfterClean: Flow<ActionAfterClean?> =
+        context.dataStore.data.map { preferences ->
+            runCatching {
+                preferences[KEY_ACTION_AFTER_CLEAN]?.let(ActionAfterClean::valueOf)
+            }.getOrNull()
+        }
 
-	suspend fun setUrlDecodeEnabled(enabled: Boolean) {
-		context.dataStore.edit {
-			it[KEY_URL_DECODE] = enabled
-		}
-	}
+    suspend fun setUrlDecodeEnabled(enabled: Boolean) {
+        context.dataStore.edit {
+            it[KEY_URL_DECODE] = enabled
+        }
+    }
 
-	val urlDecodeEnabled: Flow<Boolean> =
-		context.dataStore.data.map { preferences ->
-			preferences[KEY_URL_DECODE] ?: false
-		}
+    val urlDecodeEnabled: Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[KEY_URL_DECODE] ?: false
+        }
 
-	suspend fun setExtractUrlEnabled(enabled: Boolean) {
-		context.dataStore.edit {
-			it[KEY_EXTRACT_URL] = enabled
-		}
-	}
+    suspend fun setExtractUrlEnabled(enabled: Boolean) {
+        context.dataStore.edit {
+            it[KEY_EXTRACT_URL] = enabled
+        }
+    }
 
-	val extractUrlEnabled: Flow<Boolean> =
-		context.dataStore.data.map { preferences ->
-			preferences[KEY_EXTRACT_URL] ?: false
-		}
+    val extractUrlEnabled: Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[KEY_EXTRACT_URL] ?: false
+        }
 
-	suspend fun setCustomTabsEnabled(enabled: Boolean) {
-		context.dataStore.edit {
-			it[KEY_CUSTOM_TABS] = enabled
-		}
-	}
+    suspend fun setCustomTabsEnabled(enabled: Boolean) {
+        context.dataStore.edit {
+            it[KEY_CUSTOM_TABS] = enabled
+        }
+    }
 
-	val customTabsEnabled: Flow<Boolean> =
-		context.dataStore.data.map { preferences ->
-			preferences[KEY_CUSTOM_TABS] ?: false
-		}
+    val customTabsEnabled: Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[KEY_CUSTOM_TABS] ?: false
+        }
 
-	private companion object {
-		private val KEY_VERSION_CODE = intPreferencesKey("version_code")
-		private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
-		private val KEY_URL_DECODE = booleanPreferencesKey("url_decode")
-		private val KEY_EXTRACT_URL = booleanPreferencesKey("extract_url")
-		private val KEY_CUSTOM_TABS = booleanPreferencesKey("custom_tabs")
-	}
+    private companion object {
+        private val KEY_VERSION_CODE = intPreferencesKey("version_code")
+        private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
+        private val KEY_URL_DECODE = booleanPreferencesKey("url_decode")
+        private val KEY_EXTRACT_URL = booleanPreferencesKey("extract_url")
+        private val KEY_CUSTOM_TABS = booleanPreferencesKey("custom_tabs")
+    }
 }

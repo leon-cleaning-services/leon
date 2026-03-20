@@ -25,25 +25,25 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class MyDealzRedirectsSanitizer : Sanitizer {
 
-	override val id = SanitizerId("mydealz_redirects")
+    override val id = SanitizerId("mydealz_redirects")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_mydealz_redirects_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_mydealz_redirects_name),
+    )
 
-	override fun matchesDomain(input: String) = MyDealzDomains.DOMAINS_REGEX.containsMatchIn(input)
+    override fun matchesDomain(input: String) = MyDealzDomains.DOMAINS_REGEX.containsMatchIn(input)
 
-	override fun invoke(input: String): String {
-		val groupValues = DEAL_REGEX.matchEntire(input)?.groupValues
-			?: return input // URL is not in redirect format, pass through
-		val host = groupValues.getOrNull(1)
-			?: throw IllegalArgumentException("Could not extract host from MyDealz URL")
-		val deal = groupValues.getOrNull(2)
-			?: throw IllegalArgumentException("Could not extract deal from MyDealz URL")
-		return "https://$host/deals/a-$deal"
-	}
+    override fun invoke(input: String): String {
+        val groupValues = DEAL_REGEX.matchEntire(input)?.groupValues
+            ?: return input // URL is not in redirect format, pass through
+        val host = groupValues.getOrNull(1)
+            ?: throw IllegalArgumentException("Could not extract host from MyDealz URL")
+        val deal = groupValues.getOrNull(2)
+            ?: throw IllegalArgumentException("Could not extract deal from MyDealz URL")
+        return "https://$host/deals/a-$deal"
+    }
 
-	private companion object {
-		private val DEAL_REGEX = Regex("https://([^/]+)/share-deal-from-app/(.+)\$")
-	}
+    private companion object {
+        private val DEAL_REGEX = Regex("https://([^/]+)/share-deal-from-app/(.+)\$")
+    }
 }

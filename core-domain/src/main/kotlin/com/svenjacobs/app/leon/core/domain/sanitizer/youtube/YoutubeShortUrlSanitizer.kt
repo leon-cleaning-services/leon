@@ -25,22 +25,22 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class YoutubeShortUrlSanitizer : Sanitizer {
 
-	override val id = SanitizerId("youtube_short_url")
+    override val id = SanitizerId("youtube_short_url")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_youtube_short_url_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_youtube_short_url_name),
+    )
 
-	override fun matchesDomain(input: String) = DOMAIN_REGEX.containsMatchIn(input)
+    override fun matchesDomain(input: String) = DOMAIN_REGEX.containsMatchIn(input)
 
-	override fun invoke(input: String): String {
-		val videoId = VIDEO_ID_REGEX.matchEntire(input)?.groupValues?.getOrNull(1)
-			?: throw IllegalArgumentException("Could not extract video ID from youtu.be URL")
-		return "https://www.youtube.com/watch?v=$videoId"
-	}
+    override fun invoke(input: String): String {
+        val videoId = VIDEO_ID_REGEX.matchEntire(input)?.groupValues?.getOrNull(1)
+            ?: throw IllegalArgumentException("Could not extract video ID from youtu.be URL")
+        return "https://www.youtube.com/watch?v=$videoId"
+    }
 
-	private companion object {
-		private val DOMAIN_REGEX = Regex("youtu\\.be")
-		private val VIDEO_ID_REGEX = Regex("(?:https?://)?youtu\\.be/(.+)\$")
-	}
+    private companion object {
+        private val DOMAIN_REGEX = Regex("youtu\\.be")
+        private val VIDEO_ID_REGEX = Regex("(?:https?://)?youtu\\.be/(.+)\$")
+    }
 }

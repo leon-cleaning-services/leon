@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 
 fun isDefaultBrowser(context: Context): Boolean {
-	val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"))
-	val activity = intent.resolveActivity(context.packageManager)
-	return activity?.packageName?.startsWith("com.svenjacobs.app.leon") ?: false
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"))
+    val activity = intent.resolveActivity(context.packageManager)
+    return activity?.packageName?.startsWith("com.svenjacobs.app.leon") ?: false
 }

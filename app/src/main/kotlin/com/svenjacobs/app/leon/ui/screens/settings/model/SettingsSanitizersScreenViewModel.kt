@@ -40,38 +40,38 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
 class SettingsSanitizersScreenViewModel(
-	private val context: Context = AppContext,
-	private val sanitizers: SanitizersCollection = Sanitizers,
-	private val repository: SanitizerRepository = SanitizerRepository,
+    private val context: Context = AppContext,
+    private val sanitizers: SanitizersCollection = Sanitizers,
+    private val repository: SanitizerRepository = SanitizerRepository,
 ) : ViewModel() {
 
-	data class UiState(val sanitizers: ImmutableList<Sanitizer> = persistentListOf()) {
-		data class Sanitizer(val id: SanitizerId, val name: String, val enabled: Boolean)
-	}
+    data class UiState(val sanitizers: ImmutableList<Sanitizer> = persistentListOf()) {
+        data class Sanitizer(val id: SanitizerId, val name: String, val enabled: Boolean)
+    }
 
-	val uiState: StateFlow<UiState> =
-		repository.state.map { states ->
-			UiState(
-				sanitizers = states
-					.map { state ->
-						Sanitizer(
-							id = state.id,
-							name = sanitizers.first { it.id == state.id }.getMetadata(context).name,
-							enabled = state.enabled,
-						)
-					}
-					.sortedBy { it.name.lowercase() }
-					.toImmutableList(),
-			)
-		}.stateIn(
-			scope = viewModelScope,
-			started = SharingStarted.WhileSubscribed(5_000),
-			initialValue = UiState(),
-		)
+    val uiState: StateFlow<UiState> =
+        repository.state.map { states ->
+            UiState(
+                sanitizers = states
+                    .map { state ->
+                        Sanitizer(
+                            id = state.id,
+                            name = sanitizers.first { it.id == state.id }.getMetadata(context).name,
+                            enabled = state.enabled,
+                        )
+                    }
+                    .sortedBy { it.name.lowercase() }
+                    .toImmutableList(),
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState(),
+        )
 
-	fun onSanitizerCheckedChange(id: SanitizerId, enabled: Boolean) {
-		viewModelScope.launch {
-			repository.setEnabled(id, enabled)
-		}
-	}
+    fun onSanitizerCheckedChange(id: SanitizerId, enabled: Boolean) {
+        viewModelScope.launch {
+            repository.setEnabled(id, enabled)
+        }
+    }
 }

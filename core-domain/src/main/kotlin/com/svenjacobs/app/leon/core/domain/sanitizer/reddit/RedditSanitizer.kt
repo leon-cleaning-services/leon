@@ -27,15 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class RedditSanitizer :
-	RegexSanitizer(
-		RegexFactory.AllParameters,
-	) {
+    RegexSanitizer(
+        RegexFactory.AllParameters,
+    ) {
 
-	override val id = SanitizerId("reddit")
+    override val id = SanitizerId("reddit")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_reddit),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_reddit),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomain("reddit.com")
+    override fun matchesDomain(input: String) = input.matchesDomain("reddit.com")
 }

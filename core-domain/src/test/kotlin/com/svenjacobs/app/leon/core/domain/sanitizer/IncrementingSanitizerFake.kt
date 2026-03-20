@@ -22,16 +22,16 @@ import android.content.Context
 
 class IncrementingSanitizerFake : Sanitizer {
 
-	private var iteration = 0
+    private var iteration = 0
 
-	override val id: SanitizerId = SanitizerId("incrementing")
+    override val id: SanitizerId = SanitizerId("incrementing")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = "Incrementing",
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = "Incrementing",
+    )
 
-	override fun invoke(input: String): String {
-		iteration++
-		return iteration.toString()
-	}
+    override fun invoke(input: String): String {
+        iteration++
+        return iteration.toString()
+    }
 }

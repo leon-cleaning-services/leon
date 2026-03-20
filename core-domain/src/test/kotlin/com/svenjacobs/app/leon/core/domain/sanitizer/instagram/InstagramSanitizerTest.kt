@@ -22,20 +22,20 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class InstagramSanitizerTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove \"igshid\" parameter" {
-					val sanitizer = InstagramSanitizer()
+                "remove \"igshid\" parameter" {
+                    val sanitizer = InstagramSanitizer()
 
-					val result = sanitizer(
-						"https://www.instagram.com/reel/Ceeg-VgI4yF/?igsh=YmMyMTA2M2Y=",
-					)
+                    val result = sanitizer(
+                        "https://www.instagram.com/reel/Ceeg-VgI4yF/?igsh=YmMyMTA2M2Y=",
+                    )
 
-					result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
-				}
-			}
-		},
-	)
+                    result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                }
+            }
+        },
+    )

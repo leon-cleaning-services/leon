@@ -33,70 +33,70 @@ import kotlinx.coroutines.withContext
  * Performs cleaning of a URL taking all enabled [Sanitizers][Sanitizer] into account.
  */
 class CleanerService(
-	private val sanitizers: SanitizersCollection = Sanitizers,
-	private val repository: SanitizerRepository = SanitizerRepository,
+    private val sanitizers: SanitizersCollection = Sanitizers,
+    private val repository: SanitizerRepository = SanitizerRepository,
 ) {
 
-	data class Result(
-		val originalText: String,
-		val cleanedText: String,
-		val urls: ImmutableList<String>,
-	)
+    data class Result(
+        val originalText: String,
+        val cleanedText: String,
+        val urls: ImmutableList<String>,
+    )
 
-	suspend fun clean(text: String?, decodeUrl: Boolean = false): Result {
-		if (text.isNullOrEmpty()) throw IllegalArgumentException()
+    suspend fun clean(text: String?, decodeUrl: Boolean = false): Result {
+        if (text.isNullOrEmpty()) throw IllegalArgumentException()
 
-		val (cleaned, urls) = URL_REGEX
-			.findAll(text)
-			.fold(Pair(text, emptyList<String>())) { (currentText, urls), match ->
-				var prevResult: String
-				var result = match.value
-				var i = 0
+        val (cleaned, urls) = URL_REGEX
+            .findAll(text)
+            .fold(Pair(text, emptyList<String>())) { (currentText, urls), match ->
+                var prevResult: String
+                var result = match.value
+                var i = 0
 
-				do {
-					prevResult = result
-					result = cleanUrl(result, sanitizers)
-					i++
-				} while (result != prevResult && i < MAX_ITERATION)
+                do {
+                    prevResult = result
+                    result = cleanUrl(result, sanitizers)
+                    i++
+                } while (result != prevResult && i < MAX_ITERATION)
 
-				Pair(currentText.replace(match.value, result), urls + result)
-			}
-			.let { (cleaned, urls) ->
-				val decoded = if (decodeUrl) {
-					withContext(Dispatchers.Default) {
-						decodeUrl(cleaned)
-					}
-				} else {
-					cleaned
-				}
+                Pair(currentText.replace(match.value, result), urls + result)
+            }
+            .let { (cleaned, urls) ->
+                val decoded = if (decodeUrl) {
+                    withContext(Dispatchers.Default) {
+                        decodeUrl(cleaned)
+                    }
+                } else {
+                    cleaned
+                }
 
-				Pair(decoded, urls)
-			}
+                Pair(decoded, urls)
+            }
 
-		return Result(
-			originalText = text,
-			cleanedText = cleaned,
-			urls = urls.toImmutableList(),
-		)
-	}
+        return Result(
+            originalText = text,
+            cleanedText = cleaned,
+            urls = urls.toImmutableList(),
+        )
+    }
 
-	private suspend fun cleanUrl(url: String, sanitizers: SanitizersCollection): String {
-		val cleaned = sanitizers
-			.filter { repository.isEnabled(it.id) }
-			.filter { it.matchesDomain(url) }
-			.fold(url) { currentUrl, sanitizer ->
-				sanitizer(currentUrl)
-			}
+    private suspend fun cleanUrl(url: String, sanitizers: SanitizersCollection): String {
+        val cleaned = sanitizers
+            .filter { repository.isEnabled(it.id) }
+            .filter { it.matchesDomain(url) }
+            .fold(url) { currentUrl, sanitizer ->
+                sanitizer(currentUrl)
+            }
 
-		return if (cleaned.contains('?')) {
-			cleaned
-		} else {
-			cleaned.replaceFirst('&', '?')
-		}
-	}
+        return if (cleaned.contains('?')) {
+            cleaned
+        } else {
+            cleaned.replaceFirst('&', '?')
+        }
+    }
 
-	private companion object {
-		private val URL_REGEX = Regex("https?://.\\S*")
-		private const val MAX_ITERATION = 5
-	}
+    private companion object {
+        private val URL_REGEX = Regex("https?://.\\S*")
+        private const val MAX_ITERATION = 5
+    }
 }

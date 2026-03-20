@@ -20,39 +20,39 @@ package com.svenjacobs.app.leon.core.common.regex
 
 object RegexFactory {
 
-	/**
-	 * This regex matches all parameters of a URL, so everything starting at "?".
-	 */
-	val AllParameters = Regex("\\?.*")
+    /**
+     * This regex matches all parameters of a URL, so everything starting at "?".
+     */
+    val AllParameters = Regex("\\?.*")
 
-	/**
-	 * Returns a Regex which matches a certain parameter.
-	 *
-	 * For example `ofParameter("abc")` returns a regex string which matches `?abc=` or `&abc=`.
-	 *
-	 * @param parameter Parameter prefix
-	 */
-	@Suppress("RegExpUnnecessaryNonCapturingGroup")
-	fun ofParameter(parameter: String): Regex = Regex("[?&](?:$parameter)=([^&#]*)")
+    /**
+     * Returns a Regex which matches a certain parameter.
+     *
+     * For example `ofParameter("abc")` returns a regex string which matches `?abc=` or `&abc=`.
+     *
+     * @param parameter Parameter prefix
+     */
+    @Suppress("RegExpUnnecessaryNonCapturingGroup")
+    fun ofParameter(parameter: String): Regex = Regex("[?&](?:$parameter)=([^&#]*)")
 
-	/**
-	 * Returns a Regex which matches a certain parameter prefix.
-	 *
-	 * For example `ofWildcardParameter("abc_")` returns a regex string which matches `?abc_x=`,
-	 * `&abc_y=`, `&abc_zzz=` et cetera.
-	 *
-	 * @param parameter Parameter prefix
-	 */
-	@Suppress("RegExpUnnecessaryNonCapturingGroup")
-	fun ofWildcardParameter(parameter: String): Regex = Regex("[?&](?:$parameter)[^=]*=([^&#]*)")
+    /**
+     * Returns a Regex which matches a certain parameter prefix.
+     *
+     * For example `ofWildcardParameter("abc_")` returns a regex string which matches `?abc_x=`,
+     * `&abc_y=`, `&abc_zzz=` et cetera.
+     *
+     * @param parameter Parameter prefix
+     */
+    @Suppress("RegExpUnnecessaryNonCapturingGroup")
+    fun ofWildcardParameter(parameter: String): Regex = Regex("[?&](?:$parameter)[^=]*=([^&#]*)")
 
-	/**
-	 * Returns a Regex which removes all parameters except the specified one.
-	 *
-	 * Use regular expression group and OR (`|`) to include several parameters, for example
-	 * `(a|b)`.
-	 *
-	 * @param parameter Parameter to exclude
-	 */
-	fun exceptParameter(parameter: String): Regex = Regex("[?&](?!$parameter=)[^&]+")
+    /**
+     * Returns a Regex which removes all parameters except the specified one.
+     *
+     * Use regular expression group and OR (`|`) to include several parameters, for example
+     * `(a|b)`.
+     *
+     * @param parameter Parameter to exclude
+     */
+    fun exceptParameter(parameter: String): Regex = Regex("[?&](?!$parameter=)[^&]+")
 }

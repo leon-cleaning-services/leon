@@ -27,17 +27,17 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class YandexSanitizer :
-	RegexSanitizer(
-		RegexFactory.exceptParameter("text"),
-	) {
+    RegexSanitizer(
+        RegexFactory.exceptParameter("text"),
+    ) {
 
-	override val id = SanitizerId("yandex")
+    override val id = SanitizerId("yandex")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_yandex),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_yandex),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomainRegex(
-		"(yandex\\.com|ya\\.ru)",
-	)
+    override fun matchesDomain(input: String) = input.matchesDomainRegex(
+        "(yandex\\.com|ya\\.ru)",
+    )
 }

@@ -22,34 +22,35 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class SubstackSanitizerTest :
-	WordSpec(
-		{
-			val sanitizer = SubstackSanitizer()
+    WordSpec(
+        {
+            val sanitizer = SubstackSanitizer()
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove parameters from substack.com" {
-					sanitizer(
-						"https://substack.com/@sebastianbarros/note/c-190523061?r=c0obe&utm_source=notes-share-action&utm_medium=web",
-					) shouldBe "https://substack.com/@sebastianbarros/note/c-190523061"
-				}
+                "remove parameters from substack.com" {
+                    sanitizer(
+                        "https://substack.com/@sebastianbarros/note/c-190523061?r=c0obe&utm_source=notes-share-action&utm_medium=web",
+                    ) shouldBe "https://substack.com/@sebastianbarros/note/c-190523061"
+                }
 
-				"remove parameters from open.substack.com" {
-					sanitizer(
-						"https://open.substack.com/pub/fosspost/p/open-up-your-android-smartphone?utm_campaign=post-expanded-share&utm_medium=web",
-					) shouldBe "https://open.substack.com/pub/fosspost/p/open-up-your-android-smartphone"
-				}
-			}
+                "remove parameters from open.substack.com" {
+                    sanitizer(
+                        "https://open.substack.com/pub/fosspost/p/open-up-your-android-smartphone?utm_campaign=post-expanded-share&utm_medium=web",
+                    ) shouldBe
+                        "https://open.substack.com/pub/fosspost/p/open-up-your-android-smartphone"
+                }
+            }
 
-			"matchesDomain" should {
+            "matchesDomain" should {
 
-				"match substack.com" {
-					sanitizer.matchesDomain("https://substack.com") shouldBe true
-				}
+                "match substack.com" {
+                    sanitizer.matchesDomain("https://substack.com") shouldBe true
+                }
 
-				"match open.substack.com" {
-					sanitizer.matchesDomain("https://open.substack.com") shouldBe true
-				}
-			}
-		},
-	)
+                "match open.substack.com" {
+                    sanitizer.matchesDomain("https://open.substack.com") shouldBe true
+                }
+            }
+        },
+    )

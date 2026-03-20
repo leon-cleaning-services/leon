@@ -24,62 +24,62 @@ val catalogs = extensions.getByType<VersionCatalogsExtension>()
 val libs: VersionCatalog = catalogs.named("libs")
 
 plugins {
-	id("com.android.library")
-	id("org.jetbrains.kotlin.plugin.compose")
+    id("com.android.library")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 android {
-	compileSdk = Android.compileSdk
+    compileSdk = Android.compileSdk
 
-	defaultConfig {
-		minSdk = Android.minSdk
-		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-	}
+    defaultConfig {
+        minSdk = Android.minSdk
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
-	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
-	}
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 
-	buildFeatures {
-		compose = true
-	}
+    buildFeatures {
+        compose = true
+    }
 
-	testOptions {
-		unitTests.all {
-			it.useJUnitPlatform()
-		}
-	}
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 kotlin {
-	compilerOptions {
-		jvmTarget = JvmTarget.JVM_17
-	}
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 composeCompiler {
 }
 
 dependencies {
-	api(project(":core-common"))
+    api(project(":core-common"))
 
-	val composeBom = platform(libs.findLibrary("androidx.compose.bom").get())
-	api(composeBom)
-	api(platform(libs.findLibrary("kotlin.bom").get()))
+    val composeBom = platform(libs.findLibrary("androidx.compose.bom").get())
+    api(composeBom)
+    api(platform(libs.findLibrary("kotlin.bom").get()))
 
-	api(libs.findLibrary("kotlin.stdlib.jdk8").get())
-	api(libs.findBundle("androidx.compose").get())
+    api(libs.findLibrary("kotlin.stdlib.jdk8").get())
+    api(libs.findBundle("androidx.compose").get())
 
-	testImplementation(libs.findLibrary("kotest.runner.junit5").get())
-	testImplementation(libs.findLibrary("kotest.assertions.core").get())
-	testImplementation(libs.findLibrary("mockk").get())
+    testImplementation(libs.findLibrary("kotest.runner.junit5").get())
+    testImplementation(libs.findLibrary("kotest.assertions.core").get())
+    testImplementation(libs.findLibrary("mockk").get())
 
-	androidTestImplementation(composeBom)
+    androidTestImplementation(composeBom)
 }

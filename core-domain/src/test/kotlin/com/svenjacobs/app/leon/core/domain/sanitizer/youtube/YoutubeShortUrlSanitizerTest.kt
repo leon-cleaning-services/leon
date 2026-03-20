@@ -22,16 +22,16 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class YoutubeShortUrlSanitizerTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"convert youtu.be short URL into long youtube.com URL" {
-					val sanitizer = YoutubeShortUrlSanitizer()
-					val result = sanitizer("https://youtu.be/5HaUOgW5BlA")
-					result shouldBe "https://www.youtube.com/watch?v=5HaUOgW5BlA"
-				}
-			}
-		},
-	)
+                "convert youtu.be short URL into long youtube.com URL" {
+                    val sanitizer = YoutubeShortUrlSanitizer()
+                    val result = sanitizer("https://youtu.be/5HaUOgW5BlA")
+                    result shouldBe "https://www.youtube.com/watch?v=5HaUOgW5BlA"
+                }
+            }
+        },
+    )

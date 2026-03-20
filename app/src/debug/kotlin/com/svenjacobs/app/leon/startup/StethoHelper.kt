@@ -23,7 +23,7 @@ import com.facebook.stetho.Stetho
 
 class StethoHelper {
 
-	fun initialize(context: Context) {
-		Stetho.initializeWithDefaults(context)
-	}
+    fun initialize(context: Context) {
+        Stetho.initializeWithDefaults(context)
+    }
 }

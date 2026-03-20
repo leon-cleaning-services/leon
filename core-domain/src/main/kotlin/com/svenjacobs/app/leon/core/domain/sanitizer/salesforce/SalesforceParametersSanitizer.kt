@@ -26,14 +26,14 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class SalesforceParametersSanitizer :
-	RegexSanitizer(
-		// see https://help.salesforce.com/s/articleView?id=sf.mc_gai_utm_parameters.htm&type=5
-		RegexFactory.ofWildcardParameter("utm_|sfmc_"),
-	) {
+    RegexSanitizer(
+        // see https://help.salesforce.com/s/articleView?id=sf.mc_gai_utm_parameters.htm&type=5
+        RegexFactory.ofWildcardParameter("utm_|sfmc_"),
+    ) {
 
-	override val id = SanitizerId("salesforce")
+    override val id = SanitizerId("salesforce")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_salesforce_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_salesforce_name),
+    )
 }

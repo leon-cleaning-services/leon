@@ -31,70 +31,70 @@ import kotlinx.coroutines.runBlocking
 @RequiresApi(Build.VERSION_CODES.M)
 class ProcessTextActivity : ComponentActivity() {
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-		when (intent.action) {
-			ACTION_CLEAN -> actionClean()
-			Intent.ACTION_PROCESS_TEXT -> actionProcessText()
-			else -> cancel()
-		}
+        when (intent.action) {
+            ACTION_CLEAN -> actionClean()
+            Intent.ACTION_PROCESS_TEXT -> actionProcessText()
+            else -> cancel()
+        }
 
-		finish()
-	}
+        finish()
+    }
 
-	private fun actionClean() {
-		val text = intent.getStringExtra(Intent.EXTRA_TEXT)
+    private fun actionClean() {
+        val text = intent.getStringExtra(Intent.EXTRA_TEXT)
 
-		when {
-			text.isNullOrBlank() -> cancel()
-			else -> result(text, Intent.EXTRA_TEXT)
-		}
-	}
+        when {
+            text.isNullOrBlank() -> cancel()
+            else -> result(text, Intent.EXTRA_TEXT)
+        }
+    }
 
-	private fun actionProcessText() {
-		val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()
-		val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+    private fun actionProcessText() {
+        val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()
+        val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
 
-		when {
-			text.isNullOrBlank() -> cancel()
+        when {
+            text.isNullOrBlank() -> cancel()
 
-			// If readonly, delegate to MainActivity
-			readonly -> startActivity(
-				Intent(this, MainActivity::class.java).apply {
-					action = Intent.ACTION_SEND
-					type = "text/plain"
-					putExtra(Intent.EXTRA_TEXT, text)
-				},
-			)
+            // If readonly, delegate to MainActivity
+            readonly -> startActivity(
+                Intent(this, MainActivity::class.java).apply {
+                    action = Intent.ACTION_SEND
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, text)
+                },
+            )
 
-			else -> result(text, Intent.EXTRA_PROCESS_TEXT)
-		}
-	}
+            else -> result(text, Intent.EXTRA_PROCESS_TEXT)
+        }
+    }
 
-	private fun result(text: String, key: String) {
-		// Needs to run with runBlocking or else setResult() won't work
-		runBlocking {
-			val decodeUrl = AppDataStoreManager.urlDecodeEnabled.firstOrNull() ?: false
-			val result = CleanerService().clean(
-				text = text,
-				decodeUrl = decodeUrl,
-			)
+    private fun result(text: String, key: String) {
+        // Needs to run with runBlocking or else setResult() won't work
+        runBlocking {
+            val decodeUrl = AppDataStoreManager.urlDecodeEnabled.firstOrNull() ?: false
+            val result = CleanerService().clean(
+                text = text,
+                decodeUrl = decodeUrl,
+            )
 
-			setResult(
-				RESULT_OK,
-				Intent().apply {
-					putExtra(key, result.cleanedText)
-				},
-			)
-		}
-	}
+            setResult(
+                RESULT_OK,
+                Intent().apply {
+                    putExtra(key, result.cleanedText)
+                },
+            )
+        }
+    }
 
-	private fun cancel() {
-		setResult(RESULT_CANCELED)
-	}
+    private fun cancel() {
+        setResult(RESULT_CANCELED)
+    }
 
-	private companion object {
-		private const val ACTION_CLEAN = "com.svenjacobs.app.leon.CLEAN"
-	}
+    private companion object {
+        private const val ACTION_CLEAN = "com.svenjacobs.app.leon.CLEAN"
+    }
 }

@@ -35,37 +35,37 @@ import com.svenjacobs.app.leon.ui.screens.main.model.Screen
 
 @Composable
 internal fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
-	val bottomNavItems = listOf(
-		Screen.Main,
-		Screen.Settings,
-	)
+    val bottomNavItems = listOf(
+        Screen.Main,
+        Screen.Settings,
+    )
 
-	NavigationBar(
-		modifier = modifier,
-	) {
-		val navBackStackEntry by navController.currentBackStackEntryAsState()
-		val currentDestination = navBackStackEntry?.destination
+    NavigationBar(
+        modifier = modifier,
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
 
-		bottomNavItems.forEach { screen ->
-			NavigationBarItem(
-				icon = {
-					Icon(
-						imageVector = screen.icon,
-						contentDescription = stringResource(screen.iconContentDescription),
-					)
-				},
-				label = { Text(stringResource(screen.label)) },
-				selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-				onClick = dropUnlessResumed {
-					navController.navigate(screen.route) {
-						popUpTo(navController.graph.findStartDestination().id) {
-							saveState = true
-						}
-						launchSingleTop = true
-						restoreState = true
-					}
-				},
-			)
-		}
-	}
+        bottomNavItems.forEach { screen ->
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = screen.icon,
+                        contentDescription = stringResource(screen.iconContentDescription),
+                    )
+                },
+                label = { Text(stringResource(screen.label)) },
+                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                onClick = dropUnlessResumed {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+            )
+        }
+    }
 }

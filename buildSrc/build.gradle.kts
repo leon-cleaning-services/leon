@@ -17,16 +17,16 @@
  */
 
 plugins {
-	`kotlin-dsl`
+    `kotlin-dsl`
 }
 
 repositories {
-	google()
-	mavenCentral()
+    google()
+    mavenCentral()
 }
 
 dependencies {
-	implementation(libs.kotlin.gradle.plugin)
-	implementation(libs.android.gradle.plugin)
-	implementation(libs.compose.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
+    implementation(libs.android.gradle.plugin)
+    implementation(libs.compose.gradle.plugin)
 }

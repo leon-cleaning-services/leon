@@ -22,5 +22,5 @@ import androidx.startup.Initializer
 
 interface DistinctInitializer<T> : Initializer<T> {
 
-	override fun dependencies() = emptyList<Class<out Initializer<*>>>()
+    override fun dependencies() = emptyList<Class<out Initializer<*>>>()
 }

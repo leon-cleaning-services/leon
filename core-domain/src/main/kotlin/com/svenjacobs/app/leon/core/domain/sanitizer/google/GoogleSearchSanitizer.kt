@@ -27,15 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SearchResultSanitizer
 
 class GoogleSearchSanitizer :
-	SearchResultSanitizer(
-		RegexFactory.ofParameter("url|q"),
-	) {
+    SearchResultSanitizer(
+        RegexFactory.ofParameter("url|q"),
+    ) {
 
-	override val id = SanitizerId("google_search")
+    override val id = SanitizerId("google_search")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_google_search_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_google_search_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomainRegex("google\\.[^/]+/url")
+    override fun matchesDomain(input: String) = input.matchesDomainRegex("google\\.[^/]+/url")
 }

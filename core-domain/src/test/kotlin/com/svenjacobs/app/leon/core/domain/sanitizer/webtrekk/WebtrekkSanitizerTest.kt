@@ -22,20 +22,20 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class WebtrekkSanitizerTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove \"wt_*\" parameters" {
-					val sanitizer = WebtrekkSanitizer()
+                "remove \"wt_*\" parameters" {
+                    val sanitizer = WebtrekkSanitizer()
 
-					val result = sanitizer(
-						"https://www.example.com?wt_abc=123&wt_efg=456",
-					)
+                    val result = sanitizer(
+                        "https://www.example.com?wt_abc=123&wt_efg=456",
+                    )
 
-					result shouldBe "https://www.example.com"
-				}
-			}
-		},
-	)
+                    result shouldBe "https://www.example.com"
+                }
+            }
+        },
+    )

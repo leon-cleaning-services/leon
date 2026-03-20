@@ -27,15 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class InstagramSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.ofParameter("igsh"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.ofParameter("igsh"),
+    ) {
 
-	override val id = SanitizerId("instagram")
+    override val id = SanitizerId("instagram")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_instagram_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_instagram_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomain("instagram.com")
+    override fun matchesDomain(input: String) = input.matchesDomain("instagram.com")
 }

@@ -22,37 +22,37 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class DomainExtensionsTest :
-	WordSpec(
-		{
-			"matchesDomain" should {
+    WordSpec(
+        {
+            "matchesDomain" should {
 
-				"match domain with https://" {
-					"https://some.example.com/path".matchesDomain("some.example.com") shouldBe true
-				}
+                "match domain with https://" {
+                    "https://some.example.com/path".matchesDomain("some.example.com") shouldBe true
+                }
 
-				"match domain with http://" {
-					"http://some.example.com/path".matchesDomain("some.example.com") shouldBe true
-				}
+                "match domain with http://" {
+                    "http://some.example.com/path".matchesDomain("some.example.com") shouldBe true
+                }
 
-				"match domain with www" {
-					"https://www.some.example.com".matchesDomain("some.example.com") shouldBe true
-					"http://www.some.example.com".matchesDomain("some.example.com") shouldBe true
-				}
+                "match domain with www" {
+                    "https://www.some.example.com".matchesDomain("some.example.com") shouldBe true
+                    "http://www.some.example.com".matchesDomain("some.example.com") shouldBe true
+                }
 
-				"match domain without http(s)" {
-					"some.example.com".matchesDomain("some.example.com") shouldBe true
-					"www.some.example.com".matchesDomain("some.example.com") shouldBe true
-				}
+                "match domain without http(s)" {
+                    "some.example.com".matchesDomain("some.example.com") shouldBe true
+                    "www.some.example.com".matchesDomain("some.example.com") shouldBe true
+                }
 
-				"match domain with regular expression values" {
-					"https://aliexpress.com/item/32948511896".matchesDomainRegex(
-						domain = "aliexpress\\..+/item/",
-					) shouldBe true
-				}
+                "match domain with regular expression values" {
+                    "https://aliexpress.com/item/32948511896".matchesDomainRegex(
+                        domain = "aliexpress\\..+/item/",
+                    ) shouldBe true
+                }
 
-				"not match domain" {
-					"other.example.com".matchesDomain("some.example.com") shouldBe false
-				}
-			}
-		},
-	)
+                "not match domain" {
+                    "other.example.com".matchesDomain("some.example.com") shouldBe false
+                }
+            }
+        },
+    )

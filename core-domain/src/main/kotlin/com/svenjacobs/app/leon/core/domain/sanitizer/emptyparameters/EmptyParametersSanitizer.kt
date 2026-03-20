@@ -25,13 +25,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class EmptyParametersSanitizer :
-	RegexSanitizer(
-		regex = Regex("[?&][^=]+=(?=&|$)"),
-	) {
+    RegexSanitizer(
+        regex = Regex("[?&][^=]+=(?=&|$)"),
+    ) {
 
-	override val id = SanitizerId("empty_parameters")
+    override val id = SanitizerId("empty_parameters")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_empty_parameters_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_empty_parameters_name),
+    )
 }

@@ -22,10 +22,10 @@ import android.content.Context
 
 class StethoHelper {
 
-	/**
-	 * Nothing to do because there is no Stetho dependency in release build variant :)
-	 */
-	@Suppress("UNUSED_PARAMETER")
-	fun initialize(context: Context) {
-	}
+    /**
+     * Nothing to do because there is no Stetho dependency in release build variant :)
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun initialize(context: Context) {
+    }
 }

@@ -28,21 +28,21 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.extractSearchResultValue
 
 class YahooSearchSanitizer : Sanitizer {
 
-	override val id = SanitizerId("yahoo_search")
+    override val id = SanitizerId("yahoo_search")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_yahoo_search_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_yahoo_search_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomain("search.yahoo.com")
+    override fun matchesDomain(input: String) = input.matchesDomain("search.yahoo.com")
 
-	override fun invoke(input: String): String = if (input.contains("/search")) {
-		RegexFactory.exceptParameter("p").replace(input, "")
-	} else {
-		extractSearchResultValue(REGEX_SEARCH_RESULT, input)
-	}
+    override fun invoke(input: String): String = if (input.contains("/search")) {
+        RegexFactory.exceptParameter("p").replace(input, "")
+    } else {
+        extractSearchResultValue(REGEX_SEARCH_RESULT, input)
+    }
 
-	companion object {
-		private val REGEX_SEARCH_RESULT = Regex("RU=([^/]+)")
-	}
+    companion object {
+        private val REGEX_SEARCH_RESULT = Regex("RU=([^/]+)")
+    }
 }
