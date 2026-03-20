@@ -47,6 +47,7 @@
     <string name="sanitizer_kogan_name" translatable="false">Kogan</string>
     <string name="sanitizer_lazada" translatable="false">Lazada</string>
     <string name="sanitizer_linksynergy_name" translatable="false">LinkSynergy</string>
+    <string name="sanitizer_meta_ad_name" translatable="false">Meta Ads</string>
     <string name="sanitizer_mydealz_parameters_name">MyDealz Parameters</string>
     <string name="sanitizer_mydealz_redirects_name">MyDealz Redirects</string>
     <string name="sanitizer_netflix_name" translatable="false">Netflix</string>
