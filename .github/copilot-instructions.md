@@ -174,6 +174,15 @@ Every new sanitizer **must** have a corresponding `*Test` class that covers:
 1. The `invoke` function with at least one realistic URL.
 2. The `matchesDomain` function (positive *and* negative cases) whenever it is overridden.
 
+## After Generating Code
+
+After generating or modifying any Kotlin code, always run the formatter to ensure consistent code
+style:
+
+```bash
+./gradlew formatKotlin
+```
+
 ## Running Tests & Lint
 
 ```bash
