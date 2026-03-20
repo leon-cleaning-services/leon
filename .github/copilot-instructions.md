@@ -23,6 +23,22 @@ leon/
 - **`core-common`** – `RegexFactory` and `matchesDomain`/`matchesDomainRegex` extension functions
   used by sanitizers.
 
+## Commit Messages & PR Titles
+
+Commits and PR titles **must** follow the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+
+Format: `<type>[optional scope]: <description>`
+
+Common types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `style`, `perf`, `ci`.
+
+Examples:
+- `feat(sanitizer): add Google Analytics sanitizer`
+- `fix(cleaner): handle URLs without query parameters`
+- `docs: update README with new configuration options`
+
+The **PR title must be identical** to the commit message that implements the requested changes.
+
 ## Code Style
 
 - **Language**: Kotlin only.
