@@ -37,6 +37,7 @@ buildscript {
 plugins {
     alias(libs.plugins.ben.manes.versions)
     alias(libs.plugins.kotlinter)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.adarshr.test.logger)
     alias(libs.plugins.aboutlibraries) apply false
 }
@@ -71,6 +72,17 @@ subprojects {
 
 tasks.register<Delete>("clean") {
     delete = setOf(rootProject.layout.buildDirectory)
+}
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        licenseHeaderFile(rootProject.file("spotless/license.kt.txt"))
+    }
+    kotlinGradle {
+        target("**/*.gradle.kts")
+        licenseHeaderFile(rootProject.file("spotless/license.kt.txt"))
+    }
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
