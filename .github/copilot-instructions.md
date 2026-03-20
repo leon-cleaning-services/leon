@@ -39,6 +39,40 @@ Examples:
 
 The **PR title must be identical** to the commit message that implements the requested changes.
 
+## Pull Request Labels
+
+Every pull request **must** have exactly one label that reflects the nature of the change:
+
+| Label | When to use |
+|-------|-------------|
+| `feature` | A new feature or enhancement |
+| `bug` | A bug fix |
+| `chore` | Maintenance tasks, dependency updates, build changes, CI changes |
+| `documentation` | Documentation-only changes |
+| `refactor` | Code refactoring without behavior changes |
+
+## Closing Keywords
+
+If a pull request implements a feature request or fixes a bug that originates from a GitHub issue,
+include a [closing keyword](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/using-keywords-in-issues-and-pull-requests)
+in the PR description so the issue is automatically closed when the PR is merged.
+
+Supported keywords: `Closes`, `Fixes`, `Resolves` (case-insensitive).
+
+Example PR description:
+
+```
+Closes #42
+```
+
+or inline:
+
+```
+This PR adds support for removing `utm_` parameters from all URLs.
+
+Closes #42
+```
+
 ## Code Style
 
 - **Language**: Kotlin only.
