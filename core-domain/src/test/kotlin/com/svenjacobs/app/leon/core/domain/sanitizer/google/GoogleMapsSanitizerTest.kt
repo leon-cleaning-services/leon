@@ -24,6 +24,7 @@ import io.kotest.matchers.shouldBe
 class GoogleMapsSanitizerTest :
     WordSpec(
         {
+
             val sanitizer = GoogleMapsSanitizer()
 
             "invoke" should {

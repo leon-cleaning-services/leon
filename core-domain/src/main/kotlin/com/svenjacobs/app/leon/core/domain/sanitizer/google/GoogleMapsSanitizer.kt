@@ -32,9 +32,8 @@ class GoogleMapsSanitizer : Sanitizer {
         name = context.getString(R.string.sanitizer_google_maps_name),
     )
 
-    override fun matchesDomain(input: String) =
-        input.matchesDomainRegex("google\\.com/maps") ||
-            input.matchesDomainRegex("maps\\.google\\.com")
+    override fun matchesDomain(input: String) = input.matchesDomainRegex("google\\.com/maps") ||
+        input.matchesDomainRegex("maps\\.google\\.com")
 
     override fun invoke(input: String): String {
         val match = COORD_REGEX.find(input) ?: return input
@@ -43,6 +42,6 @@ class GoogleMapsSanitizer : Sanitizer {
     }
 
     private companion object {
-        val COORD_REGEX = Regex("@-?\\d+\\.\\d+,-?\\d+\\.\\d+,\\d+(?:\\.\\d+)?z")
+        private val COORD_REGEX = Regex("@-?\\d+\\.\\d+,-?\\d+\\.\\d+,\\d+(?:\\.\\d+)?z")
     }
 }
