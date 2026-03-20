@@ -27,7 +27,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class FacebookAnalyticsSanitizer :
     RegexSanitizer(
-        regex = RegexFactory.ofWildcardParameter("fb_|fbclid|sfnsn"),
+        regex = RegexFactory.ofWildcardParameter("fb_|fbclid|sfnsn|cHash"),
     ) {
 
     override val id = SanitizerId("facebook")

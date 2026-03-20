@@ -27,7 +27,7 @@ class FacebookAnalyticsSanitizerTest :
 
             "invoke" should {
 
-                "remove \"fb_*\" and \"fbclid\" parameters" {
+                "remove \"fb_*\", \"fbclid\", \"sfnsn\" and \"cHash\" parameters" {
                     val sanitizer = FacebookAnalyticsSanitizer()
 
                     val result = sanitizer(
@@ -35,6 +35,16 @@ class FacebookAnalyticsSanitizerTest :
                     )
 
                     result shouldBe "https://www.example.com"
+                }
+
+                "remove \"cHash\" parameter" {
+                    val sanitizer = FacebookAnalyticsSanitizer()
+
+                    val result = sanitizer(
+                        "https://www.spiegel.de/de?fbclid=IwY2xjawOxH_hleHRuA2FlbQIxMQ&cHash=137531e2404b087d877282a",
+                    )
+
+                    result shouldBe "https://www.spiegel.de/de"
                 }
             }
         },
