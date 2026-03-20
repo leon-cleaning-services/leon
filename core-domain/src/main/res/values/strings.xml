@@ -36,6 +36,7 @@
     <string name="sanitizer_ga_name" translatable="false">Google Analytics</string>
     <string name="sanitizer_georiot_name" translatable="false">GeoRiot</string>
     <string name="sanitizer_google_ads_name" translatable="false">Google Ads</string>
+    <string name="sanitizer_google_maps_name" translatable="false">Google Maps</string>
     <string name="sanitizer_google_play_store_name" translatable="false">Google Play Store</string>
     <string name="sanitizer_google_search_name">Google Search</string>
     <string name="sanitizer_heise" translatable="false">heise online</string>
