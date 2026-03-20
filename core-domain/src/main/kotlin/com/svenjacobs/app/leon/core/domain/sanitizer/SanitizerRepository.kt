@@ -26,11 +26,11 @@ import kotlinx.coroutines.flow.Flow
  */
 interface SanitizerRepository {
 
-	data class SanitizerState(val id: SanitizerId, val enabled: Boolean)
+    data class SanitizerState(val id: SanitizerId, val enabled: Boolean)
 
-	val state: Flow<ImmutableList<SanitizerState>>
+    val state: Flow<ImmutableList<SanitizerState>>
 
-	suspend fun isEnabled(id: SanitizerId): Boolean
+    suspend fun isEnabled(id: SanitizerId): Boolean
 
-	suspend fun setEnabled(id: SanitizerId, enabled: Boolean)
+    suspend fun setEnabled(id: SanitizerId, enabled: Boolean)
 }

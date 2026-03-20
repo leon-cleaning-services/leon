@@ -28,18 +28,18 @@ import androidx.compose.runtime.Composable
  */
 interface Sanitizer {
 
-	data class Metadata(val name: String, val hasSettingsScreen: Boolean = false)
+    data class Metadata(val name: String, val hasSettingsScreen: Boolean = false)
 
-	val id: SanitizerId
+    val id: SanitizerId
 
-	fun getMetadata(context: Context): Metadata
+    fun getMetadata(context: Context): Metadata
 
-	fun matchesDomain(input: String): Boolean = true
+    fun matchesDomain(input: String): Boolean = true
 
-	operator fun invoke(input: String): String
+    operator fun invoke(input: String): String
 
-	@Composable
-	@Suppress("unused")
-	fun SettingsScreen() {
-	}
+    @Composable
+    @Suppress("unused")
+    fun SettingsScreen() {
+    }
 }

@@ -27,17 +27,17 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class TiktokSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.AllParameters,
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.AllParameters,
+    ) {
 
-	override val id = SanitizerId("tiktok")
+    override val id = SanitizerId("tiktok")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_tiktok_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_tiktok_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomain(
-		domain = "tiktok.com",
-	)
+    override fun matchesDomain(input: String) = input.matchesDomain(
+        domain = "tiktok.com",
+    )
 }

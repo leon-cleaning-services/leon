@@ -27,17 +27,17 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class SubstackSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.AllParameters,
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.AllParameters,
+    ) {
 
-	override val id = SanitizerId("substack")
+    override val id = SanitizerId("substack")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_substack),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_substack),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomainRegex(
-		domain = "(open\\.)?substack\\.com",
-	)
+    override fun matchesDomain(input: String) = input.matchesDomainRegex(
+        domain = "(open\\.)?substack\\.com",
+    )
 }

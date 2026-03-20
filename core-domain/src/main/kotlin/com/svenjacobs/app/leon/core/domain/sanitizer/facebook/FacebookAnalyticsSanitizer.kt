@@ -26,13 +26,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class FacebookAnalyticsSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.ofWildcardParameter("fb_|fbclid|sfnsn"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.ofWildcardParameter("fb_|fbclid|sfnsn"),
+    ) {
 
-	override val id = SanitizerId("facebook")
+    override val id = SanitizerId("facebook")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_facebook_analytics_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_facebook_analytics_name),
+    )
 }

@@ -27,17 +27,17 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class FacebookSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.exceptParameter("(id|story_fbid)"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.exceptParameter("(id|story_fbid)"),
+    ) {
 
-	override val id = SanitizerId("facebook_com")
+    override val id = SanitizerId("facebook_com")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_facebook_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_facebook_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomainRegex(
-		domain = "(m\\.)?facebook.com",
-	)
+    override fun matchesDomain(input: String) = input.matchesDomainRegex(
+        domain = "(m\\.)?facebook.com",
+    )
 }

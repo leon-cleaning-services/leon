@@ -27,15 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class ElFinancieroSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.ofParameter("outputType"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.ofParameter("outputType"),
+    ) {
 
-	override val id = SanitizerId("elfinanciero")
+    override val id = SanitizerId("elfinanciero")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_elfinanciero_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_elfinanciero_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomain("elfinanciero.com.mx")
+    override fun matchesDomain(input: String) = input.matchesDomain("elfinanciero.com.mx")
 }

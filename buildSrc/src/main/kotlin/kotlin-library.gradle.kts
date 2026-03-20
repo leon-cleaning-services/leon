@@ -20,24 +20,24 @@ val catalogs = extensions.getByType<VersionCatalogsExtension>()
 val libs: VersionCatalog = catalogs.named("libs")
 
 plugins {
-	kotlin("jvm")
+    kotlin("jvm")
 }
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 dependencies {
-	api(platform(libs.findLibrary("kotlin.bom").get()))
-	api(libs.findLibrary("kotlin.stdlib.jdk8").get())
+    api(platform(libs.findLibrary("kotlin.bom").get()))
+    api(libs.findLibrary("kotlin.stdlib.jdk8").get())
 
-	testApi(libs.findLibrary("kotest.runner.junit5").get())
-	testApi(libs.findLibrary("kotest.assertions.core").get())
-	testApi(libs.findLibrary("mockk").get())
+    testApi(libs.findLibrary("kotest.runner.junit5").get())
+    testApi(libs.findLibrary("kotest.assertions.core").get())
+    testApi(libs.findLibrary("mockk").get())
 }
 
 tasks.test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

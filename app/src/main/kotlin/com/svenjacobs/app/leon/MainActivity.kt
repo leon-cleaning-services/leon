@@ -37,82 +37,85 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-	private val sourceText = mutableStateOf<String?>(null)
-	private var customTabsInitialized = false
+    private val sourceText = mutableStateOf<String?>(null)
+    private var customTabsInitialized = false
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-		enableEdgeToEdge()
+        enableEdgeToEdge()
 
-		onIntent(intent)
+        onIntent(intent)
 
-		setContent {
-			AppTheme {
-				MainRouter(
-					sourceText = sourceText,
-					onResetClick = { sourceText.value = null },
-				)
-			}
-		}
+        setContent {
+            AppTheme {
+                MainRouter(
+                    sourceText = sourceText,
+                    onResetClick = { sourceText.value = null },
+                )
+            }
+        }
 
-		lifecycleScope.launch {
-			repeatOnLifecycle(Lifecycle.State.STARTED) {
-				AppDataStoreManager.customTabsEnabled.collect { customTabsEnabled ->
-					if (customTabsEnabled) {
-						setupCustomTabsService()
-					}
-				}
-			}
-		}
-	}
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                AppDataStoreManager.customTabsEnabled.collect { customTabsEnabled ->
+                    if (customTabsEnabled) {
+                        setupCustomTabsService()
+                    }
+                }
+            }
+        }
+    }
 
-	override fun onNewIntent(intent: Intent) {
-		super.onNewIntent(intent)
-		onIntent(intent)
-	}
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        onIntent(intent)
+    }
 
-	// TODO: Pass all Intent extras
-	private fun onIntent(intent: Intent) {
-		sourceText.value = when (intent.action) {
-			Intent.ACTION_SEND ->
-				if (intent.type == MIME_TYPE_TEXT_PLAIN) {
-					intent.getStringExtra(Intent.EXTRA_TEXT)
-				} else {
-					null
-				}
+    // TODO: Pass all Intent extras
+    private fun onIntent(intent: Intent) {
+        sourceText.value = when (intent.action) {
+            Intent.ACTION_SEND ->
+                if (intent.type == MIME_TYPE_TEXT_PLAIN) {
+                    intent.getStringExtra(Intent.EXTRA_TEXT)
+                } else {
+                    null
+                }
 
-			Intent.ACTION_VIEW -> if (intent.scheme.orEmpty().startsWith("http")) {
-				intent.dataString
-			} else {
-				null
-			}
+            Intent.ACTION_VIEW -> if (intent.scheme.orEmpty().startsWith("http")) {
+                intent.dataString
+            } else {
+                null
+            }
 
-			else -> null
-		}
-	}
+            else -> null
+        }
+    }
 
-	private fun setupCustomTabsService() {
-		if (customTabsInitialized) return
+    private fun setupCustomTabsService() {
+        if (customTabsInitialized) return
 
-		val connection = object : CustomTabsServiceConnection() {
-			override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
-				client.warmup(0)
-			}
+        val connection = object : CustomTabsServiceConnection() {
+            override fun onCustomTabsServiceConnected(
+                name: ComponentName,
+                client: CustomTabsClient,
+            ) {
+                client.warmup(0)
+            }
 
-			override fun onServiceDisconnected(name: ComponentName?) {
-			}
-		}
+            override fun onServiceDisconnected(name: ComponentName?) {
+            }
+        }
 
-		val packageName = CustomTabsClient.getPackageName(this, null)
-		if (packageName != null) {
-			CustomTabsClient.bindCustomTabsService(this, packageName, connection)
-		}
+        val packageName = CustomTabsClient.getPackageName(this, null)
+        if (packageName != null) {
+            CustomTabsClient.bindCustomTabsService(this, packageName, connection)
+        }
 
-		customTabsInitialized = true
-	}
+        customTabsInitialized = true
+    }
 
-	private companion object {
-		private const val MIME_TYPE_TEXT_PLAIN = "text/plain"
-	}
+    private companion object {
+        private const val MIME_TYPE_TEXT_PLAIN = "text/plain"
+    }
 }

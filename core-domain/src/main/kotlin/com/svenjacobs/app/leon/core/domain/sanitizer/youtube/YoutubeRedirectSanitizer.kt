@@ -27,15 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SearchResultSanitizer
 
 class YoutubeRedirectSanitizer :
-	SearchResultSanitizer(
-		RegexFactory.ofParameter("q"),
-	) {
+    SearchResultSanitizer(
+        RegexFactory.ofParameter("q"),
+    ) {
 
-	override val id = SanitizerId("youtube_redirect")
+    override val id = SanitizerId("youtube_redirect")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_youtube_redirect_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_youtube_redirect_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomain("youtube.com/redirect")
+    override fun matchesDomain(input: String) = input.matchesDomain("youtube.com/redirect")
 }

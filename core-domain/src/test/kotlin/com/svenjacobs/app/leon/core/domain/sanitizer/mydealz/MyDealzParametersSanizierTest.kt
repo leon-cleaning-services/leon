@@ -22,21 +22,21 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class MyDealzParametersSanizierTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
-					val sanitizer = MyDealzParametersSanitizer()
-					val result =
-						sanitizer(
-							"https://www.mydealz.de/diskussion/gratis-adidas-fussball-trikot-" +
-								"2383743?pprmrkntfctnsrd=123456789&UATypeId=18",
-						)
-					result shouldBe "https://www.mydealz.de/diskussion/gratis-adidas-fussball-" +
-						"trikot-2383743"
-				}
-			}
-		},
-	)
+                "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
+                    val sanitizer = MyDealzParametersSanitizer()
+                    val result =
+                        sanitizer(
+                            "https://www.mydealz.de/diskussion/gratis-adidas-fussball-trikot-" +
+                                "2383743?pprmrkntfctnsrd=123456789&UATypeId=18",
+                        )
+                    result shouldBe "https://www.mydealz.de/diskussion/gratis-adidas-fussball-" +
+                        "trikot-2383743"
+                }
+            }
+        },
+    )

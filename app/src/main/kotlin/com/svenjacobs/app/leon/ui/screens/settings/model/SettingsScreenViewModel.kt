@@ -37,74 +37,74 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
 class SettingsScreenViewModel(
-	private val context: Context = AppContext,
-	private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
+    private val context: Context = AppContext,
+    private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
 ) : ViewModel() {
 
-	data class UiState(
-		val isLoading: Boolean = true,
-		val browserEnabled: Boolean = false,
-		val customTabsEnabled: Boolean = false,
-		val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
-	)
+    data class UiState(
+        val isLoading: Boolean = true,
+        val browserEnabled: Boolean = false,
+        val customTabsEnabled: Boolean = false,
+        val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
+    )
 
-	private val browserEnabled = MutableStateFlow(false)
+    private val browserEnabled = MutableStateFlow(false)
 
-	val uiState: StateFlow<UiState> =
-		combine(
-			browserEnabled,
-			appDataStoreManager.customTabsEnabled,
-			appDataStoreManager.actionAfterClean,
-		) { browserEnabled, customTabsEnabled, actionAfterClean ->
-			UiState(
-				isLoading = false,
-				browserEnabled = browserEnabled,
-				customTabsEnabled = customTabsEnabled,
-				actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
-			)
-		}.stateIn(
-			scope = viewModelScope,
-			started = SharingStarted.WhileSubscribed(5_000),
-			initialValue = UiState(),
-		)
+    val uiState: StateFlow<UiState> =
+        combine(
+            browserEnabled,
+            appDataStoreManager.customTabsEnabled,
+            appDataStoreManager.actionAfterClean,
+        ) { browserEnabled, customTabsEnabled, actionAfterClean ->
+            UiState(
+                isLoading = false,
+                browserEnabled = browserEnabled,
+                customTabsEnabled = customTabsEnabled,
+                actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState(),
+        )
 
-	init {
-		val enabledSetting = packageManager.getComponentEnabledSetting(componentName)
-		browserEnabled.value = enabledSetting == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-	}
+    init {
+        val enabledSetting = packageManager.getComponentEnabledSetting(componentName)
+        browserEnabled.value = enabledSetting == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+    }
 
-	fun onBrowserSwitchCheckedChange(checked: Boolean) {
-		browserEnabled.value = checked
-		packageManager.setComponentEnabledSetting(
-			componentName,
-			if (checked) {
-				PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-			} else {
-				PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-			},
-			PackageManager.DONT_KILL_APP,
-		)
-	}
+    fun onBrowserSwitchCheckedChange(checked: Boolean) {
+        browserEnabled.value = checked
+        packageManager.setComponentEnabledSetting(
+            componentName,
+            if (checked) {
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            } else {
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            },
+            PackageManager.DONT_KILL_APP,
+        )
+    }
 
-	fun onCustomTabsSwitchCheckedChange(checked: Boolean) {
-		viewModelScope.launch {
-			appDataStoreManager.setCustomTabsEnabled(checked)
-		}
-	}
+    fun onCustomTabsSwitchCheckedChange(checked: Boolean) {
+        viewModelScope.launch {
+            appDataStoreManager.setCustomTabsEnabled(checked)
+        }
+    }
 
-	fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {
-		viewModelScope.launch {
-			appDataStoreManager.setActionAfterClean(actionAfterClean)
-		}
-	}
+    fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {
+        viewModelScope.launch {
+            appDataStoreManager.setActionAfterClean(actionAfterClean)
+        }
+    }
 
-	private val packageManager: PackageManager
-		get() = context.packageManager
+    private val packageManager: PackageManager
+        get() = context.packageManager
 
-	private val componentName: ComponentName
-		get() = ComponentName(context.packageName, "${context.packageName}.$COMPONENT_NAME_CLASS")
+    private val componentName: ComponentName
+        get() = ComponentName(context.packageName, "${context.packageName}.$COMPONENT_NAME_CLASS")
 
-	private companion object {
-		const val COMPONENT_NAME_CLASS = "MainBrowserActivity"
-	}
+    private companion object {
+        const val COMPONENT_NAME_CLASS = "MainBrowserActivity"
+    }
 }

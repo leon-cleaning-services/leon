@@ -27,17 +27,17 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class WikipediaSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.ofParameter("wprov"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.ofParameter("wprov"),
+    ) {
 
-	override val id = SanitizerId("wikipedia")
+    override val id = SanitizerId("wikipedia")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_wikipedia_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_wikipedia_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomainRegex(
-		domain = "(.*\\.)?wikipedia.org",
-	)
+    override fun matchesDomain(input: String) = input.matchesDomainRegex(
+        domain = "(.*\\.)?wikipedia.org",
+    )
 }

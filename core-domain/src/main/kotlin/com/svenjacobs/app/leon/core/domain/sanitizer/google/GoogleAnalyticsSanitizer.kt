@@ -26,13 +26,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class GoogleAnalyticsSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.ofWildcardParameter("ga_|utm_|gclid"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.ofWildcardParameter("ga_|utm_|gclid"),
+    ) {
 
-	override val id = SanitizerId("google_analytics")
+    override val id = SanitizerId("google_analytics")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_ga_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_ga_name),
+    )
 }

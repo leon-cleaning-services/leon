@@ -25,21 +25,21 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class NewEggSanitizer : Sanitizer {
 
-	override val id = SanitizerId("newegg")
+    override val id = SanitizerId("newegg")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_newegg_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_newegg_name),
+    )
 
-	override fun invoke(input: String): String {
-		val result = DOMAIN_REGEX.find(input) ?: return input
-		val group = result.groups[1] ?: return input
-		return result.value.replaceRange(group.range, "")
-	}
+    override fun invoke(input: String): String {
+        val result = DOMAIN_REGEX.find(input) ?: return input
+        val group = result.groups[1] ?: return input
+        return result.value.replaceRange(group.range, "")
+    }
 
-	override fun matchesDomain(input: String) = DOMAIN_REGEX.containsMatchIn(input)
+    override fun matchesDomain(input: String) = DOMAIN_REGEX.containsMatchIn(input)
 
-	private companion object {
-		private val DOMAIN_REGEX = Regex("^(?:https?://)?(?:www\\.)?newegg\\..+(/.+)/p/[0-9A-Z]+")
-	}
+    private companion object {
+        private val DOMAIN_REGEX = Regex("^(?:https?://)?(?:www\\.)?newegg\\..+(/.+)/p/[0-9A-Z]+")
+    }
 }

@@ -33,28 +33,28 @@ import com.svenjacobs.app.leon.R
 
 @Composable
 fun TopAppBar(modifier: Modifier = Modifier, onBackClick: (() -> Unit)? = null) {
-	CenterAlignedTopAppBar(
-		modifier = modifier.statusBarsPadding(),
-		title = {
-			Text(
-				text = stringResource(R.string.scaffold_title),
-				overflow = TextOverflow.Ellipsis,
-				maxLines = 1,
-			)
-		},
-		navigationIcon = { if (onBackClick != null) NavigationIcon(onClick = onBackClick) },
-	)
+    CenterAlignedTopAppBar(
+        modifier = modifier.statusBarsPadding(),
+        title = {
+            Text(
+                text = stringResource(R.string.scaffold_title),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+            )
+        },
+        navigationIcon = { if (onBackClick != null) NavigationIcon(onClick = onBackClick) },
+    )
 }
 
 @Composable
 private fun NavigationIcon(modifier: Modifier = Modifier, onClick: () -> Unit) {
-	IconButton(
-		modifier = modifier,
-		onClick = onClick,
-	) {
-		Icon(
-			Icons.AutoMirrored.Filled.ArrowBack,
-			contentDescription = stringResource(R.string.a11y_back_navigation),
-		)
-	}
+    IconButton(
+        modifier = modifier,
+        onClick = onClick,
+    ) {
+        Icon(
+            Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = stringResource(R.string.a11y_back_navigation),
+        )
+    }
 }

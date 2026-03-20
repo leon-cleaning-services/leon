@@ -22,23 +22,23 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class SpiegelSanitizerTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove all parameters from Spiegel URL" {
-					val sanitizer = SpiegelSanitizer()
-					val result = sanitizer(
-						"https://www.spiegel.de/netzwelt/elon-musk-twitter-sperrt-konten-mehrerer" +
-							"-journalisten-von-new-york-times-washington-post-etc-a-040213a0-aa1e-4" +
-							"627-9a5a-69d5f4f929fb?sara_ecid=soci_upd_KsBF0AFjflf0DZCxpPYDCQgO1dEMph1",
-					)
+                "remove all parameters from Spiegel URL" {
+                    val sanitizer = SpiegelSanitizer()
+                    val result = sanitizer(
+                        "https://www.spiegel.de/netzwelt/elon-musk-twitter-sperrt-konten-mehrerer" +
+                            "-journalisten-von-new-york-times-washington-post-etc-a-040213a0-aa1e-4" +
+                            "627-9a5a-69d5f4f929fb?sara_ecid=soci_upd_KsBF0AFjflf0DZCxpPYDCQgO1dEMph1",
+                    )
 
-					result shouldBe "https://www.spiegel.de/netzwelt/elon-musk-twitter-sperrt-k" +
-						"onten-mehrerer-journalisten-von-new-york-times-washington-post-etc-a-0" +
-						"40213a0-aa1e-4627-9a5a-69d5f4f929fb"
-				}
-			}
-		},
-	)
+                    result shouldBe "https://www.spiegel.de/netzwelt/elon-musk-twitter-sperrt-k" +
+                        "onten-mehrerer-journalisten-von-new-york-times-washington-post-etc-a-0" +
+                        "40213a0-aa1e-4627-9a5a-69d5f4f929fb"
+                }
+            }
+        },
+    )

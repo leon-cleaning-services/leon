@@ -22,20 +22,20 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class GoogleAnalyticsSanitizerTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove \"ga_*\", \"utm_*\", and \"gclid\" parameters" {
-					val sanitizer = GoogleAnalyticsSanitizer()
+                "remove \"ga_*\", \"utm_*\", and \"gclid\" parameters" {
+                    val sanitizer = GoogleAnalyticsSanitizer()
 
-					val result = sanitizer(
-						"https://www.example.com?ga_abc=123&utm_def=456&gclid=789",
-					)
+                    val result = sanitizer(
+                        "https://www.example.com?ga_abc=123&utm_def=456&gclid=789",
+                    )
 
-					result shouldBe "https://www.example.com"
-				}
-			}
-		},
-	)
+                    result shouldBe "https://www.example.com"
+                }
+            }
+        },
+    )

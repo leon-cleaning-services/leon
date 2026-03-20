@@ -25,26 +25,26 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class AmazonProductSanitizer : Sanitizer {
 
-	override val id = SanitizerId("amazon")
+    override val id = SanitizerId("amazon")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_amazon_product_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_amazon_product_name),
+    )
 
-	override fun matchesDomain(input: String) = REGEX.containsMatchIn(input)
+    override fun matchesDomain(input: String) = REGEX.containsMatchIn(input)
 
-	override fun invoke(input: String): String {
-		val result = REGEX.find(input)
-		// First group contains domain and protocol like https://www.amazon.com
-		val domainGroup = result?.groups?.get(1) ?: return input
-		// Second group contains product id
-		val productIdGroup = result.groups[2] ?: return input
+    override fun invoke(input: String): String {
+        val result = REGEX.find(input)
+        // First group contains domain and protocol like https://www.amazon.com
+        val domainGroup = result?.groups?.get(1) ?: return input
+        // Second group contains product id
+        val productIdGroup = result.groups[2] ?: return input
 
-		return "${domainGroup.value}/dp/${productIdGroup.value}/"
-	}
+        return "${domainGroup.value}/dp/${productIdGroup.value}/"
+    }
 
-	private companion object {
-		private val REGEX =
-			Regex("((?:https?://)?(?:www\\.)?amazon\\.[^/]*).*/(?:dp?|gp/product)?/([^/?&]*)")
-	}
+    private companion object {
+        private val REGEX =
+            Regex("((?:https?://)?(?:www\\.)?amazon\\.[^/]*).*/(?:dp?|gp/product)?/([^/?&]*)")
+    }
 }

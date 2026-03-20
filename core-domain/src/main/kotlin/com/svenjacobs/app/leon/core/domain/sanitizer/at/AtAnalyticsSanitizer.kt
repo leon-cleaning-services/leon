@@ -26,13 +26,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class AtAnalyticsSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.ofWildcardParameter("at_"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.ofWildcardParameter("at_"),
+    ) {
 
-	override val id = SanitizerId("at_analytics")
+    override val id = SanitizerId("at_analytics")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_at_analytics_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_at_analytics_name),
+    )
 }

@@ -20,10 +20,9 @@ package com.svenjacobs.app.leon.core.domain.sanitizer
 
 import android.content.Context
 
-class RegexSanitizerFake(override val id: SanitizerId, private val name: String, regex: Regex) :
-	RegexSanitizer(regex) {
+class RegexSanitizerFake(override val id: SanitizerId, private val name: String, regex: Regex) : RegexSanitizer(regex) {
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = name,
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = name,
+    )
 }

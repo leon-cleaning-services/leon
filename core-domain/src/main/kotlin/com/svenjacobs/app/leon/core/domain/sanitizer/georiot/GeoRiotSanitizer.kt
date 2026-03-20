@@ -27,16 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SearchResultSanitizer
 
 class GeoRiotSanitizer :
-	SearchResultSanitizer(
-		RegexFactory.ofParameter("GR_URL"),
-	) {
+    SearchResultSanitizer(
+        RegexFactory.ofParameter("GR_URL"),
+    ) {
 
-	override val id = SanitizerId("georiot")
+    override val id = SanitizerId("georiot")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_georiot_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_georiot_name),
+    )
 
-	override fun matchesDomain(input: String) =
-		input.matchesDomainRegex("target.georiot\\.[^/]+/Proxy.ashx")
+    override fun matchesDomain(input: String) = input.matchesDomainRegex("target.georiot\\.[^/]+/Proxy.ashx")
 }

@@ -24,23 +24,23 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
 
 object DomainContainer {
 
-	fun init(
-		appContext: Context,
-		sanitizerRepositoryProvider: () -> SanitizerRepository,
-		sanitizers: SanitizersCollection,
-	) {
-		this.AppContext = appContext
-		this.SanitizerRepositoryProvider = sanitizerRepositoryProvider
-		this.Sanitizers = sanitizers
-	}
+    fun init(
+        appContext: Context,
+        sanitizerRepositoryProvider: () -> SanitizerRepository,
+        sanitizers: SanitizersCollection,
+    ) {
+        this.AppContext = appContext
+        this.SanitizerRepositoryProvider = sanitizerRepositoryProvider
+        this.Sanitizers = sanitizers
+    }
 
-	private lateinit var SanitizerRepositoryProvider: () -> SanitizerRepository
+    private lateinit var SanitizerRepositoryProvider: () -> SanitizerRepository
 
-	lateinit var AppContext: Context
-		private set
+    lateinit var AppContext: Context
+        private set
 
-	lateinit var Sanitizers: SanitizersCollection
-		private set
+    lateinit var Sanitizers: SanitizersCollection
+        private set
 
-	val SanitizerRepository: SanitizerRepository by lazy { SanitizerRepositoryProvider() }
+    val SanitizerRepository: SanitizerRepository by lazy { SanitizerRepositoryProvider() }
 }
