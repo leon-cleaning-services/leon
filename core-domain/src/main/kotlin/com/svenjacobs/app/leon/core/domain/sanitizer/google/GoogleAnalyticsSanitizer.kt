@@ -27,7 +27,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class GoogleAnalyticsSanitizer :
     RegexSanitizer(
-        regex = RegexFactory.ofWildcardParameter("ga_|utm_|gclid"),
+        regex = RegexFactory.ofWildcardParameter("ga_|utm_|gclid|gad_"),
     ) {
 
     override val id = SanitizerId("google_analytics")
