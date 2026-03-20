@@ -67,6 +67,12 @@ class YoutubeSanitizerTest :
                         "https://youtu.be/RvRhUHTV_8k?si=OXYBmGTMXib1jlA2?si=UA0UVnrmPbK612Lu",
                     ) shouldBe "https://youtu.be/RvRhUHTV_8k"
                 }
+
+                "not remove \"channel_id\" from feed URLs" {
+                    sanitizer(
+                        "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw",
+                    ) shouldBe "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw"
+                }
             }
 
             "matchesDomain" should {
