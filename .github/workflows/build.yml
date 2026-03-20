@@ -2,6 +2,9 @@ name: Build & Verify
 
 on: [ pull_request, workflow_dispatch ]
 
+permissions:
+  pull-requests: write
+
 jobs:
   build:
     timeout-minutes: 30
@@ -24,8 +27,21 @@ jobs:
         run: ./gradlew build
 
       - uses: actions/upload-artifact@v7
+        id: upload-artifact
         with:
           name: Android artifacts
           path: |
             app/build/outputs/apk/**/*.apk
             app/build/outputs/bundle/**/*.aab
+
+      - name: Comment artifact link on pull request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '📦 Build artifacts are available [here](${{ steps.upload-artifact.outputs.artifact-url }}).',
+            })
