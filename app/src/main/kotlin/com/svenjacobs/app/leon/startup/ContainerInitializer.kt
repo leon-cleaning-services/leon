@@ -39,6 +39,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.flipkart.FlipkartSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.georiot.GeoRiotSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleAdsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleAnalyticsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleMapsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleSearchSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleStoreSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.heise.HeiseSanitizer
@@ -104,6 +105,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                 GeoRiotSanitizer(),
                 GoogleAdsSanitizer(),
                 GoogleAnalyticsSanitizer(),
+                GoogleMapsSanitizer(),
                 GoogleSearchSanitizer(),
                 GoogleStoreSanitizer(),
                 HeiseSanitizer(),
