@@ -36,6 +36,16 @@ class GoogleAnalyticsSanitizerTest :
 
                     result shouldBe "https://www.example.com"
                 }
+
+                "remove \"gad_*\" parameters" {
+                    val sanitizer = GoogleAnalyticsSanitizer()
+
+                    val result = sanitizer(
+                        "https://www.example.com?gad_source=1&keep=123",
+                    )
+
+                    result shouldBe "https://www.example.com&keep=123"
+                }
             }
         },
     )
