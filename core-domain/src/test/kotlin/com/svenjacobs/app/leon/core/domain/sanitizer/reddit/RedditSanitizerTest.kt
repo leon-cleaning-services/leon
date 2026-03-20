@@ -22,31 +22,32 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class RedditSanitizerTest :
-	WordSpec(
-		{
-			val sanitizer = RedditSanitizer()
+    WordSpec(
+        {
+            val sanitizer = RedditSanitizer()
 
-			"invoke" should {
+            "invoke" should {
 
-				"clean reddit.com URLs" {
-					sanitizer(
-						"https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is_" +
-							"still_maintained/?share_id=Toc_TMpn88yOUd7Z-y0xv&utm_content=1&utm_mediu" +
-							"m=android_app&utm_name=androidcss&utm_source=share&utm_term=1",
-					) shouldBe "https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is" +
-						"_still_maintained/"
-				}
-			}
+                "clean reddit.com URLs" {
+                    sanitizer(
+                        "https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is_" +
+                            "still_maintained/?share_id=Toc_TMpn88yOUd7Z-y0xv&utm_content=1&utm_mediu" +
+                            "m=android_app&utm_name=androidcss&utm_source=share&utm_term=1",
+                    ) shouldBe
+                        "https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is" +
+                        "_still_maintained/"
+                }
+            }
 
-			"matchesDomain" should {
+            "matchesDomain" should {
 
-				"match for reddit.com" {
-					sanitizer.matchesDomain("https://reddit.com") shouldBe true
-				}
+                "match for reddit.com" {
+                    sanitizer.matchesDomain("https://reddit.com") shouldBe true
+                }
 
-				"not match for out.reddit.com" {
-					sanitizer.matchesDomain("https://out.reddit.com") shouldBe false
-				}
-			}
-		},
-	)
+                "not match for out.reddit.com" {
+                    sanitizer.matchesDomain("https://out.reddit.com") shouldBe false
+                }
+            }
+        },
+    )

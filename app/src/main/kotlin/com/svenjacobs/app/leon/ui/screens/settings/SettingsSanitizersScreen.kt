@@ -41,74 +41,74 @@ import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScree
 
 @Composable
 fun SettingsSanitizersScreen(
-	onBackClick: () -> Unit,
-	modifier: Modifier = Modifier,
-	viewModel: SettingsSanitizersScreenViewModel = viewModel(),
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SettingsSanitizersScreenViewModel = viewModel(),
 ) {
-	val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-	Scaffold(
-		modifier = modifier,
-		topBar = {
-			TopAppBar(
-				onBackClick = onBackClick,
-			)
-		},
-	) { contentPadding ->
-		Column(
-			modifier = Modifier
-				.padding(contentPadding)
-				.padding(horizontal = 16.dp),
-		) {
-			Text(
-				modifier = Modifier.padding(
-					start = 16.dp,
-					end = 16.dp,
-					bottom = 16.dp,
-				),
-				text = stringResource(R.string.sanitizers_description),
-				style = MaterialTheme.typography.bodyLarge,
-			)
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                onBackClick = onBackClick,
+            )
+        },
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(horizontal = 16.dp),
+        ) {
+            Text(
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
+                text = stringResource(R.string.sanitizers_description),
+                style = MaterialTheme.typography.bodyLarge,
+            )
 
-			Card {
-				LazyColumn {
-					//noinspection NewApi
-					uiState.sanitizers.forEach { sanitizer ->
-						item(key = sanitizer.id.value) {
-							Item(
-								name = sanitizer.name,
-								isEnabled = sanitizer.enabled,
-								onCheckedChange = { enabled ->
-									viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
-								},
-							)
-						}
-					}
-				}
-			}
-		}
-	}
+            Card {
+                LazyColumn {
+                    //noinspection NewApi
+                    uiState.sanitizers.forEach { sanitizer ->
+                        item(key = sanitizer.id.value) {
+                            Item(
+                                name = sanitizer.name,
+                                isEnabled = sanitizer.enabled,
+                                onCheckedChange = { enabled ->
+                                    viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
 private fun Item(
-	name: String,
-	isEnabled: Boolean,
-	onCheckedChange: (Boolean) -> Unit,
-	modifier: Modifier = Modifier,
+    name: String,
+    isEnabled: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-	Row(
-		modifier = modifier.padding(16.dp),
-		verticalAlignment = Alignment.CenterVertically,
-	) {
-		Text(
-			modifier = Modifier.weight(2f),
-			text = name,
-		)
+    Row(
+        modifier = modifier.padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.weight(2f),
+            text = name,
+        )
 
-		Switch(
-			checked = isEnabled,
-			onCheckedChange = onCheckedChange,
-		)
-	}
+        Switch(
+            checked = isEnabled,
+            onCheckedChange = onCheckedChange,
+        )
+    }
 }

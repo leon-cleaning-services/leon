@@ -18,7 +18,6 @@
 
 package com.svenjacobs.app.leon.core.common.domain
 
-fun String.matchesDomainRegex(domain: String): Boolean =
-	Regex("^(?:https?://)?(?:www\\.)?$domain.*").matches(this)
+fun String.matchesDomainRegex(domain: String): Boolean = Regex("^(?:https?://)?(?:www\\.)?$domain.*").matches(this)
 
 fun String.matchesDomain(domain: String): Boolean = matchesDomainRegex(domain.replace(".", "\\."))

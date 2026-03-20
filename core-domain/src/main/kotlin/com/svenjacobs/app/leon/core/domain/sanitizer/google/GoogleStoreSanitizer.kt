@@ -27,15 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class GoogleStoreSanitizer :
-	RegexSanitizer(
-		RegexFactory.ofParameter("hl|selections"),
-	) {
+    RegexSanitizer(
+        RegexFactory.ofParameter("hl|selections"),
+    ) {
 
-	override val id = SanitizerId("google_play_store")
+    override val id = SanitizerId("google_play_store")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_google_play_store_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_google_play_store_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomain("store.google.com")
+    override fun matchesDomain(input: String) = input.matchesDomain("store.google.com")
 }

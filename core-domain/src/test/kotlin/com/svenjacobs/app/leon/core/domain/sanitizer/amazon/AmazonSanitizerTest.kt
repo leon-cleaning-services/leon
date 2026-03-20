@@ -22,19 +22,19 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class AmazonSanitizerTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove ref_ parameter" {
-					val sanitizer = AmazonSanitizer()
-					val result = sanitizer(
-						"https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya",
-					)
+                "remove ref_ parameter" {
+                    val sanitizer = AmazonSanitizer()
+                    val result = sanitizer(
+                        "https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya",
+                    )
 
-					result shouldBe "https://www.amazon.de/gp/css/homepage.html"
-				}
-			}
-		},
-	)
+                    result shouldBe "https://www.amazon.de/gp/css/homepage.html"
+                }
+            }
+        },
+    )

@@ -25,8 +25,8 @@ package com.svenjacobs.app.leon.core.domain.sanitizer
  */
 abstract class RegexSanitizer(private val regex: Regex) : Sanitizer {
 
-	/**
-	 * Removes all matches of supplied [regex].
-	 */
-	override fun invoke(input: String) = regex.replace(input, "")
+    /**
+     * Removes all matches of supplied [regex].
+     */
+    override fun invoke(input: String) = regex.replace(input, "")
 }

@@ -22,28 +22,28 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class MyDealzRedirectsSanizierTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
-					val sanitizer = MyDealzRedirectsSanitizer()
-					val result = sanitizer("https://www.mydealz.de/share-deal-from-app/2117879")
-					result shouldBe "https://www.mydealz.de/deals/a-2117879"
-				}
+                "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
+                    val sanitizer = MyDealzRedirectsSanitizer()
+                    val result = sanitizer("https://www.mydealz.de/share-deal-from-app/2117879")
+                    result shouldBe "https://www.mydealz.de/deals/a-2117879"
+                }
 
-				"convert mydealz.de app URLs (with ad redirect) into base/direct URLs" {
-					val sanitizer = MyDealzRedirectsSanitizer()
-					val result = sanitizer("https://mydealz.de/share-deal-from-app/2117879")
-					result shouldBe "https://mydealz.de/deals/a-2117879"
-				}
+                "convert mydealz.de app URLs (with ad redirect) into base/direct URLs" {
+                    val sanitizer = MyDealzRedirectsSanitizer()
+                    val result = sanitizer("https://mydealz.de/share-deal-from-app/2117879")
+                    result shouldBe "https://mydealz.de/deals/a-2117879"
+                }
 
-				"convert preisjaeger.at app URLs (with ad redirect) into base/direct URLs" {
-					val sanitizer = MyDealzRedirectsSanitizer()
-					val result = sanitizer("https://preisjaeger.at/share-deal-from-app/2117879")
-					result shouldBe "https://preisjaeger.at/deals/a-2117879"
-				}
-			}
-		},
-	)
+                "convert preisjaeger.at app URLs (with ad redirect) into base/direct URLs" {
+                    val sanitizer = MyDealzRedirectsSanitizer()
+                    val result = sanitizer("https://preisjaeger.at/share-deal-from-app/2117879")
+                    result shouldBe "https://preisjaeger.at/deals/a-2117879"
+                }
+            }
+        },
+    )

@@ -33,100 +33,100 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
-	private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
-	private val cleanerService: CleanerService = CleanerService(),
+    private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
+    private val cleanerService: CleanerService = CleanerService(),
 ) : ViewModel() {
 
-	data class UiState(
-		val isLoading: Boolean = true,
-		val isUrlDecodeEnabled: Boolean = false,
-		val isExtractUrlEnabled: Boolean = false,
-		val isCustomTabsEnabled: Boolean = false,
-		val result: Result = Result.Empty,
-		val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
-	) {
-		sealed interface Result {
+    data class UiState(
+        val isLoading: Boolean = true,
+        val isUrlDecodeEnabled: Boolean = false,
+        val isExtractUrlEnabled: Boolean = false,
+        val isCustomTabsEnabled: Boolean = false,
+        val result: Result = Result.Empty,
+        val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
+    ) {
+        sealed interface Result {
 
-			data object Empty : Result
+            data object Empty : Result
 
-			data class Success(
-				val originalText: String,
-				val cleanedText: String,
-				val urls: ImmutableList<String>,
-			) : Result
+            data class Success(
+                val originalText: String,
+                val cleanedText: String,
+                val urls: ImmutableList<String>,
+            ) : Result
 
-			data object Error : Result
-		}
-	}
+            data object Error : Result
+        }
+    }
 
-	private val text = MutableStateFlow<String?>(null)
+    private val text = MutableStateFlow<String?>(null)
 
-	val uiState =
-		combine(
-			text,
-			appDataStoreManager.urlDecodeEnabled,
-			appDataStoreManager.extractUrlEnabled,
-			appDataStoreManager.customTabsEnabled,
-			appDataStoreManager.actionAfterClean,
-		) { text, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean ->
-			val result = text?.let {
-				clean(
-					text = text,
-					decodeUrl = urlDecodeEnabled,
-					extractUrl = extractUrlEnabled,
-				)
-			} ?: Result.Empty
+    val uiState =
+        combine(
+            text,
+            appDataStoreManager.urlDecodeEnabled,
+            appDataStoreManager.extractUrlEnabled,
+            appDataStoreManager.customTabsEnabled,
+            appDataStoreManager.actionAfterClean,
+        ) { text, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean ->
+            val result = text?.let {
+                clean(
+                    text = text,
+                    decodeUrl = urlDecodeEnabled,
+                    extractUrl = extractUrlEnabled,
+                )
+            } ?: Result.Empty
 
-			UiState(
-				isLoading = text == null,
-				isUrlDecodeEnabled = urlDecodeEnabled,
-				isExtractUrlEnabled = extractUrlEnabled,
-				isCustomTabsEnabled = isCustomTabsEnabled,
-				result = result,
-				actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
-			)
-		}.stateIn(
-			scope = viewModelScope,
-			started = SharingStarted.WhileSubscribed(5_000),
-			initialValue = UiState(),
-		)
+            UiState(
+                isLoading = text == null,
+                isUrlDecodeEnabled = urlDecodeEnabled,
+                isExtractUrlEnabled = extractUrlEnabled,
+                isCustomTabsEnabled = isCustomTabsEnabled,
+                result = result,
+                actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState(),
+        )
 
-	fun setText(text: String?) {
-		if (text == null && uiState.value.result is Result.Success) return
-		this.text.value = text
-	}
+    fun setText(text: String?) {
+        if (text == null && uiState.value.result is Result.Success) return
+        this.text.value = text
+    }
 
-	fun onResetClick() {
-		text.value = null
-	}
+    fun onResetClick() {
+        text.value = null
+    }
 
-	fun onUrlDecodeCheckedChange(enabled: Boolean) {
-		viewModelScope.launch {
-			appDataStoreManager.setUrlDecodeEnabled(enabled)
-		}
-	}
+    fun onUrlDecodeCheckedChange(enabled: Boolean) {
+        viewModelScope.launch {
+            appDataStoreManager.setUrlDecodeEnabled(enabled)
+        }
+    }
 
-	fun onExtractUrlCheckedChange(enabled: Boolean) {
-		viewModelScope.launch {
-			appDataStoreManager.setExtractUrlEnabled(enabled)
-		}
-	}
+    fun onExtractUrlCheckedChange(enabled: Boolean) {
+        viewModelScope.launch {
+            appDataStoreManager.setExtractUrlEnabled(enabled)
+        }
+    }
 
-	private suspend fun clean(text: String, decodeUrl: Boolean, extractUrl: Boolean): Result = try {
-		cleanerService.clean(
-			text = text,
-			decodeUrl = decodeUrl,
-		).let { result ->
-			Result.Success(
-				originalText = result.originalText,
-				cleanedText = when {
-					extractUrl -> result.urls.firstOrNull().orEmpty()
-					else -> result.cleanedText
-				},
-				urls = result.urls,
-			)
-		}
-	} catch (e: Exception) {
-		Result.Error
-	}
+    private suspend fun clean(text: String, decodeUrl: Boolean, extractUrl: Boolean): Result = try {
+        cleanerService.clean(
+            text = text,
+            decodeUrl = decodeUrl,
+        ).let { result ->
+            Result.Success(
+                originalText = result.originalText,
+                cleanedText = when {
+                    extractUrl -> result.urls.firstOrNull().orEmpty()
+                    else -> result.cleanedText
+                },
+                urls = result.urls,
+            )
+        }
+    } catch (e: Exception) {
+        Result.Error
+    }
 }

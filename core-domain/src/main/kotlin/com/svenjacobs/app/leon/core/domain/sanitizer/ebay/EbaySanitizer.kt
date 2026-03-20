@@ -27,15 +27,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class EbaySanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.AllParameters,
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.AllParameters,
+    ) {
 
-	override val id = SanitizerId("ebay")
+    override val id = SanitizerId("ebay")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_ebay_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_ebay_name),
+    )
 
-	override fun matchesDomain(input: String) = input.matchesDomainRegex("ebay\\..+/itm/")
+    override fun matchesDomain(input: String) = input.matchesDomainRegex("ebay\\..+/itm/")
 }

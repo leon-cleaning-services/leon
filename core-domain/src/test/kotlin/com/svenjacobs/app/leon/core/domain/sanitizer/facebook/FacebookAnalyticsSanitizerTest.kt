@@ -22,20 +22,20 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class FacebookAnalyticsSanitizerTest :
-	WordSpec(
-		{
+    WordSpec(
+        {
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove \"fb_*\" and \"fbclid\" parameters" {
-					val sanitizer = FacebookAnalyticsSanitizer()
+                "remove \"fb_*\" and \"fbclid\" parameters" {
+                    val sanitizer = FacebookAnalyticsSanitizer()
 
-					val result = sanitizer(
-						"https://www.example.com?fb_abc=123&fbclid=12345&sfnsn=scwspmo",
-					)
+                    val result = sanitizer(
+                        "https://www.example.com?fb_abc=123&fbclid=12345&sfnsn=scwspmo",
+                    )
 
-					result shouldBe "https://www.example.com"
-				}
-			}
-		},
-	)
+                    result shouldBe "https://www.example.com"
+                }
+            }
+        },
+    )

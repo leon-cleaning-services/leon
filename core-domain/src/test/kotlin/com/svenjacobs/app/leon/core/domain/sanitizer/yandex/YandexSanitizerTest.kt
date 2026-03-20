@@ -22,34 +22,34 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class YandexSanitizerTest :
-	WordSpec(
-		{
-			val sanitizer = YandexSanitizer()
+    WordSpec(
+        {
+            val sanitizer = YandexSanitizer()
 
-			"invoke" should {
+            "invoke" should {
 
-				"clean yandex.com URLs" {
-					sanitizer.invoke(
-						"https://yandex.com/search/?text=test&lr=103769&search_source=yacom_desktop_common",
-					) shouldBe "https://yandex.com/search/?text=test"
-				}
+                "clean yandex.com URLs" {
+                    sanitizer.invoke(
+                        "https://yandex.com/search/?text=test&lr=103769&search_source=yacom_desktop_common",
+                    ) shouldBe "https://yandex.com/search/?text=test"
+                }
 
-				"clean ya.ru URLs" {
-					sanitizer.invoke(
-						"https://ya.ru/search/?text=test&lr=103769&search_source=yacom_desktop_common",
-					) shouldBe "https://ya.ru/search/?text=test"
-				}
-			}
+                "clean ya.ru URLs" {
+                    sanitizer.invoke(
+                        "https://ya.ru/search/?text=test&lr=103769&search_source=yacom_desktop_common",
+                    ) shouldBe "https://ya.ru/search/?text=test"
+                }
+            }
 
-			"matchesDomain" should {
+            "matchesDomain" should {
 
-				"match yandex.com" {
-					sanitizer.matchesDomain("https://yandex.com") shouldBe true
-				}
+                "match yandex.com" {
+                    sanitizer.matchesDomain("https://yandex.com") shouldBe true
+                }
 
-				"match ya.ru" {
-					sanitizer.matchesDomain("https://ya.ru") shouldBe true
-				}
-			}
-		},
-	)
+                "match ya.ru" {
+                    sanitizer.matchesDomain("https://ya.ru") shouldBe true
+                }
+            }
+        },
+    )

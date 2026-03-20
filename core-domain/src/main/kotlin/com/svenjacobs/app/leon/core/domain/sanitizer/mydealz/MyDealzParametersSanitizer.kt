@@ -26,15 +26,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class MyDealzParametersSanitizer :
-	RegexSanitizer(
-		RegexFactory.AllParameters,
-	) {
+    RegexSanitizer(
+        RegexFactory.AllParameters,
+    ) {
 
-	override val id = SanitizerId("mydealz_parameters")
+    override val id = SanitizerId("mydealz_parameters")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_mydealz_parameters_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_mydealz_parameters_name),
+    )
 
-	override fun matchesDomain(input: String) = MyDealzDomains.DOMAINS_REGEX.containsMatchIn(input)
+    override fun matchesDomain(input: String) = MyDealzDomains.DOMAINS_REGEX.containsMatchIn(input)
 }
