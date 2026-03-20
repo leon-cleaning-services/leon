@@ -67,6 +67,7 @@
     <string name="sanitizer_webtrekk_name" translatable="false">Webtrekk</string>
     <string name="sanitizer_wikipedia_name" translatable="false">Wikipedia</string>
     <string name="sanitizer_x_name" translatable="false">X (Twitter)</string>
+    <string name="sanitizer_yahoo_referrer_name" translatable="false">Yahoo Referrer</string>
     <string name="sanitizer_yahoo_search_name">Yahoo Search</string>
     <string name="sanitizer_yandex" translatable="false">Yandex</string>
     <string name="sanitizer_youtube_music_name" translatable="false">YouTube Music</string>
