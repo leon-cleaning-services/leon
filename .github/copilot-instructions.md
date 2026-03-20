@@ -26,7 +26,7 @@ leon/
 ## Code Style
 
 - **Language**: Kotlin only.
-- **Indentation**: tabs (size 4), as configured in `.editorconfig`.
+- **Indentation**: spaces (size 4), as configured in `.editorconfig`.
 - **Formatting**: enforced by [kotlinter](https://github.com/jeremymailen/kotlinter-gradle)
   (`./gradlew lintKotlin` / `./gradlew formatKotlin`). Code style is `android_studio`.
 - **Trailing commas**: allowed (and preferred) on both declaration and call sites.
@@ -77,18 +77,18 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class ExampleSanitizer :
-	RegexSanitizer(
-		regex = RegexFactory.ofWildcardParameter("example_"),
-	) {
+    RegexSanitizer(
+        regex = RegexFactory.ofWildcardParameter("example_"),
+    ) {
 
-	override val id = SanitizerId("example")
+    override val id = SanitizerId("example")
 
-	override fun getMetadata(context: Context) = Sanitizer.Metadata(
-		name = context.getString(R.string.sanitizer_example_name),
-	)
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_example_name),
+    )
 
-	// Override matchesDomain only when the sanitizer is domain-specific:
-	override fun matchesDomain(input: String) = input.matchesDomain("example.com")
+    // Override matchesDomain only when the sanitizer is domain-specific:
+    override fun matchesDomain(input: String) = input.matchesDomain("example.com")
 }
 ```
 
@@ -141,32 +141,32 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class ExampleSanitizerTest :
-	WordSpec(
-		{
-			val sanitizer = ExampleSanitizer()
+    WordSpec(
+        {
+            val sanitizer = ExampleSanitizer()
 
-			"invoke" should {
+            "invoke" should {
 
-				"remove example_ parameters" {
-					sanitizer(
-						"https://www.example.com/path?example_ref=abc&keep=123",
-					) shouldBe "https://www.example.com/path&keep=123"
-				}
-			}
+                "remove example_ parameters" {
+                    sanitizer(
+                        "https://www.example.com/path?example_ref=abc&keep=123",
+                    ) shouldBe "https://www.example.com/path&keep=123"
+                }
+            }
 
-			// Include this block only when matchesDomain is overridden:
-			"matchesDomain" should {
+            // Include this block only when matchesDomain is overridden:
+            "matchesDomain" should {
 
-				"match example.com" {
-					sanitizer.matchesDomain("https://example.com") shouldBe true
-				}
+                "match example.com" {
+                    sanitizer.matchesDomain("https://example.com") shouldBe true
+                }
 
-				"not match other.com" {
-					sanitizer.matchesDomain("https://other.com") shouldBe false
-				}
-			}
-		},
-	)
+                "not match other.com" {
+                    sanitizer.matchesDomain("https://other.com") shouldBe false
+                }
+            }
+        },
+    )
 ```
 
 Every new sanitizer **must** have a corresponding `*Test` class that covers:
