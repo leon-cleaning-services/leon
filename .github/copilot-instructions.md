@@ -172,10 +172,7 @@ Use `translatable="false"` for brand names; omit (or set `translatable="true"`) 
 names that should be localised.
 
 For every string marked as translatable, also add the corresponding translated entry to **all**
-existing locale-specific `strings.xml` files. The `core-domain` module currently has translations
-for `values-de/` (German) and `values-ru/` (Russian). The `app` module currently has translations
-for `values-de/` (German), `values-pl/` (Polish), `values-ru/` (Russian), and `values-vi/`
-(Vietnamese).
+existing locale-specific `strings.xml` files.
 
 ### 3. Register the sanitizer
 
