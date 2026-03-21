@@ -19,10 +19,16 @@ package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -55,18 +61,45 @@ fun SettingsSanitizersScreen(
                 style = MaterialTheme.typography.bodyLarge,
             )
 
-            Card {
-                LazyColumn {
-                    //noinspection NewApi
-                    uiState.sanitizers.forEach { sanitizer ->
-                        item(key = sanitizer.id.value) {
-                            Item(
-                                name = sanitizer.name,
-                                isEnabled = sanitizer.enabled,
-                                onCheckedChange = { enabled ->
-                                    viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
-                                },
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                value = uiState.searchQuery,
+                onValueChange = viewModel::onSearchQueryChange,
+                placeholder = { Text(stringResource(R.string.sanitizers_search_placeholder)) },
+                singleLine = true,
+                trailingIcon = {
+                    if (uiState.searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription =
+                                    stringResource(R.string.sanitizers_search_clear),
                             )
+                        }
+                    }
+                },
+            )
+
+            if (uiState.sanitizers.isEmpty() && uiState.searchQuery.isNotEmpty()) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = stringResource(R.string.sanitizers_no_results),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            } else {
+                Card {
+                    LazyColumn {
+                        //noinspection NewApi
+                        uiState.sanitizers.forEach { sanitizer ->
+                            item(key = sanitizer.id.value) {
+                                Item(
+                                    name = sanitizer.name,
+                                    isEnabled = sanitizer.enabled,
+                                    onCheckedChange = { enabled ->
+                                        viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
+                                    },
+                                )
+                            }
                         }
                     }
                 }

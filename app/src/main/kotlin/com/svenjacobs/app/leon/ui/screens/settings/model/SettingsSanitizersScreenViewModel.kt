@@ -31,9 +31,10 @@ import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScree
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -44,29 +45,44 @@ class SettingsSanitizersScreenViewModel(
     private val repository: SanitizerRepository = SanitizerRepository,
 ) : ViewModel() {
 
-    data class UiState(val sanitizers: ImmutableList<Sanitizer> = persistentListOf()) {
+    data class UiState(
+        val sanitizers: ImmutableList<Sanitizer> = persistentListOf(),
+        val searchQuery: String = "",
+    ) {
         data class Sanitizer(val id: SanitizerId, val name: String, val enabled: Boolean)
     }
 
+    private val sanitizersById = sanitizers.associateBy { it.id }
+
+    private val _searchQuery = MutableStateFlow("")
+
     val uiState: StateFlow<UiState> =
-        repository.state
-            .map { states ->
+        combine(repository.state, _searchQuery) { states, query ->
+                val allSanitizers =
+                    states
+                        .map { state ->
+                            Sanitizer(
+                                id = state.id,
+                                name =
+                                    sanitizersById[state.id]
+                                        ?.getMetadata(context)
+                                        ?.name
+                                        ?: state.id.value,
+                                enabled = state.enabled,
+                            )
+                        }
+                        .sortedBy { it.name.lowercase() }
+
+                val filteredSanitizers =
+                    if (query.isBlank()) {
+                        allSanitizers
+                    } else {
+                        allSanitizers.filter { it.name.contains(query, ignoreCase = true) }
+                    }
+
                 UiState(
-                    sanitizers =
-                        states
-                            .map { state ->
-                                Sanitizer(
-                                    id = state.id,
-                                    name =
-                                        sanitizers
-                                            .first { it.id == state.id }
-                                            .getMetadata(context)
-                                            .name,
-                                    enabled = state.enabled,
-                                )
-                            }
-                            .sortedBy { it.name.lowercase() }
-                            .toImmutableList()
+                    sanitizers = filteredSanitizers.toImmutableList(),
+                    searchQuery = query,
                 )
             }
             .stateIn(
@@ -74,6 +90,10 @@ class SettingsSanitizersScreenViewModel(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = UiState(),
             )
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
+    }
 
     fun onSanitizerCheckedChange(id: SanitizerId, enabled: Boolean) {
         viewModelScope.launch { repository.setEnabled(id, enabled) }
