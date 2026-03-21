@@ -21,12 +21,12 @@
     <string name="screen_settings">Ustawienia</string>
     <string name="scaffold_title">Léon – Oczyszczacz URL</string>
     <string name="share">Udostępnij</string>
-    <string name="open">Open</string>> <!-- TODO: translate -->
+    <string name="open">Otwórz</string>
     <string name="copy">Kopiuj</string>
     <string name="clipboard_message">Link skopiowany do schowka</string>
-    <string name="clipboard_empty_message">Clipboard is empty</string> <!-- TODO: translate -->
+    <string name="clipboard_empty_message">Schowek jest pusty</string>
     <string name="how_to_title">Jak wykonać</string>
-    <string name="how_to_text">When sharing text, choose \"URL Cleaner\". Then click on \"Share\" in this app to send text to target app. Alternatively, click the button above to import contents from the clipboard.</string>
+    <string name="how_to_text">Podczas udostępniania tekstu wybierz \"URL Cleaner\". Następnie kliknij \"Udostępnij\" w tej aplikacji, aby wysłać tekst do docelowej aplikacji. Alternatywnie kliknij przycisk powyżej, aby zaimportować zawartość ze schowka.\n\nMożliwe jest również zaznaczenie edytowalnego tekstu w aplikacji, a następnie wybranie z menu kontekstowego opcji Léon, aby wyczyścić tekst w miejscu.</string>
     <string name="cleaned_url">URL Oczyszczony</string>
     <string name="original_url">URL Źródłowy</string>
     <string name="sanitizers">Sanityzatory</string>
@@ -40,11 +40,11 @@
     <string name="reset">Wyzeruj</string>
     <string name="extract_url">Wyodrębnij tylko URL</string>
     <string name="register_as_browser">Zarejestruj Léona jako przeglądarkę</string>
-    <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string> <!-- TODO: translate -->
-    <string name="action_after_clean">Action after clean</string> <!-- TODO: translate -->
-    <string name="do_nothing">Do nothing</string> <!-- TODO: translate -->
-    <string name="open_share_menu">Open share menu</string> <!-- TODO: translate -->
-    <string name="open_url">Open URL</string> <!-- TODO: translate -->
-    <string name="copy_to_clipboard">Copy to clipboard</string> <!-- TODO: translate -->
-    <string name="process_text_action_name">Clean URL (Léon)</string> <!-- TODO: translate -->
+    <string name="open_in_custom_tabs">Otwórz adresy URL w niestandardowych kartach przeglądarki</string>
+    <string name="action_after_clean">Akcja po wyczyszczeniu</string>
+    <string name="do_nothing">Nic nie rób</string>
+    <string name="open_share_menu">Otwórz menu udostępniania</string>
+    <string name="open_url">Otwórz URL</string>
+    <string name="copy_to_clipboard">Kopiuj do schowka</string>
+    <string name="process_text_action_name">Wyczyść URL (Léon)</string>
 </resources>

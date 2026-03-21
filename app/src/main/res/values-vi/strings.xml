@@ -24,7 +24,7 @@
     <string name="open">Mở</string>
     <string name="copy">Sao chép</string>
     <string name="clipboard_message">Đã chép liên kết vào clipboard</string>
-    <string name="clipboard_empty_message">Clipboard is empty</string> <!-- TODO: translate -->
+    <string name="clipboard_empty_message">Clipboard trống</string>
     <string name="how_to_title">Cách-để</string>
     <string name="how_to_text">Khi chia sẻ văn bản, chọn \"URL Cleaner\". Sau đó nhấp vào \"Chia sẻ\" trong ứng dụng này để gửi văn bản đến ứng dụng mục tiêu. Ngoài ra, hãy nhấp vào nút bên trên để nhập nội dung từ clipboard.</string>
     <string name="cleaned_url">URL đã làm sạch</string>
@@ -40,11 +40,11 @@
     <string name="reset">Đặt lại</string>
     <string name="extract_url">Chỉ trích xuất URL</string>
     <string name="register_as_browser">Đăng ký Léon làm trình duyệt</string>
-    <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string> <!-- TODO: translate -->
+    <string name="open_in_custom_tabs">Mở URL trong tab tùy chỉnh của trình duyệt</string>
     <string name="action_after_clean">Hành động sau khi làm sạch</string>
     <string name="do_nothing">Không làm gì cả</string>
     <string name="open_share_menu">Mở menu chia sẻ</string>
     <string name="open_url">Mở URL</string>
     <string name="copy_to_clipboard">Sao chép vào clipboard</string>
-    <string name="process_text_action_name">Clean URL (Léon)</string> <!-- TODO: translate -->
+    <string name="process_text_action_name">Làm sạch URL (Léon)</string>
 </resources>
