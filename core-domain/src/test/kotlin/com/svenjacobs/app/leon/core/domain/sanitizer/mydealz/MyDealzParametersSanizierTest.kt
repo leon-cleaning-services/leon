@@ -15,28 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class MyDealzParametersSanizierTest :
-    WordSpec(
-        {
-
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
                     val sanitizer = MyDealzParametersSanitizer()
                     val result =
                         sanitizer(
                             "https://www.mydealz.de/diskussion/gratis-adidas-fussball-trikot-" +
-                                "2383743?pprmrkntfctnsrd=123456789&UATypeId=18",
+                                "2383743?pprmrkntfctnsrd=123456789&UATypeId=18"
                         )
-                    result shouldBe "https://www.mydealz.de/diskussion/gratis-adidas-fussball-" +
-                        "trikot-2383743"
+                    result shouldBe
+                        "https://www.mydealz.de/diskussion/gratis-adidas-fussball-" +
+                            "trikot-2383743"
                 }
             }
-        },
-    )
+    })

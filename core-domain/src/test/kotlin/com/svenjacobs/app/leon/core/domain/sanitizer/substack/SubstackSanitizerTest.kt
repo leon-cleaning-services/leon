@@ -15,35 +15,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.substack
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class SubstackSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = SubstackSanitizer()
+    WordSpec({
+        val sanitizer = SubstackSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "remove parameters from substack.com" {
                     sanitizer(
-                        "https://substack.com/@sebastianbarros/note/c-190523061?r=c0obe&utm_source=notes-share-action&utm_medium=web",
+                        "https://substack.com/@sebastianbarros/note/c-190523061?r=c0obe&utm_source=notes-share-action&utm_medium=web"
                     ) shouldBe "https://substack.com/@sebastianbarros/note/c-190523061"
                 }
 
                 "remove parameters from open.substack.com" {
                     sanitizer(
-                        "https://open.substack.com/pub/fosspost/p/open-up-your-android-smartphone?utm_campaign=post-expanded-share&utm_medium=web",
+                        "https://open.substack.com/pub/fosspost/p/open-up-your-android-smartphone?utm_campaign=post-expanded-share&utm_medium=web"
                     ) shouldBe
                         "https://open.substack.com/pub/fosspost/p/open-up-your-android-smartphone"
                 }
             }
 
-            "matchesDomain" should {
-
+        "matchesDomain" should
+            {
                 "match substack.com" {
                     sanitizer.matchesDomain("https://substack.com") shouldBe true
                 }
@@ -52,5 +50,4 @@ class SubstackSanitizerTest :
                     sanitizer.matchesDomain("https://open.substack.com") shouldBe true
                 }
             }
-        },
-    )
+    })

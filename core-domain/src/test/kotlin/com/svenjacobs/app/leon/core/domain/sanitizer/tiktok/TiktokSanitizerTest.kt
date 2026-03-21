@@ -15,31 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.tiktok
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class TiktokSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = TiktokSanitizer()
+    WordSpec({
+        val sanitizer = TiktokSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "remove all parameters" {
-                    var result = sanitizer(
-                        "https://www.tiktok.com/@lihayk/video/7271645505522879751?" +
-                            "is_from_webapp=1&sender_device=pc&web_id=7098566637619288452",
-                    )
+                    var result =
+                        sanitizer(
+                            "https://www.tiktok.com/@lihayk/video/7271645505522879751?" +
+                                "is_from_webapp=1&sender_device=pc&web_id=7098566637619288452"
+                        )
 
                     result shouldBe "https://www.tiktok.com/@lihayk/video/7271645505522879751"
 
                     result =
                         sanitizer(
                             "https://www.tiktok.com/@conqressesquotes/video/7284563007244389664" +
-                                "?_t=3tmYqC7L494&_r=1",
+                                "?_t=3tmYqC7L494&_r=1"
                         )
 
                     result shouldBe
@@ -51,15 +50,12 @@ class TiktokSanitizerTest :
                 }
             }
 
-            "matchesDomain" should {
-
-                "match tiktok.com" {
-                    sanitizer.matchesDomain("https://tiktok.com") shouldBe true
-                }
+        "matchesDomain" should
+            {
+                "match tiktok.com" { sanitizer.matchesDomain("https://tiktok.com") shouldBe true }
 
                 "match www.tiktok.com" {
                     sanitizer.matchesDomain("https://www.tiktok.com") shouldBe true
                 }
             }
-        },
-    )
+    })

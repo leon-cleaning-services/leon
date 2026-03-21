@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.main.model
 
 import androidx.lifecycle.ViewModel
@@ -63,33 +62,35 @@ class MainScreenViewModel(
 
     val uiState =
         combine(
-            text,
-            appDataStoreManager.urlDecodeEnabled,
-            appDataStoreManager.extractUrlEnabled,
-            appDataStoreManager.customTabsEnabled,
-            appDataStoreManager.actionAfterClean,
-        ) { text, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean ->
-            val result = text?.let {
-                clean(
-                    text = text,
-                    decodeUrl = urlDecodeEnabled,
-                    extractUrl = extractUrlEnabled,
-                )
-            } ?: Result.Empty
+                text,
+                appDataStoreManager.urlDecodeEnabled,
+                appDataStoreManager.extractUrlEnabled,
+                appDataStoreManager.customTabsEnabled,
+                appDataStoreManager.actionAfterClean,
+            ) { text, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean ->
+                val result =
+                    text?.let {
+                        clean(
+                            text = text,
+                            decodeUrl = urlDecodeEnabled,
+                            extractUrl = extractUrlEnabled,
+                        )
+                    } ?: Result.Empty
 
-            UiState(
-                isLoading = text == null,
-                isUrlDecodeEnabled = urlDecodeEnabled,
-                isExtractUrlEnabled = extractUrlEnabled,
-                isCustomTabsEnabled = isCustomTabsEnabled,
-                result = result,
-                actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+                UiState(
+                    isLoading = text == null,
+                    isUrlDecodeEnabled = urlDecodeEnabled,
+                    isExtractUrlEnabled = extractUrlEnabled,
+                    isCustomTabsEnabled = isCustomTabsEnabled,
+                    result = result,
+                    actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = UiState(),
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState(),
-        )
 
     fun setText(text: String?) {
         if (text == null && uiState.value.result is Result.Success) return
@@ -101,32 +102,27 @@ class MainScreenViewModel(
     }
 
     fun onUrlDecodeCheckedChange(enabled: Boolean) {
-        viewModelScope.launch {
-            appDataStoreManager.setUrlDecodeEnabled(enabled)
-        }
+        viewModelScope.launch { appDataStoreManager.setUrlDecodeEnabled(enabled) }
     }
 
     fun onExtractUrlCheckedChange(enabled: Boolean) {
-        viewModelScope.launch {
-            appDataStoreManager.setExtractUrlEnabled(enabled)
-        }
+        viewModelScope.launch { appDataStoreManager.setExtractUrlEnabled(enabled) }
     }
 
-    private suspend fun clean(text: String, decodeUrl: Boolean, extractUrl: Boolean): Result = try {
-        cleanerService.clean(
-            text = text,
-            decodeUrl = decodeUrl,
-        ).let { result ->
-            Result.Success(
-                originalText = result.originalText,
-                cleanedText = when {
-                    extractUrl -> result.urls.firstOrNull().orEmpty()
-                    else -> result.cleanedText
-                },
-                urls = result.urls,
-            )
+    private suspend fun clean(text: String, decodeUrl: Boolean, extractUrl: Boolean): Result =
+        try {
+            cleanerService.clean(text = text, decodeUrl = decodeUrl).let { result ->
+                Result.Success(
+                    originalText = result.originalText,
+                    cleanedText =
+                        when {
+                            extractUrl -> result.urls.firstOrNull().orEmpty()
+                            else -> result.cleanedText
+                        },
+                    urls = result.urls,
+                )
+            }
+        } catch (e: Exception) {
+            Result.Error
         }
-    } catch (e: Exception) {
-        Result.Error
-    }
 }

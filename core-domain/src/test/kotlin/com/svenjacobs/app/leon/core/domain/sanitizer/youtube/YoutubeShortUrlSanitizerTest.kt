@@ -15,23 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.youtube
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class YoutubeShortUrlSanitizerTest :
-    WordSpec(
-        {
-
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "convert youtu.be short URL into long youtube.com URL" {
                     val sanitizer = YoutubeShortUrlSanitizer()
                     val result = sanitizer("https://youtu.be/5HaUOgW5BlA")
                     result shouldBe "https://www.youtube.com/watch?v=5HaUOgW5BlA"
                 }
             }
-        },
-    )
+    })

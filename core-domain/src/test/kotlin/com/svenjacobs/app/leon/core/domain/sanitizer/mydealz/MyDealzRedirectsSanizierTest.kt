@@ -15,18 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class MyDealzRedirectsSanizierTest :
-    WordSpec(
-        {
-
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
                     val sanitizer = MyDealzRedirectsSanitizer()
                     val result = sanitizer("https://www.mydealz.de/share-deal-from-app/2117879")
@@ -45,5 +42,4 @@ class MyDealzRedirectsSanizierTest :
                     result shouldBe "https://preisjaeger.at/deals/a-2117879"
                 }
             }
-        },
-    )
+    })

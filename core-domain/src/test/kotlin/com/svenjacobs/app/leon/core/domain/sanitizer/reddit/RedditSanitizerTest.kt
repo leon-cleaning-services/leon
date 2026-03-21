@@ -15,32 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.reddit
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class RedditSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = RedditSanitizer()
+    WordSpec({
+        val sanitizer = RedditSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "clean reddit.com URLs" {
                     sanitizer(
                         "https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is_" +
                             "still_maintained/?share_id=Toc_TMpn88yOUd7Z-y0xv&utm_content=1&utm_mediu" +
-                            "m=android_app&utm_name=androidcss&utm_source=share&utm_term=1",
+                            "m=android_app&utm_name=androidcss&utm_source=share&utm_term=1"
                     ) shouldBe
                         "https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is" +
-                        "_still_maintained/"
+                            "_still_maintained/"
                 }
             }
 
-            "matchesDomain" should {
-
+        "matchesDomain" should
+            {
                 "match for reddit.com" {
                     sanitizer.matchesDomain("https://reddit.com") shouldBe true
                 }
@@ -49,5 +47,4 @@ class RedditSanitizerTest :
                     sanitizer.matchesDomain("https://out.reddit.com") shouldBe false
                 }
             }
-        },
-    )
+    })

@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.youtube
 
 import android.content.Context
@@ -27,9 +26,8 @@ class YoutubeMusicSanitizer : Sanitizer {
 
     override val id = SanitizerId("youtube_music")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_youtube_music_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_youtube_music_name))
 
     override fun matchesDomain(input: String) = DOMAIN_REGEX.containsMatchIn(input)
 

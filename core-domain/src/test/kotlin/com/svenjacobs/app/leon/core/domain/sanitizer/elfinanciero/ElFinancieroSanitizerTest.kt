@@ -15,36 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class ElFinancieroSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = ElFinancieroSanitizer()
+    WordSpec({
+        val sanitizer = ElFinancieroSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "remove \"outputType\" parameter" {
+                    val result =
+                        sanitizer(
+                            "https://www.elfinanciero.com.mx/food-and-drink/2023/01/04/" +
+                                "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/?outputType=amp"
+                        )
 
-                    val result = sanitizer(
+                    result shouldBe
                         "https://www.elfinanciero.com.mx/food-and-drink/2023/01/04/" +
-                            "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/?outputType=amp",
-                    )
-
-                    result shouldBe "https://www.elfinanciero.com.mx/food-and-drink/2023/01/04/" +
-                        "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/"
+                            "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/"
                 }
             }
 
-            "matchesDomain" should {
-
+        "matchesDomain" should
+            {
                 "match for elfinanciero.com.mx" {
                     sanitizer.matchesDomain("https://www.elfinanciero.com.mx") shouldBe true
                 }
             }
-        },
-    )
+    })

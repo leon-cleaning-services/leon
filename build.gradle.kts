@@ -19,7 +19,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType.STANDARD
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 buildscript {
     repositories {
@@ -36,26 +35,16 @@ buildscript {
 
 plugins {
     alias(libs.plugins.ben.manes.versions)
-    alias(libs.plugins.kotlinter)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.adarshr.test.logger)
     alias(libs.plugins.aboutlibraries) apply false
 }
 
 subprojects {
-    apply(plugin = "org.jmailen.kotlinter")
     apply(plugin = "com.adarshr.test-logger")
-
-    repositories {
-        google()
-        mavenCentral()
-    }
 
     testlogger {
         theme = STANDARD
-    }
-
-    tasks.withType<LintTask>().configureEach {
-        exclude { it.file.path.contains("/build/generated/") }
     }
 
     tasks.withType<KotlinCompile>().configureEach {
@@ -69,8 +58,13 @@ subprojects {
     }
 }
 
-tasks.register<Delete>("clean") {
-    delete = setOf(rootProject.layout.buildDirectory)
+spotless {
+    kotlin {
+        target("**/*.kt")
+        targetExclude("**/build/**/*.*", "buildSrc/**/Android.kt")
+        licenseHeaderFile(rootProject.file("spotless/license_header.txt"))
+        ktfmt().kotlinlangStyle()
+    }
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {

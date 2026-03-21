@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.facebook
 
 import android.content.Context
@@ -26,18 +25,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class FacebookSanitizer :
-    RegexSanitizer(
-        regex = RegexFactory.exceptParameter("(id|story_fbid)"),
-    ) {
+class FacebookSanitizer : RegexSanitizer(regex = RegexFactory.exceptParameter("(id|story_fbid)")) {
 
     override val id = SanitizerId("facebook_com")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_facebook_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_facebook_name))
 
-    override fun matchesDomain(input: String) = input.matchesDomainRegex(
-        domain = "(m\\.)?facebook.com",
-    )
+    override fun matchesDomain(input: String) =
+        input.matchesDomainRegex(domain = "(m\\.)?facebook.com")
 }

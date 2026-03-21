@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.yahoo
 
 import android.content.Context
@@ -26,13 +25,10 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class YahooReferrerSanitizer :
-    RegexSanitizer(
-        regex = RegexFactory.ofParameter("guccounter|guce_referrer|guce_referrer_sig"),
-    ) {
+    RegexSanitizer(regex = RegexFactory.ofParameter("guccounter|guce_referrer|guce_referrer_sig")) {
 
     override val id = SanitizerId("yahooReferrer")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_yahoo_referrer_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_yahoo_referrer_name))
 }

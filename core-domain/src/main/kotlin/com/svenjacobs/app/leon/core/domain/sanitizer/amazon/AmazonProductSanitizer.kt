@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.amazon
 
 import android.content.Context
@@ -27,9 +26,8 @@ class AmazonProductSanitizer : Sanitizer {
 
     override val id = SanitizerId("amazon")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_amazon_product_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_amazon_product_name))
 
     override fun matchesDomain(input: String) = REGEX.containsMatchIn(input)
 

@@ -15,26 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.amazon
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class AmazonSanitizerTest :
-    WordSpec(
-        {
-
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "remove ref_ parameter" {
                     val sanitizer = AmazonSanitizer()
-                    val result = sanitizer(
-                        "https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya",
-                    )
+                    val result =
+                        sanitizer(
+                            "https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya"
+                        )
 
                     result shouldBe "https://www.amazon.de/gp/css/homepage.html"
                 }
             }
-        },
-    )
+    })

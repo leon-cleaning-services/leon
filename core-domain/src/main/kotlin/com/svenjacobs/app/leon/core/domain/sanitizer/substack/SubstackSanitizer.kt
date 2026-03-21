@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.substack
 
 import android.content.Context
@@ -26,18 +25,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class SubstackSanitizer :
-    RegexSanitizer(
-        regex = RegexFactory.AllParameters,
-    ) {
+class SubstackSanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) {
 
     override val id = SanitizerId("substack")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_substack),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_substack))
 
-    override fun matchesDomain(input: String) = input.matchesDomainRegex(
-        domain = "(open\\.)?substack\\.com",
-    )
+    override fun matchesDomain(input: String) =
+        input.matchesDomainRegex(domain = "(open\\.)?substack\\.com")
 }

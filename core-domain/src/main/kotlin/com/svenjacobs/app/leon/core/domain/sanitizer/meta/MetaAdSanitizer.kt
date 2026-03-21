@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.meta
 
 import android.content.Context
@@ -27,12 +26,11 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class MetaAdSanitizer :
     RegexSanitizer(
-        regex = RegexFactory.ofParameter("ad_id|adset_id|campaign_id|gc_id|h_ad_id|placement"),
+        regex = RegexFactory.ofParameter("ad_id|adset_id|campaign_id|gc_id|h_ad_id|placement")
     ) {
 
     override val id = SanitizerId("meta_ad")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_meta_ad_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_meta_ad_name))
 }

@@ -15,17 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.startup
 
 import android.content.Context
 
 class StethoHelper {
 
-    /**
-     * Nothing to do because there is no Stetho dependency in release build variant :)
-     */
-    @Suppress("UNUSED_PARAMETER")
-    fun initialize(context: Context) {
-    }
+    /** Nothing to do because there is no Stetho dependency in release build variant :) */
+    @Suppress("UNUSED_PARAMETER") fun initialize(context: Context) {}
 }

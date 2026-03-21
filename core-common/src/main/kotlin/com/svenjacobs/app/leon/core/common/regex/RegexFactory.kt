@@ -15,14 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.common.regex
 
 object RegexFactory {
 
-    /**
-     * This regex matches all parameters of a URL, so everything starting at "?".
-     */
+    /** This regex matches all parameters of a URL, so everything starting at "?". */
     val AllParameters = Regex("\\?.*")
 
     /**
@@ -49,8 +46,7 @@ object RegexFactory {
     /**
      * Returns a Regex which removes all parameters except the specified one.
      *
-     * Use regular expression group and OR (`|`) to include several parameters, for example
-     * `(a|b)`.
+     * Use regular expression group and OR (`|`) to include several parameters, for example `(a|b)`.
      *
      * @param parameter Parameter to exclude
      */

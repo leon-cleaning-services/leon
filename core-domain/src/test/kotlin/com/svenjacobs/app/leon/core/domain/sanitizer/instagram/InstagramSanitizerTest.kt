@@ -15,27 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.instagram
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class InstagramSanitizerTest :
-    WordSpec(
-        {
-
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "remove \"igshid\" parameter" {
                     val sanitizer = InstagramSanitizer()
 
-                    val result = sanitizer(
-                        "https://www.instagram.com/reel/Ceeg-VgI4yF/?igsh=YmMyMTA2M2Y=",
-                    )
+                    val result =
+                        sanitizer("https://www.instagram.com/reel/Ceeg-VgI4yF/?igsh=YmMyMTA2M2Y=")
 
                     result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
                 }
             }
-        },
-    )
+    })

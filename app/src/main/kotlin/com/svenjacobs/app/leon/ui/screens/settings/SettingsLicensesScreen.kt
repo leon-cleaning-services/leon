@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,25 +35,20 @@ import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 fun SettingsLicensesScreen(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                onBackClick = onBackClick,
-            )
-        },
+        topBar = { TopAppBar(onBackClick = onBackClick) },
     ) { contentPadding ->
         val libs by produceLibraries()
 
         LibrariesContainer(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize(),
+            modifier = Modifier.padding(contentPadding).fillMaxSize(),
             libraries = libs,
-            colors = LibraryDefaults.libraryColors(
-                libraryBackgroundColor = MaterialTheme.colorScheme.background,
-                libraryContentColor = MaterialTheme.colorScheme.onBackground,
-                versionChipColors = LibraryDefaults.chipColors(),
-                licenseChipColors = LibraryDefaults.chipColors(),
-            ),
+            colors =
+                LibraryDefaults.libraryColors(
+                    libraryBackgroundColor = MaterialTheme.colorScheme.background,
+                    libraryContentColor = MaterialTheme.colorScheme.onBackground,
+                    versionChipColors = LibraryDefaults.chipColors(),
+                    licenseChipColors = LibraryDefaults.chipColors(),
+                ),
         )
     }
 }

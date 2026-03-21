@@ -15,27 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.webtrekk
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class WebtrekkSanitizerTest :
-    WordSpec(
-        {
-
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "remove \"wt_*\" parameters" {
                     val sanitizer = WebtrekkSanitizer()
 
-                    val result = sanitizer(
-                        "https://www.example.com?wt_abc=123&wt_efg=456",
-                    )
+                    val result = sanitizer("https://www.example.com?wt_abc=123&wt_efg=456")
 
                     result shouldBe "https://www.example.com"
                 }
             }
-        },
-    )
+    })

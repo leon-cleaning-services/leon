@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.foundation.layout.Box
@@ -90,28 +89,17 @@ private fun Content(
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-            )
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
-            Column(
-                modifier = Modifier.padding(16.dp),
-            ) {
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = onSanitizersClick,
-                ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onSanitizersClick) {
                     Text(stringResource(R.string.sanitizers))
                 }
 
                 OutlinedButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     onClick = onLicensesClick,
                 ) {
                     Text(stringResource(R.string.licenses))
@@ -132,9 +120,7 @@ private fun Content(
                     enabled = !isDefaultBrowser(LocalContext.current),
                 )
 
-                Column(
-                    modifier = Modifier.padding(top = 8.dp),
-                ) {
+                Column(modifier = Modifier.padding(top = 8.dp)) {
                     var expanded by rememberSaveable { mutableStateOf(false) }
 
                     Text(stringResource(R.string.action_after_clean))
@@ -145,9 +131,9 @@ private fun Content(
                         onExpandedChange = { expanded = !expanded },
                     ) {
                         TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                             value = actionAfterClean.text(),
                             onValueChange = {},
                             readOnly = true,
@@ -200,12 +186,7 @@ private fun Content(
         }
 
         Text(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    bottom = 8.dp,
-                    end = 8.dp,
-                ),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 8.dp, end = 8.dp),
             text = "v${BuildConfig.VERSION_NAME}",
             style = MaterialTheme.typography.bodySmall,
         )
@@ -220,32 +201,21 @@ private fun SwitchRow(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .weight(1f),
-            text = text,
-        )
+    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(modifier = Modifier.padding(end = 8.dp).weight(1f), text = text)
 
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            enabled = enabled,
-        )
+        Switch(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled)
     }
 }
 
 @Composable
-private fun ActionAfterClean.text(): String = when (this) {
-    ActionAfterClean.DoNothing -> stringResource(R.string.do_nothing)
-    ActionAfterClean.OpenShareMenu -> stringResource(R.string.open_share_menu)
-    ActionAfterClean.OpenUrl -> stringResource(R.string.open_url)
-    ActionAfterClean.CopyToClipboard -> stringResource(R.string.copy_to_clipboard)
-}
+private fun ActionAfterClean.text(): String =
+    when (this) {
+        ActionAfterClean.DoNothing -> stringResource(R.string.do_nothing)
+        ActionAfterClean.OpenShareMenu -> stringResource(R.string.open_share_menu)
+        ActionAfterClean.OpenUrl -> stringResource(R.string.open_url)
+        ActionAfterClean.CopyToClipboard -> stringResource(R.string.copy_to_clipboard)
+    }
 
 @Composable
 @DayNightPreviews

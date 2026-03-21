@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.main.model
 
 import androidx.annotation.StringRes
@@ -31,17 +30,19 @@ sealed class Screen(
     @param:StringRes val label: Int,
     @param:StringRes val iconContentDescription: Int,
 ) {
-    data object Main : Screen(
-        route = "main",
-        icon = Icons.Filled.Home,
-        label = R.string.screen_main,
-        iconContentDescription = R.string.screen_main,
-    )
+    data object Main :
+        Screen(
+            route = "main",
+            icon = Icons.Filled.Home,
+            label = R.string.screen_main,
+            iconContentDescription = R.string.screen_main,
+        )
 
-    data object Settings : Screen(
-        route = "settings",
-        icon = Icons.Filled.Settings,
-        label = R.string.screen_settings,
-        iconContentDescription = R.string.screen_settings,
-    )
+    data object Settings :
+        Screen(
+            route = "settings",
+            icon = Icons.Filled.Settings,
+            label = R.string.screen_settings,
+            iconContentDescription = R.string.screen_settings,
+        )
 }

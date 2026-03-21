@@ -15,33 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.reddit
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class RedditOutSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = RedditOutSanitizer()
+    WordSpec({
+        val sanitizer = RedditOutSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "extract URL" {
-                    val result = sanitizer(
-                        "https://out.reddit.com/t3_11zcpau?url=https%3A%2F%2Fcompress-or-die.co" +
-                            "m%2FThe-nasty-red-JPG-compression-artifacts&token=AQAA-odsZCyQ04Ae10crjv" +
-                            "g8DGlsTPckMpu3vvIjNwmWPgLdQMbC&app_name=web2x&web_redirect=true/",
-                    )
+                    val result =
+                        sanitizer(
+                            "https://out.reddit.com/t3_11zcpau?url=https%3A%2F%2Fcompress-or-die.co" +
+                                "m%2FThe-nasty-red-JPG-compression-artifacts&token=AQAA-odsZCyQ04Ae10crjv" +
+                                "g8DGlsTPckMpu3vvIjNwmWPgLdQMbC&app_name=web2x&web_redirect=true/"
+                        )
 
                     result shouldBe
                         "https://compress-or-die.com/The-nasty-red-JPG-compression-artifacts"
                 }
             }
 
-            "matchesDomain" should {
-
+        "matchesDomain" should
+            {
                 "match for out.reddit.com" {
                     sanitizer.matchesDomain("https://out.reddit.com") shouldBe true
                 }
@@ -50,5 +49,4 @@ class RedditOutSanitizerTest :
                     sanitizer.matchesDomain("https://reddit.com") shouldBe false
                 }
             }
-        },
-    )
+    })

@@ -15,35 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.shopee
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class ShopeeSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = ShopeeSanitizer()
+    WordSpec({
+        val sanitizer = ShopeeSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "remove all parameters" {
-
-                    val result = sanitizer(
-                        "https://shopee.com.my/product/300862466/12251369135?smtt=O.123661111-1" +
-                            "672730601.9",
-                    )
+                    val result =
+                        sanitizer(
+                            "https://shopee.com.my/product/300862466/12251369135?smtt=O.123661111-1" +
+                                "672730601.9"
+                        )
 
                     result shouldBe "https://shopee.com.my/product/300862466/12251369135"
                 }
             }
 
-            "matchesDomain" should {
-
+        "matchesDomain" should
+            {
                 "match for shopee.com.my" {
                     sanitizer.matchesDomain("https://shopee.com.my") shouldBe true
                 }
             }
-        },
-    )
+    })

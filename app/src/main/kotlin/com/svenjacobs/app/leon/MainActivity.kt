@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon
 
 import android.content.ComponentName
@@ -49,10 +48,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                MainRouter(
-                    sourceText = sourceText,
-                    onResetClick = { sourceText.value = null },
-                )
+                MainRouter(sourceText = sourceText, onResetClick = { sourceText.value = null })
             }
         }
 
@@ -74,38 +70,40 @@ class MainActivity : ComponentActivity() {
 
     // TODO: Pass all Intent extras
     private fun onIntent(intent: Intent) {
-        sourceText.value = when (intent.action) {
-            Intent.ACTION_SEND ->
-                if (intent.type == MIME_TYPE_TEXT_PLAIN) {
-                    intent.getStringExtra(Intent.EXTRA_TEXT)
-                } else {
-                    null
-                }
+        sourceText.value =
+            when (intent.action) {
+                Intent.ACTION_SEND ->
+                    if (intent.type == MIME_TYPE_TEXT_PLAIN) {
+                        intent.getStringExtra(Intent.EXTRA_TEXT)
+                    } else {
+                        null
+                    }
 
-            Intent.ACTION_VIEW -> if (intent.scheme.orEmpty().startsWith("http")) {
-                intent.dataString
-            } else {
-                null
+                Intent.ACTION_VIEW ->
+                    if (intent.scheme.orEmpty().startsWith("http")) {
+                        intent.dataString
+                    } else {
+                        null
+                    }
+
+                else -> null
             }
-
-            else -> null
-        }
     }
 
     private fun setupCustomTabsService() {
         if (customTabsInitialized) return
 
-        val connection = object : CustomTabsServiceConnection() {
-            override fun onCustomTabsServiceConnected(
-                name: ComponentName,
-                client: CustomTabsClient,
-            ) {
-                client.warmup(0)
-            }
+        val connection =
+            object : CustomTabsServiceConnection() {
+                override fun onCustomTabsServiceConnected(
+                    name: ComponentName,
+                    client: CustomTabsClient,
+                ) {
+                    client.warmup(0)
+                }
 
-            override fun onServiceDisconnected(name: ComponentName?) {
+                override fun onServiceDisconnected(name: ComponentName?) {}
             }
-        }
 
         val packageName = CustomTabsClient.getPackageName(this, null)
         if (packageName != null) {

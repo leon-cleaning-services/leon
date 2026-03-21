@@ -33,6 +33,7 @@ Format: `<type>[optional scope]: <description>`
 Common types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `style`, `perf`, `ci`.
 
 Examples:
+
 - `feat(sanitizer): add Google Analytics sanitizer`
 - `fix(cleaner): handle URLs without query parameters`
 - `docs: update README with new configuration options`
@@ -43,18 +44,19 @@ The **PR title must be identical** to the commit message that implements the req
 
 Every pull request **must** have exactly one label that reflects the nature of the change:
 
-| Label | When to use |
-|-------|-------------|
-| `feature` | A new feature or enhancement |
-| `bug` | A bug fix |
-| `chore` | Maintenance tasks, dependency updates, build changes, CI changes |
-| `documentation` | Documentation-only changes |
-| `refactor` | Code refactoring without behavior changes |
+| Label           | When to use                                                      |
+|-----------------|------------------------------------------------------------------|
+| `feature`       | A new feature or enhancement                                     |
+| `bug`           | A bug fix                                                        |
+| `chore`         | Maintenance tasks, dependency updates, build changes, CI changes |
+| `documentation` | Documentation-only changes                                       |
+| `refactor`      | Code refactoring without behavior changes                        |
 
 ## Closing Keywords
 
 If a pull request implements a feature request or fixes a bug that originates from a GitHub issue,
-include a [closing keyword](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/using-keywords-in-issues-and-pull-requests)
+include
+a [closing keyword](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/using-keywords-in-issues-and-pull-requests)
 in the PR description so the issue is automatically closed when the PR is merged.
 
 Supported keywords: `Closes`, `Fixes`, `Resolves` (case-insensitive).
@@ -77,8 +79,8 @@ Closes #42
 
 - **Language**: Kotlin only.
 - **Indentation**: spaces (size 4), as configured in `.editorconfig`.
-- **Formatting**: enforced by [kotlinter](https://github.com/jeremymailen/kotlinter-gradle)
-  (`./gradlew lintKotlin` / `./gradlew formatKotlin`). Code style is `android_studio`.
+- **Formatting**: enforced by [Spotless](https://github.com/diffplug/spotless)
+  (`./gradlew spotlessCheck` / `./gradlew spotlessApply`). Code style is `kotlinlang`.
 - **Trailing commas**: allowed (and preferred) on both declaration and call sites.
 - **License header**: every `.kt` file must start with the GPL-3.0 license header (see below).
 
@@ -162,6 +164,7 @@ When `matchesDomain` is **not** overridden the sanitizer applies to **all** URLs
 Add a string entry to `core-domain/src/main/res/values/strings.xml`:
 
 ```xml
+
 <string name="sanitizer_example_name" translatable="false">Example</string>
 ```
 
@@ -230,7 +233,7 @@ After generating or modifying any Kotlin code, always run the formatter to ensur
 style:
 
 ```bash
-./gradlew formatKotlin
+./gradlew spotlessApply
 ```
 
 ## Running Tests & Lint
@@ -243,8 +246,8 @@ style:
 ./gradlew :core-common:test
 
 # Lint (check formatting)
-./gradlew lintKotlin
+./gradlew spotlessCheck
 
 # Auto-format
-./gradlew formatKotlin
+./gradlew spotlessApply
 ```

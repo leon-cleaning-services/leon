@@ -15,24 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.google
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class GoogleAnalyticsSanitizerTest :
-    WordSpec(
-        {
-
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "remove \"ga_*\", \"utm_*\", and \"gclid\" parameters" {
                     val sanitizer = GoogleAnalyticsSanitizer()
 
-                    val result = sanitizer(
-                        "https://www.example.com?ga_abc=123&utm_def=456&gclid=789",
-                    )
+                    val result =
+                        sanitizer("https://www.example.com?ga_abc=123&utm_def=456&gclid=789")
 
                     result shouldBe "https://www.example.com"
                 }
@@ -40,12 +36,9 @@ class GoogleAnalyticsSanitizerTest :
                 "remove \"gad_*\" parameters" {
                     val sanitizer = GoogleAnalyticsSanitizer()
 
-                    val result = sanitizer(
-                        "https://www.example.com?gad_source=1&keep=123",
-                    )
+                    val result = sanitizer("https://www.example.com?gad_source=1&keep=123")
 
                     result shouldBe "https://www.example.com&keep=123"
                 }
             }
-        },
-    )
+    })

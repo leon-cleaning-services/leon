@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.sanitizer
 
 import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.Sanitizers
@@ -37,16 +36,21 @@ class SanitizerRepositoryImpl(
 ) : SanitizerRepository {
 
     override val state: Flow<ImmutableList<SanitizerState>>
-        get() = dataStoreManager.data.map { pref ->
-            sanitizers.map { sanitizer ->
-                SanitizerState(
-                    id = sanitizer.id,
-                    enabled = pref[dataStoreManager.preferencesKey(sanitizer.id.value)] ?: true,
-                )
-            }.toImmutableList()
-        }
+        get() =
+            dataStoreManager.data.map { pref ->
+                sanitizers
+                    .map { sanitizer ->
+                        SanitizerState(
+                            id = sanitizer.id,
+                            enabled =
+                                pref[dataStoreManager.preferencesKey(sanitizer.id.value)] ?: true,
+                        )
+                    }
+                    .toImmutableList()
+            }
 
-    override suspend fun isEnabled(id: SanitizerId): Boolean = dataStoreManager.isSanitizerEnabled(id.value).first() ?: true
+    override suspend fun isEnabled(id: SanitizerId): Boolean =
+        dataStoreManager.isSanitizerEnabled(id.value).first() ?: true
 
     override suspend fun setEnabled(id: SanitizerId, enabled: Boolean) {
         dataStoreManager.setSanitizerEnabled(id.value, enabled)

@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.ikea
 
 import io.kotest.core.spec.style.WordSpec
@@ -25,25 +24,26 @@ class IkeaSanitizerTest :
     WordSpec({
         val sanitizer = IkeaSanitizer()
 
-        "invoke" should {
-            "remove all parameters from ikea.com URL" {
-                val result =
-                    sanitizer(
-                        "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/?gad_source=1&extProvId=5",
-                    )
-                result shouldBe "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/"
+        "invoke" should
+            {
+                "remove all parameters from ikea.com URL" {
+                    val result =
+                        sanitizer(
+                            "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/?gad_source=1&extProvId=5"
+                        )
+                    result shouldBe "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/"
+                }
             }
-        }
 
-        "matchesDomain" should {
-            "match for ikea.com" {
-                sanitizer.matchesDomain(
-                    "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/",
-                ) shouldBe
-                    true
+        "matchesDomain" should
+            {
+                "match for ikea.com" {
+                    sanitizer.matchesDomain(
+                        "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/"
+                    ) shouldBe true
+                }
+                "not match for other domains" {
+                    sanitizer.matchesDomain("https://www.example.com/product/123") shouldBe false
+                }
             }
-            "not match for other domains" {
-                sanitizer.matchesDomain("https://www.example.com/product/123") shouldBe false
-            }
-        }
     })

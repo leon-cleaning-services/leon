@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.aol
 
 import android.content.Context
@@ -25,16 +24,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SearchResultSanitizer
 
-class AolSearchSanitizer :
-    SearchResultSanitizer(
-        Regex("RU=([^/]+)"),
-    ) {
+class AolSearchSanitizer : SearchResultSanitizer(Regex("RU=([^/]+)")) {
 
     override val id = SanitizerId("aol_search")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_aol_search_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_aol_search_name))
 
     override fun matchesDomain(input: String) = input.matchesDomain("search.aol.com")
 }
