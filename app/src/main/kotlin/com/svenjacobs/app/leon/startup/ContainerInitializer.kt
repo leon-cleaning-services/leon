@@ -29,6 +29,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.cargurus.CarGurusSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.change.ChangeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.cx.CxAnalyticsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.ebay.EbaySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.echobox.EchoboxSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero.ElFinancieroSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.emptyparameters.EmptyParametersSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.facebook.FacebookAnalyticsSanitizer
@@ -99,6 +100,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     ChangeSanitizer(),
                     CxAnalyticsSanitizer(),
                     EbaySanitizer(),
+                    EchoboxSanitizer(),
                     ElFinancieroSanitizer(),
                     EmptyParametersSanitizer(),
                     FacebookAnalyticsSanitizer(),
