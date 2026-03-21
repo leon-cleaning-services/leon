@@ -15,26 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.at
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class AtAnalyticsSanitizerTest :
-    WordSpec(
-        {
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "remove at_* parameters" {
                     val sanitizer = AtAnalyticsSanitizer()
 
                     sanitizer(
                         "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html" +
-                            "?at_medium=mastodon&at_campaign=tagesschau.de",
-                    ) shouldBe
-                        "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html"
+                            "?at_medium=mastodon&at_campaign=tagesschau.de"
+                    ) shouldBe "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html"
                 }
             }
-        },
-    )
+    })

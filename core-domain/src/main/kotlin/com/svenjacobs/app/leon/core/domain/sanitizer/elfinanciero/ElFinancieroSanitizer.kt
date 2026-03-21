@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero
 
 import android.content.Context
@@ -26,16 +25,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class ElFinancieroSanitizer :
-    RegexSanitizer(
-        regex = RegexFactory.ofParameter("outputType"),
-    ) {
+class ElFinancieroSanitizer : RegexSanitizer(regex = RegexFactory.ofParameter("outputType")) {
 
     override val id = SanitizerId("elfinanciero")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_elfinanciero_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_elfinanciero_name))
 
     override fun matchesDomain(input: String) = input.matchesDomain("elfinanciero.com.mx")
 }

@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.settings.model
 
 import android.annotation.SuppressLint
@@ -52,21 +51,22 @@ class SettingsScreenViewModel(
 
     val uiState: StateFlow<UiState> =
         combine(
-            browserEnabled,
-            appDataStoreManager.customTabsEnabled,
-            appDataStoreManager.actionAfterClean,
-        ) { browserEnabled, customTabsEnabled, actionAfterClean ->
-            UiState(
-                isLoading = false,
-                browserEnabled = browserEnabled,
-                customTabsEnabled = customTabsEnabled,
-                actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+                browserEnabled,
+                appDataStoreManager.customTabsEnabled,
+                appDataStoreManager.actionAfterClean,
+            ) { browserEnabled, customTabsEnabled, actionAfterClean ->
+                UiState(
+                    isLoading = false,
+                    browserEnabled = browserEnabled,
+                    customTabsEnabled = customTabsEnabled,
+                    actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = UiState(),
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState(),
-        )
 
     init {
         val enabledSetting = packageManager.getComponentEnabledSetting(componentName)
@@ -87,15 +87,11 @@ class SettingsScreenViewModel(
     }
 
     fun onCustomTabsSwitchCheckedChange(checked: Boolean) {
-        viewModelScope.launch {
-            appDataStoreManager.setCustomTabsEnabled(checked)
-        }
+        viewModelScope.launch { appDataStoreManager.setCustomTabsEnabled(checked) }
     }
 
     fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {
-        viewModelScope.launch {
-            appDataStoreManager.setActionAfterClean(actionAfterClean)
-        }
+        viewModelScope.launch { appDataStoreManager.setActionAfterClean(actionAfterClean) }
     }
 
     private val packageManager: PackageManager

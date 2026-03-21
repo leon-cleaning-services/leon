@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer
 
 import android.content.Context
@@ -38,8 +37,5 @@ interface Sanitizer {
 
     operator fun invoke(input: String): String
 
-    @Composable
-    @Suppress("unused")
-    fun SettingsScreen() {
-    }
+    @Composable @Suppress("unused") fun SettingsScreen() {}
 }

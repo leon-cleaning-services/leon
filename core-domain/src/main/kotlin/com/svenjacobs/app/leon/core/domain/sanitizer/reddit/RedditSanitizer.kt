@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.reddit
 
 import android.content.Context
@@ -26,16 +25,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class RedditSanitizer :
-    RegexSanitizer(
-        RegexFactory.AllParameters,
-    ) {
+class RedditSanitizer : RegexSanitizer(RegexFactory.AllParameters) {
 
     override val id = SanitizerId("reddit")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_reddit),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_reddit))
 
     override fun matchesDomain(input: String) = input.matchesDomain("reddit.com")
 }

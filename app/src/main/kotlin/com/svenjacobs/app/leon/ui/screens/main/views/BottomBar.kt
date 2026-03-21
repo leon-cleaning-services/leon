@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.main.views
 
 import androidx.compose.material3.Icon
@@ -35,14 +34,9 @@ import com.svenjacobs.app.leon.ui.screens.main.model.Screen
 
 @Composable
 internal fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
-    val bottomNavItems = listOf(
-        Screen.Main,
-        Screen.Settings,
-    )
+    val bottomNavItems = listOf(Screen.Main, Screen.Settings)
 
-    NavigationBar(
-        modifier = modifier,
-    ) {
+    NavigationBar(modifier = modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
@@ -56,15 +50,16 @@ internal fun BottomBar(navController: NavHostController, modifier: Modifier = Mo
                 },
                 label = { Text(stringResource(screen.label)) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                onClick = dropUnlessResumed {
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                onClick =
+                    dropUnlessResumed {
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
+                    },
             )
         }
     }

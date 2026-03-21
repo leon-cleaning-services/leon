@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.newegg
 
 import android.content.Context
@@ -27,9 +26,8 @@ class NewEggSanitizer : Sanitizer {
 
     override val id = SanitizerId("newegg")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_newegg_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_newegg_name))
 
     override fun invoke(input: String): String {
         val result = DOMAIN_REGEX.find(input) ?: return input

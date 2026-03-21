@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.datastore
 
 import android.content.Context
@@ -29,9 +28,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/**
- * Manages [Sanitizer] specific preferences stored via [DataStore].
- */
+/** Manages [Sanitizer] specific preferences stored via [DataStore]. */
 class SanitizerDataStoreManager(private val context: Context = AppContext) {
     private val Context.dataStore by preferencesDataStore(name = "sanitizers")
 
@@ -42,15 +39,11 @@ class SanitizerDataStoreManager(private val context: Context = AppContext) {
 
     suspend fun setSanitizerEnabled(id: String, enabled: Boolean) {
         val key = preferencesKey(id)
-        context.dataStore.edit {
-            it[key] = enabled
-        }
+        context.dataStore.edit { it[key] = enabled }
     }
 
     fun isSanitizerEnabled(id: String): Flow<Boolean?> {
         val key = preferencesKey(id)
-        return context.dataStore.data.map {
-            it[key]
-        }
+        return context.dataStore.data.map { it[key] }
     }
 }

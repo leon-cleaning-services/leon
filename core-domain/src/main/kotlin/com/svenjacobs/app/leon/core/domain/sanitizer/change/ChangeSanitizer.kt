@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.change
 
 import android.content.Context
@@ -26,16 +25,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class ChangeSanitizer :
-    RegexSanitizer(
-        regex = RegexFactory.AllParameters,
-    ) {
+class ChangeSanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) {
 
     override val id = SanitizerId("change")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_change_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_change_name))
 
     override fun matchesDomain(input: String) = input.matchesDomain("change.org")
 }

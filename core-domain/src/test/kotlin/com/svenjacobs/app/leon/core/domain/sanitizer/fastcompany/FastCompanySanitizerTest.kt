@@ -15,36 +15,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.fastcompany
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class FastCompanySanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = FastCompanySanitizer()
+    WordSpec({
+        val sanitizer = FastCompanySanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "clean fastcompany.com URLs" {
                     sanitizer(
                         "https://www.fastcompany.com/90890683/bronx-dream-school-david-adjaye?u" +
                             "tm_source= newsletters&utm_medium=email&utm_campaign =FC%20%20Top%2010%" +
                             "20Newsletter. Newsletter %20-%20FC%20-%20Top%2010%205-7-23&leadld=77345" +
                             "0&mkt_tok=NjEWLUXFRS04NZIAAAGLIUIVk0W4gRAxyR6Nmx3ZSH_IJS1KWrpFwGORBYZXQ" +
-                            "3cnEc99TZ-1QVnrwnx87XLC_QdRSecUnOk0QLPnfUXF2vr9yAQuN7g|OjfbvtY",
+                            "3cnEc99TZ-1QVnrwnx87XLC_QdRSecUnOk0QLPnfUXF2vr9yAQuN7g|OjfbvtY"
                     ) shouldBe
                         "https://www.fastcompany.com/90890683/bronx-dream-school-david-adjaye"
                 }
             }
 
-            "matchesDomain" should {
-
+        "matchesDomain" should
+            {
                 "match fastcompany.com" {
                     sanitizer.matchesDomain("https://fastcompany.com") shouldBe true
                 }
             }
-        },
-    )
+    })

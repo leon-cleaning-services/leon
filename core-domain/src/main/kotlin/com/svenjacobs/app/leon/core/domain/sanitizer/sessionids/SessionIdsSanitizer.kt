@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.sessionids
 
 import android.content.Context
@@ -26,13 +25,10 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class SessionIdsSanitizer :
-    RegexSanitizer(
-        regex = RegexFactory.ofWildcardParameter("j?sessionid"),
-    ) {
+    RegexSanitizer(regex = RegexFactory.ofWildcardParameter("j?sessionid")) {
 
     override val id = SanitizerId("session_ids")
 
-    override fun getMetadata(context: Context): Sanitizer.Metadata = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_session_ids_name),
-    )
+    override fun getMetadata(context: Context): Sanitizer.Metadata =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_session_ids_name))
 }

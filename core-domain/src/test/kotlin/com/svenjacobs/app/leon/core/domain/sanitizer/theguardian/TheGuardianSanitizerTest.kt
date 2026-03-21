@@ -15,37 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.theguardian
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class TheGuardianSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = TheGuardianSanitizer()
+    WordSpec({
+        val sanitizer = TheGuardianSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "remove all parameters" {
-
-                    val result = sanitizer(
-                        "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-with-7" +
-                            "2-onboard-leaves-at-least-16-dead?CMP=Share_AndroidApp_Other",
-                    )
+                    val result =
+                        sanitizer(
+                            "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-with-7" +
+                                "2-onboard-leaves-at-least-16-dead?CMP=Share_AndroidApp_Other"
+                        )
 
                     result shouldBe
                         "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-" +
-                        "with-72-onboard-leaves-at-least-16-dead"
+                            "with-72-onboard-leaves-at-least-16-dead"
                 }
             }
 
-            "matchesDomain" should {
-
+        "matchesDomain" should
+            {
                 "match for theguardian.com" {
                     sanitizer.matchesDomain("https://www.theguardian.com") shouldBe true
                 }
             }
-        },
-    )
+    })

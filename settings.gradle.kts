@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 /*
  * Léon - The URL Cleaner
  * Copyright (C) 2022 Sven Jacobs
@@ -18,6 +20,13 @@
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
 rootProject.name = "Leon"

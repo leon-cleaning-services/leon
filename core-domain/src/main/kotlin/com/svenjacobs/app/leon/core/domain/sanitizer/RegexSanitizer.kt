@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer
 
 /**
@@ -25,8 +24,6 @@ package com.svenjacobs.app.leon.core.domain.sanitizer
  */
 abstract class RegexSanitizer(private val regex: Regex) : Sanitizer {
 
-    /**
-     * Removes all matches of supplied [regex].
-     */
+    /** Removes all matches of supplied [regex]. */
     override fun invoke(input: String) = regex.replace(input, "")
 }

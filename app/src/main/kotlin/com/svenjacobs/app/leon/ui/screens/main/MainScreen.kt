@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.main
 
 import android.app.Activity
@@ -57,15 +56,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -113,9 +109,7 @@ fun MainScreen(
     var didPerformActionAfterClean by remember(uiState.result) { mutableStateOf(false) }
     val view = LocalView.current
 
-    LaunchedEffect(sourceText.value) {
-        viewModel.setText(sourceText.value)
-    }
+    LaunchedEffect(sourceText.value) { viewModel.setText(sourceText.value) }
 
     LaunchedEffect(Unit) {
         val window = view.context.findWindow() ?: return@LaunchedEffect
@@ -124,39 +118,32 @@ fun MainScreen(
     }
 
     fun openShareMenu(result: Result.Success) {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            addCategory(Intent.CATEGORY_DEFAULT)
-            putExtra(Intent.EXTRA_TEXT, result.cleanedText)
-        }
+        val intent =
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                addCategory(Intent.CATEGORY_DEFAULT)
+                putExtra(Intent.EXTRA_TEXT, result.cleanedText)
+            }
 
-        context.startActivity(
-            Intent.createChooser(
-                intent,
-                shareTitle,
-            ),
-        )
+        context.startActivity(Intent.createChooser(intent, shareTitle))
     }
 
     fun openInDefaultApp(result: Result.Success) {
-        val uri = result.urls.firstOrNull()
-            ?.let { url -> runCatching { Uri.parse(url) }.getOrNull() } ?: return
+        val uri =
+            result.urls.firstOrNull()?.let { url -> runCatching { Uri.parse(url) }.getOrNull() }
+                ?: return
 
         val intent = Intent(Intent.ACTION_VIEW, uri)
 
-        context.startActivity(
-            Intent.createChooser(
-                intent,
-                openTitle,
-            ),
-        )
+        context.startActivity(Intent.createChooser(intent, openTitle))
     }
 
     fun openInCustomTabs(result: Result.Success) {
         result.urls.firstOrNull()?.let { url ->
-            val intent = CustomTabsIntent.Builder()
-                .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
-                .build()
+            val intent =
+                CustomTabsIntent.Builder()
+                    .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
+                    .build()
 
             intent.launchUrl(context, Uri.parse(url))
         }
@@ -177,7 +164,7 @@ fun MainScreen(
     fun copyToClipboard(result: Result.Success) {
         coroutineScope.launch {
             clipboard.setClipEntry(
-                ClipData.newPlainText(result.cleanedText, result.cleanedText).toClipEntry(),
+                ClipData.newPlainText(result.cleanedText, result.cleanedText).toClipEntry()
             )
             snackbarHostState.showSnackbar(copiedToClipboardMessage)
         }
@@ -189,15 +176,10 @@ fun MainScreen(
         bottomBar = { BottomBar(navController = navController) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         content = { padding ->
-            Box(
-                modifier = Modifier.padding(padding),
-            ) {
+            Box(modifier = Modifier.padding(padding)) {
                 BackgroundImage()
 
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.Main.route,
-                ) {
+                NavHost(navController = navController, startDestination = Screen.Main.route) {
                     composable(Screen.Main.route) {
                         LaunchedEffect(uiState.result, uiState.actionAfterClean) {
                             if (didPerformActionAfterClean) return@LaunchedEffect
@@ -221,9 +203,12 @@ fun MainScreen(
                             onImportFromClipboardClick = {
                                 coroutineScope.launch {
                                     val text =
-                                        clipboard.getClipEntry()?.clipData?.getItemAt(
-                                            0,
-                                        )?.text?.toString()
+                                        clipboard
+                                            .getClipEntry()
+                                            ?.clipData
+                                            ?.getItemAt(0)
+                                            ?.text
+                                            ?.toString()
 
                                     if (text.isNullOrBlank()) {
                                         snackbarHostState.showSnackbar(clipboardEmptyMessage)
@@ -270,32 +255,27 @@ private fun Content(
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
-    ) {
-        Box(
-            modifier = Modifier.padding(16.dp),
-        ) {
+    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+        Box(modifier = Modifier.padding(16.dp)) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 when (result) {
-                    is Result.Success -> SuccessBody(
-                        result = result,
-                        isUrlDecodeEnabled = isUrlDecodeEnabled,
-                        isExtractUrlEnabled = isExtractUrlEnabled,
-                        onShareClick = onShareClick,
-                        onCopyToClipboardClick = onCopyToClipboardClick,
-                        onOpenClick = onOpenClick,
-                        onResetClick = onResetClick,
-                        onUrlDecodeCheckedChange = onUrlDecodeCheckedChange,
-                        onExtractUrlCheckedChange = onExtractUrlCheckedChange,
-                    )
+                    is Result.Success ->
+                        SuccessBody(
+                            result = result,
+                            isUrlDecodeEnabled = isUrlDecodeEnabled,
+                            isExtractUrlEnabled = isExtractUrlEnabled,
+                            onShareClick = onShareClick,
+                            onCopyToClipboardClick = onCopyToClipboardClick,
+                            onOpenClick = onOpenClick,
+                            onResetClick = onResetClick,
+                            onUrlDecodeCheckedChange = onUrlDecodeCheckedChange,
+                            onExtractUrlCheckedChange = onExtractUrlCheckedChange,
+                        )
 
-                    else -> HowToBody(
-                        onImportFromClipboardClick = onImportFromClipboardClick,
-                    )
+                    else -> HowToBody(onImportFromClipboardClick = onImportFromClipboardClick)
                 }
             }
         }
@@ -315,9 +295,7 @@ private fun SuccessBody(
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-    ) {
+    Column(modifier = modifier) {
         Card {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -354,15 +332,10 @@ private fun SuccessBody(
                 val buttonModifier = Modifier.widthIn(min = 120.dp)
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                 ) {
-                    OutlinedButton(
-                        modifier = buttonModifier,
-                        onClick = { onShareClick(result) },
-                    ) {
+                    OutlinedButton(modifier = buttonModifier, onClick = { onShareClick(result) }) {
                         Text(
                             text = stringResource(R.string.share),
                             style = MaterialTheme.typography.bodyMedium,
@@ -381,9 +354,7 @@ private fun SuccessBody(
                 }
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                 ) {
                     OutlinedButton(
@@ -397,10 +368,7 @@ private fun SuccessBody(
                         )
                     }
 
-                    OutlinedButton(
-                        modifier = buttonModifier,
-                        onClick = onResetClick,
-                    ) {
+                    OutlinedButton(modifier = buttonModifier, onClick = onResetClick) {
                         Text(
                             text = stringResource(R.string.reset),
                             style = MaterialTheme.typography.bodyMedium,
@@ -433,10 +401,7 @@ private fun SwitchRow(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Text(
             modifier = Modifier.weight(1f),
             text = text,
@@ -453,12 +418,8 @@ private fun SwitchRow(
 
 @Composable
 private fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-        ) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onImportFromClipboardClick,
@@ -470,19 +431,14 @@ private fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick:
             }
 
             Text(
-                modifier = Modifier.padding(
-                    top = 16.dp,
-                    bottom = 8.dp,
-                ),
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                 text = stringResource(R.string.how_to_title),
                 style = MaterialTheme.typography.headlineSmall,
             )
 
             Row {
                 Image(
-                    modifier = Modifier
-                        .height(300.dp)
-                        .padding(end = 16.dp),
+                    modifier = Modifier.height(300.dp).padding(end = 16.dp),
                     painter = painterResource(R.drawable.howto_pixel_5),
                     contentDescription = stringResource(R.string.a11y_howto),
                 )
@@ -497,22 +453,24 @@ private fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick:
     }
 }
 
-private tailrec fun Context.findWindow(): Window? = when (this) {
-    is Activity -> window
-    is ContextWrapper -> baseContext.findWindow()
-    else -> null
-}
+private tailrec fun Context.findWindow(): Window? =
+    when (this) {
+        is Activity -> window
+        is ContextWrapper -> baseContext.findWindow()
+        else -> null
+    }
 
 @Preview(showBackground = true)
 @Composable
 private fun SuccessBodyPreview() {
     AppTheme {
         SuccessBody(
-            result = Result.Success(
-                originalText = "http://www.some.url?tracking=true",
-                cleanedText = "http://www.some.url",
-                urls = persistentListOf(),
-            ),
+            result =
+                Result.Success(
+                    originalText = "http://www.some.url?tracking=true",
+                    cleanedText = "http://www.some.url",
+                    urls = persistentListOf(),
+                ),
             isUrlDecodeEnabled = false,
             isExtractUrlEnabled = false,
             onShareClick = {},
@@ -528,9 +486,5 @@ private fun SuccessBodyPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun HowToBodyPreview() {
-    AppTheme {
-        HowToBody(
-            onImportFromClipboardClick = {},
-        )
-    }
+    AppTheme { HowToBody(onImportFromClipboardClick = {}) }
 }

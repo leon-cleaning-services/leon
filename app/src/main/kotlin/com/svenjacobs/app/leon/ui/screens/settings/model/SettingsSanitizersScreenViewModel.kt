@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.settings.model
 
 import android.annotation.SuppressLint
@@ -50,28 +49,33 @@ class SettingsSanitizersScreenViewModel(
     }
 
     val uiState: StateFlow<UiState> =
-        repository.state.map { states ->
-            UiState(
-                sanitizers = states
-                    .map { state ->
-                        Sanitizer(
-                            id = state.id,
-                            name = sanitizers.first { it.id == state.id }.getMetadata(context).name,
-                            enabled = state.enabled,
-                        )
-                    }
-                    .sortedBy { it.name.lowercase() }
-                    .toImmutableList(),
+        repository.state
+            .map { states ->
+                UiState(
+                    sanitizers =
+                        states
+                            .map { state ->
+                                Sanitizer(
+                                    id = state.id,
+                                    name =
+                                        sanitizers
+                                            .first { it.id == state.id }
+                                            .getMetadata(context)
+                                            .name,
+                                    enabled = state.enabled,
+                                )
+                            }
+                            .sortedBy { it.name.lowercase() }
+                            .toImmutableList()
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = UiState(),
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState(),
-        )
 
     fun onSanitizerCheckedChange(id: SanitizerId, enabled: Boolean) {
-        viewModelScope.launch {
-            repository.setEnabled(id, enabled)
-        }
+        viewModelScope.launch { repository.setEnabled(id, enabled) }
     }
 }

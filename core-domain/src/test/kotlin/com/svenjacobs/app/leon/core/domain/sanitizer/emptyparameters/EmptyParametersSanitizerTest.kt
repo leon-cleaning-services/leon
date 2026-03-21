@@ -15,28 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.emptyparameters
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class EmptyParametersSanitizerTest :
-    WordSpec(
-        {
-            "invoke" should {
-
+    WordSpec({
+        "invoke" should
+            {
                 "remove empty parameters" {
                     val sanitizer = EmptyParametersSanitizer()
-                    val result = sanitizer(
-                        "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id" +
-                            "=13241297&p=3&sid=&static=0&nav=",
-                    )
+                    val result =
+                        sanitizer(
+                            "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id" +
+                                "=13241297&p=3&sid=&static=0&nav="
+                        )
 
                     result shouldBe
                         "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962" +
-                        "258&id=13241297&p=3&static=0"
+                            "258&id=13241297&p=3&static=0"
                 }
             }
-        },
-    )
+    })

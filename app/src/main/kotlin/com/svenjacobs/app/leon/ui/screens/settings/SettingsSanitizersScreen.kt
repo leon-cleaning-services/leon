@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
@@ -47,25 +46,11 @@ fun SettingsSanitizersScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                onBackClick = onBackClick,
-            )
-        },
-    ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .padding(contentPadding)
-                .padding(horizontal = 16.dp),
-        ) {
+    Scaffold(modifier = modifier, topBar = { TopAppBar(onBackClick = onBackClick) }) {
+        contentPadding ->
+        Column(modifier = Modifier.padding(contentPadding).padding(horizontal = 16.dp)) {
             Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 16.dp,
-                ),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 text = stringResource(R.string.sanitizers_description),
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -97,18 +82,9 @@ private fun Item(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            modifier = Modifier.weight(2f),
-            text = name,
-        )
+    Row(modifier = modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(modifier = Modifier.weight(2f), text = name)
 
-        Switch(
-            checked = isEnabled,
-            onCheckedChange = onCheckedChange,
-        )
+        Switch(checked = isEnabled, onCheckedChange = onCheckedChange)
     }
 }

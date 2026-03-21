@@ -15,17 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.common.domain
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class DomainExtensionsTest :
-    WordSpec(
-        {
-            "matchesDomain" should {
-
+    WordSpec({
+        "matchesDomain" should
+            {
                 "match domain with https://" {
                     "https://some.example.com/path".matchesDomain("some.example.com") shouldBe true
                 }
@@ -45,14 +43,12 @@ class DomainExtensionsTest :
                 }
 
                 "match domain with regular expression values" {
-                    "https://aliexpress.com/item/32948511896".matchesDomainRegex(
-                        domain = "aliexpress\\..+/item/",
-                    ) shouldBe true
+                    "https://aliexpress.com/item/32948511896"
+                        .matchesDomainRegex(domain = "aliexpress\\..+/item/") shouldBe true
                 }
 
                 "not match domain" {
                     "other.example.com".matchesDomain("some.example.com") shouldBe false
                 }
             }
-        },
-    )
+    })

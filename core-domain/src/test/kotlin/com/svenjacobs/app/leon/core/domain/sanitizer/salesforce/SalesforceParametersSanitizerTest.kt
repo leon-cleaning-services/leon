@@ -15,24 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.salesforce
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class SalesforceParametersSanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = SalesforceParametersSanitizer()
+    WordSpec({
+        val sanitizer = SalesforceParametersSanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "remove sfmc_activityid parameter as per #302" {
                     sanitizer(
-                        "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2",
+                        "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2"
                     ) shouldBe "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/"
                 }
             }
-        },
-    )
+    })

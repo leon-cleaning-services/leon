@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer
 
 import android.content.Context
@@ -26,9 +25,7 @@ class IncrementingSanitizerFake : Sanitizer {
 
     override val id: SanitizerId = SanitizerId("incrementing")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = "Incrementing",
-    )
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(name = "Incrementing")
 
     override fun invoke(input: String): String {
         iteration++

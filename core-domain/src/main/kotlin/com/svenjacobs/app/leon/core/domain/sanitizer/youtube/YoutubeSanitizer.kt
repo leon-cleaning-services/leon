@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.youtube
 
 import android.content.Context
@@ -27,15 +26,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class YoutubeSanitizer :
-    RegexSanitizer(
-        RegexFactory.exceptParameter("(v|search_query|list|t|channel_id)"),
-    ) {
+    RegexSanitizer(RegexFactory.exceptParameter("(v|search_query|list|t|channel_id)")) {
 
     override val id = SanitizerId("youtube")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_youtube_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_youtube_name))
 
-    override fun matchesDomain(input: String) = input.matchesDomainRegex("(?:(?:(?:m(?:usic)?\\.)?youtube\\.com)|youtu\\.be)")
+    override fun matchesDomain(input: String) =
+        input.matchesDomainRegex("(?:(?:(?:m(?:usic)?\\.)?youtube\\.com)|youtu\\.be)")
 }

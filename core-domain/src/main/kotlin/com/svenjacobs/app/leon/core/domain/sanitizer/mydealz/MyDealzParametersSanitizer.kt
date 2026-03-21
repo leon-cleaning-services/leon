@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
 import android.content.Context
@@ -25,16 +24,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class MyDealzParametersSanitizer :
-    RegexSanitizer(
-        RegexFactory.AllParameters,
-    ) {
+class MyDealzParametersSanitizer : RegexSanitizer(RegexFactory.AllParameters) {
 
     override val id = SanitizerId("mydealz_parameters")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_mydealz_parameters_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_mydealz_parameters_name))
 
     override fun matchesDomain(input: String) = MyDealzDomains.DOMAINS_REGEX.containsMatchIn(input)
 }

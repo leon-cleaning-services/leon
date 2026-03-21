@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.google
 
 import android.content.Context
@@ -28,12 +27,12 @@ class GoogleMapsSanitizer : Sanitizer {
 
     override val id = SanitizerId("google_maps")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_google_maps_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_google_maps_name))
 
-    override fun matchesDomain(input: String) = input.matchesDomainRegex("google\\.com/maps") ||
-        input.matchesDomainRegex("maps\\.google\\.com")
+    override fun matchesDomain(input: String) =
+        input.matchesDomainRegex("google\\.com/maps") ||
+            input.matchesDomainRegex("maps\\.google\\.com")
 
     override fun invoke(input: String): String {
         val match = COORD_REGEX.find(input) ?: return input

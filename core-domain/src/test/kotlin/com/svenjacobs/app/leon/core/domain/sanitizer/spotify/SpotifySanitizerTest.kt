@@ -15,46 +15,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.spotify
 
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class SpotifySanitizerTest :
-    WordSpec(
-        {
-            val sanitizer = SpotifySanitizer()
+    WordSpec({
+        val sanitizer = SpotifySanitizer()
 
-            "invoke" should {
-
+        "invoke" should
+            {
                 "remove all parameters" {
-
-                    var result = sanitizer(
-                        "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN?si=BICcHVzTTqmqt" +
-                            "82Y6f2e_A&utm_source=native-share-menu",
-                    )
+                    var result =
+                        sanitizer(
+                            "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN?si=BICcHVzTTqmqt" +
+                                "82Y6f2e_A&utm_source=native-share-menu"
+                        )
 
                     result shouldBe "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN"
 
-                    result = sanitizer(
-                        "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59?si=CXCVCQplRkqNt" +
-                            "DWW42dXgA&context=spotify%3Aplaylist%3A37i9dQZF1EpjSENbNnZRJr",
-                    )
+                    result =
+                        sanitizer(
+                            "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59?si=CXCVCQplRkqNt" +
+                                "DWW42dXgA&context=spotify%3Aplaylist%3A37i9dQZF1EpjSENbNnZRJr"
+                        )
 
                     result shouldBe "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59"
                 }
             }
 
-            "matchesDomain" should {
-
-                "match spotify.com" {
-                    sanitizer.matchesDomain("https://spotify.com") shouldBe true
-                }
+        "matchesDomain" should
+            {
+                "match spotify.com" { sanitizer.matchesDomain("https://spotify.com") shouldBe true }
 
                 "match open.spotify.com" {
                     sanitizer.matchesDomain("https://open.spotify.com") shouldBe true
                 }
             }
-        },
-    )
+    })

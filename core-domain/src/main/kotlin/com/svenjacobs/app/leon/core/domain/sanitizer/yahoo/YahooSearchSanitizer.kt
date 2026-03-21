@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.core.domain.sanitizer.yahoo
 
 import android.content.Context
@@ -30,17 +29,17 @@ class YahooSearchSanitizer : Sanitizer {
 
     override val id = SanitizerId("yahoo_search")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_yahoo_search_name),
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_yahoo_search_name))
 
     override fun matchesDomain(input: String) = input.matchesDomain("search.yahoo.com")
 
-    override fun invoke(input: String): String = if (input.contains("/search")) {
-        RegexFactory.exceptParameter("p").replace(input, "")
-    } else {
-        extractSearchResultValue(REGEX_SEARCH_RESULT, input)
-    }
+    override fun invoke(input: String): String =
+        if (input.contains("/search")) {
+            RegexFactory.exceptParameter("p").replace(input, "")
+        } else {
+            extractSearchResultValue(REGEX_SEARCH_RESULT, input)
+        }
 
     companion object {
         private val REGEX_SEARCH_RESULT = Regex("RU=([^/]+)")

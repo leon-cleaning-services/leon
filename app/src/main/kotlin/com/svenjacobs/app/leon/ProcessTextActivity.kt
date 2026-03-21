@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon
 
 import android.content.Intent
@@ -60,13 +59,14 @@ class ProcessTextActivity : ComponentActivity() {
             text.isNullOrBlank() -> cancel()
 
             // If readonly, delegate to MainActivity
-            readonly -> startActivity(
-                Intent(this, MainActivity::class.java).apply {
-                    action = Intent.ACTION_SEND
-                    type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, text)
-                },
-            )
+            readonly ->
+                startActivity(
+                    Intent(this, MainActivity::class.java).apply {
+                        action = Intent.ACTION_SEND
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, text)
+                    }
+                )
 
             else -> result(text, Intent.EXTRA_PROCESS_TEXT)
         }
@@ -76,17 +76,9 @@ class ProcessTextActivity : ComponentActivity() {
         // Needs to run with runBlocking or else setResult() won't work
         runBlocking {
             val decodeUrl = AppDataStoreManager.urlDecodeEnabled.firstOrNull() ?: false
-            val result = CleanerService().clean(
-                text = text,
-                decodeUrl = decodeUrl,
-            )
+            val result = CleanerService().clean(text = text, decodeUrl = decodeUrl)
 
-            setResult(
-                RESULT_OK,
-                Intent().apply {
-                    putExtra(key, result.cleanedText)
-                },
-            )
+            setResult(RESULT_OK, Intent().apply { putExtra(key, result.cleanedText) })
         }
     }
 

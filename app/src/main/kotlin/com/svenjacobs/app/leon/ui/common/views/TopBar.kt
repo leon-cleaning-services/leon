@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.svenjacobs.app.leon.ui.common.views
 
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -48,10 +47,7 @@ fun TopAppBar(modifier: Modifier = Modifier, onBackClick: (() -> Unit)? = null) 
 
 @Composable
 private fun NavigationIcon(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
-    ) {
+    IconButton(modifier = modifier, onClick = onClick) {
         Icon(
             Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(R.string.a11y_back_navigation),
