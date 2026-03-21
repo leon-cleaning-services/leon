@@ -64,9 +64,7 @@ class SettingsSanitizersScreenViewModel(
                             Sanitizer(
                                 id = state.id,
                                 name =
-                                    sanitizersById[state.id]
-                                        ?.getMetadata(context)
-                                        ?.name
+                                    sanitizersById[state.id]?.getMetadata(context)?.name
                                         ?: state.id.value,
                                 enabled = state.enabled,
                             )
@@ -82,10 +80,7 @@ class SettingsSanitizersScreenViewModel(
                         allSanitizers.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
                     }
 
-                UiState(
-                    sanitizers = filteredSanitizers.toImmutableList(),
-                    searchQuery = query,
-                )
+                UiState(sanitizers = filteredSanitizers.toImmutableList(), searchQuery = query)
             }
             .stateIn(
                 scope = viewModelScope,

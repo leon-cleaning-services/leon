@@ -32,6 +32,9 @@
     <string name="sanitizers">Очистка</string>
     <string name="licenses">Лицензия</string>
     <string name="sanitizers_description">Включение или отключение очистки</string>
+    <string name="sanitizers_search_placeholder">Поиск очистки</string>
+    <string name="sanitizers_search_clear">Очистить поиск</string>
+    <string name="sanitizers_no_results">Очистка не найдена</string>
     <string name="decode_url">Декодировать URL-адрес</string>
     <string name="import_from_clipboard">Импорт из буфера обмена</string>
     <string name="reset">Сброс</string>
