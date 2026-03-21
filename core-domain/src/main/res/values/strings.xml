@@ -27,6 +27,7 @@
     <string name="sanitizer_change_name" translatable="false">Change</string>
     <string name="sanitizer_cx_name" translatable="false">CX Analytics</string>
     <string name="sanitizer_ebay_name" translatable="false">eBay</string>
+    <string name="sanitizer_echobox_name" translatable="false">Echobox</string>
     <string name="sanitizer_elfinanciero_name" translatable="false">ElFinanciero</string>
     <string name="sanitizer_empty_parameters_name">Empty Parameters</string>
     <string name="sanitizer_facebook_analytics_name" translatable="false">Facebook Analytics</string>
