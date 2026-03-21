@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Léon - The URL Cleaner
-  ~ Copyright (C) 2022 Sven Jacobs
+  ~ Copyright (C) 2026 Sven Jacobs
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
   -->
 
 <resources>
-    <string name="sanitizer_amazon_product_name">Продукты Amazon</string>
-    <string name="sanitizer_aol_search_name">Поиск AOL</string>
-    <string name="sanitizer_empty_parameters_name">Пустые параметры</string>
-    <string name="sanitizer_google_search_name">Поиск Google</string>
-    <string name="sanitizer_mydealz_parameters_name">Параметры MyDealz</string>
-    <string name="sanitizer_mydealz_redirects_name">Перенаправления MyDealz</string>
-    <string name="sanitizer_yahoo_search_name">Поиск Yahoo</string>
-    <string name="sanitizer_youtube_redirect_name">Перенаправление YouTube</string>
+    <string name="sanitizer_amazon_product_name">Sản phẩm Amazon</string>
+    <string name="sanitizer_aol_search_name">Tìm kiếm AOL</string>
+    <string name="sanitizer_empty_parameters_name">Tham số trống</string>
+    <string name="sanitizer_google_search_name">Tìm kiếm Google</string>
+    <string name="sanitizer_mydealz_parameters_name">Tham số MyDealz</string>
+    <string name="sanitizer_mydealz_redirects_name">Chuyển hướng MyDealz</string>
+    <string name="sanitizer_yahoo_search_name">Tìm kiếm Yahoo</string>
+    <string name="sanitizer_youtube_redirect_name">Chuyển hướng YouTube</string>
 </resources>

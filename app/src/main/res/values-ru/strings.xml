@@ -19,14 +19,14 @@
 <resources>
     <string name="screen_main">Дом</string>
     <string name="screen_settings">Настройки</string>
-    <string name="scaffold_title">Léon – The URL Cleaner</string>
+    <string name="scaffold_title">Léon – Очиститель URL</string>
     <string name="share">Поделиться</string>
-    <string name="open">Open</string>> <!-- TODO: translate -->
+    <string name="open">Открыть</string>
     <string name="copy">Копировать</string>
     <string name="clipboard_message">Ссылка скопирована в буфер обмена</string>
-    <string name="clipboard_empty_message">Clipboard is empty</string> <!-- TODO: translate -->
+    <string name="clipboard_empty_message">Буфер обмена пуст</string>
     <string name="how_to_title">Инструкция</string>
-    <string name="how_to_text">When sharing text, choose \"URL Cleaner\". Then click on \"Share\" in this app to send text to target app. Alternatively, click the button above to import contents from the clipboard.</string>
+    <string name="how_to_text">При отправке текста выберите \"URL Cleaner\". Затем нажмите \"Поделиться\" в этом приложении, чтобы отправить текст в целевое приложение. Или нажмите кнопку выше, чтобы импортировать содержимое из буфера обмена.\n\nТакже можно выделить редактируемый текст в приложении, затем в контекстном меню выбрать Léon, чтобы очистить текст на месте.</string>
     <string name="cleaned_url">Очищенный URL-адрес</string>
     <string name="original_url">Оригинальный URL-адрес</string>
     <string name="sanitizers">Очистка</string>
@@ -39,12 +39,12 @@
     <string name="import_from_clipboard">Импорт из буфера обмена</string>
     <string name="reset">Сброс</string>
     <string name="extract_url">Извлечение только URL-адреса</string>
-    <string name="register_as_browser">Register Léon as browser</string>  <!-- TODO: translate -->
-    <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string> <!-- TODO: translate -->
-    <string name="action_after_clean">Action after clean</string> <!-- TODO: translate -->
-    <string name="do_nothing">Do nothing</string> <!-- TODO: translate -->
-    <string name="open_share_menu">Open share menu</string> <!-- TODO: translate -->
-    <string name="open_url">Open URL</string> <!-- TODO: translate -->
-    <string name="copy_to_clipboard">Copy to clipboard</string> <!-- TODO: translate -->
-    <string name="process_text_action_name">Clean URL (Léon)</string> <!-- TODO: translate -->
+    <string name="register_as_browser">Зарегистрировать Léon как браузер</string>
+    <string name="open_in_custom_tabs">Открывать URL во встроенных вкладках браузера</string>
+    <string name="action_after_clean">Действие после очистки</string>
+    <string name="do_nothing">Ничего не делать</string>
+    <string name="open_share_menu">Открыть меню «Поделиться»</string>
+    <string name="open_url">Открыть URL</string>
+    <string name="copy_to_clipboard">Копировать в буфер обмена</string>
+    <string name="process_text_action_name">Очистить URL (Léon)</string>
 </resources>

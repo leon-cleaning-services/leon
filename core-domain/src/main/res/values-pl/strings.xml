@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Léon - The URL Cleaner
-  ~ Copyright (C) 2022 Sven Jacobs
+  ~ Copyright (C) 2026 Sven Jacobs
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
   -->
 
 <resources>
-    <string name="sanitizer_amazon_product_name">Продукты Amazon</string>
-    <string name="sanitizer_aol_search_name">Поиск AOL</string>
-    <string name="sanitizer_empty_parameters_name">Пустые параметры</string>
-    <string name="sanitizer_google_search_name">Поиск Google</string>
-    <string name="sanitizer_mydealz_parameters_name">Параметры MyDealz</string>
-    <string name="sanitizer_mydealz_redirects_name">Перенаправления MyDealz</string>
-    <string name="sanitizer_yahoo_search_name">Поиск Yahoo</string>
-    <string name="sanitizer_youtube_redirect_name">Перенаправление YouTube</string>
+    <string name="sanitizer_amazon_product_name">Produkty Amazon</string>
+    <string name="sanitizer_aol_search_name">Wyszukiwanie AOL</string>
+    <string name="sanitizer_empty_parameters_name">Puste parametry</string>
+    <string name="sanitizer_google_search_name">Wyszukiwarka Google</string>
+    <string name="sanitizer_mydealz_parameters_name">Parametry MyDealz</string>
+    <string name="sanitizer_mydealz_redirects_name">Przekierowania MyDealz</string>
+    <string name="sanitizer_yahoo_search_name">Wyszukiwanie Yahoo</string>
+    <string name="sanitizer_youtube_redirect_name">Przekierowanie YouTube</string>
 </resources>
