@@ -73,11 +73,13 @@ class SettingsSanitizersScreenViewModel(
                         }
                         .sortedBy { it.name.lowercase() }
 
+                val trimmedQuery = query.trim()
+
                 val filteredSanitizers =
-                    if (query.isBlank()) {
+                    if (trimmedQuery.isBlank()) {
                         allSanitizers
                     } else {
-                        allSanitizers.filter { it.name.contains(query, ignoreCase = true) }
+                        allSanitizers.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
                     }
 
                 UiState(
