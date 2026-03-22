@@ -25,6 +25,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.amazon.AmazonSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.aol.AolSearchSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.at.AtAnalyticsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.autotrader.AutoTraderSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.bluesky.BlueskyRedirectSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.cargurus.CarGurusSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.change.ChangeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.cx.CxAnalyticsSanitizer
@@ -91,6 +92,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
             sanitizers =
                 persistentListOf(
                     AliexpressSanitizer(),
+                    BlueskyRedirectSanitizer(),
                     AmazonProductSanitizer(),
                     AmazonSanitizer(),
                     AolSearchSanitizer(),
