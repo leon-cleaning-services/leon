@@ -68,11 +68,19 @@ class AppDataStoreManager(private val context: Context = AppContext) {
     val customTabsEnabled: Flow<Boolean> =
         context.dataStore.data.map { preferences -> preferences[KEY_CUSTOM_TABS] ?: false }
 
+    suspend fun setProtectScreenEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[KEY_PROTECT_SCREEN] = enabled }
+    }
+
+    val protectScreenEnabled: Flow<Boolean> =
+        context.dataStore.data.map { preferences -> preferences[KEY_PROTECT_SCREEN] ?: false }
+
     private companion object {
         private val KEY_VERSION_CODE = intPreferencesKey("version_code")
         private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
         private val KEY_URL_DECODE = booleanPreferencesKey("url_decode")
         private val KEY_EXTRACT_URL = booleanPreferencesKey("extract_url")
         private val KEY_CUSTOM_TABS = booleanPreferencesKey("custom_tabs")
+        private val KEY_PROTECT_SCREEN = booleanPreferencesKey("protect_screen")
     }
 }
