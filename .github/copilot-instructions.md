@@ -52,6 +52,11 @@ Every pull request **must** have exactly one label that reflects the nature of t
 | `documentation` | Documentation-only changes                                       |
 | `refactor`      | Code refactoring without behavior changes                        |
 
+## Pull Request State
+
+After all work is done, the pull request **must** be marked as **"ready for review"**. This signals
+that the implementation is complete and the PR is ready for human review.
+
 ## Closing Keywords
 
 If a pull request implements a feature request or fixes a bug that originates from a GitHub issue,
