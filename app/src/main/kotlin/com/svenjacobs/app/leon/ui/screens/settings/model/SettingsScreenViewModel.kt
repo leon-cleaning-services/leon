@@ -44,6 +44,7 @@ class SettingsScreenViewModel(
         val isLoading: Boolean = true,
         val browserEnabled: Boolean = false,
         val customTabsEnabled: Boolean = false,
+        val protectScreenEnabled: Boolean = false,
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
     )
 
@@ -53,12 +54,14 @@ class SettingsScreenViewModel(
         combine(
                 browserEnabled,
                 appDataStoreManager.customTabsEnabled,
+                appDataStoreManager.protectScreenEnabled,
                 appDataStoreManager.actionAfterClean,
-            ) { browserEnabled, customTabsEnabled, actionAfterClean ->
+            ) { browserEnabled, customTabsEnabled, protectScreenEnabled, actionAfterClean ->
                 UiState(
                     isLoading = false,
                     browserEnabled = browserEnabled,
                     customTabsEnabled = customTabsEnabled,
+                    protectScreenEnabled = protectScreenEnabled,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
                 )
             }
@@ -88,6 +91,10 @@ class SettingsScreenViewModel(
 
     fun onCustomTabsSwitchCheckedChange(checked: Boolean) {
         viewModelScope.launch { appDataStoreManager.setCustomTabsEnabled(checked) }
+    }
+
+    fun onProtectScreenSwitchCheckedChange(checked: Boolean) {
+        viewModelScope.launch { appDataStoreManager.setProtectScreenEnabled(checked) }
     }
 
     fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {

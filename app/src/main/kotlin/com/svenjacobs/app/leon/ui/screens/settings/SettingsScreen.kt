@@ -67,11 +67,13 @@ fun SettingsScreen(
         isLoading = uiState.isLoading,
         browserEnabled = uiState.browserEnabled,
         customTabsEnabled = uiState.customTabsEnabled,
+        protectScreenEnabled = uiState.protectScreenEnabled,
         actionAfterClean = uiState.actionAfterClean,
         onSanitizersClick = onNavigateToSettingsSanitizers,
         onLicensesClick = onNavigateToSettingsLicenses,
         onBrowserSwitchCheckedChange = viewModel::onBrowserSwitchCheckedChange,
         onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
+        onProtectScreenSwitchCheckedChange = viewModel::onProtectScreenSwitchCheckedChange,
         onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
     )
 }
@@ -81,11 +83,13 @@ private fun Content(
     isLoading: Boolean,
     browserEnabled: Boolean,
     customTabsEnabled: Boolean,
+    protectScreenEnabled: Boolean,
     actionAfterClean: ActionAfterClean,
     onSanitizersClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onBrowserSwitchCheckedChange: (Boolean) -> Unit,
     onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
+    onProtectScreenSwitchCheckedChange: (Boolean) -> Unit,
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -118,6 +122,13 @@ private fun Content(
                     checked = customTabsEnabled,
                     onCheckedChange = onCustomTabsSwitchCheckedChange,
                     enabled = !isDefaultBrowser(LocalContext.current),
+                )
+
+                SwitchRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(R.string.protect_screen),
+                    checked = protectScreenEnabled,
+                    onCheckedChange = onProtectScreenSwitchCheckedChange,
                 )
 
                 Column(modifier = Modifier.padding(top = 8.dp)) {
@@ -225,11 +236,13 @@ private fun ContentPreview() {
             isLoading = false,
             browserEnabled = false,
             customTabsEnabled = false,
+            protectScreenEnabled = false,
             actionAfterClean = ActionAfterClean.OpenShareMenu,
             onSanitizersClick = {},
             onLicensesClick = {},
             onBrowserSwitchCheckedChange = {},
             onCustomTabsSwitchCheckedChange = {},
+            onProtectScreenSwitchCheckedChange = {},
             onActionAfterCleanClick = {},
         )
     }
