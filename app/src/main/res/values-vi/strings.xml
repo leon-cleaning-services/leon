@@ -47,4 +47,5 @@
     <string name="open_url">Mở URL</string>
     <string name="copy_to_clipboard">Sao chép vào clipboard</string>
     <string name="process_text_action_name">Làm sạch URL (Léon)</string>
+    <string name="protect_screen">Bảo vệ màn hình ứng dụng</string>
 </resources>

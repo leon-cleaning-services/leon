@@ -47,4 +47,5 @@
     <string name="open_url">Открыть URL</string>
     <string name="copy_to_clipboard">Копировать в буфер обмена</string>
     <string name="process_text_action_name">Очистить URL (Léon)</string>
+    <string name="protect_screen">Защитить экран приложения</string>
 </resources>
