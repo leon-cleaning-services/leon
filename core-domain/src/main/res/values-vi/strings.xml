@@ -25,4 +25,5 @@
     <string name="sanitizer_mydealz_redirects_name">Chuyển hướng MyDealz</string>
     <string name="sanitizer_yahoo_search_name">Tìm kiếm Yahoo</string>
     <string name="sanitizer_youtube_redirect_name">Chuyển hướng YouTube</string>
+    <string name="sanitizer_bluesky_redirect_name">Chuyển hướng Bluesky</string>
 </resources>

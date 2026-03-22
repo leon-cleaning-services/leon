@@ -25,4 +25,5 @@
     <string name="sanitizer_mydealz_redirects_name">Перенаправления MyDealz</string>
     <string name="sanitizer_yahoo_search_name">Поиск Yahoo</string>
     <string name="sanitizer_youtube_redirect_name">Перенаправление YouTube</string>
+    <string name="sanitizer_bluesky_redirect_name">Перенаправление Bluesky</string>
 </resources>

@@ -25,4 +25,5 @@
     <string name="sanitizer_mydealz_redirects_name">MyDealz Weiterleitungen</string>
     <string name="sanitizer_yahoo_search_name">Yahoo Suche</string>
     <string name="sanitizer_youtube_redirect_name">YouTube Weiterleitung</string>
+    <string name="sanitizer_bluesky_redirect_name">Bluesky Weiterleitung</string>
 </resources>
