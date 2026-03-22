@@ -18,7 +18,7 @@
 
 <resources>
     <string name="sanitizer_aliexpress_name" translatable="false">AliExpress</string>
-    <string name="sanitizer_bluesky_redirect_name" translatable="false">Bluesky Redirect</string>
+    <string name="sanitizer_bluesky_redirect_name">Bluesky Redirect</string>
     <string name="sanitizer_amazon_name" translatable="false">Amazon</string>
     <string name="sanitizer_amazon_product_name">Amazon Products</string>
     <string name="sanitizer_aol_search_name">AOL Search</string>
