@@ -26,7 +26,6 @@ plugins {
     kotlin("plugin.parcelize")
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.aboutlibraries)
-    alias(libs.plugins.triplet.play)
 }
 
 java {
@@ -115,14 +114,6 @@ kotlin {
             "-opt-in=kotlin.RequiresOptIn",
         )
     }
-}
-
-composeCompiler {
-}
-
-play {
-    serviceAccountCredentials.set(rootProject.file("google-play-service-account.json"))
-    defaultToAppBundles.set(true)
 }
 
 dependencies {
