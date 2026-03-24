@@ -46,10 +46,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleSearchSanitize
 import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleStoreSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.heise.HeiseSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.ikea.IkeaSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.ilmessaggero.IlMessaggeroSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.instagram.InstagramSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.jdoqocy.JdoqocySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.jodel.JodelSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.kogan.KoganSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.latinatoday.LatinaTodaySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.lazada.LazadaSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.linkedin.LinkedInSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.linksynergy.LinkSynergySanitizer
@@ -119,10 +121,12 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     GoogleStoreSanitizer(),
                     HeiseSanitizer(),
                     IkeaSanitizer(),
+                    IlMessaggeroSanitizer(),
                     InstagramSanitizer(),
                     JdoqocySanitizer(),
                     JodelSanitizer(),
                     KoganSanitizer(),
+                    LatinaTodaySanitizer(),
                     LazadaSanitizer(),
                     LinkedInSanitizer(),
                     LinkSynergySanitizer(),
