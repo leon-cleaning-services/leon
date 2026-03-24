@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,31 +24,33 @@ class IlMessaggeroSanitizerTest :
     WordSpec({
         val sanitizer = IlMessaggeroSanitizer()
 
-        "invoke" should {
-            "remove all parameters except topic" {
-                sanitizer(
-                    "https://archivio.ilmessaggero.it/articolo?topic=politica&utm_source=facebook&utm_medium=social"
-                ) shouldBe "https://archivio.ilmessaggero.it/articolo?topic=politica"
+        "invoke" should
+            {
+                "remove all parameters except topic" {
+                    sanitizer(
+                        "https://archivio.ilmessaggero.it/articolo?topic=politica&utm_source=facebook&utm_medium=social"
+                    ) shouldBe "https://archivio.ilmessaggero.it/articolo?topic=politica"
+                }
+
+                "remove all parameters when topic is absent" {
+                    sanitizer(
+                        "https://archivio.ilmessaggero.it/articolo?utm_source=facebook&utm_medium=social"
+                    ) shouldBe "https://archivio.ilmessaggero.it/articolo"
+                }
             }
 
-            "remove all parameters when topic is absent" {
-                sanitizer(
-                    "https://archivio.ilmessaggero.it/articolo?utm_source=facebook&utm_medium=social"
-                ) shouldBe "https://archivio.ilmessaggero.it/articolo"
-            }
-        }
+        "matchesDomain" should
+            {
+                "match archivio.ilmessaggero.it" {
+                    sanitizer.matchesDomain("https://archivio.ilmessaggero.it") shouldBe true
+                }
 
-        "matchesDomain" should {
-            "match archivio.ilmessaggero.it" {
-                sanitizer.matchesDomain("https://archivio.ilmessaggero.it") shouldBe true
-            }
+                "not match ilmessaggero.it" {
+                    sanitizer.matchesDomain("https://ilmessaggero.it") shouldBe false
+                }
 
-            "not match ilmessaggero.it" {
-                sanitizer.matchesDomain("https://ilmessaggero.it") shouldBe false
+                "not match other.com" {
+                    sanitizer.matchesDomain("https://other.com") shouldBe false
+                }
             }
-
-            "not match other.com" {
-                sanitizer.matchesDomain("https://other.com") shouldBe false
-            }
-        }
     })
