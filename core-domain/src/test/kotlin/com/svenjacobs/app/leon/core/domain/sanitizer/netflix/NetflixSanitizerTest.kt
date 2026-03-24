@@ -44,6 +44,17 @@ class NetflixSanitizerTest :
 
                     result shouldBe "https://help.netflix.com/en/titlerequest"
                 }
+
+                "remove all query arguments from US title URL" {
+                    val result =
+                        sanitizer(
+                            "https://www.netflix.com/us/title/81461530?s=a&trkid=13747225&shareType=Title" +
+                                "&shareUuid=8266283d-94f3-42b5-83ac-ad2be3c826c9&trg=cp" +
+                                "&unifiedEntityIdEncoded=Video%3A81461530&vlang=en&clip=82633134"
+                        )
+
+                    result shouldBe "https://www.netflix.com/us/title/81461530"
+                }
             }
 
         "matchesDomain" should
