@@ -25,10 +25,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class NetflixSanitizer :
-    RegexSanitizer(
-        regex = RegexFactory.AllParameters,
-    ) {
+class NetflixSanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) {
 
     override val id = SanitizerId("netflix")
 
