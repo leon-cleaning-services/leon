@@ -86,6 +86,18 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeShortUrlSanitizer
 import com.svenjacobs.app.leon.sanitizer.SanitizerRepositoryImpl
 import kotlinx.collections.immutable.persistentListOf
+import com.svenjacobs.app.leon.core.domain.sanitizer.xiaohongshu.XiaohongshuSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.douyin.DouyinSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.wechat.WechatSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.taobao.TaobaoSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.bilibili.BilibiliSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.pinduoduo.PddSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.jd.JdSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.kuaishou.KuaishouSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.weibo.WeiboSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.zhihu.ZhihuSanitizer
+
+
 
 class ContainerInitializer : DistinctInitializer<Unit> {
 
@@ -160,6 +172,17 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     YoutubeRedirectSanitizer(),
                     YoutubeSanitizer(),
                     YoutubeShortUrlSanitizer(),
+                    XiaohongshuSanitizer(),
+                    DouyinSanitizer(),
+                    WechatSanitizer(),
+                    TaobaoSanitizer(),
+                    BilibiliSanitizer(),
+                    PddSanitizer(),
+                    JdSanitizer(),
+                    KuaishouSanitizer(),
+                    WeiboSanitizer(),
+                    ZhihuSanitizer()
+                    
                 ),
         )
     }
