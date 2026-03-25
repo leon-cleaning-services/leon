@@ -67,6 +67,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.reddit.RedditSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.salesforce.SalesforceParametersSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.sessionids.SessionIdsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.shopee.ShopeeSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.snapchat.SnapchatSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.spiegel.SpiegelSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.spotify.SpotifySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.substack.SubstackSanitizer
@@ -142,6 +143,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     SalesforceParametersSanitizer(),
                     SessionIdsSanitizer(),
                     ShopeeSanitizer(),
+                    SnapchatSanitizer(),
                     SpiegelSanitizer(),
                     SpotifySanitizer(),
                     SubstackSanitizer(),
