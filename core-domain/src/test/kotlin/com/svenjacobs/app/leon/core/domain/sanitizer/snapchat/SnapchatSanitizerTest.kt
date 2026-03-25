@@ -24,21 +24,23 @@ class SnapchatSanitizerTest :
     WordSpec({
         val sanitizer = SnapchatSanitizer()
 
-        "invoke" should {
-            "remove all query parameters from Snapchat URLs" {
-                sanitizer(
-                    "https://www.snapchat.com/add/thesmileybunch?share_id=tUPMpk8AeX0&locale=fi-Fl-u-fw-mon-mu-celsius",
-                ) shouldBe "https://www.snapchat.com/add/thesmileybunch"
-            }
-        }
-
-        "matchesDomain" should {
-            "match snapchat.com" {
-                sanitizer.matchesDomain("https://www.snapchat.com") shouldBe true
+        "invoke" should
+            {
+                "remove all query parameters from Snapchat URLs" {
+                    sanitizer(
+                        "https://www.snapchat.com/add/thesmileybunch?share_id=tUPMpk8AeX0&locale=fi-Fl-u-fw-mon-mu-celsius"
+                    ) shouldBe "https://www.snapchat.com/add/thesmileybunch"
+                }
             }
 
-            "not match other domains" {
-                sanitizer.matchesDomain("https://www.example.com") shouldBe false
+        "matchesDomain" should
+            {
+                "match snapchat.com" {
+                    sanitizer.matchesDomain("https://www.snapchat.com") shouldBe true
+                }
+
+                "not match other domains" {
+                    sanitizer.matchesDomain("https://www.example.com") shouldBe false
+                }
             }
-        }
     })
