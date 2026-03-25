@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ class SnapchatSanitizerTest :
         "invoke" should {
             "remove all query parameters from Snapchat URLs" {
                 sanitizer(
-                    "https://www.snapchat.com/add/thesmileybunchh?share_id=tUPMpk8AeX0&locale=fi-Fl-u-fw-mon-mu-celsius",
-                ) shouldBe "https://www.snapchat.com/add/thesmileybunchh"
+                    "https://www.snapchat.com/add/thesmileybunch?share_id=tUPMpk8AeX0&locale=fi-Fl-u-fw-mon-mu-celsius",
+                ) shouldBe "https://www.snapchat.com/add/thesmileybunch"
             }
         }
 
