@@ -36,9 +36,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
-import com.svenjacobs.app.leon.AppConstants
 import com.svenjacobs.app.leon.BuildConfig
 import com.svenjacobs.app.leon.R
+import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsScreenViewModel
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
 
@@ -72,8 +72,8 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
                         buildLinkedAnnotatedString(
                             template = developerTemplate,
                             linkStyles = linkStyles,
-                            "Sven Jacobs" to AppConstants.AUTHOR_URL,
-                            contributorsText to AppConstants.CONTRIBUTORS_URL,
+                            "Sven Jacobs" to SettingsScreenViewModel.AUTHOR_URL,
+                            contributorsText to SettingsScreenViewModel.CONTRIBUTORS_URL,
                         ),
                 )
 
@@ -83,7 +83,7 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
                         buildLinkedAnnotatedString(
                             template = licenseTemplate,
                             linkStyles = linkStyles,
-                            AppConstants.GITHUB_URL to AppConstants.GITHUB_URL,
+                            SettingsScreenViewModel.GITHUB_URL to SettingsScreenViewModel.GITHUB_URL,
                         ),
                 )
 
@@ -93,7 +93,7 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
                         buildLinkedAnnotatedString(
                             template = bugsTemplate,
                             linkStyles = linkStyles,
-                            AppConstants.ISSUES_URL to AppConstants.ISSUES_URL,
+                            SettingsScreenViewModel.ISSUES_URL to SettingsScreenViewModel.ISSUES_URL,
                         ),
                 )
 
@@ -103,7 +103,8 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
                         buildLinkedAnnotatedString(
                             template = sponsorTemplate,
                             linkStyles = linkStyles,
-                            AppConstants.SPONSORS_URL to AppConstants.SPONSORS_URL,
+                            SettingsScreenViewModel.SPONSORS_URL to
+                                SettingsScreenViewModel.SPONSORS_URL,
                         ),
                 )
 
