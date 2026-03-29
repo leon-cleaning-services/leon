@@ -48,4 +48,12 @@
     <string name="copy_to_clipboard">Sao chép vào clipboard</string>
     <string name="process_text_action_name">Làm sạch URL (Léon)</string>
     <string name="protect_screen">Bảo vệ màn hình ứng dụng</string>
+    <string name="about">Thông tin</string>
+    <string name="about_developer">Được phát triển bởi %1$s với sự giúp đỡ của nhiều %2$s.</string>
+    <string name="about_contributors">người đóng góp</string>
+    <string name="about_license">Được cấp phép theo GPL 3.0. Mã nguồn tại %1$s.</string>
+    <string name="about_bugs">Lỗi và yêu cầu tính năng tại %1$s.</string>
+    <string name="about_sponsor">Tài trợ cho nhà phát triển tại %1$s.</string>
+    <string name="about_version">Phiên bản: %1$s</string>
+    <string name="close">Đóng</string>
 </resources>
