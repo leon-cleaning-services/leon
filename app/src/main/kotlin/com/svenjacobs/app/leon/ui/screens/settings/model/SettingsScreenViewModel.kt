@@ -108,7 +108,7 @@ class SettingsScreenViewModel(
         get() = ComponentName(context.packageName, "${context.packageName}.$COMPONENT_NAME_CLASS")
 
     companion object {
-        const val COMPONENT_NAME_CLASS = "MainBrowserActivity"
+        private const val COMPONENT_NAME_CLASS = "MainBrowserActivity"
         const val GITHUB_URL = "https://github.com/leon-cleaning-services/leon"
         const val CONTRIBUTORS_URL = "$GITHUB_URL?tab=readme-ov-file#contributors"
         const val ISSUES_URL = "$GITHUB_URL/issues"
