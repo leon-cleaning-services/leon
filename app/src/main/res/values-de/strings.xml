@@ -26,7 +26,7 @@
     <string name="clipboard_message">Link in Zwischenablage kopiert</string>
     <string name="clipboard_empty_message">Zwischenablage ist leer</string>
     <string name="how_to_title">Anleitung</string>
-    <string name="how_to_text">Wähle die App \"URL Cleaner\" beim Teilen von Text aus. Klicke anschließend in dieser App auf \"Teilen\", um den Text an die Ziel-App zu schicken. Alternativ, klicke die Schaltflächte oben, um den Inhalt aus der Zwischenablage zu importieren.\n\nEs ist auch möglich editierbaren Text in einer App auszuwählen und anschließend in dem Kontextmenü Léon zu wählen, um den Text and Ort und Stelle zu reinigen.</string>
+    <string name="how_to_text">Wähle die App \"URL Cleaner\" beim Teilen von Text aus. Klicke anschließend in dieser App auf \"Teilen\", um den Text an die Ziel-App zu schicken. Alternativ, klicke die Schaltfläche oben, um den Inhalt aus der Zwischenablage zu importieren.\n\nEs ist auch möglich editierbaren Text in einer App auszuwählen und anschließend in dem Kontextmenü Léon zu wählen, um den Text and Ort und Stelle zu reinigen.</string>
     <string name="cleaned_url">Gesäuberte URL</string>
     <string name="original_url">Original URL</string>
     <string name="sanitizers">Reiniger</string>
