@@ -13,7 +13,9 @@ class PddSanitizer : Sanitizer {
         Sanitizer.Metadata(name = "拼多多")
 
     override fun matchesDomain(input: String): Boolean =
-        input.matchesDomain("pinduoduo.com") || input.matchesDomain("pdd.com")
+        input.matchesDomain("pinduoduo.com") ||
+        input.matchesDomain("pdd.com") ||
+        input.matchesDomain("yangkeduo.com")  // 覆盖 mobile.yangkeduo.com 及其它子域名
 
     override fun invoke(input: String): String {
         return input

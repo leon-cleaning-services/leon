@@ -1,7 +1,7 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.xiaohongshu
 
 import android.content.Context
-import com.svenjacobs.app.leon.core.common.domain.matchesDomain  // 扩展函数
+import com.svenjacobs.app.leon.core.common.domain.matchesDomain
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
@@ -16,14 +16,7 @@ class XiaohongshuSanitizer : Sanitizer {
         input.matchesDomain("xiaohongshu.com") || input.matchesDomain("xhslink.com")
 
     override fun invoke(input: String): String {
-        return input
-            .replace(Regex("&xhslink=[^&]*"), "")
-            .replace(Regex("&from=[^&]*"), "")
-            .replace(Regex("&share_id=[^&]*"), "")
-            .replace(Regex("&share_user_id=[^&]*"), "")
-            .replace(Regex("&wx_fakeid=[^&]*"), "")
-            .replace(Regex("&scene=[^&]*"), "")
-            .replace(Regex("&is_share=[^&]*"), "")
-            .removeSuffix("?")
+        // 直接截取 '?' 之前的部分，去掉所有查询参数
+        return input.substringBefore('?')
     }
 }
