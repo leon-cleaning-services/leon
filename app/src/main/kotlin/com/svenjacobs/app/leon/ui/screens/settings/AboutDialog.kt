@@ -124,7 +124,7 @@ private fun buildLinkedAnnotatedString(
 ): AnnotatedString = buildAnnotatedString {
     var cursor = 0
     linkPairs.forEachIndexed { index, (displayText, url) ->
-        val placeholder = "%${index + 1}\$s"
+        val placeholder = $$"%$${index + 1}$s"
         val pos = template.indexOf(placeholder, cursor)
         if (pos >= 0) {
             append(template.substring(cursor, pos))
