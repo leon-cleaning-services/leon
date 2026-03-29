@@ -48,4 +48,12 @@
     <string name="copy_to_clipboard">Kopiuj do schowka</string>
     <string name="process_text_action_name">Wyczyść URL (Léon)</string>
     <string name="protect_screen">Chroń ekran aplikacji</string>
+    <string name="about">O aplikacji</string>
+    <string name="about_developer">Opracowane przez %1$s przy pomocy wielu %2$s.</string>
+    <string name="about_contributors">współtwórców</string>
+    <string name="about_license">Licencjonowane na GPL 3.0. Kod źródłowy pod adresem %1$s.</string>
+    <string name="about_bugs">Błędy i prośby o funkcje można zgłaszać pod adresem %1$s.</string>
+    <string name="about_sponsor">Sponsoruj dewelopera pod adresem %1$s.</string>
+    <string name="about_version">Wersja: %1$s</string>
+    <string name="close">Zamknij</string>
 </resources>
