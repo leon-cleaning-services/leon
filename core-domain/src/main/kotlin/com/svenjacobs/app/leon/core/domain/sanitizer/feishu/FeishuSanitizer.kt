@@ -19,13 +19,14 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.feishu_dingtalk
 
 import android.content.Context
 import android.net.Uri
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class FeishuDingtalkSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:from|scene|channel|source|refer)=[^&]*)")
+    regex = RegexFactory.ofParameter("from|scene|channel|source|refer")
 ) {
 
     override val id = SanitizerId("feishu_dingtalk")

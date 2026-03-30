@@ -19,13 +19,14 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.taobao
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class TaobaoSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:smid|ut_ma|track_id|spm|share_crt_v|tbkt|isg|tk)=[^&]*)")
+    regex = RegexFactory.ofParameter("smid|ut_ma|track_id|spm|share_crt_v|tbkt|isg|tk")
 ) {
 
     override val id = SanitizerId("taobao")

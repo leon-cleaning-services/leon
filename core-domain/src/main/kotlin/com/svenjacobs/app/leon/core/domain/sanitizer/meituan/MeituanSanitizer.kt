@@ -19,13 +19,17 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.meituan_dianping
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class MeituanDianpingSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:from|source|channel|refer|wm|c|wx_?[^=]*)=[^&]*)")
+    regex = Regex("(" +
+        RegexFactory.ofParameter("from|source|channel|refer|wm|c").pattern + "|" +
+        RegexFactory.ofWildcardParameter("wx").pattern + ")"
+    )
 ) {
 
     override val id = SanitizerId("meituan_dianping")

@@ -19,13 +19,14 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.kuaishou
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class KuaishouSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:share|userId|photoId)=[^&]*)")
+    regex = RegexFactory.ofParameter("share|userId|photoId")
 ) {
 
     override val id = SanitizerId("kuaishou")

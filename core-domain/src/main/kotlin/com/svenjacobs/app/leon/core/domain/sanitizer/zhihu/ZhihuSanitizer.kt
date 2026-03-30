@@ -19,13 +19,14 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.zhihu
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class ZhihuSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:share_redirect|share_code)=[^&]*)")
+    regex = RegexFactory.ofParameter("share_redirect|share_code")
 ) {
 
     override val id = SanitizerId("zhihu")

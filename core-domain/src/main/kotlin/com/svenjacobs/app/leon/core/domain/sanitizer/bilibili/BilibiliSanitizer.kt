@@ -19,13 +19,14 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.bilibili
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class BilibiliSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:vd_source|seid|from|share_source|copy_link)=[^&]*)")
+    regex = RegexFactory.ofParameter("vd_source|seid|from|share_source|copy_link")
 ) {
 
     override val id = SanitizerId("bilibili")

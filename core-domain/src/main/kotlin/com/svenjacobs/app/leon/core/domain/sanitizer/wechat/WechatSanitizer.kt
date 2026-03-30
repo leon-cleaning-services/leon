@@ -19,13 +19,14 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.wechat
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class WechatSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:__biz|mid|idx|sn|scene|wx_header)=[^&]*)")
+    regex = RegexFactory.ofParameter("__biz|mid|idx|sn|scene|wx_header")
 ) {
 
     override val id = SanitizerId("wechat")

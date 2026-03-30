@@ -19,13 +19,14 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.pinduoduo
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
 class PddSanitizer : RegexSanitizer(
-    regex = Regex("([?&](?:pid|share_uin|track_id|goods_sign)=[^&]*)")
+    regex = RegexFactory.ofParameter("pid|share_uin|track_id|goods_sign")
 ) {
 
     override val id = SanitizerId("pinduoduo")
