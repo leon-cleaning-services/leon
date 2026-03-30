@@ -48,4 +48,12 @@
     <string name="copy_to_clipboard">Копировать в буфер обмена</string>
     <string name="process_text_action_name">Очистить URL (Léon)</string>
     <string name="protect_screen">Защитить экран приложения</string>
+    <string name="about">О программе</string>
+    <string name="about_developer">Разработано %1$s при помощи многих %2$s.</string>
+    <string name="about_contributors">участников</string>
+    <string name="about_license">Лицензировано под GPL 3.0. Исходный код на %1$s.</string>
+    <string name="about_bugs">Об ошибках и запросах функций можно сообщить на %1$s.</string>
+    <string name="about_sponsor">Поддержите разработчика на %1$s.</string>
+    <string name="about_version">Версия: %1$s</string>
+    <string name="close">Закрыть</string>
 </resources>

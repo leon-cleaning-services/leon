@@ -49,4 +49,12 @@
     <string name="copy_to_clipboard">Copy to clipboard</string>
     <string name="process_text_action_name">Clean URL (Léon)</string>
     <string name="protect_screen">Protect app screen</string>
+    <string name="about">About</string>
+    <string name="about_developer">Developed by %1$s with the help of many %2$s.</string>
+    <string name="about_contributors">contributors</string>
+    <string name="about_license">Licensed under GPL 3.0. Source code at %1$s.</string>
+    <string name="about_bugs">Bugs and feature requests at %1$s.</string>
+    <string name="about_sponsor">Sponsor the developer at %1$s.</string>
+    <string name="about_version">Version: %1$s</string>
+    <string name="close">Close</string>
 </resources>

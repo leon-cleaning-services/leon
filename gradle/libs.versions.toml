@@ -1,9 +1,9 @@
 [versions]
 android-gradle-plugin = "9.1.0"
 androidx-activity = "1.13.0"
-androidx-compose-bom = "2026.03.00" # https://developer.android.com/jetpack/compose/bom/bom-mapping
+androidx-compose-bom = "2026.03.01" # https://developer.android.com/jetpack/compose/bom/bom-mapping
 androidx-lifecycle = "2.10.0"
-kotest = "6.1.7"
+kotest = "6.1.9"
 kotlin = "2.3.20"
 kotlinx-coroutines = "1.10.2"
 mikepenz-aboutlibraries = "14.0.0-b02"
@@ -12,7 +12,7 @@ mikepenz-aboutlibraries = "14.0.0-b02"
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
-androidx-browser = "androidx.browser:browser:1.9.0"
+androidx-browser = "androidx.browser:browser:1.10.0"
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
@@ -55,4 +55,4 @@ androidx-compose = [
 adarshr-test-logger = "com.adarshr.test-logger:4.0.0"
 ben-manes-versions = "com.github.ben-manes.versions:0.53.0"
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "mikepenz-aboutlibraries" }
-spotless = "com.diffplug.spotless:8.3.0"
+spotless = "com.diffplug.spotless:8.4.0"
