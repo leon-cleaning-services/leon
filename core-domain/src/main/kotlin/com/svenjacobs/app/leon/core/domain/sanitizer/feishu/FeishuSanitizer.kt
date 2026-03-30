@@ -19,14 +19,20 @@ package com.svenjacobs.app.leon.core.domain.sanitizer.feishu_dingtalk
 
 import android.content.Context
 import android.net.Uri
+import com.svenjacobs.app.leon.core.domain.R
+import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class FeishuDingtalkSanitizer : Sanitizer {
+class FeishuDingtalkSanitizer : RegexSanitizer(
+    regex = Regex("([?&](?:from|scene|channel|source|refer)=[^&]*)")
+) {
 
     override val id = SanitizerId("feishu_dingtalk")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(name = "飞书 / 钉钉")
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_feishu_dingtalk_name)
+    )
 
     override fun matchesDomain(input: String): Boolean {
         val host = runCatching { Uri.parse(input).host }.getOrNull() ?: return false
@@ -40,24 +46,5 @@ class FeishuDingtalkSanitizer : Sanitizer {
             host.endsWith(".dingtalk.cn")
     }
 
-    override fun invoke(input: String): String {
-        return try {
-            val uri = Uri.parse(input)
-            val builder = uri.buildUpon().clearQuery()
-
-            // 保留所有非跟踪参数
-            val keepParams = mutableMapOf<String, String>()
-            for (name in uri.queryParameterNames) {
-                if (name !in setOf("from", "scene", "channel", "source", "refer")) {
-                    keepParams[name] = uri.getQueryParameter(name) ?: ""
-                }
-            }
-            for ((name, value) in keepParams) {
-                builder.appendQueryParameter(name, value)
-            }
-            builder.build().toString()
-        } catch (e: Exception) {
-            input
-        }
-    }
+    // 无需覆写 invoke，基类会自动移除匹配的正则部分
 }

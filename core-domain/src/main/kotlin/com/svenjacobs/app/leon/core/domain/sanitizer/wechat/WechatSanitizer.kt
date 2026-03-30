@@ -18,27 +18,22 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.wechat
 
 import android.content.Context
-import com.svenjacobs.app.leon.core.common.domain.matchesDomain // 扩展函数
+import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.domain.R
+import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class WechatSanitizer : Sanitizer {
+class WechatSanitizer : RegexSanitizer(
+    regex = Regex("([?&](?:__biz|mid|idx|sn|scene|wx_header)=[^&]*)")
+) {
 
     override val id = SanitizerId("wechat")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(name = "微信")
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(
+        name = context.getString(R.string.sanitizer_wechat_name)
+    )
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("weixin.qq.com") || input.matchesDomain("url.cn")
-
-    override fun invoke(input: String): String {
-        return input
-            .replace(Regex("&__biz=[^&]*"), "")
-            .replace(Regex("&mid=[^&]*"), "")
-            .replace(Regex("&idx=[^&]*"), "")
-            .replace(Regex("&sn=[^&]*"), "")
-            .replace(Regex("&scene=[^&]*"), "")
-            .replace(Regex("&wx_header=[^&]*"), "")
-            .removeSuffix("?")
-    }
 }

@@ -24,9 +24,11 @@
     <string name="sanitizer_aol_search_name">AOL Search</string>
     <string name="sanitizer_at_analytics_name" translatable="false">AT Analytics</string>
     <string name="sanitizer_autotrader_name" translatable="false">AutoTrader</string>
+    <string name="sanitizer_bilibili_name">Bilibili</string>
     <string name="sanitizer_cargurus_name" translatable="false">CarGurus</string>
     <string name="sanitizer_change_name" translatable="false">Change</string>
     <string name="sanitizer_cx_name" translatable="false">CX Analytics</string>
+    <string name="sanitizer_douyin_name">Douyin</string>
     <string name="sanitizer_ebay_name" translatable="false">eBay</string>
     <string name="sanitizer_echobox_name" translatable="false">Echobox</string>
     <string name="sanitizer_elfinanciero_name" translatable="false">ElFinanciero</string>
@@ -35,6 +37,7 @@
     <string name="sanitizer_facebook_name" translatable="false">Facebook.com</string>
     <string name="sanitizer_fastcompany" translatable="false">Fast Company</string>
     <string name="sanitizer_flipkart_name" translatable="false">Flipkart</string>
+    <string name="sanitizer_feishu_dingtalk_name">Feishu / DingTalk</string>
     <string name="sanitizer_adobe_marketo_engage_name" translatable="false">Adobe Marketo Engage</string>
     <string name="sanitizer_ga_name" translatable="false">Google Analytics</string>
     <string name="sanitizer_georiot_name" translatable="false">GeoRiot</string>
@@ -48,7 +51,9 @@
     <string name="sanitizer_instagram_name" translatable="false">Instagram</string>
     <string name="sanitizer_jdoqocy_name" translatable="false">Jdoqocy</string>
     <string name="sanitizer_jodel_name" translatable="false">Jodel</string>
+    <string name="sanitizer_jd_name">JD.com</string>
     <string name="sanitizer_kogan_name" translatable="false">Kogan</string>
+    <string name="sanitizer_kuaishou_name">Kuaishou</string>
     <string name="sanitizer_latinatoday_name" translatable="false">Latina Today</string>
     <string name="sanitizer_lazada" translatable="false">Lazada</string>
     <string name="sanitizer_linkedin_name" translatable="false">LinkedIn</string>
@@ -56,9 +61,11 @@
     <string name="sanitizer_meta_ad_name" translatable="false">Meta Ads</string>
     <string name="sanitizer_mydealz_parameters_name">MyDealz Parameters</string>
     <string name="sanitizer_mydealz_redirects_name">MyDealz Redirects</string>
+    <string name="sanitizer_meituan_dianping_name">Meituan / Dianping</string>
     <string name="sanitizer_netflix_name" translatable="false">Netflix</string>
     <string name="sanitizer_newegg_name" translatable="false">NewEgg</string>
     <string name="sanitizer_pearl" translatable="false">Pearl</string>
+    <string name="sanitizer_pinduoduo_name">Pinduoduo</string>
     <string name="sanitizer_reddit" translatable="false">Reddit</string>
     <string name="sanitizer_reddit_mail" translatable="false">Reddit (click.redditmail.com)</string>
     <string name="sanitizer_reddit_out" translatable="false">Reddit (out.reddit.com)</string>
@@ -72,9 +79,13 @@
     <string name="sanitizer_theguardian" translatable="false">The Guardian</string>
     <string name="sanitizer_threads" translatable="false">Threads</string>
     <string name="sanitizer_tiktok_name" translatable="false">TikTok</string>
+    <string name="sanitizer_taobao_name">Taobao</string>
     <string name="sanitizer_webtrekk_name" translatable="false">Webtrekk</string>
     <string name="sanitizer_wikipedia_name" translatable="false">Wikipedia</string>
+    <string name="sanitizer_wechat_name">WeChat</string>
+    <string name="sanitizer_weibo_name">Weibo</string>
     <string name="sanitizer_x_name" translatable="false">X (Twitter)</string>
+    <string name="sanitizer_xiaohongshu_name">Xiaohongshu</string>
     <string name="sanitizer_yahoo_referrer_name" translatable="false">Yahoo Referrer</string>
     <string name="sanitizer_yahoo_search_name">Yahoo Search</string>
     <string name="sanitizer_yandex" translatable="false">Yandex</string>
@@ -82,4 +93,5 @@
     <string name="sanitizer_youtube_name" translatable="false">YouTube</string>
     <string name="sanitizer_youtube_redirect_name">YouTube Redirect</string>
     <string name="sanitizer_youtube_short_url_name" translatable="false">Youtu.be</string>
+    <string name="sanitizer_zhihu_name">Zhihu</string>
 </resources>

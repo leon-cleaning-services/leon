@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Léon - The URL Cleaner
+  ~ Copyright (C) 2023 Sven Jacobs
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+        <string name="sanitizer_bilibili_name">哔哩哔哩</string>
+        <string name="sanitizer_douyin_name">抖音</string>
+        <string name="sanitizer_feishu_dingtalk_name">飞书 / 钉钉</string>
+        <string name="sanitizer_jd_name">京东</string>
+        <string name="sanitizer_kuaishou_name">快手</string>
+        <string name="sanitizer_meituan_dianping_name">美团 / 大众点评</string>
+        <string name="sanitizer_pinduoduo_name">拼多多</string>
+        <string name="sanitizer_taobao_name">淘宝</string>
+        <string name="sanitizer_wechat_name">微信</string>
+        <string name="sanitizer_weibo_name">微博</string>
+        <string name="sanitizer_xiaohongshu_name">小红书</string>
+        <string name="sanitizer_zhihu_name">知乎</string>
+</resources>
