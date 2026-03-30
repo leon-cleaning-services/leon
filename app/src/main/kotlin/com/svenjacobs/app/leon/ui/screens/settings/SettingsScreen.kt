@@ -93,6 +93,12 @@ private fun Content(
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showAboutDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showAboutDialog) {
+        AboutDialog(onDismissRequest = { showAboutDialog = false })
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -107,6 +113,13 @@ private fun Content(
                     onClick = onLicensesClick,
                 ) {
                     Text(stringResource(R.string.licenses))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = { showAboutDialog = true },
+                ) {
+                    Text(stringResource(R.string.about))
                 }
 
                 SwitchRow(
