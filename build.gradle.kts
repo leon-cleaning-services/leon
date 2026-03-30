@@ -67,6 +67,13 @@ spotless {
     }
 }
 
+allprojects {
+    repositories {
+        mavenCentral()
+        google() 
+    }
+}
+
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
 
     fun isNonStable(version: String) =
