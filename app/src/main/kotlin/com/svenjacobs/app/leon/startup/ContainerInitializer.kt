@@ -96,8 +96,8 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.jd.JdSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.kuaishou.KuaishouSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.weibo.WeiboSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.zhihu.ZhihuSanitizer
-
-
+import com.svenjacobs.app.leon.core.domain.sanitizer.meituan_dianping.MeituanDianpingSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.feishu_dingtalk.FeishuDingtalkSanitizer
 
 class ContainerInitializer : DistinctInitializer<Unit> {
 
@@ -181,8 +181,9 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     JdSanitizer(),
                     KuaishouSanitizer(),
                     WeiboSanitizer(),
-                    ZhihuSanitizer()
-                    
+                    ZhihuSanitizer(),
+                    MeituanDianpingSanitizer(),
+                    FeishuDingtalkSanitizer()
                 ),
         )
     }
