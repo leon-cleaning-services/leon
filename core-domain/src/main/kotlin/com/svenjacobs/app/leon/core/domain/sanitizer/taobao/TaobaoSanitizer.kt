@@ -1,3 +1,20 @@
+/*
+ * Léon - The URL Cleaner
+ * Copyright (C) 2026 Sven Jacobs
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.svenjacobs.app.leon.core.domain.sanitizer.taobao
 
 import android.content.Context
@@ -9,29 +26,29 @@ class TaobaoSanitizer : Sanitizer {
 
     override val id = SanitizerId("taobao")
 
-    override fun getMetadata(context: Context) =
-        Sanitizer.Metadata(name = "淘宝")
+    override fun getMetadata(context: Context) = Sanitizer.Metadata(name = "淘宝")
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("taobao.com") ||
-                input.matchesDomain("tmall.com") ||
-                input.matchesDomain("tb.cn") ||
-                input.matchesDomain("e.tb.cn") ||
-                input.matchesDomain("m.tb.cn")   // 明确添加短链域名
+            input.matchesDomain("tmall.com") ||
+            input.matchesDomain("tb.cn") ||
+            input.matchesDomain("e.tb.cn") ||
+            input.matchesDomain("m.tb.cn") // 明确添加短链域名
 
     override fun invoke(input: String): String {
         // 先将 &amp; 实体转换为 &，便于正则匹配
         var result = input.replace("&amp;", "&")
 
-        result = result
-            .replace(Regex("[?&]smid=[^&]*"), "")
-            .replace(Regex("[?&]ut_ma=[^&]*"), "")
-            .replace(Regex("[?&]track_id=[^&]*"), "")
-            .replace(Regex("[?&]spm=[^&]*"), "")
-            .replace(Regex("[?&]share_crt_v=[^&]*"), "")
-            .replace(Regex("[?&]tbkt=[^&]*"), "")
-            .replace(Regex("[?&]isg=[^&]*"), "")
-            .replace(Regex("[?&]tk=[^&]*"), "")   // 确保 tk 被删除
+        result =
+            result
+                .replace(Regex("[?&]smid=[^&]*"), "")
+                .replace(Regex("[?&]ut_ma=[^&]*"), "")
+                .replace(Regex("[?&]track_id=[^&]*"), "")
+                .replace(Regex("[?&]spm=[^&]*"), "")
+                .replace(Regex("[?&]share_crt_v=[^&]*"), "")
+                .replace(Regex("[?&]tbkt=[^&]*"), "")
+                .replace(Regex("[?&]isg=[^&]*"), "")
+                .replace(Regex("[?&]tk=[^&]*"), "") // 确保 tk 被删除
 
         // 清理末尾残留的 ? 或 &
         return result.replace(Regex("[?&]$"), "")

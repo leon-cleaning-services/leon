@@ -26,10 +26,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.amazon.AmazonSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.aol.AolSearchSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.at.AtAnalyticsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.autotrader.AutoTraderSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.bilibili.BilibiliSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.bluesky.BlueskyRedirectSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.cargurus.CarGurusSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.change.ChangeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.cx.CxAnalyticsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.douyin.DouyinSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.ebay.EbaySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.echobox.EchoboxSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero.ElFinancieroSanitizer
@@ -37,6 +39,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.emptyparameters.EmptyParame
 import com.svenjacobs.app.leon.core.domain.sanitizer.facebook.FacebookAnalyticsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.facebook.FacebookSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.fastcompany.FastCompanySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.feishu_dingtalk.FeishuDingtalkSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.flipkart.FlipkartSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.georiot.GeoRiotSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleAdsSanitizer
@@ -48,19 +51,23 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.heise.HeiseSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.ikea.IkeaSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.ilmessaggero.IlMessaggeroSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.instagram.InstagramSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.jd.JdSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.jdoqocy.JdoqocySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.jodel.JodelSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.kogan.KoganSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.kuaishou.KuaishouSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.latinatoday.LatinaTodaySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.lazada.LazadaSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.linkedin.LinkedInSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.linksynergy.LinkSynergySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.meituan_dianping.MeituanDianpingSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.meta.MetaAdSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.mydealz.MyDealzParametersSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.mydealz.MyDealzRedirectsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.netflix.NetflixSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.newegg.NewEggSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.pearl.PearlSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.pinduoduo.PddSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.reddit.RedditMailSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.reddit.RedditOutSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.reddit.RedditSanitizer
@@ -71,12 +78,16 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.snapchat.SnapchatSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.spiegel.SpiegelSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.spotify.SpotifySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.substack.SubstackSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.taobao.TaobaoSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.theguardian.TheGuardianSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.threads.ThreadsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.tiktok.TiktokSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.webtrekk.WebtrekkSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.wechat.WechatSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.weibo.WeiboSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.wikipedia.WikipediaSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.x.XSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.xiaohongshu.XiaohongshuSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.yahoo.YahooReferrerSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.yahoo.YahooSearchSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.yandex.YandexSanitizer
@@ -84,20 +95,9 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeMusicSanitiz
 import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeRedirectSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeShortUrlSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.zhihu.ZhihuSanitizer
 import com.svenjacobs.app.leon.sanitizer.SanitizerRepositoryImpl
 import kotlinx.collections.immutable.persistentListOf
-import com.svenjacobs.app.leon.core.domain.sanitizer.xiaohongshu.XiaohongshuSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.douyin.DouyinSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.wechat.WechatSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.taobao.TaobaoSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.bilibili.BilibiliSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.pinduoduo.PddSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.jd.JdSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.kuaishou.KuaishouSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.weibo.WeiboSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.zhihu.ZhihuSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.meituan_dianping.MeituanDianpingSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.feishu_dingtalk.FeishuDingtalkSanitizer
 
 class ContainerInitializer : DistinctInitializer<Unit> {
 
@@ -183,7 +183,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     WeiboSanitizer(),
                     ZhihuSanitizer(),
                     MeituanDianpingSanitizer(),
-                    FeishuDingtalkSanitizer()
+                    FeishuDingtalkSanitizer(),
                 ),
         )
     }
