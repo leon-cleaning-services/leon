@@ -15,31 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.svenjacobs.app.leon.core.domain.sanitizer.meituan
+package com.svenjacobs.app.leon.core.domain.sanitizer.dingtalk
 
 import android.content.Context
-import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import android.net.Uri
 import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class MeituanSanitizer : RegexSanitizer(
-    regex = Regex("(" +
-        RegexFactory.ofParameter("from|source|channel|refer|wm|c").pattern + "|" +
-        RegexFactory.ofWildcardParameter("wx").pattern + ")"
-    )
+class DingtalkSanitizer : RegexSanitizer(
+    regex = RegexFactory.ofParameter("from|scene|channel|source|refer")
 ) {
 
-    override val id = SanitizerId("meituan")
+    override val id = SanitizerId("dingtalk")
 
     override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_meituan_name)
+        name = context.getString(R.string.sanitizer_dingtalk_name)
     )
 
-    override fun matchesDomain(input: String): Boolean =
-        input.matchesDomain("meituan.com") ||
-            input.matchesDomain("meituan.cn") ||
-            input.matchesDomain("meituan.net")
+    override fun matchesDomain(input: String): Boolean {
+        val host = runCatching { Uri.parse(input).host }.getOrNull() ?: return false
+        return host == "dingtalk.com" ||
+            host == "dingtalk.cn" ||
+            host.endsWith(".dingtalk.com") ||
+            host.endsWith(".dingtalk.cn")
+    }
 }

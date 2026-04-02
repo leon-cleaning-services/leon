@@ -32,6 +32,8 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.cargurus.CarGurusSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.change.ChangeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.cx.CxAnalyticsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.douyin.DouyinSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.dingtalk.DingtalkSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.dianping.DianpingSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.ebay.EbaySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.echobox.EchoboxSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero.ElFinancieroSanitizer
@@ -39,7 +41,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.emptyparameters.EmptyParame
 import com.svenjacobs.app.leon.core.domain.sanitizer.facebook.FacebookAnalyticsSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.facebook.FacebookSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.fastcompany.FastCompanySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.feishu_dingtalk.FeishuDingtalkSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.feishu.FeishuSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.flipkart.FlipkartSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.georiot.GeoRiotSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleAdsSanitizer
@@ -60,7 +62,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.latinatoday.LatinaTodaySani
 import com.svenjacobs.app.leon.core.domain.sanitizer.lazada.LazadaSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.linkedin.LinkedInSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.linksynergy.LinkSynergySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.meituan_dianping.MeituanDianpingSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.meituan.MeituanSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.meta.MetaAdSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.mydealz.MyDealzParametersSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.mydealz.MyDealzRedirectsSanitizer
@@ -120,6 +122,8 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     ChangeSanitizer(),
                     CxAnalyticsSanitizer(),
                     DouyinSanitizer(),
+                    DingtalkSanitizer(),
+                    DianpingSanitizer(),
                     EbaySanitizer(),
                     EchoboxSanitizer(),
                     ElFinancieroSanitizer(),
@@ -128,7 +132,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     FacebookSanitizer(),
                     FastCompanySanitizer(),
                     FlipkartSanitizer(),
-                    FeishuDingtalkSanitizer(),
+                    FeishuSanitizer(),
                     GeoRiotSanitizer(),
                     GoogleAdsSanitizer(),
                     GoogleAnalyticsSanitizer(),
@@ -151,7 +155,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     MetaAdSanitizer(),
                     MyDealzParametersSanitizer(),
                     MyDealzRedirectsSanitizer(),
-                    MeituanDianpingSanitizer(),
+                    MeituanSanitizer(),
                     NetflixSanitizer(),
                     NewEggSanitizer(),
                     PearlSanitizer(),

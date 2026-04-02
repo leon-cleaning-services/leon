@@ -29,6 +29,8 @@
     <string name="sanitizer_change_name" translatable="false">Change.org</string>
     <string name="sanitizer_cx_name" translatable="false">CX 分析</string>
     <string name="sanitizer_douyin_name">抖音</string>
+    <string name="sanitizer_dingtalk_name">钉钉</string>
+    <string name="sanitizer_dianping_name">大众点评</string>
     <string name="sanitizer_ebay_name" translatable="false">电子湾</string>
     <string name="sanitizer_echobox_name" translatable="false">Echobox</string>
     <string name="sanitizer_elfinanciero_name" translatable="false">El Financiero</string>
@@ -37,7 +39,7 @@
     <string name="sanitizer_facebook_name" translatable="false">Facebook</string>
     <string name="sanitizer_fastcompany" translatable="false">Fast Company</string>
     <string name="sanitizer_flipkart_name" translatable="false">Flipkart</string>
-    <string name="sanitizer_feishu_dingtalk_name">飞书 / 钉钉</string>
+    <string name="sanitizer_feishu_name">飞书</string>
     <string name="sanitizer_adobe_marketo_engage_name" translatable="false">Adobe Marketo Engage</string>
     <string name="sanitizer_ga_name" translatable="false">Google 分析</string>
     <string name="sanitizer_georiot_name" translatable="false">GeoRiot</string>
@@ -61,7 +63,7 @@
     <string name="sanitizer_meta_ad_name" translatable="false">Meta 广告</string>
     <string name="sanitizer_mydealz_parameters_name">MyDealz 参数</string>
     <string name="sanitizer_mydealz_redirects_name">MyDealz 重定向</string>
-    <string name="sanitizer_meituan_dianping_name">美团 / 大众点评</string>
+    <string name="sanitizer_meituan_name">美团</string>
     <string name="sanitizer_netflix_name" translatable="false">奈飞</string>
     <string name="sanitizer_newegg_name" translatable="false">新蛋</string>
     <string name="sanitizer_pearl" translatable="false">Pearl</string>

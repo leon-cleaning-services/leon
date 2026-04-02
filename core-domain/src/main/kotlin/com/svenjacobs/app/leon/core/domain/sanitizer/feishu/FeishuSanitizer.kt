@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.svenjacobs.app.leon.core.domain.sanitizer.feishu_dingtalk
+package com.svenjacobs.app.leon.core.domain.sanitizer.feishu
 
 import android.content.Context
 import android.net.Uri
@@ -25,27 +25,21 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class FeishuDingtalkSanitizer : RegexSanitizer(
+class FeishuSanitizer : RegexSanitizer(
     regex = RegexFactory.ofParameter("from|scene|channel|source|refer")
 ) {
 
-    override val id = SanitizerId("feishu_dingtalk")
+    override val id = SanitizerId("feishu")
 
     override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_feishu_dingtalk_name)
+        name = context.getString(R.string.sanitizer_feishu_name)
     )
 
     override fun matchesDomain(input: String): Boolean {
         val host = runCatching { Uri.parse(input).host }.getOrNull() ?: return false
         return host == "feishu.cn" ||
             host == "feishu.net" ||
-            host == "dingtalk.com" ||
-            host == "dingtalk.cn" ||
             host.endsWith(".feishu.cn") ||
-            host.endsWith(".feishu.net") ||
-            host.endsWith(".dingtalk.com") ||
-            host.endsWith(".dingtalk.cn")
+            host.endsWith(".feishu.net")
     }
-
-    // 无需覆写 invoke，基类会自动移除匹配的正则部分
 }

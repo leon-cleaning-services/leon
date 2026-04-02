@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.svenjacobs.app.leon.core.domain.sanitizer.meituan
+package com.svenjacobs.app.leon.core.domain.sanitizer.dianping
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.common.domain.matchesDomain
@@ -25,21 +25,19 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class MeituanSanitizer : RegexSanitizer(
+class DianpingSanitizer : RegexSanitizer(
     regex = Regex("(" +
         RegexFactory.ofParameter("from|source|channel|refer|wm|c").pattern + "|" +
         RegexFactory.ofWildcardParameter("wx").pattern + ")"
     )
 ) {
 
-    override val id = SanitizerId("meituan")
+    override val id = SanitizerId("dianping")
 
     override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_meituan_name)
+        name = context.getString(R.string.sanitizer_dianping_name)
     )
 
     override fun matchesDomain(input: String): Boolean =
-        input.matchesDomain("meituan.com") ||
-            input.matchesDomain("meituan.cn") ||
-            input.matchesDomain("meituan.net")
+        input.matchesDomain("dianping.com")
 }
