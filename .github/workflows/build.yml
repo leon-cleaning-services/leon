@@ -21,7 +21,7 @@ jobs:
           java-version: '21'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build and test app
         run: ./gradlew check build
@@ -36,7 +36,7 @@ jobs:
 
       - name: Comment artifact link on pull request
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.createComment({
