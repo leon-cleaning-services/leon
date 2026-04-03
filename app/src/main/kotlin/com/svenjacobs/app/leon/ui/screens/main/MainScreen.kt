@@ -63,6 +63,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -74,7 +75,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.toClipEntry
@@ -89,6 +89,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
@@ -313,7 +314,9 @@ private fun SuccessBody(
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isWideLayout = LocalConfiguration.current.screenWidthDp >= WIDE_LAYOUT_THRESHOLD_DP
+    val isWideLayout =
+        currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass !=
+            WindowWidthSizeClass.COMPACT
     var optionsExpanded by remember { mutableStateOf(false) }
 
     if (isWideLayout) {
@@ -598,8 +601,6 @@ private tailrec fun Context.findWindow(): Window? =
         is ContextWrapper -> baseContext.findWindow()
         else -> null
     }
-
-private const val WIDE_LAYOUT_THRESHOLD_DP = 600
 
 @Preview(showBackground = true)
 @Composable
