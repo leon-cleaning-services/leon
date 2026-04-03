@@ -313,7 +313,7 @@ private fun SuccessBody(
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isWideLayout = LocalConfiguration.current.screenWidthDp >= 600
+    val isWideLayout = LocalConfiguration.current.screenWidthDp >= WIDE_LAYOUT_THRESHOLD_DP
     var optionsExpanded by remember { mutableStateOf(false) }
 
     if (isWideLayout) {
@@ -514,6 +514,7 @@ private fun ActionsSection(
         AnimatedVisibility(visible = optionsExpanded) {
             Column {
                 SwitchRow(
+                    modifier = Modifier.padding(top = 8.dp),
                     text = stringResource(R.string.decode_url),
                     checked = isUrlDecodeEnabled,
                     onCheckedChange = onUrlDecodeCheckedChange,
@@ -597,6 +598,8 @@ private tailrec fun Context.findWindow(): Window? =
         is ContextWrapper -> baseContext.findWindow()
         else -> null
     }
+
+private const val WIDE_LAYOUT_THRESHOLD_DP = 600
 
 @Preview(showBackground = true)
 @Composable
