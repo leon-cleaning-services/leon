@@ -38,6 +38,7 @@
     <string name="decode_url">Giải mã URL</string>
     <string name="import_from_clipboard">Nhập từ clipboard</string>
     <string name="reset">Đặt lại</string>
+    <string name="options">Tùy chọn</string>
     <string name="extract_url">Chỉ trích xuất URL</string>
     <string name="register_as_browser">Đăng ký Léon làm trình duyệt</string>
     <string name="open_in_custom_tabs">Mở URL trong tab tùy chỉnh của trình duyệt</string>

@@ -39,6 +39,7 @@
     <string name="decode_url">Decode URL</string>
     <string name="import_from_clipboard">Import from clipboard</string>
     <string name="reset">Reset</string>
+    <string name="options">Options</string>
     <string name="extract_url">Extract only URL</string>
     <string name="register_as_browser">Register Léon as browser</string>
     <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string>

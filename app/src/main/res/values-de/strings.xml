@@ -38,6 +38,7 @@
     <string name="decode_url">URL dekodieren</string>
     <string name="import_from_clipboard">Aus Zwischenablage importieren</string>
     <string name="reset">Zurücksetzen</string>
+    <string name="options">Optionen</string>
     <string name="extract_url">Nur URL extrahieren</string>
     <string name="register_as_browser">Registriere Léon als Browser</string>
     <string name="open_in_custom_tabs">URLs in Browser Custom Tabs öffnen</string>
