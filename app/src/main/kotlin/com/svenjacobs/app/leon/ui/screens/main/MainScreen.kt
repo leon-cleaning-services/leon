@@ -83,13 +83,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
@@ -164,7 +165,7 @@ fun MainScreen(
                     .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
                     .build()
 
-            intent.launchUrl(context, Uri.parse(url))
+            intent.launchUrl(context, url.toUri())
         }
     }
 
@@ -314,12 +315,10 @@ private fun SuccessBody(
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isWideLayout =
-        currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass !=
-            WindowWidthSizeClass.COMPACT
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     var optionsExpanded by remember { mutableStateOf(false) }
 
-    if (isWideLayout) {
+    if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
