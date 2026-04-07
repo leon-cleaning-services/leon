@@ -3,7 +3,7 @@ android-gradle-plugin = "9.1.0"
 androidx-activity = "1.13.0"
 androidx-compose-bom = "2026.03.01" # https://developer.android.com/jetpack/compose/bom/bom-mapping
 androidx-lifecycle = "2.10.0"
-kotest = "6.1.9"
+kotest = "6.1.10"
 kotlin = "2.3.20"
 kotlinx-coroutines = "1.10.2"
 mikepenz-aboutlibraries = "14.0.0-b02"
@@ -15,7 +15,9 @@ androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
 androidx-browser = "androidx.browser:browser:1.10.0"
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
 androidx-compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }

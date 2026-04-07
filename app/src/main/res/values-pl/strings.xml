@@ -38,6 +38,7 @@
     <string name="decode_url">Odkoduj URL</string>
     <string name="import_from_clipboard">Importuj ze schowka</string>
     <string name="reset">Wyzeruj</string>
+    <string name="options">Opcje</string>
     <string name="extract_url">Wyodrębnij tylko URL</string>
     <string name="register_as_browser">Zarejestruj Léona jako przeglądarkę</string>
     <string name="open_in_custom_tabs">Otwórz adresy URL w niestandardowych kartach przeglądarki</string>

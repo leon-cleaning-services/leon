@@ -38,6 +38,7 @@
     <string name="decode_url">Декодировать URL-адрес</string>
     <string name="import_from_clipboard">Импорт из буфера обмена</string>
     <string name="reset">Сброс</string>
+    <string name="options">Параметры</string>
     <string name="extract_url">Извлечение только URL-адреса</string>
     <string name="register_as_browser">Зарегистрировать Léon как браузер</string>
     <string name="open_in_custom_tabs">Открывать URL во встроенных вкладках браузера</string>
