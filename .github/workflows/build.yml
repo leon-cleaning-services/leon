@@ -21,10 +21,8 @@ jobs:
           java-version: '21'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          cache-disabled: true
         uses: gradle/actions/setup-gradle@v6
+
 
       - name: Build and test app
         run: ./gradlew check build
