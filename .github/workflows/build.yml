@@ -30,7 +30,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-
       - name: Build and test app
         run: ./gradlew check build
 
