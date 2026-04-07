@@ -25,20 +25,36 @@ import android.content.Intent
 import android.net.Uri
 import android.view.Window
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -46,6 +62,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -65,12 +83,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.window.core.layout.WindowSizeClass
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
@@ -145,7 +165,7 @@ fun MainScreen(
                     .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
                     .build()
 
-            intent.launchUrl(context, Uri.parse(url))
+            intent.launchUrl(context, url.toUri())
         }
     }
 
@@ -295,94 +315,212 @@ private fun SuccessBody(
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        Card {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    var optionsExpanded by remember { mutableStateOf(false) }
+
+    if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            UrlDisplaySection(result = result, modifier = Modifier.weight(1f))
+            ActionsSection(
+                result = result,
+                isUrlDecodeEnabled = isUrlDecodeEnabled,
+                isExtractUrlEnabled = isExtractUrlEnabled,
+                optionsExpanded = optionsExpanded,
+                onOptionsExpandedChange = { optionsExpanded = it },
+                onShareClick = onShareClick,
+                onCopyToClipboardClick = onCopyToClipboardClick,
+                onOpenClick = onOpenClick,
+                onResetClick = onResetClick,
+                onUrlDecodeCheckedChange = onUrlDecodeCheckedChange,
+                onExtractUrlCheckedChange = onExtractUrlCheckedChange,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    } else {
+        Column(modifier = modifier.fillMaxWidth()) {
+            UrlDisplaySection(result = result)
+            ActionsSection(
+                result = result,
+                isUrlDecodeEnabled = isUrlDecodeEnabled,
+                isExtractUrlEnabled = isExtractUrlEnabled,
+                optionsExpanded = optionsExpanded,
+                onOptionsExpandedChange = { optionsExpanded = it },
+                onShareClick = onShareClick,
+                onCopyToClipboardClick = onCopyToClipboardClick,
+                onOpenClick = onOpenClick,
+                onResetClick = onResetClick,
+                onUrlDecodeCheckedChange = onUrlDecodeCheckedChange,
+                onExtractUrlCheckedChange = onExtractUrlCheckedChange,
+            )
+        }
+    }
+}
+
+@Composable
+private fun UrlDisplaySection(result: Result.Success, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            colors =
+                CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = stringResource(R.string.original_url),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-
                 SelectionContainer {
                     Text(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(top = 8.dp),
                         text = result.originalText,
                         style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+            }
+        }
 
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            colors =
+                CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = stringResource(R.string.cleaned_url),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
-
                 SelectionContainer {
                     Text(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(top = 8.dp),
                         text = result.cleanedText,
                         style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
+            }
+        }
+    }
+}
 
-                val buttonModifier = Modifier.widthIn(min = 120.dp)
+@Composable
+private fun ActionsSection(
+    result: Result.Success,
+    isUrlDecodeEnabled: Boolean,
+    isExtractUrlEnabled: Boolean,
+    optionsExpanded: Boolean,
+    onOptionsExpandedChange: (Boolean) -> Unit,
+    onShareClick: (Result.Success) -> Unit,
+    onCopyToClipboardClick: (Result.Success) -> Unit,
+    onOpenClick: (Result.Success) -> Unit,
+    onResetClick: () -> Unit,
+    onUrlDecodeCheckedChange: (Boolean) -> Unit,
+    onExtractUrlCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FilledTonalButton(modifier = Modifier.weight(1f), onClick = { onShareClick(result) }) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(
+                    text = stringResource(R.string.share),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                ) {
-                    OutlinedButton(modifier = buttonModifier, onClick = { onShareClick(result) }) {
-                        Text(
-                            text = stringResource(R.string.share),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
+            FilledTonalButton(
+                modifier = Modifier.weight(1f),
+                onClick = { onCopyToClipboardClick(result) },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ContentCopy,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(
+                    text = stringResource(R.string.copy),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
 
-                    OutlinedButton(
-                        modifier = buttonModifier,
-                        onClick = { onCopyToClipboardClick(result) },
-                    ) {
-                        Text(
-                            text = stringResource(R.string.copy),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            OutlinedButton(
+                modifier = Modifier.weight(1f),
+                onClick = { onOpenClick(result) },
+                enabled = !isDefaultBrowser(LocalContext.current),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.OpenInBrowser,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(
+                    text = stringResource(R.string.open),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                ) {
-                    OutlinedButton(
-                        modifier = buttonModifier,
-                        onClick = { onOpenClick(result) },
-                        enabled = !isDefaultBrowser(LocalContext.current),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.open),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
+            OutlinedButton(modifier = Modifier.weight(1f), onClick = onResetClick) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(
+                    text = stringResource(R.string.reset),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
 
-                    OutlinedButton(modifier = buttonModifier, onClick = onResetClick) {
-                        Text(
-                            text = stringResource(R.string.reset),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
+        TextButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onOptionsExpandedChange(!optionsExpanded) },
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(R.string.options),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Icon(
+                imageVector =
+                    if (optionsExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = null,
+            )
+        }
 
+        AnimatedVisibility(visible = optionsExpanded) {
+            Column {
                 SwitchRow(
                     modifier = Modifier.padding(top = 8.dp),
                     text = stringResource(R.string.decode_url),
                     checked = isUrlDecodeEnabled,
                     onCheckedChange = onUrlDecodeCheckedChange,
                 )
-
                 SwitchRow(
                     modifier = Modifier.padding(top = 8.dp),
                     text = stringResource(R.string.extract_url),
@@ -420,10 +558,13 @@ private fun SwitchRow(
 private fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            OutlinedButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onImportFromClipboardClick,
-            ) {
+            Button(modifier = Modifier.fillMaxWidth(), onClick = onImportFromClipboardClick) {
+                Icon(
+                    imageVector = Icons.Default.ContentPaste,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(
                     text = stringResource(R.string.import_from_clipboard),
                     style = MaterialTheme.typography.bodyMedium,
@@ -468,6 +609,29 @@ private fun SuccessBodyPreview() {
             result =
                 Result.Success(
                     originalText = "http://www.some.url?tracking=true",
+                    cleanedText = "http://www.some.url",
+                    urls = persistentListOf(),
+                ),
+            isUrlDecodeEnabled = false,
+            isExtractUrlEnabled = false,
+            onShareClick = {},
+            onCopyToClipboardClick = {},
+            onOpenClick = {},
+            onResetClick = {},
+            onUrlDecodeCheckedChange = {},
+            onExtractUrlCheckedChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 700)
+@Composable
+private fun SuccessBodyWidePreview() {
+    AppTheme {
+        SuccessBody(
+            result =
+                Result.Success(
+                    originalText = "http://www.some.url?tracking=true&utm_source=twitter",
                     cleanedText = "http://www.some.url",
                     urls = persistentListOf(),
                 ),
