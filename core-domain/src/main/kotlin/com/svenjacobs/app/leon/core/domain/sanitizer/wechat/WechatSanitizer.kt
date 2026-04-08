@@ -25,15 +25,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class WechatSanitizer : RegexSanitizer(
-    regex = RegexFactory.ofParameter("__biz|mid|idx|sn|scene|wx_header")
-) {
+class WechatSanitizer :
+    RegexSanitizer(regex = RegexFactory.ofParameter("__biz|mid|idx|sn|scene|wx_header")) {
 
     override val id = SanitizerId("wechat")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_wechat_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_wechat_name))
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("weixin.qq.com") || input.matchesDomain("url.cn")

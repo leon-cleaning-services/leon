@@ -25,15 +25,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class BilibiliSanitizer : RegexSanitizer(
-    regex = RegexFactory.ofParameter("vd_source|seid|from|share_source|copy_link")
-) {
+class BilibiliSanitizer :
+    RegexSanitizer(regex = RegexFactory.ofParameter("vd_source|seid|from|share_source|copy_link")) {
 
     override val id = SanitizerId("bilibili")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_bilibili_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_bilibili_name))
 
     override fun matchesDomain(input: String): Boolean = input.matchesDomain("bilibili.com")
 }

@@ -24,15 +24,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class DouyinSanitizer : RegexSanitizer(
-    regex = Regex("(?i)(/Ipd:.*|/lpD:.*|/9@4\\.com.*|/\\d+/\\d+.*)$")
-) {
+class DouyinSanitizer :
+    RegexSanitizer(regex = Regex("(?i)(/Ipd:.*|/lpD:.*|/9@4\\.com.*|/\\d+/\\d+.*)$")) {
 
     override val id = SanitizerId("douyin")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_douyin_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_douyin_name))
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("douyin.com") ||

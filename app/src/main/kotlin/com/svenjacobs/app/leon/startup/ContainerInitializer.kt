@@ -31,9 +31,9 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.bluesky.BlueskyRedirectSani
 import com.svenjacobs.app.leon.core.domain.sanitizer.cargurus.CarGurusSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.change.ChangeSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.cx.CxAnalyticsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.douyin.DouyinSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.dingtalk.DingtalkSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.dianping.DianpingSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.dingtalk.DingtalkSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.douyin.DouyinSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.ebay.EbaySanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.echobox.EchoboxSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero.ElFinancieroSanitizer
@@ -187,7 +187,7 @@ class ContainerInitializer : DistinctInitializer<Unit> {
                     YoutubeRedirectSanitizer(),
                     YoutubeSanitizer(),
                     YoutubeShortUrlSanitizer(),
-                    ZhihuSanitizer() 
+                    ZhihuSanitizer(),
                 ),
         )
     }

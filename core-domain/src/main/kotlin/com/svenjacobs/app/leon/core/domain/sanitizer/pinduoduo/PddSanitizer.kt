@@ -25,15 +25,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class PddSanitizer : RegexSanitizer(
-    regex = RegexFactory.ofParameter("pid|share_uin|track_id|goods_sign")
-) {
+class PddSanitizer :
+    RegexSanitizer(regex = RegexFactory.ofParameter("pid|share_uin|track_id|goods_sign")) {
 
     override val id = SanitizerId("pinduoduo")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_pinduoduo_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_pinduoduo_name))
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("pinduoduo.com") ||

@@ -25,15 +25,13 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class FeishuSanitizer : RegexSanitizer(
-    regex = RegexFactory.ofParameter("from|scene|channel|source|refer")
-) {
+class FeishuSanitizer :
+    RegexSanitizer(regex = RegexFactory.ofParameter("from|scene|channel|source|refer")) {
 
     override val id = SanitizerId("feishu")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_feishu_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_feishu_name))
 
     override fun matchesDomain(input: String): Boolean {
         val host = runCatching { Uri.parse(input).host }.getOrNull() ?: return false

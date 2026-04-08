@@ -25,15 +25,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class JdSanitizer : RegexSanitizer(
-    regex = RegexFactory.ofParameter("share|jkl")
-) {
+class JdSanitizer : RegexSanitizer(regex = RegexFactory.ofParameter("share|jkl")) {
 
     override val id = SanitizerId("jd")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_jd_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_jd_name))
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("jd.com") || input.matchesDomain("3.cn")

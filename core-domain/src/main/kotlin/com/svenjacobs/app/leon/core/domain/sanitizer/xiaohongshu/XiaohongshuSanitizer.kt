@@ -29,9 +29,10 @@ class XiaohongshuSanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) 
 
     override val id = SanitizerId("xiaohongshu")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_xiaohongshu_name)  // 需要添加字符串资源
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(
+            name = context.getString(R.string.sanitizer_xiaohongshu_name) // 需要添加字符串资源
+        )
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("xiaohongshu.com") || input.matchesDomain("xhslink.com")

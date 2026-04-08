@@ -25,15 +25,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class WeiboSanitizer : RegexSanitizer(
-    regex = RegexFactory.ofParameter("from|refer|share_token")
-) {
+class WeiboSanitizer : RegexSanitizer(regex = RegexFactory.ofParameter("from|refer|share_token")) {
 
     override val id = SanitizerId("weibo")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_weibo_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_weibo_name))
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("weibo.com") || input.matchesDomain("m.weibo.cn")

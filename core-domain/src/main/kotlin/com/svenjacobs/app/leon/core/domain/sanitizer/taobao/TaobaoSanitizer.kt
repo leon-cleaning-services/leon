@@ -25,15 +25,15 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class TaobaoSanitizer : RegexSanitizer(
-    regex = RegexFactory.ofParameter("smid|ut_ma|track_id|spm|share_crt_v|tbkt|isg|tk")
-) {
+class TaobaoSanitizer :
+    RegexSanitizer(
+        regex = RegexFactory.ofParameter("smid|ut_ma|track_id|spm|share_crt_v|tbkt|isg|tk")
+    ) {
 
     override val id = SanitizerId("taobao")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_taobao_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_taobao_name))
 
     override fun matchesDomain(input: String): Boolean =
         input.matchesDomain("taobao.com") ||

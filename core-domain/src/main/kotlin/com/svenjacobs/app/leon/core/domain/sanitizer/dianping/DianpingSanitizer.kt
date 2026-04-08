@@ -25,19 +25,22 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 
-class DianpingSanitizer : RegexSanitizer(
-    regex = Regex("(" +
-        RegexFactory.ofParameter("from|source|channel|refer|wm|c").pattern + "|" +
-        RegexFactory.ofWildcardParameter("wx").pattern + ")"
-    )
-) {
+class DianpingSanitizer :
+    RegexSanitizer(
+        regex =
+            Regex(
+                "(" +
+                    RegexFactory.ofParameter("from|source|channel|refer|wm|c").pattern +
+                    "|" +
+                    RegexFactory.ofWildcardParameter("wx").pattern +
+                    ")"
+            )
+    ) {
 
     override val id = SanitizerId("dianping")
 
-    override fun getMetadata(context: Context) = Sanitizer.Metadata(
-        name = context.getString(R.string.sanitizer_dianping_name)
-    )
+    override fun getMetadata(context: Context) =
+        Sanitizer.Metadata(name = context.getString(R.string.sanitizer_dianping_name))
 
-    override fun matchesDomain(input: String): Boolean =
-        input.matchesDomain("dianping.com")
+    override fun matchesDomain(input: String): Boolean = input.matchesDomain("dianping.com")
 }

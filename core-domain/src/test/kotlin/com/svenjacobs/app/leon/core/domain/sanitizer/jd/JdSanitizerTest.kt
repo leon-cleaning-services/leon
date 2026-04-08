@@ -28,9 +28,7 @@ class JdSanitizerTest :
             {
                 "remove tracking parameters and handle &amp; entity" {
                     val result =
-                        sanitizer(
-                            "https://item.jd.com/123.html?share=1&amp;jkl=2&keep=yes"
-                        )
+                        sanitizer("https://item.jd.com/123.html?share=1&amp;jkl=2&keep=yes")
                     result shouldBe "https://item.jd.com/123.html?keep=yes"
                 }
             }
