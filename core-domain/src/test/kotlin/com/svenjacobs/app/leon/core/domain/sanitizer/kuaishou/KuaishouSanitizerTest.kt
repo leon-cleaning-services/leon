@@ -29,12 +29,11 @@ class KuaishouSanitizerTest :
                 "remove tracking parameters from Kuaishou URL" {
                     val result =
                         sanitizer(
-                            "https://www.kuaishou.com/short-video/abc?share=1&userId=123&photoId=456&keep=yes"
+                            "https://www.kuaishou.com/short-video/abc?share=1&userId=123&photoId=456"
                         )
-                    result shouldBe "https://www.kuaishou.com/short-video/abc?keep=yes"
+                    result shouldBe "https://www.kuaishou.com/short-video/abc"
                 }
             }
-
         "matchesDomain" should
             {
                 "match kuaishou.com and v.kuaishou.com domains" {

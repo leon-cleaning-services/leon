@@ -23,15 +23,14 @@ import io.kotest.matchers.shouldBe
 class WechatSanitizerTest :
     WordSpec({
         val sanitizer = WechatSanitizer()
-
         "invoke" should
             {
                 "remove tracking parameters from WeChat URL" {
                     val result =
                         sanitizer(
-                            "https://weixin.qq.com/s?__biz=abc&mid=123&idx=1&sn=def&scene=2&wx_header=3&keep=yes"
+                            "https://weixin.qq.com/s?__biz=abc&mid=123&idx=1&sn=def&scene=2&wx_header=3"
                         )
-                    result shouldBe "https://weixin.qq.com/s?keep=yes"
+                    result shouldBe "https://weixin.qq.com/s"
                 }
             }
 

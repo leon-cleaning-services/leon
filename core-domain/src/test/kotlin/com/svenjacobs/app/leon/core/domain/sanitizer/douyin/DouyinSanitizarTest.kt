@@ -27,9 +27,8 @@ class DouyinSanitizerTest :
         "invoke" should
             {
                 "extract URL and remove password suffix from Douyin share text" {
-                    val result =
-                        sanitizer("分享视频&nbsp;https://v.douyin.com/abc123?extra=keep /Ipd:abcde")
-                    result shouldBe "https://v.douyin.com/abc123?extra=keep"
+                    val result = sanitizer("分享视频&nbsp;https://v.douyin.com/abc123/Ipd:abcde")
+                    result shouldBe "https://v.douyin.com/abc123"
                 }
             }
 

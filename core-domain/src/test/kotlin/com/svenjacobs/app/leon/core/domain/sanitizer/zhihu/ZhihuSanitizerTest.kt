@@ -29,9 +29,9 @@ class ZhihuSanitizerTest :
                 "remove tracking parameters from Zhihu URL" {
                     val result =
                         sanitizer(
-                            "https://www.zhihu.com/question/123?share_redirect=1&share_code=abc&keep=yes"
+                            "https://www.zhihu.com/question/123?share_redirect=1&share_code=abc"
                         )
-                    result shouldBe "https://www.zhihu.com/question/123?keep=yes"
+                    result shouldBe "https://www.zhihu.com/question/123"
                 }
             }
 

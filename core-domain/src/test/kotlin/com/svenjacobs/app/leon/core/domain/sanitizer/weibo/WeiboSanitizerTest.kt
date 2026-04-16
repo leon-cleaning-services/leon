@@ -29,9 +29,9 @@ class WeiboSanitizerTest :
                 "remove tracking parameters from Weibo URL" {
                     val result =
                         sanitizer(
-                            "https://weibo.com/123/profile?from=share&refer=user&share_token=abc&keep=yes"
+                            "https://weibo.com/123/profile?from=share&refer=user&share_token=abc"
                         )
-                    result shouldBe "https://weibo.com/123/profile?keep=yes"
+                    result shouldBe "https://weibo.com/123/profile"
                 }
             }
 

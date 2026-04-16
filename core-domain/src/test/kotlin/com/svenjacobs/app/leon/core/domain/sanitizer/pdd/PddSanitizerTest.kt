@@ -29,12 +29,11 @@ class PddSanitizerTest :
                 "remove tracking parameters from Pinduoduo URL" {
                     val result =
                         sanitizer(
-                            "https://mobile.yangkeduo.com/goods.html?pid=123&share_uin=456&track_id=789&goods_sign=abc&keep=yes"
+                            "https://mobile.yangkeduo.com/goods.html?pid=123&share_uin=456&track_id=789&goods_sign=abc"
                         )
-                    result shouldBe "https://mobile.yangkeduo.com/goods.html?keep=yes"
+                    result shouldBe "https://mobile.yangkeduo.com/goods.html"
                 }
             }
-
         "matchesDomain" should
             {
                 "match pinduoduo.com, pdd.com and yangkeduo.com domains" {

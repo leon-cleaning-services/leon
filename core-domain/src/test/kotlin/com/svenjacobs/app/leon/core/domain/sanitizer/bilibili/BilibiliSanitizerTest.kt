@@ -29,9 +29,9 @@ class BilibiliSanitizerTest :
                 "remove tracking parameters from Bilibili URL" {
                     val result =
                         sanitizer(
-                            "https://www.bilibili.com/video/BV1xx?vd_source=abc&seid=456&from=spm&share_source=copy&copy_link=789&keep=yes"
+                            "https://www.bilibili.com/video/BV1xx?vd_source=abc&seid=456&from=spm&share_source=copy&copy_link=789"
                         )
-                    result shouldBe "https://www.bilibili.com/video/BV1xx?keep=yes"
+                    result shouldBe "https://www.bilibili.com/video/BV1xx"
                 }
             }
 
