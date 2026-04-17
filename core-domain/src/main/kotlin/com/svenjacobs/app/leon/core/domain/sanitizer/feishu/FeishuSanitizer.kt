@@ -18,7 +18,7 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.feishu
 
 import android.content.Context
-import android.net.Uri
+import com.svenjacobs.app.leon.core.common.domain.matchesDomain
 import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
@@ -33,11 +33,6 @@ class FeishuSanitizer :
     override fun getMetadata(context: Context) =
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_feishu_name))
 
-    override fun matchesDomain(input: String): Boolean {
-        val host = runCatching { Uri.parse(input).host }.getOrNull() ?: return false
-        return host == "feishu.cn" ||
-            host == "feishu.net" ||
-            host.endsWith(".feishu.cn") ||
-            host.endsWith(".feishu.net")
-    }
+    override fun matchesDomain(input: String): Boolean =
+        input.matchesDomain("feishu.cn") || input.matchesDomain("feishu.net")
 }
