@@ -31,7 +31,7 @@ class XiaohongshuSanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) 
 
     override fun getMetadata(context: Context) =
         Sanitizer.Metadata(
-            name = context.getString(R.string.sanitizer_xiaohongshu_name) // 需要添加字符串资源
+            name = context.getString(R.string.sanitizer_xiaohongshu_name)
         )
 
     override fun matchesDomain(input: String): Boolean =
