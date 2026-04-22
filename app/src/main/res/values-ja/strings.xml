@@ -1,0 +1,60 @@
+<!--
+  ~ Léon - The URL Cleaner
+  ~ Copyright (C) 2024 Sven Jacobs
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="screen_main">ホーム</string>
+    <string name="screen_settings">設定</string>
+    <string name="scaffold_title">Léon – URL クリーナー</string>
+    <string name="share">共有</string>
+    <string name="open">開く</string>
+    <string name="copy">コピー</string>
+    <string name="clipboard_message">リンクをクリップボードにコピーしました</string>
+    <string name="clipboard_empty_message">クリップボードは空です</string>
+    <string name="how_to_title">使い方</string>
+    <string name="how_to_text">テキストを共有するときに「URL Cleaner」を選択してください。その後、このアプリの「共有」をタップして対象のアプリにテキストを送信します。または、上のボタンをタップしてクリップボードの内容をインポートすることもできます。\n\nアプリ内で編集可能なテキストを選択し、コンテキストメニューから Léon を選ぶと、その場でテキストをクリーンにすることもできます。</string>
+    <string name="cleaned_url">クリーン済み URL</string>
+    <string name="original_url">元の URL</string>
+    <string name="sanitizers">サニタイザー</string>
+    <string name="licenses">ライセンス</string>
+    <string name="sanitizers_description">サニタイザーを有効または無効にする</string>
+    <string name="sanitizers_search_placeholder">サニタイザーを検索</string>
+    <string name="sanitizers_search_clear">検索をクリア</string>
+    <string name="sanitizers_no_results">サニタイザーが見つかりません</string>
+    <string name="decode_url">URL をデコード</string>
+    <string name="import_from_clipboard">クリップボードからインポート</string>
+    <string name="reset">リセット</string>
+    <string name="options">オプション</string>
+    <string name="extract_url">URL のみ抽出</string>
+    <string name="register_as_browser">Léon をブラウザとして登録</string>
+    <string name="open_in_custom_tabs">URL をブラウザのカスタムタブで開く</string>
+    <string name="action_after_clean">クリーン後のアクション</string>
+    <string name="do_nothing">何もしない</string>
+    <string name="open_share_menu">共有メニューを開く</string>
+    <string name="open_url">URL を開く</string>
+    <string name="copy_to_clipboard">クリップボードにコピー</string>
+    <string name="process_text_action_name">URL をクリーン (Léon)</string>
+    <string name="protect_screen">アプリ画面を保護</string>
+    <string name="about">アプリについて</string>
+    <string name="about_developer">%1$s と多くの %2$s によって開発されました。</string>
+    <string name="about_contributors">コントリビューター</string>
+    <string name="about_license">GPL 3.0 の下でライセンスされています。ソースコードは %1$s にあります。</string>
+    <string name="about_bugs">バグや機能リクエストは %1$s までお寄せください。</string>
+    <string name="about_sponsor">%1$s から開発者をスポンサーできます。</string>
+    <string name="about_version">バージョン: %1$s</string>
+    <string name="close">閉じる</string>
+</resources>
