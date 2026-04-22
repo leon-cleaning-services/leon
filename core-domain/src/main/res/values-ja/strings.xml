@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Léon - The URL Cleaner
+  ~ Copyright (C) 2023 Sven Jacobs
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="sanitizer_bluesky_redirect_name">Bluesky リダイレクト</string>
+    <string name="sanitizer_amazon_product_name">Amazon 商品</string>
+    <string name="sanitizer_aol_search_name">AOL 検索</string>
+    <string name="sanitizer_empty_parameters_name">空のパラメーター</string>
+    <string name="sanitizer_google_search_name">Google 検索</string>
+    <string name="sanitizer_mydealz_parameters_name">MyDealz パラメーター</string>
+    <string name="sanitizer_mydealz_redirects_name">MyDealz リダイレクト</string>
+    <string name="sanitizer_yahoo_search_name">Yahoo 検索</string>
+    <string name="sanitizer_youtube_redirect_name">YouTube リダイレクト</string>
+</resources>
