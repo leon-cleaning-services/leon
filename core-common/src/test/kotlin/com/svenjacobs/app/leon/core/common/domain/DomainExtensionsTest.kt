@@ -50,5 +50,10 @@ class DomainExtensionsTest :
                 "not match domain" {
                     "other.example.com".matchesDomain("some.example.com") shouldBe false
                 }
+
+                "match subdomains" {
+                    "sub.example.com".matchesSubdomains("example.com") shouldBe true
+                    "sub.example2.com".matchesSubdomains("example.com") shouldBe false
+                }
             }
     })
