@@ -35,14 +35,14 @@ class FeishuSanitizerTest :
                 }
             }
 
-        // matchesDomain 测试暂时跳过，因为 matchesDomain 扩展函数不支持子域名前缀（如 wiki.feishu.cn）
-        // 原始实现支持，但为保持项目一致性，待作者确认后再调整
-        // "matchesDomain" should
-        //     {
-        //         "match feishu.cn and feishu.net domains" {
-        //             sanitizer.matchesDomain("feishu.cn") shouldBe true
-        //             sanitizer.matchesDomain("www.feishu.cn") shouldBe true
-        //             sanitizer.matchesDomain("feishu.net") shouldBe true
-        //         }
-        //     }
+        "matchesDomain" should
+            {
+                "match feishu.cn and feishu.net domains with subdomains" {
+                    sanitizer.matchesDomain("feishu.cn") shouldBe true
+                    sanitizer.matchesDomain("www.feishu.cn") shouldBe true
+                    sanitizer.matchesDomain("wiki.feishu.cn") shouldBe true
+                    sanitizer.matchesDomain("feishu.net") shouldBe true
+                    sanitizer.matchesDomain("sub.feishu.net") shouldBe true
+                }
+            }
     })

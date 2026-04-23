@@ -18,7 +18,7 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.feishu
 
 import android.content.Context
-import com.svenjacobs.app.leon.core.common.domain.matchesDomain
+import com.svenjacobs.app.leon.core.common.domain.matchesSubdomains
 import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
@@ -34,5 +34,5 @@ class FeishuSanitizer :
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_feishu_name))
 
     override fun matchesDomain(input: String): Boolean =
-        input.matchesDomain("feishu.cn") || input.matchesDomain("feishu.net")
+        input.matchesSubdomains("feishu.cn") || input.matchesSubdomains("feishu.net")
 }
