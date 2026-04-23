@@ -27,6 +27,7 @@ import android.view.Window
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -181,11 +182,9 @@ fun MainScreen(
         }
     }
 
-    fun copyToClipboard(result: Result.Success) {
+    fun copyToClipboard(text: String) {
         coroutineScope.launch {
-            clipboard.setClipEntry(
-                ClipData.newPlainText(result.cleanedText, result.cleanedText).toClipEntry()
-            )
+            clipboard.setClipEntry(ClipData.newPlainText(text, text).toClipEntry())
             snackbarHostState.showSnackbar(copiedToClipboardMessage)
         }
     }
@@ -208,7 +207,8 @@ fun MainScreen(
                                 when (uiState.actionAfterClean) {
                                     ActionAfterClean.OpenShareMenu -> openShareMenu(result)
                                     ActionAfterClean.OpenUrl -> openUrl(result)
-                                    ActionAfterClean.CopyToClipboard -> copyToClipboard(result)
+                                    ActionAfterClean.CopyToClipboard ->
+                                        copyToClipboard(result.cleanedText)
                                     ActionAfterClean.DoNothing -> {}
                                 }
 
@@ -268,7 +268,7 @@ private fun Content(
     isExtractUrlEnabled: Boolean,
     onImportFromClipboardClick: () -> Unit,
     onShareClick: (Result.Success) -> Unit,
-    onCopyToClipboardClick: (Result.Success) -> Unit,
+    onCopyToClipboardClick: (String) -> Unit,
     onOpenClick: (Result.Success) -> Unit,
     onResetClick: () -> Unit,
     onUrlDecodeCheckedChange: (Boolean) -> Unit,
@@ -308,7 +308,7 @@ private fun SuccessBody(
     isUrlDecodeEnabled: Boolean,
     isExtractUrlEnabled: Boolean,
     onShareClick: (Result.Success) -> Unit,
-    onCopyToClipboardClick: (Result.Success) -> Unit,
+    onCopyToClipboardClick: (String) -> Unit,
     onOpenClick: (Result.Success) -> Unit,
     onResetClick: () -> Unit,
     onUrlDecodeCheckedChange: (Boolean) -> Unit,
@@ -323,7 +323,11 @@ private fun SuccessBody(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            UrlDisplaySection(result = result, modifier = Modifier.weight(1f))
+            UrlDisplaySection(
+                result = result,
+                onUrlTap = onCopyToClipboardClick,
+                modifier = Modifier.weight(1f),
+            )
             ActionsSection(
                 result = result,
                 isUrlDecodeEnabled = isUrlDecodeEnabled,
@@ -341,7 +345,7 @@ private fun SuccessBody(
         }
     } else {
         Column(modifier = modifier.fillMaxWidth()) {
-            UrlDisplaySection(result = result)
+            UrlDisplaySection(result = result, onUrlTap = onCopyToClipboardClick)
             ActionsSection(
                 result = result,
                 isUrlDecodeEnabled = isUrlDecodeEnabled,
@@ -360,10 +364,14 @@ private fun SuccessBody(
 }
 
 @Composable
-private fun UrlDisplaySection(result: Result.Success, modifier: Modifier = Modifier) {
+private fun UrlDisplaySection(
+    result: Result.Success,
+    onUrlTap: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ElevatedCard(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().clickable { onUrlTap(result.originalText) },
             colors =
                 CardDefaults.elevatedCardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -387,7 +395,7 @@ private fun UrlDisplaySection(result: Result.Success, modifier: Modifier = Modif
         }
 
         ElevatedCard(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().clickable { onUrlTap(result.cleanedText) },
             colors =
                 CardDefaults.elevatedCardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -420,7 +428,7 @@ private fun ActionsSection(
     optionsExpanded: Boolean,
     onOptionsExpandedChange: (Boolean) -> Unit,
     onShareClick: (Result.Success) -> Unit,
-    onCopyToClipboardClick: (Result.Success) -> Unit,
+    onCopyToClipboardClick: (String) -> Unit,
     onOpenClick: (Result.Success) -> Unit,
     onResetClick: () -> Unit,
     onUrlDecodeCheckedChange: (Boolean) -> Unit,
@@ -447,7 +455,7 @@ private fun ActionsSection(
 
             FilledTonalButton(
                 modifier = Modifier.weight(1f),
-                onClick = { onCopyToClipboardClick(result) },
+                onClick = { onCopyToClipboardClick(result.cleanedText) },
             ) {
                 Icon(
                     imageVector = Icons.Default.ContentCopy,
