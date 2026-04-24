@@ -518,6 +518,15 @@
       "contributions": [
         "maintenance"
       ]
+    },
+    {
+      "login": "BG2NDR",
+      "name": "BG2NDR",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175372936?v=4",
+      "profile": "https://github.com/BG2NDR",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
