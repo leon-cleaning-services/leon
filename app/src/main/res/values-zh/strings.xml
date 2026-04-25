@@ -1,0 +1,61 @@
+<!--
+  ~ Léon - The URL Cleaner
+  ~ Copyright (C) 2024 Sven Jacobs
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="app_name" translatable="false">URL 清理器</string>
+    <string name="screen_main">首页</string>
+    <string name="screen_settings">设置</string>
+    <string name="scaffold_title">Léon – 链接清理器</string>
+    <string name="share">分享</string>
+    <string name="open">打开</string>
+    <string name="copy">复制</string>
+    <string name="clipboard_message">链接已复制到剪贴板</string>
+    <string name="clipboard_empty_message">剪贴板为空</string>
+    <string name="how_to_title">使用教程</string>
+    <string name="how_to_text">分享内容时，选择 \"URL 清理器\". 随后在本应用内点击 \"分享\" 即可将内容发送至目标应用。 你也可以点击上方按钮，从剪贴板导入内容。\n\n也可以在其他应用程序中选择待清理的链接，然后在菜单中选择 Léon 来清理它。</string>
+    <string name="cleaned_url">清理后链接</string>
+    <string name="original_url">原始链接</string>
+    <string name="sanitizers">清理规则</string>
+    <string name="licenses">开源许可</string>
+    <string name="sanitizers_description">启用或禁用链接清理规则</string>
+    <string name="sanitizers_search_placeholder">搜索清理规则</string>
+    <string name="sanitizers_search_clear">清空搜索</string>
+    <string name="sanitizers_no_results">未找到相关清理规则</string>
+    <string name="decode_url">解码链接</string>
+    <string name="import_from_clipboard">从剪贴板导入</string>
+    <string name="reset">重置</string>
+    <string name="options">选项</string>
+    <string name="extract_url">仅提取链接</string>
+    <string name="register_as_browser">将 Léon 注册为浏览器</string>
+    <string name="open_in_custom_tabs">在浏览器自定义标签页打开链接</string>
+    <string name="action_after_clean">清理完成后</string>
+    <string name="do_nothing">无操作</string>
+    <string name="open_share_menu">打开分享菜单</string>
+    <string name="open_url">打开链接</string>
+    <string name="copy_to_clipboard">复制到剪贴板</string>
+    <string name="process_text_action_name">链接清理 (Léon)</string>
+    <string name="protect_screen">应用截屏保护</string>
+    <string name="about">关于</string>
+    <string name="about_developer">由 %1$s 开发， %2$s 共同协助</string>
+    <string name="about_contributors">贡献者</string>
+    <string name="about_license">基于 GNU 通用公共许可证 3.0 协议开源，源码地址： %1$s.</string>
+    <string name="about_bugs">问题反馈与功能建议： %1$s.</string>
+    <string name="about_sponsor">请作者喝杯咖啡： %1$s.</string>
+    <string name="about_version">版本号： %1$s</string>
+    <string name="close">关闭</string>
+</resources>
