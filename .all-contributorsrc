@@ -518,6 +518,24 @@
       "contributions": [
         "maintenance"
       ]
+    },
+    {
+      "login": "BG2NDR",
+      "name": "BG2NDR",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175372936?v=4",
+      "profile": "https://github.com/BG2NDR",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "monta-gh",
+      "name": "monta-gh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/205591834?v=4",
+      "profile": "https://github.com/monta-gh",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
