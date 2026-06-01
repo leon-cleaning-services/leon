@@ -44,7 +44,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
 mikepenz-aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "mikepenz-aboutlibraries" }
 mockk = "io.mockk:mockk:1.14.9"
-slack-compose-lint-checks = "com.slack.lint.compose:compose-lint-checks:1.4.2"
+slack-compose-lint-checks = "com.slack.lint.compose:compose-lint-checks:1.5.1"
 
 [bundles]
 androidx-compose = [
