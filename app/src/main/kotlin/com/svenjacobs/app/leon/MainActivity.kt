@@ -33,12 +33,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
 import com.svenjacobs.app.leon.ui.MainRouter
+import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.theme.AppTheme
+import java.util.UUID
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    private val sourceText = mutableStateOf<String?>(null)
+    private val sourceText = mutableStateOf<SourceText?>(null)
     private var customTabsInitialized = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,12 +85,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         onIntent(intent)
     }
 
     // TODO: Pass all Intent extras
     private fun onIntent(intent: Intent) {
-        sourceText.value =
+        // The id extra is stamped onto the intent the first time it is seen and stays stable
+        // across activity recreation (e.g. configuration changes), but a new intent (i.e. a new
+        // share) never carries it, so a fresh id is generated. This allows distinguishing "the
+        // same intent redelivered" from "the same text shared again", which must trigger the
+        // configured action after clean again even though the text is unchanged.
+        val id =
+            intent.getStringExtra(EXTRA_SOURCE_TEXT_ID)
+                ?: UUID.randomUUID().toString().also { intent.putExtra(EXTRA_SOURCE_TEXT_ID, it) }
+
+        val text =
             when (intent.action) {
                 Intent.ACTION_SEND ->
                     if (intent.type == MIME_TYPE_TEXT_PLAIN) {
@@ -106,6 +118,8 @@ class MainActivity : ComponentActivity() {
 
                 else -> null
             }
+
+        sourceText.value = SourceText(id = id, text = text)
     }
 
     private fun setupCustomTabsService() {
@@ -133,5 +147,6 @@ class MainActivity : ComponentActivity() {
 
     private companion object {
         private const val MIME_TYPE_TEXT_PLAIN = "text/plain"
+        private const val EXTRA_SOURCE_TEXT_ID = "com.svenjacobs.app.leon.extra.SOURCE_TEXT_ID"
     }
 }

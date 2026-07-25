@@ -96,6 +96,7 @@ import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
 import com.svenjacobs.app.leon.ui.common.views.TopAppBar
+import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.screens.main.model.Screen
@@ -108,7 +109,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
-    sourceText: State<String?>,
+    sourceText: State<SourceText?>,
     onNavigateToSettingsSanitizers: () -> Unit,
     onNavigateToSettingsLicenses: () -> Unit,
     onResetClick: () -> Unit,
@@ -127,10 +128,9 @@ fun MainScreen(
     val openTitle = stringResource(R.string.open)
     val copiedToClipboardMessage = stringResource(R.string.clipboard_message)
     val clipboardEmptyMessage = stringResource(R.string.clipboard_empty_message)
-    var didPerformActionAfterClean by remember(uiState.result) { mutableStateOf(false) }
     val view = LocalView.current
 
-    LaunchedEffect(sourceText.value) { viewModel.setText(sourceText.value) }
+    LaunchedEffect(sourceText.value) { sourceText.value?.let { viewModel.setText(it.text, it.id) } }
 
     LaunchedEffect(Unit) {
         val window = view.context.findWindow() ?: return@LaunchedEffect
@@ -200,19 +200,17 @@ fun MainScreen(
 
                 NavHost(navController = navController, startDestination = Screen.Main.route) {
                     composable(Screen.Main.route) {
-                        LaunchedEffect(uiState.result, uiState.actionAfterClean) {
-                            if (didPerformActionAfterClean) return@LaunchedEffect
+                        LaunchedEffect(uiState.inputId, uiState.actionAfterClean) {
+                            val inputId = uiState.inputId ?: return@LaunchedEffect
+                            val result = uiState.result as? Result.Success ?: return@LaunchedEffect
+                            if (!viewModel.consumeActionAfterClean(inputId)) return@LaunchedEffect
 
-                            (uiState.result as? Result.Success)?.let { result ->
-                                when (uiState.actionAfterClean) {
-                                    ActionAfterClean.OpenShareMenu -> openShareMenu(result)
-                                    ActionAfterClean.OpenUrl -> openUrl(result)
-                                    ActionAfterClean.CopyToClipboard ->
-                                        copyToClipboard(result.cleanedText)
-                                    ActionAfterClean.DoNothing -> {}
-                                }
-
-                                didPerformActionAfterClean = true
+                            when (uiState.actionAfterClean) {
+                                ActionAfterClean.OpenShareMenu -> openShareMenu(result)
+                                ActionAfterClean.OpenUrl -> openUrl(result)
+                                ActionAfterClean.CopyToClipboard ->
+                                    copyToClipboard(result.cleanedText)
+                                ActionAfterClean.DoNothing -> {}
                             }
                         }
 

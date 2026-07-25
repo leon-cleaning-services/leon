@@ -24,6 +24,7 @@ import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
+import java.util.UUID
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,6 +39,7 @@ class MainScreenViewModel(
 
     data class UiState(
         val isLoading: Boolean = true,
+        val inputId: String? = null,
         val isUrlDecodeEnabled: Boolean = false,
         val isExtractUrlEnabled: Boolean = false,
         val isCustomTabsEnabled: Boolean = false,
@@ -58,27 +60,34 @@ class MainScreenViewModel(
         }
     }
 
-    private val text = MutableStateFlow<String?>(null)
+    /** Text of a single incoming intent, identified by a stable [id]. */
+    private data class Input(val id: String, val text: String)
+
+    private val input = MutableStateFlow<Input?>(null)
+
+    /** Id of the input for which the action after clean has already been performed. */
+    private var handledActionInputId: String? = null
 
     val uiState =
         combine(
-                text,
+                input,
                 appDataStoreManager.urlDecodeEnabled,
                 appDataStoreManager.extractUrlEnabled,
                 appDataStoreManager.customTabsEnabled,
                 appDataStoreManager.actionAfterClean,
-            ) { text, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean ->
+            ) { input, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean ->
                 val result =
-                    text?.let {
+                    input?.let {
                         clean(
-                            text = text,
+                            text = it.text,
                             decodeUrl = urlDecodeEnabled,
                             extractUrl = extractUrlEnabled,
                         )
                     } ?: Result.Empty
 
                 UiState(
-                    isLoading = text == null,
+                    isLoading = input == null,
+                    inputId = input?.id,
                     isUrlDecodeEnabled = urlDecodeEnabled,
                     isExtractUrlEnabled = extractUrlEnabled,
                     isCustomTabsEnabled = isCustomTabsEnabled,
@@ -92,13 +101,25 @@ class MainScreenViewModel(
                 initialValue = UiState(),
             )
 
-    fun setText(text: String?) {
+    fun setText(text: String?, id: String = UUID.randomUUID().toString()) {
         if (text == null && uiState.value.result is Result.Success) return
-        this.text.value = text
+        input.value = text?.let { Input(id = id, text = it) }
     }
 
     fun onResetClick() {
-        text.value = null
+        input.value = null
+    }
+
+    /**
+     * Returns `true` if the action after clean configured by the user still needs to be performed
+     * for [inputId] and marks it as handled. Returns `false` if it was already performed for this
+     * exact input, which happens when the UI recomposes or the activity is recreated (e.g. on a
+     * configuration change) without a genuinely new input being submitted.
+     */
+    fun consumeActionAfterClean(inputId: String): Boolean {
+        if (inputId == handledActionInputId) return false
+        handledActionInputId = inputId
+        return true
     }
 
     fun onUrlDecodeCheckedChange(enabled: Boolean) {
