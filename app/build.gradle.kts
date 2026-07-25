@@ -55,7 +55,7 @@ android {
             return@signingConfigs
         }
 
-        val release by creating {
+        create("release") {
             val props = Properties()
             signingFile.inputStream().use { props.load(it) }
 
@@ -73,6 +73,7 @@ android {
 
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
