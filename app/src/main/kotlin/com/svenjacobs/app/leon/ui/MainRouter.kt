@@ -24,13 +24,14 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.screens.main.MainScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsLicensesScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsSanitizersScreen
 
 @Composable
 fun MainRouter(
-    sourceText: State<String?>,
+    sourceText: State<SourceText?>,
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
