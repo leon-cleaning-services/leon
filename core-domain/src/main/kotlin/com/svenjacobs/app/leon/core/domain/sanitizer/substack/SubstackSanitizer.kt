@@ -33,6 +33,8 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
  *   leaves a URL that no longer points to any article at all, so those two are kept.
  * - `open.substack.com/pub/<publication>/p/<slug>` URLs are an indirection for opening the article
  *   in the Substack app. They are rewritten to the canonical `<publication>.substack.com/p/<slug>`.
+ * - `substack.com/redirect/<uuid>?j=<blob>` URLs are left untouched. It is not publicly documented
+ *   what the `j` blob carries, and removing it would leave a dead link.
  *
  * For all other Substack URLs the path already is the article reference, so only the parameters are
  * removed. The fragment is always kept since it references a section or comment of the article.
@@ -53,6 +55,8 @@ class SubstackSanitizer : Sanitizer {
         val path = groupValues[3]
         val query = groupValues[4]
         val fragment = groupValues[5]
+
+        if (REDIRECT_PATH_REGEX.matches(path)) return input
 
         val (cleanedHost, cleanedPath) = canonicalize(host, path)
         val cleanedQuery =
@@ -76,7 +80,13 @@ class SubstackSanitizer : Sanitizer {
         return Pair("${groupValues[1]}.substack.com", groupValues[2])
     }
 
-    /** Removes all parameters of [query] except those named in [parameters], preserving order. */
+    /**
+     * Removes all parameters of [query] except those named in [parameters], preserving order.
+     *
+     * `RegexFactory.exceptParameter` is the obvious helper for this but cannot be used here: its
+     * `[^&]+` swallows the fragment along with the last parameter, and the fragment is exactly what
+     * this sanitizer preserves.
+     */
     private fun keepParameters(query: String, parameters: Set<String>): String {
         val kept =
             query.removePrefix("?").split('&').filter { it.substringBefore('=') in parameters }
@@ -92,21 +102,23 @@ class SubstackSanitizer : Sanitizer {
          * Matches Substack URLs, capturing scheme, host, path, parameters and fragment.
          *
          * The path has to start with `/` so that the host ends at `substack.com` and a URL like
-         * `https://substack.com.example.com/p/foo` does not match.
+         * `https://substack.com.example.com/p/foo` does not match. An optional port is part of the
+         * host group so that it survives into the result.
          */
         private val URL_REGEX =
             Regex(
-                "(https?://)?((?:[A-Za-z0-9-]+\\.)*substack\\.com)((?:/[^?#]*)?)(\\?[^#]*)?(#.*)?",
+                "(https?://)?((?:[A-Za-z0-9-]+\\.)*substack\\.com(?::\\d+)?)((?:/[^?#]*)?)(\\?[^#]*)?(#.*)?",
                 RegexOption.IGNORE_CASE,
             )
 
         private val APP_LINK_PATH_REGEX = Regex("/app-link(/.*)?", RegexOption.IGNORE_CASE)
 
+        private val REDIRECT_PATH_REGEX = Regex("/redirect(/.*)?", RegexOption.IGNORE_CASE)
+
         private val OPEN_PUB_PATH_REGEX =
             Regex("/pub/([A-Za-z0-9-]+)(/.*)?", RegexOption.IGNORE_CASE)
 
         /** Parameters of `app-link` URLs which reference the actual content. */
-        private val APP_LINK_REFERENCE_PARAMETERS =
-            setOf("publication_id", "post_id", "note_id", "comment_id")
+        private val APP_LINK_REFERENCE_PARAMETERS = setOf("publication_id", "post_id", "note_id")
     }
 }

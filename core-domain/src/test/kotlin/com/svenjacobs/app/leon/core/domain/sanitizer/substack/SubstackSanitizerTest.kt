@@ -89,6 +89,16 @@ class SubstackSanitizerTest :
                     ) shouldBe "https://substack.com/app-link/post"
                 }
 
+                "leave redirect links untouched" {
+                    sanitizer("https://substack.com/redirect/2f9a1c/?j=eyJ1IjoiYWJjIn0") shouldBe
+                        "https://substack.com/redirect/2f9a1c/?j=eyJ1IjoiYWJjIn0"
+                }
+
+                "keep a port while removing parameters" {
+                    sanitizer("https://substack.com:443/p/some-article?r=c0obe") shouldBe
+                        "https://substack.com:443/p/some-article"
+                }
+
                 "leave an already clean URL untouched" {
                     sanitizer(
                         "https://fosspost.substack.com/p/open-up-your-android-smartphone"
@@ -116,6 +126,10 @@ class SubstackSanitizerTest :
 
                 "match publication subdomains" {
                     sanitizer.matchesDomain("https://fosspost.substack.com/p/article") shouldBe true
+                }
+
+                "match hosts with a port" {
+                    sanitizer.matchesDomain("https://substack.com:443/p/article") shouldBe true
                 }
 
                 "not match domains which merely end with substack.com" {
