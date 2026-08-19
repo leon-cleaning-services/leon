@@ -22,15 +22,42 @@ import io.kotest.matchers.shouldBe
 
 class InstagramSanitizerTest :
     WordSpec({
+        val sanitizer = InstagramSanitizer()
+
         "invoke" should
             {
-                "remove \"igshid\" parameter" {
-                    val sanitizer = InstagramSanitizer()
-
+                "remove \"igsh\" parameter" {
                     val result =
                         sanitizer("https://www.instagram.com/reel/Ceeg-VgI4yF/?igsh=YmMyMTA2M2Y=")
 
                     result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                }
+
+                "remove \"igsi\" parameter" {
+                    val result =
+                        sanitizer("https://www.instagram.com/reel/Ceeg-VgI4yF/?igsi=YmMyMTA2M2Y=")
+
+                    result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                }
+
+                "keep other parameters" {
+                    val result =
+                        sanitizer("https://www.instagram.com/p/Ceeg-VgI4yF/?igsi=abc&img_index=2")
+
+                    result shouldBe "https://www.instagram.com/p/Ceeg-VgI4yF/&img_index=2"
+                }
+            }
+
+        "matchesDomain" should
+            {
+                "match instagram.com" {
+                    sanitizer.matchesDomain("https://www.instagram.com/reel/Ceeg-VgI4yF/") shouldBe
+                        true
+                }
+
+                "not match other.com" {
+                    sanitizer.matchesDomain("https://www.other.com/reel/Ceeg-VgI4yF/") shouldBe
+                        false
                 }
             }
     })
