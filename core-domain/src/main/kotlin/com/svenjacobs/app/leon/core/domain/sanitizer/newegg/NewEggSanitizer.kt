@@ -38,6 +38,7 @@ class NewEggSanitizer : Sanitizer {
     override fun matchesDomain(input: String) = DOMAIN_REGEX.containsMatchIn(input)
 
     private companion object {
-        private val DOMAIN_REGEX = Regex("^(?:https?://)?(?:www\\.)?newegg\\..+(/.+)/p/[0-9A-Z]+")
+        private val DOMAIN_REGEX =
+            Regex("^(?:https?://)?(?:www\\.)?newegg\\.[^/?#:]+(/.+)/p/[0-9A-Z]+")
     }
 }

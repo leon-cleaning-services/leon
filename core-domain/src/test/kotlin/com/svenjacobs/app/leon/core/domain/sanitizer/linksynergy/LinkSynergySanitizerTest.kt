@@ -37,4 +37,15 @@ class LinkSynergySanitizerTest :
                     result shouldBe "https://www.newegg.com/p/23B-001E-003S3?item=9SIAGREJ3S5851"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match LinkSynergy link" {
+                    sanitizer.matchesDomain("https://click.linksynergy.com/link?id=a") shouldBe true
+                }
+
+                "not match host which continues after the domain" {
+                    sanitizer.matchesDomain("https://linksynergy.evil.com?u=/link") shouldBe false
+                }
+            }
     })

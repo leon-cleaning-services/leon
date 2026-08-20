@@ -36,4 +36,18 @@ class EbaySanitizerTest :
                     result shouldBe "https://www.ebay.de/itm/271784973135"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match eBay article URL" {
+                    val sanitizer = EbaySanitizer()
+                    sanitizer.matchesDomain("https://www.ebay.de/itm/271784973135") shouldBe true
+                }
+
+                "not match host which continues after the domain" {
+                    val sanitizer = EbaySanitizer()
+                    sanitizer.matchesDomain("https://ebay.evil.com?u=/itm/271784973135") shouldBe
+                        false
+                }
+            }
     })

@@ -30,4 +30,17 @@ class YoutubeShortUrlSanitizerTest :
                     result shouldBe "https://www.youtube.com/watch?v=5HaUOgW5BlA"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match youtu.be" {
+                    val sanitizer = YoutubeShortUrlSanitizer()
+                    sanitizer.matchesDomain("https://youtu.be/5HaUOgW5BlA") shouldBe true
+                }
+
+                "not match youtu.be inside another URL" {
+                    val sanitizer = YoutubeShortUrlSanitizer()
+                    sanitizer.matchesDomain("https://evil.com/youtu.be/5HaUOgW5BlA") shouldBe false
+                }
+            }
     })

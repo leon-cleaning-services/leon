@@ -50,5 +50,14 @@ class AliexpressSanitizerTest :
                     sanitizer.matchesDomain("de.aliexpress.com/item/12345") shouldBe true
                     sanitizer.matchesDomain("es.aliexpress.com/item/12345") shouldBe true
                 }
+
+                "not match aliexpress.com inside another URL" {
+                    sanitizer.matchesDomain("https://evil.com/?u=de.aliexpress.com/item/1") shouldBe
+                        false
+                }
+
+                "not match host which only starts with aliexpress.com" {
+                    sanitizer.matchesDomain("https://aliexpress.com.evil.com/item/1") shouldBe false
+                }
             }
     })

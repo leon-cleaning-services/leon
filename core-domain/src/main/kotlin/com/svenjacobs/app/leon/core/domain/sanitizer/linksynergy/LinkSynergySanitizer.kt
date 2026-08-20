@@ -32,5 +32,6 @@ class LinkSynergySanitizer : SearchResultSanitizer(RegexFactory.ofParameter("mur
     override fun getMetadata(context: Context) =
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_linksynergy_name))
 
-    override fun matchesDomain(input: String) = input.matchesDomainRegex("linksynergy\\.[^/]+/link")
+    override fun matchesDomain(input: String) =
+        input.matchesDomainRegex("(?:[^./?#:]+\\.)*linksynergy\\.[^/?#:]+/link")
 }

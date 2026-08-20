@@ -33,5 +33,5 @@ class FacebookSanitizer : RegexSanitizer(regex = RegexFactory.exceptParameter("(
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_facebook_name))
 
     override fun matchesDomain(input: String) =
-        input.matchesDomainRegex(domain = "(m\\.)?facebook.com")
+        input.matchesDomainRegex(domain = "(m\\.)?facebook\\.com")
 }

@@ -52,5 +52,13 @@ class FacebookSanitizerTest :
                 "match m.facebook.com" {
                     sanitizer.matchesDomain("https://m.facebook.com") shouldBe true
                 }
+
+                "not match host which only starts with facebook.com" {
+                    sanitizer.matchesDomain("https://facebook.com.evil.com") shouldBe false
+                }
+
+                "not match host where the dot is another character" {
+                    sanitizer.matchesDomain("https://facebook-com") shouldBe false
+                }
             }
     })

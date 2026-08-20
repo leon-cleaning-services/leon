@@ -18,6 +18,7 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
 import android.content.Context
+import com.svenjacobs.app.leon.core.common.domain.matchesDomainRegex
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
@@ -29,7 +30,8 @@ class MyDealzRedirectsSanitizer : Sanitizer {
     override fun getMetadata(context: Context) =
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_mydealz_redirects_name))
 
-    override fun matchesDomain(input: String) = MyDealzDomains.DOMAINS_REGEX.containsMatchIn(input)
+    override fun matchesDomain(input: String) =
+        input.matchesDomainRegex(MyDealzDomains.DOMAINS_REGEX)
 
     override fun invoke(input: String): String {
         val groupValues =

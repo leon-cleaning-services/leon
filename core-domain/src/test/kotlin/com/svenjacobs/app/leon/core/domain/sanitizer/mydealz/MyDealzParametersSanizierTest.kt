@@ -36,4 +36,18 @@ class MyDealzParametersSanizierTest :
                             "trikot-2383743"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match MyDealz domains" {
+                    val sanitizer = MyDealzParametersSanitizer()
+                    sanitizer.matchesDomain("https://www.mydealz.de/deals/a-1") shouldBe true
+                    sanitizer.matchesDomain("https://www.hotukdeals.com/deals/a-1") shouldBe true
+                }
+
+                "not match MyDealz domain inside another URL" {
+                    val sanitizer = MyDealzParametersSanitizer()
+                    sanitizer.matchesDomain("https://evil.com/?u=mydealz.de") shouldBe false
+                }
+            }
     })

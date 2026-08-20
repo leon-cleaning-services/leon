@@ -49,5 +49,17 @@ class WikipediaSanitizerTest :
                 "don't match google.com" {
                     sanitizer.matchesDomain("https://google.com") shouldBe false
                 }
+
+                "don't match wikipedia.org inside another URL" {
+                    sanitizer.matchesDomain("https://evil.com/?u=en.wikipedia.org") shouldBe false
+                }
+
+                "don't match host which only starts with wikipedia.org" {
+                    sanitizer.matchesDomain("https://wikipedia.org.evil.com") shouldBe false
+                }
+
+                "don't match host where the dot is another character" {
+                    sanitizer.matchesDomain("https://wikipedia-org") shouldBe false
+                }
             }
     })

@@ -18,7 +18,7 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.wikipedia
 
 import android.content.Context
-import com.svenjacobs.app.leon.core.common.domain.matchesDomainRegex
+import com.svenjacobs.app.leon.core.common.domain.matchesSubdomains
 import com.svenjacobs.app.leon.core.common.regex.RegexFactory
 import com.svenjacobs.app.leon.core.domain.R
 import com.svenjacobs.app.leon.core.domain.sanitizer.RegexSanitizer
@@ -32,6 +32,5 @@ class WikipediaSanitizer : RegexSanitizer(regex = RegexFactory.ofParameter("wpro
     override fun getMetadata(context: Context) =
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_wikipedia_name))
 
-    override fun matchesDomain(input: String) =
-        input.matchesDomainRegex(domain = "(.*\\.)?wikipedia.org")
+    override fun matchesDomain(input: String) = input.matchesSubdomains("wikipedia.org")
 }

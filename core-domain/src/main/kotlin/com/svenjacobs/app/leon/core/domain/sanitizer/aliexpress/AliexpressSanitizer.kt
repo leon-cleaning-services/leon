@@ -33,5 +33,5 @@ class AliexpressSanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) {
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_aliexpress_name))
 
     override fun matchesDomain(input: String) =
-        input.matchesDomainRegex("(.+\\.)?aliexpress\\..+/item/")
+        input.matchesDomainRegex("(?:[^./?#:]+\\.)*aliexpress\\.[^./?#:]+/item/")
 }

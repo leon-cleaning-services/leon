@@ -34,4 +34,18 @@ class AmazonSanitizerTest :
                     result shouldBe "https://www.amazon.de/gp/css/homepage.html"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match Amazon domains" {
+                    val sanitizer = AmazonSanitizer()
+                    sanitizer.matchesDomain("https://www.amazon.de/dp/B091G3FLL7/") shouldBe true
+                }
+
+                "not match host which continues after the domain" {
+                    val sanitizer = AmazonSanitizer()
+                    sanitizer.matchesDomain("https://amazon.evil.com?u=/dp/B091G3FLL7/") shouldBe
+                        false
+                }
+            }
     })

@@ -33,5 +33,5 @@ class GeoRiotSanitizer : SearchResultSanitizer(RegexFactory.ofParameter("GR_URL"
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_georiot_name))
 
     override fun matchesDomain(input: String) =
-        input.matchesDomainRegex("target.georiot\\.[^/]+/Proxy.ashx")
+        input.matchesDomainRegex("target\\.georiot\\.[^/?#:]+/Proxy\\.ashx")
 }

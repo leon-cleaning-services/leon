@@ -33,5 +33,5 @@ class NetflixSanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) {
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_netflix_name))
 
     override fun matchesDomain(input: String) =
-        input.matchesDomainRegex(domain = "(help\\.)?netflix.com")
+        input.matchesDomainRegex(domain = "(help\\.)?netflix\\.com")
 }

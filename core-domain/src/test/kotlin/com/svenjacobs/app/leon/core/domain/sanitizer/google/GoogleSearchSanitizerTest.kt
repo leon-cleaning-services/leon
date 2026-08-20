@@ -48,4 +48,15 @@ class GoogleSearchSanitizerTest :
                     result shouldBe "https://www.regextester.com/"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match Google redirect URL" {
+                    sanitizer.matchesDomain("https://www.google.com/url?q=a") shouldBe true
+                }
+
+                "not match host which continues after the domain" {
+                    sanitizer.matchesDomain("https://google.evil.com?u=/url") shouldBe false
+                }
+            }
     })
