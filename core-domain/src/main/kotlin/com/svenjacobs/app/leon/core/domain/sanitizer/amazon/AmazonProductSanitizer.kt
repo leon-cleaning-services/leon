@@ -43,6 +43,6 @@ class AmazonProductSanitizer : Sanitizer {
 
     private companion object {
         private val REGEX =
-            Regex("((?:https?://)?(?:www\\.)?amazon\\.[^/]*).*/(?:dp?|gp/product)?/([^/?&]*)")
+            Regex("^((?:https?://)?(?:www\\.)?amazon\\.[^/?#]*).*/(?:dp?|gp/product)?/([^/?&]*)")
     }
 }

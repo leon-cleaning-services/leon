@@ -91,5 +91,11 @@ class AmazonProductSanitizerTest :
                             "0DER&psc=1"
                     ) shouldBe true
                 }
+
+                "not match Amazon product link inside another URL" {
+                    sanitizer.matchesDomain(
+                        "https://evil.com/?u=https://amazon.com/dp/B091G3FLL7"
+                    ) shouldBe false
+                }
             }
     })

@@ -37,6 +37,6 @@ class YoutubeMusicSanitizer : Sanitizer {
     }
 
     private companion object {
-        private val DOMAIN_REGEX = Regex("(?:https?://)?(music\\.)youtube\\.com")
+        private val DOMAIN_REGEX = Regex("^(?:https?://)?(music\\.)youtube\\.com(?=[:/?#]|\$)")
     }
 }

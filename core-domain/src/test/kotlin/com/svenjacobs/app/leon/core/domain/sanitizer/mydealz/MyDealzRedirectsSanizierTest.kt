@@ -42,4 +42,18 @@ class MyDealzRedirectsSanizierTest :
                     result shouldBe "https://preisjaeger.at/deals/a-2117879"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match MyDealz domains" {
+                    val sanitizer = MyDealzRedirectsSanitizer()
+                    sanitizer.matchesDomain("https://www.mydealz.de/deals/a-1") shouldBe true
+                    sanitizer.matchesDomain("https://www.hotukdeals.com/deals/a-1") shouldBe true
+                }
+
+                "not match MyDealz domain inside another URL" {
+                    val sanitizer = MyDealzRedirectsSanitizer()
+                    sanitizer.matchesDomain("https://evil.com/?u=mydealz.de") shouldBe false
+                }
+            }
     })

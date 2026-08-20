@@ -17,10 +17,52 @@
  */
 package com.svenjacobs.app.leon.core.common.domain
 
-fun String.matchesDomainRegex(domain: String): Boolean =
-    Regex("^(?:https?://)?(?:www\\.)?$domain.*").matches(this)
+private val SCHEME = Regex("^https?://")
 
-fun String.matchesDomain(domain: String): Boolean = matchesDomainRegex(domain.replace(".", "\\."))
+private val HOST_DELIMITERS = charArrayOf(':', '/', '?', '#')
 
+/**
+ * Returns whether this URL is matched by the regular expression [domain].
+ *
+ * An optional scheme and an optional leading `www.` are matched implicitly, so `example\.com`
+ * matches `example.com`, `http://example.com` and `https://www.example.com` alike.
+ *
+ * [domain] must cover the complete host of the URL. A pattern which merely is a prefix of the host
+ * does *not* match, which keeps lookalike hosts such as `example.com.evil.com` or
+ * `example.computer` from being treated as `example.com`. Whatever follows the host — a port, a
+ * path, a query or a fragment — is not restricted, and [domain] may reach into the path itself, for
+ * example `google\.com/maps`.
+ *
+ * @param domain Regular expression of the domain, without scheme and without leading `www.`
+ */
+fun String.matchesDomainRegex(domain: String): Boolean {
+    val match = Regex("^(?:https?://)?(?:www\\.)?(?:$domain)").find(this) ?: return false
+    return match.range.last + 1 >= hostEndIndex()
+}
+
+/**
+ * Returns whether this URL is hosted at exactly [domain].
+ *
+ * @param domain Literal domain, without scheme and without leading `www.`
+ */
+fun String.matchesDomain(domain: String): Boolean = matchesDomainRegex(domain.quoteDots())
+
+/**
+ * Returns whether this URL is hosted at [domain] or at any of its subdomains.
+ *
+ * @param domain Literal domain, without scheme and without leading `www.`
+ */
 fun String.matchesSubdomains(domain: String): Boolean =
-    Regex("^(?:https?://)?.*$domain.*").matches(this)
+    matchesDomainRegex("(?:[^./?#:]+\\.)*${domain.quoteDots()}")
+
+private fun String.quoteDots(): String = replace(".", "\\.")
+
+/**
+ * Returns the index at which the host of this URL ends, which is the first delimiter after an
+ * optional scheme, or the length of the string when there is none.
+ */
+private fun String.hostEndIndex(): Int {
+    val start = SCHEME.find(this)?.value?.length ?: 0
+    val index = indexOfAny(HOST_DELIMITERS, startIndex = start)
+    return if (index == -1) length else index
+}

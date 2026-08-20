@@ -32,5 +32,5 @@ class GoogleSearchSanitizer : SearchResultSanitizer(RegexFactory.ofParameter("ur
     override fun getMetadata(context: Context) =
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_google_search_name))
 
-    override fun matchesDomain(input: String) = input.matchesDomainRegex("google\\.[^/]+/url")
+    override fun matchesDomain(input: String) = input.matchesDomainRegex("google\\.[^/?#:]+/url")
 }

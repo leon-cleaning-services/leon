@@ -46,4 +46,16 @@ class YoutubeMusicSanitizerTest :
                             "UrAH_0ZI"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match music.youtube.com" {
+                    sanitizer.matchesDomain("https://music.youtube.com/playlist?list=a") shouldBe
+                        true
+                }
+
+                "not match music.youtube.com inside another URL" {
+                    sanitizer.matchesDomain("https://evil.com/?u=music.youtube.com") shouldBe false
+                }
+            }
     })

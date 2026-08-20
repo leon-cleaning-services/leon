@@ -32,5 +32,5 @@ class EbaySanitizer : RegexSanitizer(regex = RegexFactory.AllParameters) {
     override fun getMetadata(context: Context) =
         Sanitizer.Metadata(name = context.getString(R.string.sanitizer_ebay_name))
 
-    override fun matchesDomain(input: String) = input.matchesDomainRegex("ebay\\..+/itm/")
+    override fun matchesDomain(input: String) = input.matchesDomainRegex("ebay\\.[^/?#:]+/itm/")
 }

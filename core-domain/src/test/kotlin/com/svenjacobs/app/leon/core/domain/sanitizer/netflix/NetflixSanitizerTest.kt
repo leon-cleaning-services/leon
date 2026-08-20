@@ -64,5 +64,13 @@ class NetflixSanitizerTest :
                 "match help.netflix.com" {
                     sanitizer.matchesDomain("https://help.netflix.com") shouldBe true
                 }
+
+                "not match host which only starts with netflix.com" {
+                    sanitizer.matchesDomain("https://netflix.com.evil.com") shouldBe false
+                }
+
+                "not match host where the dot is another character" {
+                    sanitizer.matchesDomain("https://netflix-com") shouldBe false
+                }
             }
     })

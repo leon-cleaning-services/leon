@@ -51,5 +51,17 @@ class FlipkartSanitizerTest :
                 "match *.flipkart.com" {
                     sanitizer.matchesDomain("https://aa.flipkart.com") shouldBe true
                 }
+
+                "match flipkart.com without subdomain" {
+                    sanitizer.matchesDomain("https://flipkart.com") shouldBe true
+                }
+
+                "not match flipkart.com inside another URL" {
+                    sanitizer.matchesDomain("https://evil.com/?u=aa.flipkart.com") shouldBe false
+                }
+
+                "not match host which only starts with flipkart.com" {
+                    sanitizer.matchesDomain("https://aa.flipkart.com.evil.com") shouldBe false
+                }
             }
     })

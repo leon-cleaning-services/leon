@@ -39,7 +39,7 @@ class YoutubeShortUrlSanitizer : Sanitizer {
     }
 
     private companion object {
-        private val DOMAIN_REGEX = Regex("youtu\\.be")
+        private val DOMAIN_REGEX = Regex("^(?:https?://)?(?:www\\.)?youtu\\.be(?=[:/?#]|\$)")
         private val VIDEO_ID_REGEX = Regex("(?:https?://)?youtu\\.be/(.+)\$")
     }
 }

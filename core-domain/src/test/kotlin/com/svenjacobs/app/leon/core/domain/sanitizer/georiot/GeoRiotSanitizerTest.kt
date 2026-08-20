@@ -39,4 +39,17 @@ class GeoRiotSanitizerTest :
                             "=ogi&th=1&psc=1&ascsubtag=cbq-us-custom-tracking-20"
                 }
             }
+
+        "matchesDomain" should
+            {
+                "match GeoRiot proxy URL" {
+                    sanitizer.matchesDomain(
+                        "https://target.georiot.com/Proxy.ashx?tsid=8429"
+                    ) shouldBe true
+                }
+
+                "not match host where the dots are other characters" {
+                    sanitizer.matchesDomain("https://target-georiot.com/Proxy-ashx") shouldBe false
+                }
+            }
     })
