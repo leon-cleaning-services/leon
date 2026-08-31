@@ -17,32 +17,34 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.yandex
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YandexSanitizer
 import io.kotest.matchers.shouldBe
 
 class YandexSanitizerTest :
-    WordSpec({
-        val sanitizer = YandexSanitizer()
+    SanitizerSpec(
+        YandexSanitizer,
+        {
+            "clean" should
+                {
+                    "clean yandex.com URLs" {
+                        clean(
+                            "https://yandex.com/search/?text=test&lr=103769&search_source=yacom_desktop_common"
+                        ) shouldBe "https://yandex.com/search/?text=test"
+                    }
 
-        "invoke" should
-            {
-                "clean yandex.com URLs" {
-                    sanitizer.invoke(
-                        "https://yandex.com/search/?text=test&lr=103769&search_source=yacom_desktop_common"
-                    ) shouldBe "https://yandex.com/search/?text=test"
+                    "clean ya.ru URLs" {
+                        clean(
+                            "https://ya.ru/search/?text=test&lr=103769&search_source=yacom_desktop_common"
+                        ) shouldBe "https://ya.ru/search/?text=test"
+                    }
                 }
 
-                "clean ya.ru URLs" {
-                    sanitizer.invoke(
-                        "https://ya.ru/search/?text=test&lr=103769&search_source=yacom_desktop_common"
-                    ) shouldBe "https://ya.ru/search/?text=test"
+            "matches" should
+                {
+                    "match yandex.com" { matches("https://yandex.com") shouldBe true }
+
+                    "match ya.ru" { matches("https://ya.ru") shouldBe true }
                 }
-            }
-
-        "matchesDomain" should
-            {
-                "match yandex.com" { sanitizer.matchesDomain("https://yandex.com") shouldBe true }
-
-                "match ya.ru" { sanitizer.matchesDomain("https://ya.ru") shouldBe true }
-            }
-    })
+        },
+    )

@@ -17,30 +17,32 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.xiaohongshu
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.XiaohongshuSanitizer
 import io.kotest.matchers.shouldBe
 
 class XiaohongshuSanitizerTest :
-    WordSpec({
-        val sanitizer = XiaohongshuSanitizer()
-
-        "invoke" should
-            {
-                "remove all parameters from Xiaohongshu URL" {
-                    val result =
-                        sanitizer(
-                            "https://www.xiaohongshu.com/discovery/item?id=123&from=share&utm_source=google&extra=keep"
-                        )
-                    result shouldBe "https://www.xiaohongshu.com/discovery/item"
+    SanitizerSpec(
+        XiaohongshuSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters from Xiaohongshu URL" {
+                        val result =
+                            clean(
+                                "https://www.xiaohongshu.com/discovery/item?id=123&from=share&utm_source=google&extra=keep"
+                            )
+                        result shouldBe "https://www.xiaohongshu.com/discovery/item"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match xiaohongshu.com and xhslink.com domains" {
-                    sanitizer.matchesDomain("xiaohongshu.com/discovery") shouldBe true
-                    sanitizer.matchesDomain("www.xiaohongshu.com") shouldBe true
-                    sanitizer.matchesDomain("xhslink.com/abc") shouldBe true
+            "matches" should
+                {
+                    "match xiaohongshu.com and xhslink.com domains" {
+                        matches("xiaohongshu.com/discovery") shouldBe true
+                        matches("www.xiaohongshu.com") shouldBe true
+                        matches("xhslink.com/abc") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

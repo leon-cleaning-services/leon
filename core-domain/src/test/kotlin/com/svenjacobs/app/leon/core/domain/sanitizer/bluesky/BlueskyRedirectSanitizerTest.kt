@@ -17,32 +17,33 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.bluesky
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.BlueskyRedirectSanitizer
 import io.kotest.matchers.shouldBe
 
 class BlueskyRedirectSanitizerTest :
-    WordSpec({
-        val sanitizer = BlueskyRedirectSanitizer()
-
-        "invoke" should
-            {
-                "extract URL from Bluesky redirect link" {
-                    sanitizer(
-                        "https://go.bsky.app/redirect?u=https%3A%2F%2Fexample.com%2Fsome%2Fpath%3Ffoo%3Dbar"
-                    ) shouldBe "https://example.com/some/path?foo=bar"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match go.bsky.app/redirect" {
-                    sanitizer.matchesDomain(
-                        "https://go.bsky.app/redirect?u=https%3A%2F%2Fexample.com"
-                    ) shouldBe true
+    SanitizerSpec(
+        BlueskyRedirectSanitizer,
+        {
+            "clean" should
+                {
+                    "extract URL from Bluesky redirect link" {
+                        clean(
+                            "https://go.bsky.app/redirect?u=https%3A%2F%2Fexample.com%2Fsome%2Fpath%3Ffoo%3Dbar"
+                        ) shouldBe "https://example.com/some/path?foo=bar"
+                    }
                 }
 
-                "not match other domains" {
-                    sanitizer.matchesDomain("https://bsky.app/profile/user") shouldBe false
+            "matches" should
+                {
+                    "match go.bsky.app/redirect" {
+                        matches("https://go.bsky.app/redirect?u=https%3A%2F%2Fexample.com") shouldBe
+                            true
+                    }
+
+                    "not match other domains" {
+                        matches("https://bsky.app/profile/user") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

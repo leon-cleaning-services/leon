@@ -17,19 +17,26 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.salesforce
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SalesforceParametersSanitizer
 import io.kotest.matchers.shouldBe
 
 class SalesforceParametersSanitizerTest :
-    WordSpec({
-        val sanitizer = SalesforceParametersSanitizer()
+    SanitizerSpec(
+        SalesforceParametersSanitizer,
+        {
+            "clean" should
+                {
+                    "remove sfmc_activityid parameter as per #302" {
+                        clean(
+                            "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2"
+                        ) shouldBe "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/"
+                    }
 
-        "invoke" should
-            {
-                "remove sfmc_activityid parameter as per #302" {
-                    sanitizer(
-                        "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2"
-                    ) shouldBe "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/"
+                    "not remove utm_ parameters, which are Google Analytics's, not Salesforce's" {
+                        clean("https://www.geox.com/?utm_source=newsletter&sfmc_id=1") shouldBe
+                            "https://www.geox.com/?utm_source=newsletter"
+                    }
                 }
-            }
-    })
+        },
+    )

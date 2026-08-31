@@ -17,34 +17,32 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.latinatoday
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.LatinaTodaySanitizer
 import io.kotest.matchers.shouldBe
 
 class LatinaTodaySanitizerTest :
-    WordSpec({
-        val sanitizer = LatinaTodaySanitizer()
-
-        "invoke" should
-            {
-                "remove all parameters" {
-                    sanitizer(
-                        "https://www.latinatoday.it/cronaca/articolo.html?utm_source=facebook&utm_medium=social"
-                    ) shouldBe "https://www.latinatoday.it/cronaca/articolo.html"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match latinatoday.it" {
-                    sanitizer.matchesDomain("https://latinatoday.it") shouldBe true
+    SanitizerSpec(
+        LatinaTodaySanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters" {
+                        clean(
+                            "https://www.latinatoday.it/cronaca/articolo.html?utm_source=facebook&utm_medium=social"
+                        ) shouldBe "https://www.latinatoday.it/cronaca/articolo.html"
+                    }
                 }
 
-                "match www.latinatoday.it" {
-                    sanitizer.matchesDomain("https://www.latinatoday.it") shouldBe true
-                }
+            "matches" should
+                {
+                    "match latinatoday.it" { matches("https://latinatoday.it") shouldBe true }
 
-                "not match other.com" {
-                    sanitizer.matchesDomain("https://other.com") shouldBe false
+                    "match www.latinatoday.it" {
+                        matches("https://www.latinatoday.it") shouldBe true
+                    }
+
+                    "not match other.com" { matches("https://other.com") shouldBe false }
                 }
-            }
-    })
+        },
+    )

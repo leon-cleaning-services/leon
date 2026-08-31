@@ -17,47 +17,47 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.instagram
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.InstagramSanitizer
 import io.kotest.matchers.shouldBe
 
 class InstagramSanitizerTest :
-    WordSpec({
-        val sanitizer = InstagramSanitizer()
+    SanitizerSpec(
+        InstagramSanitizer,
+        {
+            "clean" should
+                {
+                    "remove \"igsh\" parameter" {
+                        val result =
+                            clean("https://www.instagram.com/reel/Ceeg-VgI4yF/?igsh=YmMyMTA2M2Y=")
 
-        "invoke" should
-            {
-                "remove \"igsh\" parameter" {
-                    val result =
-                        sanitizer("https://www.instagram.com/reel/Ceeg-VgI4yF/?igsh=YmMyMTA2M2Y=")
+                        result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                    }
 
-                    result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                    "remove \"igsi\" parameter" {
+                        val result =
+                            clean("https://www.instagram.com/reel/Ceeg-VgI4yF/?igsi=YmMyMTA2M2Y=")
+
+                        result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                    }
+
+                    "keep other parameters" {
+                        val result =
+                            clean("https://www.instagram.com/p/Ceeg-VgI4yF/?igsi=abc&img_index=2")
+
+                        result shouldBe "https://www.instagram.com/p/Ceeg-VgI4yF/?img_index=2"
+                    }
                 }
 
-                "remove \"igsi\" parameter" {
-                    val result =
-                        sanitizer("https://www.instagram.com/reel/Ceeg-VgI4yF/?igsi=YmMyMTA2M2Y=")
+            "matches" should
+                {
+                    "match instagram.com" {
+                        matches("https://www.instagram.com/reel/Ceeg-VgI4yF/") shouldBe true
+                    }
 
-                    result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                    "not match other.com" {
+                        matches("https://www.other.com/reel/Ceeg-VgI4yF/") shouldBe false
+                    }
                 }
-
-                "keep other parameters" {
-                    val result =
-                        sanitizer("https://www.instagram.com/p/Ceeg-VgI4yF/?igsi=abc&img_index=2")
-
-                    result shouldBe "https://www.instagram.com/p/Ceeg-VgI4yF/&img_index=2"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match instagram.com" {
-                    sanitizer.matchesDomain("https://www.instagram.com/reel/Ceeg-VgI4yF/") shouldBe
-                        true
-                }
-
-                "not match other.com" {
-                    sanitizer.matchesDomain("https://www.other.com/reel/Ceeg-VgI4yF/") shouldBe
-                        false
-                }
-            }
-    })
+        },
+    )

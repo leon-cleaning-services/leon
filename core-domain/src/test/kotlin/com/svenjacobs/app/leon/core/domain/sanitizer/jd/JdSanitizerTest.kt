@@ -17,25 +17,27 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.jd
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.JdSanitizer
 import io.kotest.matchers.shouldBe
 
 class JdSanitizerTest :
-    WordSpec({
-        val sanitizer = JdSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters and handle &amp; entity" {
-                    val result = sanitizer("https://item.jd.com/123.html?share=1&amp;jkl=2")
-                    result shouldBe "https://item.jd.com/123.html"
+    SanitizerSpec(
+        JdSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters and handle &amp; entity" {
+                        val result = clean("https://item.jd.com/123.html?share=1&amp;jkl=2")
+                        result shouldBe "https://item.jd.com/123.html"
+                    }
                 }
-            }
-        "matchesDomain" should
-            {
-                "match jd.com and 3.cn domains" {
-                    sanitizer.matchesDomain("jd.com") shouldBe true
-                    sanitizer.matchesDomain("3.cn") shouldBe true
+            "matches" should
+                {
+                    "match jd.com and 3.cn domains" {
+                        matches("jd.com") shouldBe true
+                        matches("3.cn") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

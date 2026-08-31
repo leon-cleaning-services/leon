@@ -17,36 +17,34 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.reddit
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.RedditOutSanitizer
 import io.kotest.matchers.shouldBe
 
 class RedditOutSanitizerTest :
-    WordSpec({
-        val sanitizer = RedditOutSanitizer()
+    SanitizerSpec(
+        RedditOutSanitizer,
+        {
+            "clean" should
+                {
+                    "extract URL" {
+                        val result =
+                            clean(
+                                "https://out.reddit.com/t3_11zcpau?url=https%3A%2F%2Fcompress-or-die.co" +
+                                    "m%2FThe-nasty-red-JPG-compression-artifacts&token=AQAA-odsZCyQ04Ae10crjv" +
+                                    "g8DGlsTPckMpu3vvIjNwmWPgLdQMbC&app_name=web2x&web_redirect=true/"
+                            )
 
-        "invoke" should
-            {
-                "extract URL" {
-                    val result =
-                        sanitizer(
-                            "https://out.reddit.com/t3_11zcpau?url=https%3A%2F%2Fcompress-or-die.co" +
-                                "m%2FThe-nasty-red-JPG-compression-artifacts&token=AQAA-odsZCyQ04Ae10crjv" +
-                                "g8DGlsTPckMpu3vvIjNwmWPgLdQMbC&app_name=web2x&web_redirect=true/"
-                        )
-
-                    result shouldBe
-                        "https://compress-or-die.com/The-nasty-red-JPG-compression-artifacts"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match for out.reddit.com" {
-                    sanitizer.matchesDomain("https://out.reddit.com") shouldBe true
+                        result shouldBe
+                            "https://compress-or-die.com/The-nasty-red-JPG-compression-artifacts"
+                    }
                 }
 
-                "not match for reddit.com" {
-                    sanitizer.matchesDomain("https://reddit.com") shouldBe false
+            "matches" should
+                {
+                    "match for out.reddit.com" { matches("https://out.reddit.com") shouldBe true }
+
+                    "not match for reddit.com" { matches("https://reddit.com") shouldBe false }
                 }
-            }
-    })
+        },
+    )

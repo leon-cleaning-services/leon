@@ -17,29 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.weibo
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.WeiboSanitizer
 import io.kotest.matchers.shouldBe
 
 class WeiboSanitizerTest :
-    WordSpec({
-        val sanitizer = WeiboSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters from Weibo URL" {
-                    val result =
-                        sanitizer(
-                            "https://weibo.com/123/profile?from=share&refer=user&share_token=abc"
-                        )
-                    result shouldBe "https://weibo.com/123/profile"
+    SanitizerSpec(
+        WeiboSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from Weibo URL" {
+                        val result =
+                            clean(
+                                "https://weibo.com/123/profile?from=share&refer=user&share_token=abc"
+                            )
+                        result shouldBe "https://weibo.com/123/profile"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match weibo.com and m.weibo.cn domains" {
-                    sanitizer.matchesDomain("weibo.com") shouldBe true
-                    sanitizer.matchesDomain("m.weibo.cn") shouldBe true
+            "matches" should
+                {
+                    "match weibo.com and m.weibo.cn domains" {
+                        matches("weibo.com") shouldBe true
+                        matches("m.weibo.cn") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

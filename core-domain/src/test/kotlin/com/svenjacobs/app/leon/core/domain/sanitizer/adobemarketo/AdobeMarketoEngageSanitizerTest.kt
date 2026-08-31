@@ -17,24 +17,26 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.adobemarketo
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AdobeMarketoEngageSanitizer
 import io.kotest.matchers.shouldBe
 
 class AdobeMarketoEngageSanitizerTest :
-    WordSpec({
-        val sanitizer = AdobeMarketoEngageSanitizer()
+    SanitizerSpec(
+        AdobeMarketoEngageSanitizer,
+        {
+            "clean" should
+                {
+                    "remove mkt_* parameters" {
+                        clean("https://www.example.com/page?mkt_tok=abc123&keep=123") shouldBe
+                            "https://www.example.com/page?keep=123"
+                    }
 
-        "invoke" should
-            {
-                "remove mkt_* parameters" {
-                    sanitizer("https://www.example.com/page?mkt_tok=abc123&keep=123") shouldBe
-                        "https://www.example.com/page&keep=123"
+                    "remove multiple mkt_* parameters" {
+                        clean(
+                            "https://www.example.com/page?mkt_tok=abc&mkt_unsubscribe=1&keep=123"
+                        ) shouldBe "https://www.example.com/page?keep=123"
+                    }
                 }
-
-                "remove multiple mkt_* parameters" {
-                    sanitizer(
-                        "https://www.example.com/page?mkt_tok=abc&mkt_unsubscribe=1&keep=123"
-                    ) shouldBe "https://www.example.com/page&keep=123"
-                }
-            }
-    })
+        },
+    )

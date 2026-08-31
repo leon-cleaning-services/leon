@@ -17,76 +17,72 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.youtube
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YoutubeSanitizer
 import io.kotest.matchers.shouldBe
 
 class YoutubeSanitizerTest :
-    WordSpec({
-        val sanitizer = YoutubeSanitizer()
+    SanitizerSpec(
+        YoutubeSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters except \"v\" from video URLs" {
+                        clean(
+                            "https://m.youtube.com/watch?v=CvFH_6DNRCY&pp=ygUHZGVidXNzeQ%3D%3D"
+                        ) shouldBe "https://m.youtube.com/watch?v=CvFH_6DNRCY"
+                    }
 
-        "invoke" should
-            {
-                "remove all parameters except \"v\" from video URLs" {
-                    sanitizer(
-                        "https://m.youtube.com/watch?v=CvFH_6DNRCY&pp=ygUHZGVidXNzeQ%3D%3D"
-                    ) shouldBe "https://m.youtube.com/watch?v=CvFH_6DNRCY"
+                    "remove all parameters except \"t\" from video URLs" {
+                        clean("https://m.youtube.com/watch?v=CvFH_6DNRCY&t=125") shouldBe
+                            "https://m.youtube.com/watch?v=CvFH_6DNRCY&t=125"
+                    }
+
+                    "remove all parameters except \"search_query\" from search URLs" {
+                        clean(
+                            "https://m.youtube.com/results?sp=mAEA&search_query=funny+dog+video"
+                        ) shouldBe "https://m.youtube.com/results?search_query=funny+dog+video"
+                    }
+
+                    "remove all parameters except \"list\" from playlist URLs" {
+                        clean(
+                            "https://youtube.com/playlist?list=PLkqz3S84Tw-QYEdfTLBzxJ1FAprtqeE" +
+                                "pJ&si=2tDDmSKejG2GTtj5"
+                        ) shouldBe
+                            "https://youtube.com/playlist?list=PLkqz3S84Tw-QYEdfTLBzxJ1FAprtqeEpJ"
+                    }
+
+                    "remove all parameters except \"v\" from YouTube Music URLs" {
+                        clean(
+                            "https://music.youtube.com/watch?v=KGFkMD2zotU&si=JrZ7QzX4VeMrfzp8"
+                        ) shouldBe "https://music.youtube.com/watch?v=KGFkMD2zotU"
+                    }
+
+                    "remove parameters from youtu.be domain" {
+                        clean(
+                            "https://youtu.be/RvRhUHTV_8k?si=OXYBmGTMXib1jlA2?si=UA0UVnrmPbK612Lu"
+                        ) shouldBe "https://youtu.be/RvRhUHTV_8k"
+                    }
+
+                    "not remove \"channel_id\" from feed URLs" {
+                        clean(
+                            "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw"
+                        ) shouldBe
+                            "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw"
+                    }
                 }
 
-                "remove all parameters except \"t\" from video URLs" {
-                    sanitizer("https://m.youtube.com/watch?v=CvFH_6DNRCY&t=125") shouldBe
-                        "https://m.youtube.com/watch?v=CvFH_6DNRCY&t=125"
-                }
+            "matches" should
+                {
+                    "match youtube.com domain" { matches("https://youtube.com/") shouldBe true }
 
-                "remove all parameters except \"search_query\" from search URLs" {
-                    sanitizer(
-                        "https://m.youtube.com/results?sp=mAEA&search_query=funny+dog+video"
-                    ) shouldBe "https://m.youtube.com/results&search_query=funny+dog+video"
-                }
+                    "match m.youtube.com domain" { matches("https://m.youtube.com/") shouldBe true }
 
-                "remove all parameters except \"list\" from playlist URLs" {
-                    sanitizer(
-                        "https://youtube.com/playlist?list=PLkqz3S84Tw-QYEdfTLBzxJ1FAprtqeE" +
-                            "pJ&si=2tDDmSKejG2GTtj5"
-                    ) shouldBe
-                        "https://youtube.com/playlist?list=PLkqz3S84Tw-QYEdfTLBzxJ1FAprtqeEpJ"
-                }
+                    "match music.youtube.com domain" {
+                        matches("https://music.youtube.com/") shouldBe true
+                    }
 
-                "remove all parameters except \"v\" from YouTube Music URLs" {
-                    sanitizer(
-                        "https://music.youtube.com/watch?v=KGFkMD2zotU&si=JrZ7QzX4VeMrfzp8"
-                    ) shouldBe "https://music.youtube.com/watch?v=KGFkMD2zotU"
+                    "match youtu.be domain" { matches("https://youtu.be/") shouldBe true }
                 }
-
-                "remove parameters from youtu.be domain" {
-                    sanitizer(
-                        "https://youtu.be/RvRhUHTV_8k?si=OXYBmGTMXib1jlA2?si=UA0UVnrmPbK612Lu"
-                    ) shouldBe "https://youtu.be/RvRhUHTV_8k"
-                }
-
-                "not remove \"channel_id\" from feed URLs" {
-                    sanitizer(
-                        "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw"
-                    ) shouldBe
-                        "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match youtube.com domain" {
-                    sanitizer.matchesDomain("https://youtube.com/") shouldBe true
-                }
-
-                "match m.youtube.com domain" {
-                    sanitizer.matchesDomain("https://m.youtube.com/") shouldBe true
-                }
-
-                "match music.youtube.com domain" {
-                    sanitizer.matchesDomain("https://music.youtube.com/") shouldBe true
-                }
-
-                "match youtu.be domain" {
-                    sanitizer.matchesDomain("https://youtu.be/") shouldBe true
-                }
-            }
-    })
+        },
+    )

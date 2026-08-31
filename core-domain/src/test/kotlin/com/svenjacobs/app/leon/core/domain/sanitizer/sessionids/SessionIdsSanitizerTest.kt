@@ -17,31 +17,33 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.sessionids
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SessionIdsSanitizer
 import io.kotest.matchers.shouldBe
 
 class SessionIdsSanitizerTest :
-    WordSpec({
-        val sanitizer = SessionIdsSanitizer()
+    SanitizerSpec(
+        SessionIdsSanitizer,
+        {
+            "clean" should
+                {
+                    "remove \"sessionid\" parameter" {
+                        val result =
+                            clean(
+                                "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id=13241297"
+                            )
 
-        "invoke" should
-            {
-                "remove \"sessionid\" parameter" {
-                    val result =
-                        sanitizer(
-                            "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id=13241297"
-                        )
+                        result shouldBe "https://www.buch24.de/shopdirekt.cgi?id=13241297"
+                    }
 
-                    result shouldBe "https://www.buch24.de/shopdirekt.cgi&id=13241297"
+                    "remove \"jsessionid\" parameter" {
+                        val result =
+                            clean(
+                                "https://www.buch24.de/shopdirekt.cgi?jsessionid=1650808921-319962258&id=13241297"
+                            )
+
+                        result shouldBe "https://www.buch24.de/shopdirekt.cgi?id=13241297"
+                    }
                 }
-
-                "remove \"jsessionid\" parameter" {
-                    val result =
-                        sanitizer(
-                            "https://www.buch24.de/shopdirekt.cgi?jsessionid=1650808921-319962258&id=13241297"
-                        )
-
-                    result shouldBe "https://www.buch24.de/shopdirekt.cgi&id=13241297"
-                }
-            }
-    })
+        },
+    )

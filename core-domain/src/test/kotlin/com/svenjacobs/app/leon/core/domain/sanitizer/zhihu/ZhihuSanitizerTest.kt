@@ -17,29 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.zhihu
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ZhihuSanitizer
 import io.kotest.matchers.shouldBe
 
 class ZhihuSanitizerTest :
-    WordSpec({
-        val sanitizer = ZhihuSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters from Zhihu URL" {
-                    val result =
-                        sanitizer(
-                            "https://www.zhihu.com/question/123?share_redirect=1&share_code=abc"
-                        )
-                    result shouldBe "https://www.zhihu.com/question/123"
+    SanitizerSpec(
+        ZhihuSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from Zhihu URL" {
+                        val result =
+                            clean(
+                                "https://www.zhihu.com/question/123?share_redirect=1&share_code=abc"
+                            )
+                        result shouldBe "https://www.zhihu.com/question/123"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match zhihu.com domain" {
-                    sanitizer.matchesDomain("zhihu.com") shouldBe true
-                    sanitizer.matchesDomain("www.zhihu.com") shouldBe true
+            "matches" should
+                {
+                    "match zhihu.com domain" {
+                        matches("zhihu.com") shouldBe true
+                        matches("www.zhihu.com") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

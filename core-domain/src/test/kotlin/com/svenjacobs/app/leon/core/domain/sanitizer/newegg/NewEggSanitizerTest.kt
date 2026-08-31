@@ -17,39 +17,37 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.newegg
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.NewEggSanitizer
 import io.kotest.matchers.shouldBe
 
 class NewEggSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove obsolete parameters" {
-                    val sanitizer = NewEggSanitizer()
-                    val result =
-                        sanitizer(
-                            "https://www.newegg.com/black-acer-nitro-5-an515-57-59f7-gaming/p/N82E1" +
-                                "6834360174?Item=N82E16834360174"
-                        )
+    SanitizerSpec(
+        NewEggSanitizer,
+        {
+            "clean" should
+                {
+                    "remove obsolete parameters" {
+                        val result =
+                            clean(
+                                "https://www.newegg.com/black-acer-nitro-5-an515-57-59f7-gaming/p/N82E1" +
+                                    "6834360174?Item=N82E16834360174"
+                            )
 
-                    result shouldBe "https://www.newegg.com/p/N82E16834360174"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match NewEgg product URL" {
-                    val sanitizer = NewEggSanitizer()
-                    sanitizer.matchesDomain(
-                        "https://www.newegg.com/some-product/p/N82E16834360174"
-                    ) shouldBe true
+                        result shouldBe "https://www.newegg.com/p/N82E16834360174"
+                    }
                 }
 
-                "not match host which continues after the domain" {
-                    val sanitizer = NewEggSanitizer()
-                    sanitizer.matchesDomain(
-                        "https://newegg.evil.com?u=/a/p/N82E16834360174"
-                    ) shouldBe false
+            "matches" should
+                {
+                    "match NewEgg product URL" {
+                        matches("https://www.newegg.com/some-product/p/N82E16834360174") shouldBe
+                            true
+                    }
+
+                    "not match host which continues after the domain" {
+                        matches("https://newegg.evil.com?u=/a/p/N82E16834360174") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

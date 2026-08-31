@@ -17,45 +17,46 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.youtube
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YoutubeMusicSanitizer
 import io.kotest.matchers.shouldBe
 
 class YoutubeMusicSanitizerTest :
-    WordSpec({
-        val sanitizer = YoutubeMusicSanitizer()
+    SanitizerSpec(
+        YoutubeMusicSanitizer,
+        {
+            "matches" should
+                {
+                    "match music.youtube.com domain" {
+                        matches("https://music.youtube.com/") shouldBe true
+                    }
 
-        "matchesDomain" should
-            {
-                "match music.youtube.com domain" {
-                    sanitizer.matchesDomain("https://music.youtube.com/") shouldBe true
+                    "not match regular youtube.com domain" {
+                        matches("https://youtube.com/") shouldBe false
+                    }
                 }
 
-                "not match regular youtube.com domain" {
-                    sanitizer.matchesDomain("https://youtube.com/") shouldBe false
-                }
-            }
-
-        "invoke" should
-            {
-                "convert music.youtube.com domain to youtube.com" {
-                    sanitizer(
-                        "https://music.youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARW" +
-                            "cTZd1UrAH_0ZI"
-                    ) shouldBe
-                        "https://youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARWcTZd1" +
-                            "UrAH_0ZI"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match music.youtube.com" {
-                    sanitizer.matchesDomain("https://music.youtube.com/playlist?list=a") shouldBe
-                        true
+            "clean" should
+                {
+                    "convert music.youtube.com domain to youtube.com" {
+                        clean(
+                            "https://music.youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARW" +
+                                "cTZd1UrAH_0ZI"
+                        ) shouldBe
+                            "https://youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARWcTZd1" +
+                                "UrAH_0ZI"
+                    }
                 }
 
-                "not match music.youtube.com inside another URL" {
-                    sanitizer.matchesDomain("https://evil.com/?u=music.youtube.com") shouldBe false
+            "matches" should
+                {
+                    "match music.youtube.com" {
+                        matches("https://music.youtube.com/playlist?list=a") shouldBe true
+                    }
+
+                    "not match music.youtube.com inside another URL" {
+                        matches("https://evil.com/?u=music.youtube.com") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

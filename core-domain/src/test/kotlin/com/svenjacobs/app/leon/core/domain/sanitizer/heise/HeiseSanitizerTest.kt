@@ -17,27 +17,26 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.heise
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.HeiseSanitizer
 import io.kotest.matchers.shouldBe
 
 class HeiseSanitizerTest :
-    WordSpec({
-        val sanitizer = HeiseSanitizer()
-
-        "invoke" should
-            {
-                "clean heise.de URLs" {
-                    sanitizer.invoke(
-                        "https://www.heise.de/news/Boom-bei-Balkonkraftwerken-Bereits-mehr-als-" +
-                            "300-000-in-Betrieb-9324094.html?wt_mc=rss.red.ho.ho.rdf.beitrag.beitrag"
-                    ) shouldBe
-                        "https://www.heise.de/news/Boom-bei-Balkonkraftwerken-Bereits-mehr-als" +
-                            "-300-000-in-Betrieb-9324094.html"
+    SanitizerSpec(
+        HeiseSanitizer,
+        {
+            "clean" should
+                {
+                    "clean heise.de URLs" {
+                        clean(
+                            "https://www.heise.de/news/Boom-bei-Balkonkraftwerken-Bereits-mehr-als-" +
+                                "300-000-in-Betrieb-9324094.html?wt_mc=rss.red.ho.ho.rdf.beitrag.beitrag"
+                        ) shouldBe
+                            "https://www.heise.de/news/Boom-bei-Balkonkraftwerken-Bereits-mehr-als" +
+                                "-300-000-in-Betrieb-9324094.html"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match heise.de" { sanitizer.matchesDomain("https://heise.de") shouldBe true }
-            }
-    })
+            "matches" should { "match heise.de" { matches("https://heise.de") shouldBe true } }
+        },
+    )

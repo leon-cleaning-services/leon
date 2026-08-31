@@ -17,32 +17,34 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ElFinancieroSanitizer
 import io.kotest.matchers.shouldBe
 
 class ElFinancieroSanitizerTest :
-    WordSpec({
-        val sanitizer = ElFinancieroSanitizer()
+    SanitizerSpec(
+        ElFinancieroSanitizer,
+        {
+            "clean" should
+                {
+                    "remove \"outputType\" parameter" {
+                        val result =
+                            clean(
+                                "https://www.elfinanciero.com.mx/food-and-drink/2023/01/04/" +
+                                    "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/?outputType=amp"
+                            )
 
-        "invoke" should
-            {
-                "remove \"outputType\" parameter" {
-                    val result =
-                        sanitizer(
+                        result shouldBe
                             "https://www.elfinanciero.com.mx/food-and-drink/2023/01/04/" +
-                                "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/?outputType=amp"
-                        )
-
-                    result shouldBe
-                        "https://www.elfinanciero.com.mx/food-and-drink/2023/01/04/" +
-                            "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/"
+                                "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match for elfinanciero.com.mx" {
-                    sanitizer.matchesDomain("https://www.elfinanciero.com.mx") shouldBe true
+            "matches" should
+                {
+                    "match for elfinanciero.com.mx" {
+                        matches("https://www.elfinanciero.com.mx") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

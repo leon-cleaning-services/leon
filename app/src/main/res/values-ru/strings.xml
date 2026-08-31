@@ -57,4 +57,14 @@
     <string name="about_sponsor">Поддержите разработчика на %1$s.</string>
     <string name="about_version">Версия: %1$s</string>
     <string name="close">Закрыть</string>
+    <string name="changes_title">Изменения</string>
+    <string name="sanitizer_bluesky_redirect_name">Перенаправление Bluesky</string>
+    <string name="sanitizer_amazon_product_name">Продукты Amazon</string>
+    <string name="sanitizer_aol_search_name">Поиск AOL</string>
+    <string name="sanitizer_empty_parameters_name">Пустые параметры</string>
+    <string name="sanitizer_google_search_name">Поиск Google</string>
+    <string name="sanitizer_mydealz_parameters_name">Параметры MyDealz</string>
+    <string name="sanitizer_mydealz_redirects_name">Перенаправления MyDealz</string>
+    <string name="sanitizer_yahoo_search_name">Поиск Yahoo</string>
+    <string name="sanitizer_youtube_redirect_name">Перенаправление YouTube</string>
 </resources>

@@ -17,40 +17,40 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.spotify
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SpotifySanitizer
 import io.kotest.matchers.shouldBe
 
 class SpotifySanitizerTest :
-    WordSpec({
-        val sanitizer = SpotifySanitizer()
+    SanitizerSpec(
+        SpotifySanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters" {
+                        var result =
+                            clean(
+                                "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN?si=BICcHVzTTqmqt" +
+                                    "82Y6f2e_A&utm_source=native-share-menu"
+                            )
 
-        "invoke" should
-            {
-                "remove all parameters" {
-                    var result =
-                        sanitizer(
-                            "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN?si=BICcHVzTTqmqt" +
-                                "82Y6f2e_A&utm_source=native-share-menu"
-                        )
+                        result shouldBe "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN"
 
-                    result shouldBe "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN"
+                        result =
+                            clean(
+                                "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59?si=CXCVCQplRkqNt" +
+                                    "DWW42dXgA&context=spotify%3Aplaylist%3A37i9dQZF1EpjSENbNnZRJr"
+                            )
 
-                    result =
-                        sanitizer(
-                            "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59?si=CXCVCQplRkqNt" +
-                                "DWW42dXgA&context=spotify%3Aplaylist%3A37i9dQZF1EpjSENbNnZRJr"
-                        )
-
-                    result shouldBe "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59"
+                        result shouldBe "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match spotify.com" { sanitizer.matchesDomain("https://spotify.com") shouldBe true }
+            "matches" should
+                {
+                    "match spotify.com" { matches("https://spotify.com") shouldBe true }
 
-                "match open.spotify.com" {
-                    sanitizer.matchesDomain("https://open.spotify.com") shouldBe true
+                    "match open.spotify.com" { matches("https://open.spotify.com") shouldBe true }
                 }
-            }
-    })
+        },
+    )

@@ -17,46 +17,48 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.google
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearchSanitizer
 import io.kotest.matchers.shouldBe
 
 class GoogleSearchSanitizerTest :
-    WordSpec({
-        val sanitizer = GoogleSearchSanitizer()
+    SanitizerSpec(
+        GoogleSearchSanitizer,
+        {
+            "clean" should
+                {
+                    "extract URL from Google search link (\"url\" parameter)" {
+                        val result =
+                            clean(
+                                "https://www.google.com/url?sa=t&source=web&rct=j&url=https://www.regex" +
+                                    "tester.com/&ved=2ahUKEwiTpvflqP34AhXOgv0HHSNQCOIQFnoECAcQAQ&usg=AOvVaw1w" +
+                                    "BmEA7TD90QkZPu7zcsOa"
+                            )
 
-        "invoke" should
-            {
-                "extract URL from Google search link (\"url\" parameter)" {
-                    val result =
-                        sanitizer(
-                            "https://www.google.com/url?sa=t&source=web&rct=j&url=https://www.regex" +
-                                "tester.com/&ved=2ahUKEwiTpvflqP34AhXOgv0HHSNQCOIQFnoECAcQAQ&usg=AOvVaw1w" +
-                                "BmEA7TD90QkZPu7zcsOa"
-                        )
+                        result shouldBe "https://www.regextester.com/"
+                    }
 
-                    result shouldBe "https://www.regextester.com/"
+                    "extract URL from Google search link (\"q\" parameter)" {
+                        val result =
+                            clean(
+                                "https://www.google.com/url?sa=t&source=web&rct=j&q=https://www.regexte" +
+                                    "ster.com/&ved=2ahUKEwiTpvflqP34AhXOgv0HHSNQCOIQFnoECAcQAQ&usg=AOvVaw1wBm" +
+                                    "EA7TD90QkZPu7zcsOa"
+                            )
+
+                        result shouldBe "https://www.regextester.com/"
+                    }
                 }
 
-                "extract URL from Google search link (\"q\" parameter)" {
-                    val result =
-                        sanitizer(
-                            "https://www.google.com/url?sa=t&source=web&rct=j&q=https://www.regexte" +
-                                "ster.com/&ved=2ahUKEwiTpvflqP34AhXOgv0HHSNQCOIQFnoECAcQAQ&usg=AOvVaw1wBm" +
-                                "EA7TD90QkZPu7zcsOa"
-                        )
+            "matches" should
+                {
+                    "match Google redirect URL" {
+                        matches("https://www.google.com/url?q=a") shouldBe true
+                    }
 
-                    result shouldBe "https://www.regextester.com/"
+                    "not match host which continues after the domain" {
+                        matches("https://google.evil.com?u=/url") shouldBe false
+                    }
                 }
-            }
-
-        "matchesDomain" should
-            {
-                "match Google redirect URL" {
-                    sanitizer.matchesDomain("https://www.google.com/url?q=a") shouldBe true
-                }
-
-                "not match host which continues after the domain" {
-                    sanitizer.matchesDomain("https://google.evil.com?u=/url") shouldBe false
-                }
-            }
-    })
+        },
+    )

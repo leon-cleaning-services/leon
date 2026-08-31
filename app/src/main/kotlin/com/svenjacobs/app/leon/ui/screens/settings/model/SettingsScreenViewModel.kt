@@ -24,8 +24,8 @@ import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.AppContext
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
+import com.svenjacobs.app.leon.inject.AppContainer.AppContext
 import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -17,37 +17,37 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.ebay
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EbaySanitizer
 import io.kotest.matchers.shouldBe
 
 class EbaySanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove all parameters from eBay article URL" {
-                    val sanitizer = EbaySanitizer()
-                    val result =
-                        sanitizer(
-                            "https://www.ebay.de/itm/271784973135?mkcid=16&mkevt=1&mkrid=707-127654" +
-                                "-2357-0&ssspo=rMbbkKXARCW&sssrc=2348624&ssuid=Bw-3_LUXSsm&widget_ver=art" +
-                                "emis&media=MORE"
-                        )
+    SanitizerSpec(
+        EbaySanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters from eBay article URL" {
+                        val result =
+                            clean(
+                                "https://www.ebay.de/itm/271784973135?mkcid=16&mkevt=1&mkrid=707-127654" +
+                                    "-2357-0&ssspo=rMbbkKXARCW&sssrc=2348624&ssuid=Bw-3_LUXSsm&widget_ver=art" +
+                                    "emis&media=MORE"
+                            )
 
-                    result shouldBe "https://www.ebay.de/itm/271784973135"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match eBay article URL" {
-                    val sanitizer = EbaySanitizer()
-                    sanitizer.matchesDomain("https://www.ebay.de/itm/271784973135") shouldBe true
+                        result shouldBe "https://www.ebay.de/itm/271784973135"
+                    }
                 }
 
-                "not match host which continues after the domain" {
-                    val sanitizer = EbaySanitizer()
-                    sanitizer.matchesDomain("https://ebay.evil.com?u=/itm/271784973135") shouldBe
-                        false
+            "matches" should
+                {
+                    "match eBay article URL" {
+                        matches("https://www.ebay.de/itm/271784973135") shouldBe true
+                    }
+
+                    "not match host which continues after the domain" {
+                        matches("https://ebay.evil.com?u=/itm/271784973135") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

@@ -17,32 +17,34 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.theguardian
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TheGuardianSanitizer
 import io.kotest.matchers.shouldBe
 
 class TheGuardianSanitizerTest :
-    WordSpec({
-        val sanitizer = TheGuardianSanitizer()
+    SanitizerSpec(
+        TheGuardianSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters" {
+                        val result =
+                            clean(
+                                "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-with-7" +
+                                    "2-onboard-leaves-at-least-16-dead?CMP=Share_AndroidApp_Other"
+                            )
 
-        "invoke" should
-            {
-                "remove all parameters" {
-                    val result =
-                        sanitizer(
-                            "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-with-7" +
-                                "2-onboard-leaves-at-least-16-dead?CMP=Share_AndroidApp_Other"
-                        )
-
-                    result shouldBe
-                        "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-" +
-                            "with-72-onboard-leaves-at-least-16-dead"
+                        result shouldBe
+                            "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-" +
+                                "with-72-onboard-leaves-at-least-16-dead"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match for theguardian.com" {
-                    sanitizer.matchesDomain("https://www.theguardian.com") shouldBe true
+            "matches" should
+                {
+                    "match for theguardian.com" {
+                        matches("https://www.theguardian.com") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

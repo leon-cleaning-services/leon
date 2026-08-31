@@ -17,40 +17,38 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.linkedin
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.LinkedInSanitizer
 import io.kotest.matchers.shouldBe
 
 class LinkedInSanitizerTest :
-    WordSpec({
-        val sanitizer = LinkedInSanitizer()
+    SanitizerSpec(
+        LinkedInSanitizer,
+        {
+            "clean" should
+                {
+                    "remove rcm parameter" {
+                        clean(
+                            "https://www.linkedin.com/feed/update/urn:li:activity:7358242171365335040" +
+                                "?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUR3RBZwN2Ag"
+                        ) shouldBe
+                            "https://www.linkedin.com/feed/update/urn:li:activity:7358242171365335040" +
+                                "?utm_source=share&utm_medium=member_desktop"
+                    }
 
-        "invoke" should
-            {
-                "remove rcm parameter" {
-                    sanitizer(
-                        "https://www.linkedin.com/feed/update/urn:li:activity:7358242171365335040" +
-                            "?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUR3RBZwN2Ag"
-                    ) shouldBe
-                        "https://www.linkedin.com/feed/update/urn:li:activity:7358242171365335040" +
-                            "?utm_source=share&utm_medium=member_desktop"
+                    "remove rcm parameter when it is the only parameter" {
+                        clean(
+                            "https://www.linkedin.com/posts/example-7394057060608462849-3jHb" +
+                                "?rcm=ACoAAAUR3RBZwN2Ag"
+                        ) shouldBe "https://www.linkedin.com/posts/example-7394057060608462849-3jHb"
+                    }
                 }
 
-                "remove rcm parameter when it is the only parameter" {
-                    sanitizer(
-                        "https://www.linkedin.com/posts/example-7394057060608462849-3jHb" +
-                            "?rcm=ACoAAAUR3RBZwN2Ag"
-                    ) shouldBe "https://www.linkedin.com/posts/example-7394057060608462849-3jHb"
-                }
-            }
+            "matches" should
+                {
+                    "match linkedin.com" { matches("https://www.linkedin.com") shouldBe true }
 
-        "matchesDomain" should
-            {
-                "match linkedin.com" {
-                    sanitizer.matchesDomain("https://www.linkedin.com") shouldBe true
+                    "not match other.com" { matches("https://other.com") shouldBe false }
                 }
-
-                "not match other.com" {
-                    sanitizer.matchesDomain("https://other.com") shouldBe false
-                }
-            }
-    })
+        },
+    )

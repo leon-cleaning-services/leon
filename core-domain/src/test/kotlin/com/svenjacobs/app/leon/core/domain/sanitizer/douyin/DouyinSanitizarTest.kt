@@ -17,27 +17,29 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.douyin
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.DouyinSanitizer
 import io.kotest.matchers.shouldBe
 
 class DouyinSanitizerTest :
-    WordSpec({
-        val sanitizer = DouyinSanitizer()
-
-        "invoke" should
-            {
-                "extract URL and remove password suffix from Douyin share text" {
-                    val result = sanitizer("分享视频&nbsp;https://v.douyin.com/abc123/Ipd:abcde")
-                    result shouldBe "https://v.douyin.com/abc123"
+    SanitizerSpec(
+        DouyinSanitizer,
+        {
+            "clean" should
+                {
+                    "remove the password suffix from a Douyin URL" {
+                        val result = clean("https://v.douyin.com/abc123/Ipd:abcde")
+                        result shouldBe "https://v.douyin.com/abc123"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match douyin.com, v.douyin.com and iesdouyin.com domains" {
-                    sanitizer.matchesDomain("douyin.com/video") shouldBe true
-                    sanitizer.matchesDomain("v.douyin.com/abc") shouldBe true
-                    sanitizer.matchesDomain("iesdouyin.com/share") shouldBe true
+            "matches" should
+                {
+                    "match douyin.com, v.douyin.com and iesdouyin.com domains" {
+                        matches("douyin.com/video") shouldBe true
+                        matches("v.douyin.com/abc") shouldBe true
+                        matches("iesdouyin.com/share") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

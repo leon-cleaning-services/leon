@@ -17,24 +17,26 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.aol
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AolSearchSanitizer
 import io.kotest.matchers.shouldBe
 
 class AolSearchSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "extract URL from AOL search link" {
-                    val sanitizer = AolSearchSanitizer()
+    SanitizerSpec(
+        AolSearchSanitizer,
+        {
+            "clean" should
+                {
+                    "extract URL from AOL search link" {
+                        val result =
+                            clean(
+                                "https://search.aol.com/click/_ylt=A0geK.HAoltiwykAlAR8CWVH;_ylu=Y29sbw" +
+                                    "NiZjEEcG9zAzQEdnRpZAMEc2VjA3Ny/RV=2/RE=1650201408/RO=10/RU=https%3a%2f%2" +
+                                    "fgithub.com%2fsvenjacobs%2fleon/RK=0/RS=cXRWej4shdsEIIDm147.G4CRZEo-"
+                            )
 
-                    val result =
-                        sanitizer(
-                            "https://search.aol.com/click/_ylt=A0geK.HAoltiwykAlAR8CWVH;_ylu=Y29sbw" +
-                                "NiZjEEcG9zAzQEdnRpZAMEc2VjA3Ny/RV=2/RE=1650201408/RO=10/RU=https%3a%2f%2" +
-                                "fgithub.com%2fsvenjacobs%2fleon/RK=0/RS=cXRWej4shdsEIIDm147.G4CRZEo-"
-                        )
-
-                    result shouldBe "https://github.com/svenjacobs/leon"
+                        result shouldBe "https://github.com/svenjacobs/leon"
+                    }
                 }
-            }
-    })
+        },
+    )

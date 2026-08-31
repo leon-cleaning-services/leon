@@ -17,45 +17,45 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.tiktok
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokSanitizer
 import io.kotest.matchers.shouldBe
 
 class TiktokSanitizerTest :
-    WordSpec({
-        val sanitizer = TiktokSanitizer()
+    SanitizerSpec(
+        TiktokSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters" {
+                        var result =
+                            clean(
+                                "https://www.tiktok.com/@lihayk/video/7271645505522879751?" +
+                                    "is_from_webapp=1&sender_device=pc&web_id=7098566637619288452"
+                            )
 
-        "invoke" should
-            {
-                "remove all parameters" {
-                    var result =
-                        sanitizer(
-                            "https://www.tiktok.com/@lihayk/video/7271645505522879751?" +
-                                "is_from_webapp=1&sender_device=pc&web_id=7098566637619288452"
-                        )
+                        result shouldBe "https://www.tiktok.com/@lihayk/video/7271645505522879751"
 
-                    result shouldBe "https://www.tiktok.com/@lihayk/video/7271645505522879751"
+                        result =
+                            clean(
+                                "https://www.tiktok.com/@conqressesquotes/video/7284563007244389664" +
+                                    "?_t=3tmYqC7L494&_r=1"
+                            )
 
-                    result =
-                        sanitizer(
-                            "https://www.tiktok.com/@conqressesquotes/video/7284563007244389664" +
-                                "?_t=3tmYqC7L494&_r=1"
-                        )
+                        result shouldBe
+                            "https://www.tiktok.com/@conqressesquotes/video/7284563007244389664"
 
-                    result shouldBe
-                        "https://www.tiktok.com/@conqressesquotes/video/7284563007244389664"
+                        result = clean("https://www.tiktok.com/@elaine_carroll?_t=8gneIBdmRJ1&_r=1")
 
-                    result = sanitizer("https://www.tiktok.com/@elaine_carroll?_t=8gneIBdmRJ1&_r=1")
-
-                    result shouldBe "https://www.tiktok.com/@elaine_carroll"
+                        result shouldBe "https://www.tiktok.com/@elaine_carroll"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match tiktok.com" { sanitizer.matchesDomain("https://tiktok.com") shouldBe true }
+            "matches" should
+                {
+                    "match tiktok.com" { matches("https://tiktok.com") shouldBe true }
 
-                "match www.tiktok.com" {
-                    sanitizer.matchesDomain("https://www.tiktok.com") shouldBe true
+                    "match www.tiktok.com" { matches("https://www.tiktok.com") shouldBe true }
                 }
-            }
-    })
+        },
+    )

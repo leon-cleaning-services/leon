@@ -17,35 +17,35 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.amazon
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AmazonSanitizer
 import io.kotest.matchers.shouldBe
 
 class AmazonSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove ref_ parameter" {
-                    val sanitizer = AmazonSanitizer()
-                    val result =
-                        sanitizer(
-                            "https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya"
-                        )
+    SanitizerSpec(
+        AmazonSanitizer,
+        {
+            "clean" should
+                {
+                    "remove ref_ parameter" {
+                        val result =
+                            clean(
+                                "https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya"
+                            )
 
-                    result shouldBe "https://www.amazon.de/gp/css/homepage.html"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match Amazon domains" {
-                    val sanitizer = AmazonSanitizer()
-                    sanitizer.matchesDomain("https://www.amazon.de/dp/B091G3FLL7/") shouldBe true
+                        result shouldBe "https://www.amazon.de/gp/css/homepage.html"
+                    }
                 }
 
-                "not match host which continues after the domain" {
-                    val sanitizer = AmazonSanitizer()
-                    sanitizer.matchesDomain("https://amazon.evil.com?u=/dp/B091G3FLL7/") shouldBe
-                        false
+            "matches" should
+                {
+                    "match Amazon domains" {
+                        matches("https://www.amazon.de/dp/B091G3FLL7/") shouldBe true
+                    }
+
+                    "not match host which continues after the domain" {
+                        matches("https://amazon.evil.com?u=/dp/B091G3FLL7/") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

@@ -17,29 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.pinduoduo
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.PddSanitizer
 import io.kotest.matchers.shouldBe
 
 class PddSanitizerTest :
-    WordSpec({
-        val sanitizer = PddSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters from Pinduoduo URL" {
-                    val result =
-                        sanitizer(
-                            "https://mobile.yangkeduo.com/goods.html?pid=123&share_uin=456&track_id=789&goods_sign=abc"
-                        )
-                    result shouldBe "https://mobile.yangkeduo.com/goods.html"
+    SanitizerSpec(
+        PddSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from Pinduoduo URL" {
+                        val result =
+                            clean(
+                                "https://mobile.yangkeduo.com/goods.html?pid=123&share_uin=456&track_id=789&goods_sign=abc"
+                            )
+                        result shouldBe "https://mobile.yangkeduo.com/goods.html"
+                    }
                 }
-            }
-        "matchesDomain" should
-            {
-                "match pinduoduo.com, pdd.com and yangkeduo.com domains" {
-                    sanitizer.matchesDomain("pinduoduo.com") shouldBe true
-                    sanitizer.matchesDomain("pdd.com") shouldBe true
-                    sanitizer.matchesDomain("yangkeduo.com") shouldBe true
+            "matches" should
+                {
+                    "match pinduoduo.com, pdd.com and yangkeduo.com domains" {
+                        matches("pinduoduo.com") shouldBe true
+                        matches("pdd.com") shouldBe true
+                        matches("yangkeduo.com") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

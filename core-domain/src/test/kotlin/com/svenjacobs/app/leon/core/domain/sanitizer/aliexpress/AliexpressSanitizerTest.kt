@@ -17,47 +17,48 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.aliexpress
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AliexpressSanitizer
 import io.kotest.matchers.shouldBe
 
 class AliexpressSanitizerTest :
-    WordSpec({
-        val sanitizer = AliexpressSanitizer()
+    SanitizerSpec(
+        AliexpressSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters from AliExpress article URL" {
+                        val result =
+                            clean(
+                                "https://m.de.aliexpress.com/item/32948511896.html?ug_edm_item_id=32948" +
+                                    "511896&pdp_npi=2%40dis%21EUR%21%E2%82%AC%2024%2C58%21%E2%82%AC%2014%2C" +
+                                    "50%21%21%21%21%21%402102fea916677108936606992d1f0c%2112000027801501608" +
+                                    "%21edm&edm_click_module=item_detail&tracelog=rowan&rowan_id1=aeug_edm_" +
+                                    "24677_1_de_DE_2022-11-05&rowan_msg_id=8681biz_pay_after_purchase%3A0%3" +
+                                    "A0_572584174%248a93ce02da764ff48f65112ca837f7df&ck=in_edm_other&gatewa" +
+                                    "yAdapt=gloPc2deuMsite"
+                            )
 
-        "invoke" should
-            {
-                "remove all parameters from AliExpress article URL" {
-                    val result =
-                        sanitizer(
-                            "https://m.de.aliexpress.com/item/32948511896.html?ug_edm_item_id=32948" +
-                                "511896&pdp_npi=2%40dis%21EUR%21%E2%82%AC%2024%2C58%21%E2%82%AC%2014%2C" +
-                                "50%21%21%21%21%21%402102fea916677108936606992d1f0c%2112000027801501608" +
-                                "%21edm&edm_click_module=item_detail&tracelog=rowan&rowan_id1=aeug_edm_" +
-                                "24677_1_de_DE_2022-11-05&rowan_msg_id=8681biz_pay_after_purchase%3A0%3" +
-                                "A0_572584174%248a93ce02da764ff48f65112ca837f7df&ck=in_edm_other&gatewa" +
-                                "yAdapt=gloPc2deuMsite"
-                        )
-
-                    result shouldBe "https://m.de.aliexpress.com/item/32948511896.html"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match aliexpress.com domains" {
-                    sanitizer.matchesDomain("aliexpress.com/item/12345") shouldBe true
-                    sanitizer.matchesDomain("m.de.aliexpress.com/item/12345") shouldBe true
-                    sanitizer.matchesDomain("de.aliexpress.com/item/12345") shouldBe true
-                    sanitizer.matchesDomain("es.aliexpress.com/item/12345") shouldBe true
+                        result shouldBe "https://m.de.aliexpress.com/item/32948511896.html"
+                    }
                 }
 
-                "not match aliexpress.com inside another URL" {
-                    sanitizer.matchesDomain("https://evil.com/?u=de.aliexpress.com/item/1") shouldBe
-                        false
-                }
+            "matches" should
+                {
+                    "match aliexpress.com domains" {
+                        matches("aliexpress.com/item/12345") shouldBe true
+                        matches("m.de.aliexpress.com/item/12345") shouldBe true
+                        matches("de.aliexpress.com/item/12345") shouldBe true
+                        matches("es.aliexpress.com/item/12345") shouldBe true
+                    }
 
-                "not match host which only starts with aliexpress.com" {
-                    sanitizer.matchesDomain("https://aliexpress.com.evil.com/item/1") shouldBe false
+                    "not match aliexpress.com inside another URL" {
+                        matches("https://evil.com/?u=de.aliexpress.com/item/1") shouldBe false
+                    }
+
+                    "not match host which only starts with aliexpress.com" {
+                        matches("https://aliexpress.com.evil.com/item/1") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

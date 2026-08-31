@@ -17,12 +17,25 @@
  */
 package com.svenjacobs.app.leon.ui.screens.main.model
 
-import com.svenjacobs.app.leon.core.domain.CleanerService
+import com.svenjacobs.app.leon.core.domain.Cleaner
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
+import com.svenjacobs.app.leon.core.domain.change.Change
+import com.svenjacobs.app.leon.core.domain.sanitizer.Rule
+import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EchoboxSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalyticsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearchSanitizer
+import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
+import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -52,27 +65,317 @@ class MainScreenViewModelTest :
                     every { actionAfterClean } returns flowOf(ActionAfterClean.OpenShareMenu)
                 }
 
-            val cleanerService =
-                mockk<CleanerService> {
-                    coEvery { clean(any(), any()) } answers
+            val cleaner =
+                mockk<Cleaner> {
+                    coEvery { clean(any(), any(), any(), any()) } answers
                         {
                             val text = firstArg<String>()
-                            CleanerService.Result(
+                            val url = requireNotNull(Url.parse(text))
+                            Cleaner.Result(
                                 originalText = text,
                                 cleanedText = text,
-                                urls = persistentListOf(text),
+                                urls =
+                                    persistentListOf(
+                                        Cleaner.CleanedUrl(
+                                            original = url,
+                                            cleaned = url,
+                                            available = persistentListOf(),
+                                            applied = persistentListOf(),
+                                        )
+                                    ),
                             )
                         }
                 }
 
             viewModel =
-                MainScreenViewModel(
-                    appDataStoreManager = appDataStoreManager,
-                    cleanerService = cleanerService,
-                )
+                MainScreenViewModel(appDataStoreManager = appDataStoreManager, cleaner = cleaner)
         }
 
         afterEach { Dispatchers.resetMain() }
+
+        "onChangeToggled" should
+            {
+                fun dataStore() =
+                    mockk<AppDataStoreManager> {
+                        every { urlDecodeEnabled } returns flowOf(false)
+                        every { extractUrlEnabled } returns flowOf(false)
+                        every { customTabsEnabled } returns flowOf(false)
+                        every { actionAfterClean } returns flowOf(ActionAfterClean.DoNothing)
+                    }
+
+                /** A view model on a real [Cleaner], so that changes are actually proposed. */
+                fun realViewModel(): MainScreenViewModel {
+                    val repository =
+                        mockk<SanitizerRepository> { coEvery { isEnabled(any()) } returns true }
+
+                    return MainScreenViewModel(
+                        appDataStoreManager =
+                            mockk<AppDataStoreManager> {
+                                every { urlDecodeEnabled } returns flowOf(false)
+                                every { extractUrlEnabled } returns flowOf(false)
+                                every { customTabsEnabled } returns flowOf(false)
+                                every { actionAfterClean } returns
+                                    flowOf(ActionAfterClean.DoNothing)
+                            },
+                        cleaner =
+                            Cleaner(
+                                sanitizers = persistentListOf(GoogleAnalyticsSanitizer),
+                                repository = repository,
+                            ),
+                    )
+                }
+
+                "list a proposed removal as applied and attribute it to its sanitizer" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel = realViewModel()
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x&page=2")
+
+                        val result = viewModel.uiState.value.result as Result.Success
+                        result.cleanedText shouldBe "https://example.com/p?page=2"
+
+                        val removal = result.changes.first { it.sanitizerIds.isNotEmpty() }
+                        removal.applied shouldBe true
+                        removal.sanitizerIds shouldBe persistentListOf(GoogleAnalyticsSanitizer.id)
+
+                        // The untouched parameter is offered as well, unchecked.
+                        val kept = result.changes.first { it.sanitizerIds.isEmpty() }
+                        kept.applied shouldBe false
+                    }
+                }
+
+                "put a declined removal back into the cleaned URL" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel = realViewModel()
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x&page=2")
+                        val removal =
+                            (viewModel.uiState.value.result as Result.Success).changes.first {
+                                it.sanitizerIds.isNotEmpty()
+                            }
+
+                        viewModel.onChangeToggled(removal, apply = false)
+
+                        val result = viewModel.uiState.value.result as Result.Success
+                        result.cleanedText shouldBe "https://example.com/p?utm_source=x&page=2"
+                        result.changes.first { it.sanitizerIds.isNotEmpty() }.applied shouldBe false
+                    }
+                }
+
+                "remove a parameter which no sanitizer proposed" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel = realViewModel()
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x&page=2")
+                        val kept =
+                            (viewModel.uiState.value.result as Result.Success).changes.first {
+                                it.sanitizerIds.isEmpty()
+                            }
+
+                        viewModel.onChangeToggled(kept, apply = true)
+
+                        (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
+                            "https://example.com/p"
+                    }
+                }
+
+                "collapse a removal several sanitizers propose into one row" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        // Two sanitizers which happen to target the same parameter, on purpose —
+                        // not a real pair from the catalog, so this test does not depend on which
+                        // real sanitizers overlap today.
+                        val first =
+                            Sanitizer(
+                                id = SanitizerId("fake1"),
+                                name = "fake1",
+                                rules = persistentListOf(Rule.RemoveParameters("utm_source")),
+                            )
+                        val second =
+                            Sanitizer(
+                                id = SanitizerId("fake2"),
+                                name = "fake2",
+                                rules = persistentListOf(Rule.RemoveParameters("utm_source")),
+                            )
+                        val viewModel =
+                            MainScreenViewModel(
+                                appDataStoreManager = dataStore(),
+                                cleaner =
+                                    Cleaner(
+                                        sanitizers = persistentListOf(first, second),
+                                        repository =
+                                            mockk<SanitizerRepository> {
+                                                coEvery { isEnabled(any()) } returns true
+                                            },
+                                    ),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x")
+
+                        val rows =
+                            (viewModel.uiState.value.result as Result.Success).changes.filter {
+                                it.sanitizerIds.isNotEmpty()
+                            }
+
+                        rows shouldHaveSize 1
+                        rows.first().sanitizerIds shouldBe persistentListOf(first.id, second.id)
+
+                        // Unchecking the row has to silence every sanitizer behind it.
+                        viewModel.onChangeToggled(rows.first(), apply = false)
+
+                        (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
+                            "https://example.com/p?utm_source=x"
+                    }
+                }
+
+                "offer the fragment for removal without applying it" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel = realViewModel()
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x#reviews")
+
+                        val result = viewModel.uiState.value.result as Result.Success
+                        // The fragment survives cleaning: it addresses a section, it is not
+                        // tracking.
+                        result.cleanedText shouldBe "https://example.com/p#reviews"
+
+                        val fragment =
+                            result.changes.first {
+                                it.action is Change.Action.SetComponent &&
+                                    (it.action as Change.Action.SetComponent).component ==
+                                        Change.Component.FRAGMENT
+                            }
+                        fragment.applied shouldBe false
+                        fragment.sanitizerIds.shouldBeEmpty()
+
+                        viewModel.onChangeToggled(fragment, apply = true)
+
+                        (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
+                            "https://example.com/p"
+                    }
+                }
+
+                "not offer a fragment which is not there" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel = realViewModel()
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x")
+
+                        (viewModel.uiState.value.result as Result.Success).changes.none {
+                            it.action is Change.Action.SetComponent
+                        } shouldBe true
+                    }
+                }
+
+                "check the fragment row when a sanitizer removes it" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel =
+                            MainScreenViewModel(
+                                appDataStoreManager = dataStore(),
+                                cleaner =
+                                    Cleaner(
+                                        sanitizers = persistentListOf(EchoboxSanitizer),
+                                        repository =
+                                            mockk<SanitizerRepository> {
+                                                coEvery { isEnabled(any()) } returns true
+                                            },
+                                    ),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/article#Echobox=123")
+
+                        val result = viewModel.uiState.value.result as Result.Success
+                        result.cleanedText shouldBe "https://example.com/article"
+
+                        // One row, checked, attributed to the sanitizer - not a second offer.
+                        val rows = result.changes
+                        rows shouldHaveSize 1
+                        rows.first().applied shouldBe true
+                        rows.first().sanitizerIds shouldBe persistentListOf(EchoboxSanitizer.id)
+                    }
+                }
+
+                "order rows by their position in the URL, not by applied state" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel = realViewModel()
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        // "page" precedes "utm_source" in the URL, but nothing proposes removing
+                        // it — if rows were grouped by applied state it would sort after, not
+                        // before, the checked "utm_source" row.
+                        viewModel.setText("https://example.com/p?page=2&utm_source=x#reviews")
+
+                        fun parameterOrder(result: Result.Success) =
+                            result.changes.mapNotNull {
+                                (it.action as? Change.Action.RemoveParameter)?.parameter?.name
+                            }
+
+                        parameterOrder(viewModel.uiState.value.result as Result.Success) shouldBe
+                            listOf("page", "utm_source")
+
+                        // Checking "page" must not move it past "utm_source".
+                        val row = (viewModel.uiState.value.result as Result.Success).changes.first()
+                        viewModel.onChangeToggled(row, apply = true)
+
+                        parameterOrder(viewModel.uiState.value.result as Result.Success) shouldBe
+                            listOf("page", "utm_source")
+                    }
+                }
+
+                "put a URL replacement before the rows it reveals" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel =
+                            MainScreenViewModel(
+                                appDataStoreManager = dataStore(),
+                                cleaner =
+                                    Cleaner(
+                                        sanitizers =
+                                            persistentListOf(
+                                                GoogleSearchSanitizer,
+                                                GoogleAnalyticsSanitizer,
+                                            ),
+                                        repository =
+                                            mockk<SanitizerRepository> {
+                                                coEvery { isEnabled(any()) } returns true
+                                            },
+                                    ),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText(
+                            "https://www.google.com/url?q=https%3A%2F%2Fexample.com%2Fa" +
+                                "%3Futm_source%3Dnews&usg=x"
+                        )
+
+                        val result = viewModel.uiState.value.result as Result.Success
+                        val first = result.changes.first().action
+                        first.shouldBeInstanceOf<Change.Action.Replace>()
+                    }
+                }
+
+                "forget the selection when a new text arrives" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel = realViewModel()
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x")
+                        val removal =
+                            (viewModel.uiState.value.result as Result.Success).changes.first()
+                        viewModel.onChangeToggled(removal, apply = false)
+
+                        viewModel.setText("https://other.com/q?utm_source=y")
+
+                        (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
+                            "https://other.com/q"
+                    }
+                }
+            }
 
         "setText" should
             {

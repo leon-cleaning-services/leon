@@ -17,37 +17,38 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MyDealzParametersSanitizer
 import io.kotest.matchers.shouldBe
 
 class MyDealzParametersSanizierTest :
-    WordSpec({
-        "invoke" should
-            {
-                "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
-                    val sanitizer = MyDealzParametersSanitizer()
-                    val result =
-                        sanitizer(
-                            "https://www.mydealz.de/diskussion/gratis-adidas-fussball-trikot-" +
-                                "2383743?pprmrkntfctnsrd=123456789&UATypeId=18"
-                        )
-                    result shouldBe
-                        "https://www.mydealz.de/diskussion/gratis-adidas-fussball-" +
-                            "trikot-2383743"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match MyDealz domains" {
-                    val sanitizer = MyDealzParametersSanitizer()
-                    sanitizer.matchesDomain("https://www.mydealz.de/deals/a-1") shouldBe true
-                    sanitizer.matchesDomain("https://www.hotukdeals.com/deals/a-1") shouldBe true
+    SanitizerSpec(
+        MyDealzParametersSanitizer,
+        {
+            "clean" should
+                {
+                    "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
+                        val result =
+                            clean(
+                                "https://www.mydealz.de/diskussion/gratis-adidas-fussball-trikot-" +
+                                    "2383743?pprmrkntfctnsrd=123456789&UATypeId=18"
+                            )
+                        result shouldBe
+                            "https://www.mydealz.de/diskussion/gratis-adidas-fussball-" +
+                                "trikot-2383743"
+                    }
                 }
 
-                "not match MyDealz domain inside another URL" {
-                    val sanitizer = MyDealzParametersSanitizer()
-                    sanitizer.matchesDomain("https://evil.com/?u=mydealz.de") shouldBe false
+            "matches" should
+                {
+                    "match MyDealz domains" {
+                        matches("https://www.mydealz.de/deals/a-1") shouldBe true
+                        matches("https://www.hotukdeals.com/deals/a-1") shouldBe true
+                    }
+
+                    "not match MyDealz domain inside another URL" {
+                        matches("https://evil.com/?u=mydealz.de") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

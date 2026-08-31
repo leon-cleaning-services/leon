@@ -17,20 +17,23 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.at
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AtAnalyticsSanitizer
 import io.kotest.matchers.shouldBe
 
 class AtAnalyticsSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove at_* parameters" {
-                    val sanitizer = AtAnalyticsSanitizer()
-
-                    sanitizer(
-                        "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html" +
-                            "?at_medium=mastodon&at_campaign=tagesschau.de"
-                    ) shouldBe "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html"
+    SanitizerSpec(
+        AtAnalyticsSanitizer,
+        {
+            "clean" should
+                {
+                    "remove at_* parameters" {
+                        clean(
+                            "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html" +
+                                "?at_medium=mastodon&at_campaign=tagesschau.de"
+                        ) shouldBe
+                            "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html"
+                    }
                 }
-            }
-    })
+        },
+    )

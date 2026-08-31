@@ -17,35 +17,37 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.echobox
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EchoboxSanitizer
 import io.kotest.matchers.shouldBe
 
 class EchoboxSanitizerTest :
-    WordSpec({
-        val sanitizer = EchoboxSanitizer()
+    SanitizerSpec(
+        EchoboxSanitizer,
+        {
+            "clean" should
+                {
+                    "remove #Echobox= fragment from URL" {
+                        clean(
+                            "https://www.example.com/article/some-title#Echobox=1234567890"
+                        ) shouldBe "https://www.example.com/article/some-title"
+                    }
 
-        "invoke" should
-            {
-                "remove #Echobox= fragment from URL" {
-                    sanitizer(
-                        "https://www.example.com/article/some-title#Echobox=1234567890"
-                    ) shouldBe "https://www.example.com/article/some-title"
-                }
+                    "remove #Echobox= fragment when query parameters are present" {
+                        clean(
+                            "https://www.example.com/article?utm_source=social#Echobox=1234567890"
+                        ) shouldBe "https://www.example.com/article?utm_source=social"
+                    }
 
-                "remove #Echobox= fragment when query parameters are present" {
-                    sanitizer(
-                        "https://www.example.com/article?utm_source=social#Echobox=1234567890"
-                    ) shouldBe "https://www.example.com/article?utm_source=social"
-                }
+                    "not remove other fragments" {
+                        clean("https://www.example.com/article#section") shouldBe
+                            "https://www.example.com/article#section"
+                    }
 
-                "not remove other fragments" {
-                    sanitizer("https://www.example.com/article#section") shouldBe
-                        "https://www.example.com/article#section"
+                    "not modify URL without fragment" {
+                        clean("https://www.example.com/article") shouldBe
+                            "https://www.example.com/article"
+                    }
                 }
-
-                "not modify URL without fragment" {
-                    sanitizer("https://www.example.com/article") shouldBe
-                        "https://www.example.com/article"
-                }
-            }
-    })
+        },
+    )

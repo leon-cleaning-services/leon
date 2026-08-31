@@ -17,30 +17,30 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.shopee
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ShopeeSanitizer
 import io.kotest.matchers.shouldBe
 
 class ShopeeSanitizerTest :
-    WordSpec({
-        val sanitizer = ShopeeSanitizer()
+    SanitizerSpec(
+        ShopeeSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters" {
+                        val result =
+                            clean(
+                                "https://shopee.com.my/product/300862466/12251369135?smtt=O.123661111-1" +
+                                    "672730601.9"
+                            )
 
-        "invoke" should
-            {
-                "remove all parameters" {
-                    val result =
-                        sanitizer(
-                            "https://shopee.com.my/product/300862466/12251369135?smtt=O.123661111-1" +
-                                "672730601.9"
-                        )
-
-                    result shouldBe "https://shopee.com.my/product/300862466/12251369135"
+                        result shouldBe "https://shopee.com.my/product/300862466/12251369135"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match for shopee.com.my" {
-                    sanitizer.matchesDomain("https://shopee.com.my") shouldBe true
+            "matches" should
+                {
+                    "match for shopee.com.my" { matches("https://shopee.com.my") shouldBe true }
                 }
-            }
-    })
+        },
+    )

@@ -25,7 +25,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.AppContext
+import com.svenjacobs.app.leon.inject.AppContainer.AppContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

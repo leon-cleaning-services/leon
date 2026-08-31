@@ -17,48 +17,46 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.facebook
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.FacebookSanitizer
 import io.kotest.matchers.shouldBe
 
 class FacebookSanitizerTest :
-    WordSpec({
-        val sanitizer = FacebookSanitizer()
+    SanitizerSpec(
+        FacebookSanitizer,
+        {
+            "clean" should
+                {
+                    "clean facebook.com reel URLs" {
+                        clean(
+                            "https://www.facebook.com/reel/1242384407160280?sfnsn=scwspmo"
+                        ) shouldBe "https://www.facebook.com/reel/1242384407160280"
+                    }
 
-        "invoke" should
-            {
-                "clean facebook.com reel URLs" {
-                    sanitizer(
-                        "https://www.facebook.com/reel/1242384407160280?sfnsn=scwspmo"
-                    ) shouldBe "https://www.facebook.com/reel/1242384407160280"
+                    "clean m.facebook.com story URLs" {
+                        clean(
+                            "https://m.facebook.com/story.php?story_fbid=pfbid0HqS6zLZvNrQt6ACvjv3h" +
+                                "Kq6khpVse437nWSq2jBifKRD5sVH2XRLC3zz8aA7TKkWl&id=4&sfnsn=wiwspmo&mibext" +
+                                "id=XzsMCV"
+                        ) shouldBe
+                            "https://m.facebook.com/story.php?story_fbid=pfbid0HqS6zLZvNrQt6ACvjv" +
+                                "3hKq6khpVse437nWSq2jBifKRD5sVH2XRLC3zz8aA7TKkWl&id=4"
+                    }
                 }
 
-                "clean m.facebook.com story URLs" {
-                    sanitizer(
-                        "https://m.facebook.com/story.php?story_fbid=pfbid0HqS6zLZvNrQt6ACvjv3h" +
-                            "Kq6khpVse437nWSq2jBifKRD5sVH2XRLC3zz8aA7TKkWl&id=4&sfnsn=wiwspmo&mibext" +
-                            "id=XzsMCV"
-                    ) shouldBe
-                        "https://m.facebook.com/story.php?story_fbid=pfbid0HqS6zLZvNrQt6ACvjv" +
-                            "3hKq6khpVse437nWSq2jBifKRD5sVH2XRLC3zz8aA7TKkWl&id=4"
-                }
-            }
+            "matches" should
+                {
+                    "match facebook.com" { matches("https://facebook.com") shouldBe true }
 
-        "matchesDomain" should
-            {
-                "match facebook.com" {
-                    sanitizer.matchesDomain("https://facebook.com") shouldBe true
-                }
+                    "match m.facebook.com" { matches("https://m.facebook.com") shouldBe true }
 
-                "match m.facebook.com" {
-                    sanitizer.matchesDomain("https://m.facebook.com") shouldBe true
-                }
+                    "not match host which only starts with facebook.com" {
+                        matches("https://facebook.com.evil.com") shouldBe false
+                    }
 
-                "not match host which only starts with facebook.com" {
-                    sanitizer.matchesDomain("https://facebook.com.evil.com") shouldBe false
+                    "not match host where the dot is another character" {
+                        matches("https://facebook-com") shouldBe false
+                    }
                 }
-
-                "not match host where the dot is another character" {
-                    sanitizer.matchesDomain("https://facebook-com") shouldBe false
-                }
-            }
-    })
+        },
+    )

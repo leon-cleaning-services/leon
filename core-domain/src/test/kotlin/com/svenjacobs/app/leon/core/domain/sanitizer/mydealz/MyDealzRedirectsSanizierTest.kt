@@ -17,43 +17,42 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MyDealzRedirectsSanitizer
 import io.kotest.matchers.shouldBe
 
 class MyDealzRedirectsSanizierTest :
-    WordSpec({
-        "invoke" should
-            {
-                "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
-                    val sanitizer = MyDealzRedirectsSanitizer()
-                    val result = sanitizer("https://www.mydealz.de/share-deal-from-app/2117879")
-                    result shouldBe "https://www.mydealz.de/deals/a-2117879"
+    SanitizerSpec(
+        MyDealzRedirectsSanitizer,
+        {
+            "clean" should
+                {
+                    "convert www.mydealz.de app URLs (with ad redirect) into base/direct URLs" {
+                        val result = clean("https://www.mydealz.de/share-deal-from-app/2117879")
+                        result shouldBe "https://www.mydealz.de/deals/a-2117879"
+                    }
+
+                    "convert mydealz.de app URLs (with ad redirect) into base/direct URLs" {
+                        val result = clean("https://mydealz.de/share-deal-from-app/2117879")
+                        result shouldBe "https://mydealz.de/deals/a-2117879"
+                    }
+
+                    "convert preisjaeger.at app URLs (with ad redirect) into base/direct URLs" {
+                        val result = clean("https://preisjaeger.at/share-deal-from-app/2117879")
+                        result shouldBe "https://preisjaeger.at/deals/a-2117879"
+                    }
                 }
 
-                "convert mydealz.de app URLs (with ad redirect) into base/direct URLs" {
-                    val sanitizer = MyDealzRedirectsSanitizer()
-                    val result = sanitizer("https://mydealz.de/share-deal-from-app/2117879")
-                    result shouldBe "https://mydealz.de/deals/a-2117879"
-                }
+            "matches" should
+                {
+                    "match MyDealz domains" {
+                        matches("https://www.mydealz.de/deals/a-1") shouldBe true
+                        matches("https://www.hotukdeals.com/deals/a-1") shouldBe true
+                    }
 
-                "convert preisjaeger.at app URLs (with ad redirect) into base/direct URLs" {
-                    val sanitizer = MyDealzRedirectsSanitizer()
-                    val result = sanitizer("https://preisjaeger.at/share-deal-from-app/2117879")
-                    result shouldBe "https://preisjaeger.at/deals/a-2117879"
+                    "not match MyDealz domain inside another URL" {
+                        matches("https://evil.com/?u=mydealz.de") shouldBe false
+                    }
                 }
-            }
-
-        "matchesDomain" should
-            {
-                "match MyDealz domains" {
-                    val sanitizer = MyDealzRedirectsSanitizer()
-                    sanitizer.matchesDomain("https://www.mydealz.de/deals/a-1") shouldBe true
-                    sanitizer.matchesDomain("https://www.hotukdeals.com/deals/a-1") shouldBe true
-                }
-
-                "not match MyDealz domain inside another URL" {
-                    val sanitizer = MyDealzRedirectsSanitizer()
-                    sanitizer.matchesDomain("https://evil.com/?u=mydealz.de") shouldBe false
-                }
-            }
-    })
+        },
+    )

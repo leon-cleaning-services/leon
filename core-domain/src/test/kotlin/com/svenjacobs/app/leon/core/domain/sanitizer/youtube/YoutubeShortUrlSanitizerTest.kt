@@ -17,30 +17,29 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.youtube
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YoutubeShortUrlSanitizer
 import io.kotest.matchers.shouldBe
 
 class YoutubeShortUrlSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "convert youtu.be short URL into long youtube.com URL" {
-                    val sanitizer = YoutubeShortUrlSanitizer()
-                    val result = sanitizer("https://youtu.be/5HaUOgW5BlA")
-                    result shouldBe "https://www.youtube.com/watch?v=5HaUOgW5BlA"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match youtu.be" {
-                    val sanitizer = YoutubeShortUrlSanitizer()
-                    sanitizer.matchesDomain("https://youtu.be/5HaUOgW5BlA") shouldBe true
+    SanitizerSpec(
+        YoutubeShortUrlSanitizer,
+        {
+            "clean" should
+                {
+                    "convert youtu.be short URL into long youtube.com URL" {
+                        val result = clean("https://youtu.be/5HaUOgW5BlA")
+                        result shouldBe "https://www.youtube.com/watch?v=5HaUOgW5BlA"
+                    }
                 }
 
-                "not match youtu.be inside another URL" {
-                    val sanitizer = YoutubeShortUrlSanitizer()
-                    sanitizer.matchesDomain("https://evil.com/youtu.be/5HaUOgW5BlA") shouldBe false
+            "matches" should
+                {
+                    "match youtu.be" { matches("https://youtu.be/5HaUOgW5BlA") shouldBe true }
+
+                    "not match youtu.be inside another URL" {
+                        matches("https://evil.com/youtu.be/5HaUOgW5BlA") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

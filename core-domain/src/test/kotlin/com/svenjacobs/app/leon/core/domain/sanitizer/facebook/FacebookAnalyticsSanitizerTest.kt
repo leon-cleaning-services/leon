@@ -17,31 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.facebook
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.FacebookAnalyticsSanitizer
 import io.kotest.matchers.shouldBe
 
 class FacebookAnalyticsSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove \"fb_*\", \"fbclid\", \"sfnsn\" and \"cHash\" parameters" {
-                    val sanitizer = FacebookAnalyticsSanitizer()
+    SanitizerSpec(
+        FacebookAnalyticsSanitizer,
+        {
+            "clean" should
+                {
+                    "remove \"fb_*\", \"fbclid\", \"sfnsn\" and \"cHash\" parameters" {
+                        val result =
+                            clean("https://www.example.com?fb_abc=123&fbclid=12345&sfnsn=scwspmo")
 
-                    val result =
-                        sanitizer("https://www.example.com?fb_abc=123&fbclid=12345&sfnsn=scwspmo")
+                        result shouldBe "https://www.example.com"
+                    }
 
-                    result shouldBe "https://www.example.com"
+                    "remove \"cHash\" parameter" {
+                        val result =
+                            clean(
+                                "https://www.spiegel.de/de?fbclid=IwY2xjawOxH_hleHRuA2FlbQIxMQ&cHash=137531e2404b087d877282a"
+                            )
+
+                        result shouldBe "https://www.spiegel.de/de"
+                    }
                 }
-
-                "remove \"cHash\" parameter" {
-                    val sanitizer = FacebookAnalyticsSanitizer()
-
-                    val result =
-                        sanitizer(
-                            "https://www.spiegel.de/de?fbclid=IwY2xjawOxH_hleHRuA2FlbQIxMQ&cHash=137531e2404b087d877282a"
-                        )
-
-                    result shouldBe "https://www.spiegel.de/de"
-                }
-            }
-    })
+        },
+    )

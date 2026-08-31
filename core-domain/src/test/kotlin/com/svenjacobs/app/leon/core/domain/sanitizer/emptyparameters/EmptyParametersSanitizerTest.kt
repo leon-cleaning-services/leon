@@ -17,24 +17,27 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.emptyparameters
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EmptyParametersSanitizer
 import io.kotest.matchers.shouldBe
 
 class EmptyParametersSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove empty parameters" {
-                    val sanitizer = EmptyParametersSanitizer()
-                    val result =
-                        sanitizer(
-                            "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id" +
-                                "=13241297&p=3&sid=&static=0&nav="
-                        )
+    SanitizerSpec(
+        EmptyParametersSanitizer,
+        {
+            "clean" should
+                {
+                    "remove empty parameters" {
+                        val result =
+                            clean(
+                                "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id" +
+                                    "=13241297&p=3&sid=&static=0&nav="
+                            )
 
-                    result shouldBe
-                        "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962" +
-                            "258&id=13241297&p=3&static=0"
+                        result shouldBe
+                            "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962" +
+                                "258&id=13241297&p=3&static=0"
+                    }
                 }
-            }
-    })
+        },
+    )

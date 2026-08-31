@@ -17,14 +17,11 @@
  */
 
 plugins {
-    `android-library`
-}
-
-android {
-    namespace = "com.svenjacobs.app.leon.core.domain"
+    `kotlin-library`
 }
 
 dependencies {
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.serialization.json)
+    api(libs.kotlinx.coroutines.core)
 }

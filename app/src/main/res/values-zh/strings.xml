@@ -58,4 +58,14 @@
     <string name="about_sponsor">请作者喝杯咖啡： %1$s.</string>
     <string name="about_version">版本号： %1$s</string>
     <string name="close">关闭</string>
+    <string name="changes_title">更改</string>
+    <string name="sanitizer_bluesky_redirect_name">蓝天重定向</string>
+    <string name="sanitizer_amazon_product_name">亚马逊商品</string>
+    <string name="sanitizer_aol_search_name">美国在线搜索</string>
+    <string name="sanitizer_empty_parameters_name">空参数</string>
+    <string name="sanitizer_google_search_name">Google 搜索</string>
+    <string name="sanitizer_mydealz_parameters_name">MyDealz 参数</string>
+    <string name="sanitizer_mydealz_redirects_name">MyDealz 重定向</string>
+    <string name="sanitizer_yahoo_search_name">雅虎搜索</string>
+    <string name="sanitizer_youtube_redirect_name">YouTube 重定向</string>
 </resources>

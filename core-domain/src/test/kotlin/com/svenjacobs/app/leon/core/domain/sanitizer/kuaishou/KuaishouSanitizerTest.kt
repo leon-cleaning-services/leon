@@ -17,28 +17,30 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.kuaishou
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.KuaishouSanitizer
 import io.kotest.matchers.shouldBe
 
 class KuaishouSanitizerTest :
-    WordSpec({
-        val sanitizer = KuaishouSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters from Kuaishou URL" {
-                    val result =
-                        sanitizer(
-                            "https://www.kuaishou.com/short-video/abc?share=1&userId=123&photoId=456"
-                        )
-                    result shouldBe "https://www.kuaishou.com/short-video/abc"
+    SanitizerSpec(
+        KuaishouSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from Kuaishou URL" {
+                        val result =
+                            clean(
+                                "https://www.kuaishou.com/short-video/abc?share=1&userId=123&photoId=456"
+                            )
+                        result shouldBe "https://www.kuaishou.com/short-video/abc"
+                    }
                 }
-            }
-        "matchesDomain" should
-            {
-                "match kuaishou.com and v.kuaishou.com domains" {
-                    sanitizer.matchesDomain("kuaishou.com") shouldBe true
-                    sanitizer.matchesDomain("v.kuaishou.com") shouldBe true
+            "matches" should
+                {
+                    "match kuaishou.com and v.kuaishou.com domains" {
+                        matches("kuaishou.com") shouldBe true
+                        matches("v.kuaishou.com") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

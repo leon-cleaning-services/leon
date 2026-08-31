@@ -17,28 +17,28 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.google
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalyticsSanitizer
 import io.kotest.matchers.shouldBe
 
 class GoogleAnalyticsSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove \"ga_*\", \"utm_*\", and \"gclid\" parameters" {
-                    val sanitizer = GoogleAnalyticsSanitizer()
+    SanitizerSpec(
+        GoogleAnalyticsSanitizer,
+        {
+            "clean" should
+                {
+                    "remove \"ga_*\", \"utm_*\", and \"gclid\" parameters" {
+                        val result =
+                            clean("https://www.example.com?ga_abc=123&utm_def=456&gclid=789")
 
-                    val result =
-                        sanitizer("https://www.example.com?ga_abc=123&utm_def=456&gclid=789")
+                        result shouldBe "https://www.example.com"
+                    }
 
-                    result shouldBe "https://www.example.com"
+                    "remove \"gad_*\" parameters" {
+                        val result = clean("https://www.example.com?gad_source=1&keep=123")
+
+                        result shouldBe "https://www.example.com?keep=123"
+                    }
                 }
-
-                "remove \"gad_*\" parameters" {
-                    val sanitizer = GoogleAnalyticsSanitizer()
-
-                    val result = sanitizer("https://www.example.com?gad_source=1&keep=123")
-
-                    result shouldBe "https://www.example.com&keep=123"
-                }
-            }
-    })
+        },
+    )

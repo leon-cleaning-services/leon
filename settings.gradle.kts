@@ -31,7 +31,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Leon"
 include(
-    ":core-common",
     ":core-domain",
     ":app",
 )

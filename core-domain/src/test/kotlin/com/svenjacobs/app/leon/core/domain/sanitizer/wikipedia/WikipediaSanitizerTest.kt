@@ -17,49 +17,45 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.wikipedia
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.WikipediaSanitizer
 import io.kotest.matchers.shouldBe
 
 class WikipediaSanitizerTest :
-    WordSpec({
-        val sanitizer = WikipediaSanitizer()
-
-        "invoke" should
-            {
-                "clean en.wikipedia.org URLs" {
-                    sanitizer("https://en.wikipedia.org/wiki/Kerosene?wprov=sfla1") shouldBe
-                        "https://en.wikipedia.org/wiki/Kerosene"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match wikipedia.org" {
-                    sanitizer.matchesDomain("https://wikipedia.org") shouldBe true
+    SanitizerSpec(
+        WikipediaSanitizer,
+        {
+            "clean" should
+                {
+                    "clean en.wikipedia.org URLs" {
+                        clean("https://en.wikipedia.org/wiki/Kerosene?wprov=sfla1") shouldBe
+                            "https://en.wikipedia.org/wiki/Kerosene"
+                    }
                 }
 
-                "match en.wikipedia.org" {
-                    sanitizer.matchesDomain("https://en.wikipedia.org") shouldBe true
-                }
+            "matches" should
+                {
+                    "match wikipedia.org" { matches("https://wikipedia.org") shouldBe true }
 
-                "match m.en.wikipedia.org" {
-                    sanitizer.matchesDomain("https://de.m.wikipedia.org") shouldBe true
-                }
+                    "match en.wikipedia.org" { matches("https://en.wikipedia.org") shouldBe true }
 
-                "don't match google.com" {
-                    sanitizer.matchesDomain("https://google.com") shouldBe false
-                }
+                    "match m.en.wikipedia.org" {
+                        matches("https://de.m.wikipedia.org") shouldBe true
+                    }
 
-                "don't match wikipedia.org inside another URL" {
-                    sanitizer.matchesDomain("https://evil.com/?u=en.wikipedia.org") shouldBe false
-                }
+                    "don't match google.com" { matches("https://google.com") shouldBe false }
 
-                "don't match host which only starts with wikipedia.org" {
-                    sanitizer.matchesDomain("https://wikipedia.org.evil.com") shouldBe false
-                }
+                    "don't match wikipedia.org inside another URL" {
+                        matches("https://evil.com/?u=en.wikipedia.org") shouldBe false
+                    }
 
-                "don't match host where the dot is another character" {
-                    sanitizer.matchesDomain("https://wikipedia-org") shouldBe false
+                    "don't match host which only starts with wikipedia.org" {
+                        matches("https://wikipedia.org.evil.com") shouldBe false
+                    }
+
+                    "don't match host where the dot is another character" {
+                        matches("https://wikipedia-org") shouldBe false
+                    }
                 }
-            }
-    })
+        },
+    )

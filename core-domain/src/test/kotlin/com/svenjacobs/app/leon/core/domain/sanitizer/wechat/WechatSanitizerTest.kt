@@ -17,28 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.wechat
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.WechatSanitizer
 import io.kotest.matchers.shouldBe
 
 class WechatSanitizerTest :
-    WordSpec({
-        val sanitizer = WechatSanitizer()
-        "invoke" should
-            {
-                "remove tracking parameters from WeChat URL" {
-                    val result =
-                        sanitizer(
-                            "https://weixin.qq.com/s?__biz=abc&mid=123&idx=1&sn=def&scene=2&wx_header=3"
-                        )
-                    result shouldBe "https://weixin.qq.com/s"
+    SanitizerSpec(
+        WechatSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from WeChat URL" {
+                        val result =
+                            clean(
+                                "https://weixin.qq.com/s?__biz=abc&mid=123&idx=1&sn=def&scene=2&wx_header=3"
+                            )
+                        result shouldBe "https://weixin.qq.com/s"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match weixin.qq.com and url.cn domains" {
-                    sanitizer.matchesDomain("weixin.qq.com/s") shouldBe true
-                    sanitizer.matchesDomain("url.cn/abc") shouldBe true
+            "matches" should
+                {
+                    "match weixin.qq.com and url.cn domains" {
+                        matches("weixin.qq.com/s") shouldBe true
+                        matches("url.cn/abc") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

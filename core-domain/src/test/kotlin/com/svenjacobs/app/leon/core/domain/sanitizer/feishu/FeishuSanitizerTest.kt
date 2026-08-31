@@ -17,32 +17,34 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.feishu
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.FeishuSanitizer
 import io.kotest.matchers.shouldBe
 
 class FeishuSanitizerTest :
-    WordSpec({
-        val sanitizer = FeishuSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters from Feishu URL" {
-                    val result =
-                        sanitizer(
-                            "https://www.feishu.cn/docx/abc?from=share&scene=2&channel=app&source=qr&refer=user"
-                        )
-                    result shouldBe "https://www.feishu.cn/docx/abc"
+    SanitizerSpec(
+        FeishuSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from Feishu URL" {
+                        val result =
+                            clean(
+                                "https://www.feishu.cn/docx/abc?from=share&scene=2&channel=app&source=qr&refer=user"
+                            )
+                        result shouldBe "https://www.feishu.cn/docx/abc"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match feishu.cn and feishu.net domains with subdomains" {
-                    sanitizer.matchesDomain("feishu.cn") shouldBe true
-                    sanitizer.matchesDomain("www.feishu.cn") shouldBe true
-                    sanitizer.matchesDomain("wiki.feishu.cn") shouldBe true
-                    sanitizer.matchesDomain("feishu.net") shouldBe true
-                    sanitizer.matchesDomain("sub.feishu.net") shouldBe true
+            "matches" should
+                {
+                    "match feishu.cn and feishu.net domains with subdomains" {
+                        matches("feishu.cn") shouldBe true
+                        matches("www.feishu.cn") shouldBe true
+                        matches("wiki.feishu.cn") shouldBe true
+                        matches("feishu.net") shouldBe true
+                        matches("sub.feishu.net") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

@@ -17,10 +17,18 @@
  */
 package com.svenjacobs.app.leon.inject
 
+import android.content.Context
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.datastore.SanitizerDataStoreManager
 
 object AppContainer {
+
+    fun init(appContext: Context) {
+        this.AppContext = appContext
+    }
+
+    lateinit var AppContext: Context
+        private set
 
     val AppDataStoreManager: AppDataStoreManager by lazy { AppDataStoreManager() }
     val SanitizerDataStoreManager: SanitizerDataStoreManager by lazy { SanitizerDataStoreManager() }

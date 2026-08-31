@@ -17,24 +17,26 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.cx
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.CxAnalyticsSanitizer
 import io.kotest.matchers.shouldBe
 
 class CxAnalyticsSanitizerTest :
-    WordSpec({
-        "invoke" should
-            {
-                "remove \"cx_*\", \"cxrecs_s\", and \"mibextid\" parameters" {
-                    val sanitizer = CxAnalyticsSanitizer()
+    SanitizerSpec(
+        CxAnalyticsSanitizer,
+        {
+            "clean" should
+                {
+                    "remove \"cx_*\", \"cxrecs_s\", and \"mibextid\" parameters" {
+                        val result =
+                            clean(
+                                "https://www.redacted.com/redacted/2023/06/01/page-of-article.html?" +
+                                    "cx_testId=40&cx_testVariant=cx_8&cx_artPos=4&mibextid=Zxz2cZ&cxrecs_s=5"
+                            )
 
-                    val result =
-                        sanitizer(
-                            "https://www.redacted.com/redacted/2023/06/01/page-of-article.html?" +
-                                "cx_testId=40&cx_testVariant=cx_8&cx_artPos=4&mibextid=Zxz2cZ&cxrecs_s=5"
-                        )
-
-                    result shouldBe
-                        "https://www.redacted.com/redacted/2023/06/01/page-of-article.html"
+                        result shouldBe
+                            "https://www.redacted.com/redacted/2023/06/01/page-of-article.html"
+                    }
                 }
-            }
-    })
+        },
+    )

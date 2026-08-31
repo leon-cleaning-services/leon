@@ -17,19 +17,21 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.meta
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MetaAdSanitizer
 import io.kotest.matchers.shouldBe
 
 class MetaAdSanitizerTest :
-    WordSpec({
-        val sanitizer = MetaAdSanitizer()
-
-        "invoke" should
-            {
-                "remove ad_id, adset_id, campaign_id, gc_id, h_ad_id and placement parameters" {
-                    sanitizer(
-                        "https://www.example.com/path?ad_id=1&adset_id=2&campaign_id=3&gc_id=4&h_ad_id=5&placement=6&keep=123"
-                    ) shouldBe "https://www.example.com/path&keep=123"
+    SanitizerSpec(
+        MetaAdSanitizer,
+        {
+            "clean" should
+                {
+                    "remove ad_id, adset_id, campaign_id, gc_id, h_ad_id and placement parameters" {
+                        clean(
+                            "https://www.example.com/path?ad_id=1&adset_id=2&campaign_id=3&gc_id=4&h_ad_id=5&placement=6&keep=123"
+                        ) shouldBe "https://www.example.com/path?keep=123"
+                    }
                 }
-            }
-    })
+        },
+    )

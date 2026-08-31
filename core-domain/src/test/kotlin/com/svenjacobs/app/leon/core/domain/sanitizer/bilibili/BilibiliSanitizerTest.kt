@@ -17,29 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.bilibili
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.BilibiliSanitizer
 import io.kotest.matchers.shouldBe
 
 class BilibiliSanitizerTest :
-    WordSpec({
-        val sanitizer = BilibiliSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters from Bilibili URL" {
-                    val result =
-                        sanitizer(
-                            "https://www.bilibili.com/video/BV1xx?vd_source=abc&seid=456&from=spm&share_source=copy&copy_link=789"
-                        )
-                    result shouldBe "https://www.bilibili.com/video/BV1xx"
+    SanitizerSpec(
+        BilibiliSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from Bilibili URL" {
+                        val result =
+                            clean(
+                                "https://www.bilibili.com/video/BV1xx?vd_source=abc&seid=456&from=spm&share_source=copy&copy_link=789"
+                            )
+                        result shouldBe "https://www.bilibili.com/video/BV1xx"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match bilibili.com domain" {
-                    sanitizer.matchesDomain("bilibili.com/video/123") shouldBe true
-                    sanitizer.matchesDomain("www.bilibili.com") shouldBe true
+            "matches" should
+                {
+                    "match bilibili.com domain" {
+                        matches("bilibili.com/video/123") shouldBe true
+                        matches("www.bilibili.com") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

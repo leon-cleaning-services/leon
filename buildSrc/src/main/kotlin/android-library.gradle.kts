@@ -68,7 +68,6 @@ composeCompiler {
 }
 
 dependencies {
-    api(project(":core-common"))
 
     val composeBom = platform(libs.findLibrary("androidx.compose.bom").get())
     api(composeBom)

@@ -17,34 +17,34 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.threads
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ThreadsSanitizer
 import io.kotest.matchers.shouldBe
 
 class ThreadsSanitizerTest :
-    WordSpec({
-        val sanitizer = ThreadsSanitizer()
+    SanitizerSpec(
+        ThreadsSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters from threads.net" {
+                        clean(
+                            "https://www.threads.net/t/CufR4M8yNdJ/?igshid=NTc4MTIwNjQ2YQ=="
+                        ) shouldBe "https://www.threads.net/t/CufR4M8yNdJ/"
+                    }
 
-        "invoke" should
-            {
-                "remove all parameters from threads.net" {
-                    sanitizer(
-                        "https://www.threads.net/t/CufR4M8yNdJ/?igshid=NTc4MTIwNjQ2YQ=="
-                    ) shouldBe "https://www.threads.net/t/CufR4M8yNdJ/"
+                    "remove all parameters from threads.com" {
+                        clean(
+                            "https://www.threads.com/@chpapa/post/DSzhvqtkuyg?xmt=AQF0J2-TPDkD-qhbXb7usPu3mcJy6Tz8R0LhCkenCCvSOg"
+                        ) shouldBe "https://www.threads.com/@chpapa/post/DSzhvqtkuyg"
+                    }
                 }
 
-                "remove all parameters from threads.com" {
-                    sanitizer(
-                        "https://www.threads.com/@chpapa/post/DSzhvqtkuyg?xmt=AQF0J2-TPDkD-qhbXb7usPu3mcJy6Tz8R0LhCkenCCvSOg"
-                    ) shouldBe "https://www.threads.com/@chpapa/post/DSzhvqtkuyg"
-                }
-            }
+            "matches" should
+                {
+                    "match threads.net" { matches("https://threads.net") shouldBe true }
 
-        "matchesDomain" should
-            {
-                "match threads.net" { sanitizer.matchesDomain("https://threads.net") shouldBe true }
-
-                "match threads.com" {
-                    sanitizer.matchesDomain("https://www.threads.com") shouldBe true
+                    "match threads.com" { matches("https://www.threads.com") shouldBe true }
                 }
-            }
-    })
+        },
+    )

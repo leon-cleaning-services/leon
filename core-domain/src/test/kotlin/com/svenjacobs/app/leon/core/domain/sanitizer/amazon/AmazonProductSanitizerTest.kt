@@ -17,85 +17,86 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.amazon
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AmazonProductSanitizer
 import io.kotest.matchers.shouldBe
 
 class AmazonProductSanitizerTest :
-    WordSpec({
-        val sanitizer = AmazonProductSanitizer()
+    SanitizerSpec(
+        AmazonProductSanitizer,
+        {
+            "clean" should
+                {
+                    "clean Amazon product link (dp)" {
+                        var result =
+                            clean(
+                                "https://www.amazon.de/Xiaomi-Aktivit%C3%A4tstracker-Trainings-Puls%C3%" +
+                                    "BCberwachung-Akkulaufzeit/dp/B091G3FLL7/?_encoding=UTF8&pd_rd_w=xDcJP&pf" +
+                                    "_rd_p=bf172aca-3277-41f6-babb-6ce7fc34cf7f&pf_rd_r=ZC6FZ5G6W9K8DEZTPBYW&" +
+                                    "pd_rd_r=11b3ec4e-047c-4f37-8302-62dedb8f502b&pd_rd_wg=Ozi90&ref_=pd_gw_c" +
+                                    "i_mcx_mr_hp_atf_m"
+                            )
 
-        "invoke" should
-            {
-                "clean Amazon product link (dp)" {
-                    var result =
-                        sanitizer(
-                            "https://www.amazon.de/Xiaomi-Aktivit%C3%A4tstracker-Trainings-Puls%C3%" +
-                                "BCberwachung-Akkulaufzeit/dp/B091G3FLL7/?_encoding=UTF8&pd_rd_w=xDcJP&pf" +
-                                "_rd_p=bf172aca-3277-41f6-babb-6ce7fc34cf7f&pf_rd_r=ZC6FZ5G6W9K8DEZTPBYW&" +
-                                "pd_rd_r=11b3ec4e-047c-4f37-8302-62dedb8f502b&pd_rd_wg=Ozi90&ref_=pd_gw_c" +
-                                "i_mcx_mr_hp_atf_m"
-                        )
+                        result shouldBe "https://www.amazon.de/dp/B091G3FLL7/"
 
-                    result shouldBe "https://www.amazon.de/dp/B091G3FLL7/"
+                        result =
+                            clean(
+                                "https://www.amazon.co.uk/Xiaomi-Aktivit%C3%A4tstracker-Trainings-Puls%C3%" +
+                                    "BCberwachung-Akkulaufzeit/dp/B091G3FLL7/?_encoding=UTF8&pd_rd_w=xDcJP&pf" +
+                                    "_rd_p=bf172aca-3277-41f6-babb-6ce7fc34cf7f&pf_rd_r=ZC6FZ5G6W9K8DEZTPBYW&" +
+                                    "pd_rd_r=11b3ec4e-047c-4f37-8302-62dedb8f502b&pd_rd_wg=Ozi90&ref_=pd_gw_c" +
+                                    "i_mcx_mr_hp_atf_m"
+                            )
 
-                    result =
-                        sanitizer(
-                            "https://www.amazon.co.uk/Xiaomi-Aktivit%C3%A4tstracker-Trainings-Puls%C3%" +
-                                "BCberwachung-Akkulaufzeit/dp/B091G3FLL7/?_encoding=UTF8&pd_rd_w=xDcJP&pf" +
-                                "_rd_p=bf172aca-3277-41f6-babb-6ce7fc34cf7f&pf_rd_r=ZC6FZ5G6W9K8DEZTPBYW&" +
-                                "pd_rd_r=11b3ec4e-047c-4f37-8302-62dedb8f502b&pd_rd_wg=Ozi90&ref_=pd_gw_c" +
-                                "i_mcx_mr_hp_atf_m"
-                        )
+                        result shouldBe "https://www.amazon.co.uk/dp/B091G3FLL7/"
+                    }
 
-                    result shouldBe "https://www.amazon.co.uk/dp/B091G3FLL7/"
+                    "clean Amazon product link (gp/product)" {
+                        val result =
+                            clean(
+                                "https://www.amazon.fr/gp/product/B0C9JKKL7N?tag=egcdealabs08-21&ascsubtag=1498016995"
+                            )
+
+                        result shouldBe "https://www.amazon.fr/dp/B0C9JKKL7N/"
+                    }
+
+                    "clean Amazon cart product link" {
+                        clean(
+                            "https://www.amazon.com/gp/aw/d/B009EEZYE0/ref=ox_sc_act_image_1?smid=ATVPDKIKX0DER&psc=1"
+                        ) shouldBe "https://www.amazon.com/dp/B009EEZYE0/"
+                    }
+
+                    "keep already cleaned Amazon URL" {
+                        clean("https://www.amazon.com/dp/B091G3FLL7/") shouldBe
+                            "https://www.amazon.com/dp/B091G3FLL7/"
+                    }
                 }
 
-                "clean Amazon product link (gp/product)" {
-                    val result =
-                        sanitizer(
-                            "https://www.amazon.fr/gp/product/B0C9JKKL7N?tag=egcdealabs08-21&ascsubtag=1498016995"
-                        )
+            "matches" should
+                {
+                    "match for Amazon product link" {
+                        matches(
+                            "https://www.amazon.de/Xiaomi-Aktivit%C3%A4tstracke" +
+                                "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/"
+                        ) shouldBe true
 
-                    result shouldBe "https://www.amazon.fr/dp/B0C9JKKL7N/"
+                        matches(
+                            "https://www.amazon.co.uk/Xiaomi-Aktivit%C3%A4tstracke" +
+                                "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/"
+                        ) shouldBe true
+                    }
+
+                    "match for Amazon cart product link" {
+                        matches(
+                            "www.amazon.com/gp/aw/d/B009EEZYE0/ref=ox_sc_act_image_1?smid=ATVPDKIKX" +
+                                "0DER&psc=1"
+                        ) shouldBe true
+                    }
+
+                    "not match Amazon product link inside another URL" {
+                        matches("https://evil.com/?u=https://amazon.com/dp/B091G3FLL7") shouldBe
+                            false
+                    }
                 }
-
-                "clean Amazon cart product link" {
-                    sanitizer(
-                        "https://www.amazon.com/gp/aw/d/B009EEZYE0/ref=ox_sc_act_image_1?smid=ATVPDKIKX0DER&psc=1"
-                    ) shouldBe "https://www.amazon.com/dp/B009EEZYE0/"
-                }
-
-                "keep already cleaned Amazon URL" {
-                    sanitizer("https://www.amazon.com/dp/B091G3FLL7/") shouldBe
-                        "https://www.amazon.com/dp/B091G3FLL7/"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match for Amazon product link" {
-                    sanitizer.matchesDomain(
-                        "https://www.amazon.de/Xiaomi-Aktivit%C3%A4tstracke" +
-                            "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/"
-                    ) shouldBe true
-
-                    sanitizer.matchesDomain(
-                        "https://www.amazon.co.uk/Xiaomi-Aktivit%C3%A4tstracke" +
-                            "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/"
-                    ) shouldBe true
-                }
-
-                "match for Amazon cart product link" {
-                    sanitizer.matchesDomain(
-                        "www.amazon.com/gp/aw/d/B009EEZYE0/ref=ox_sc_act_image_1?smid=ATVPDKIKX" +
-                            "0DER&psc=1"
-                    ) shouldBe true
-                }
-
-                "not match Amazon product link inside another URL" {
-                    sanitizer.matchesDomain(
-                        "https://evil.com/?u=https://amazon.com/dp/B091G3FLL7"
-                    ) shouldBe false
-                }
-            }
-    })
+        },
+    )

@@ -17,29 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.dianping
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.DianpingSanitizer
 import io.kotest.matchers.shouldBe
 
 class DianpingSanitizerTest :
-    WordSpec({
-        val sanitizer = DianpingSanitizer()
-
-        "invoke" should
-            {
-                "remove tracking parameters from Dianping URL" {
-                    val result =
-                        sanitizer(
-                            "https://www.dianping.com/shop/789?from=share&source=wx&channel=search&refer=user&wm=456&c=def&wx_extra=1"
-                        )
-                    result shouldBe "https://www.dianping.com/shop/789"
+    SanitizerSpec(
+        DianpingSanitizer,
+        {
+            "clean" should
+                {
+                    "remove tracking parameters from Dianping URL" {
+                        val result =
+                            clean(
+                                "https://www.dianping.com/shop/789?from=share&source=wx&channel=search&refer=user&wm=456&c=def&wx_extra=1"
+                            )
+                        result shouldBe "https://www.dianping.com/shop/789"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match dianping.com domain" {
-                    sanitizer.matchesDomain("dianping.com/shop") shouldBe true
-                    sanitizer.matchesDomain("www.dianping.com") shouldBe true
+            "matches" should
+                {
+                    "match dianping.com domain" {
+                        matches("dianping.com/shop") shouldBe true
+                        matches("www.dianping.com") shouldBe true
+                    }
                 }
-            }
-    })
+        },
+    )

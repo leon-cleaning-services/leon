@@ -17,31 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.pearl
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.PearlSanitizer
 import io.kotest.matchers.shouldBe
 
 class PearlSanitizerTest :
-    WordSpec({
-        val sanitizer = PearlSanitizer()
+    SanitizerSpec(
+        PearlSanitizer,
+        {
+            "clean" should
+                {
+                    "remove all parameters" {
+                        val result =
+                            clean(
+                                "https://www.pearl.de/m/10884/?vid=985&curr=DEM&wa_id=995&wa_num=10884&" +
+                                    "mt=bWsqHZ2EOdIMxzpUi7oRsjVMLsC2%2Fyc65JwkwDStD1WiEu3REqi2%2Fw%3D%3D&utm_" +
+                                    "source=10884&utm_medium=onlineversion_D"
+                            )
 
-        "invoke" should
-            {
-                "remove all parameters" {
-                    val result =
-                        sanitizer(
-                            "https://www.pearl.de/m/10884/?vid=985&curr=DEM&wa_id=995&wa_num=10884&" +
-                                "mt=bWsqHZ2EOdIMxzpUi7oRsjVMLsC2%2Fyc65JwkwDStD1WiEu3REqi2%2Fw%3D%3D&utm_" +
-                                "source=10884&utm_medium=onlineversion_D"
-                        )
-
-                    result shouldBe "https://www.pearl.de/m/10884/"
+                        result shouldBe "https://www.pearl.de/m/10884/"
+                    }
                 }
-            }
 
-        "matchesDomain" should
-            {
-                "match for pearl.de" {
-                    sanitizer.matchesDomain("https://www.pearl.de") shouldBe true
+            "matches" should
+                {
+                    "match for pearl.de" { matches("https://www.pearl.de") shouldBe true }
                 }
-            }
-    })
+        },
+    )

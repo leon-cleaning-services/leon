@@ -17,60 +17,60 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer.netflix
 
-import io.kotest.core.spec.style.WordSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.NetflixSanitizer
 import io.kotest.matchers.shouldBe
 
 class NetflixSanitizerTest :
-    WordSpec({
-        val sanitizer = NetflixSanitizer()
+    SanitizerSpec(
+        NetflixSanitizer,
+        {
+            "clean" should
+                {
+                    "remove various Netflix parameters" {
+                        val result =
+                            clean(
+                                "https://www.netflix.com/de/title/81040344?s=a&trkid=13747225&t=more&vl" +
+                                    "ang=de&clip=81499054&trg=trg"
+                            )
 
-        "invoke" should
-            {
-                "remove various Netflix parameters" {
-                    val result =
-                        sanitizer(
-                            "https://www.netflix.com/de/title/81040344?s=a&trkid=13747225&t=more&vl" +
-                                "ang=de&clip=81499054&trg=trg"
-                        )
+                        result shouldBe "https://www.netflix.com/de/title/81040344"
+                    }
 
-                    result shouldBe "https://www.netflix.com/de/title/81040344"
+                    "remove parameters from help.netflix.com URL" {
+                        val result =
+                            clean(
+                                "https://help.netflix.com/en/titlerequest?netflixsource=android&fromApp=true"
+                            )
+
+                        result shouldBe "https://help.netflix.com/en/titlerequest"
+                    }
+
+                    "remove all query arguments from US title URL" {
+                        val result =
+                            clean(
+                                "https://www.netflix.com/us/title/81461530?s=a&trkid=13747225&shareType=Title" +
+                                    "&shareUuid=8266283d-94f3-42b5-83ac-ad2be3c826c9&trg=cp" +
+                                    "&unifiedEntityIdEncoded=Video%3A81461530&vlang=en&clip=82633134"
+                            )
+
+                        result shouldBe "https://www.netflix.com/us/title/81461530"
+                    }
                 }
 
-                "remove parameters from help.netflix.com URL" {
-                    val result =
-                        sanitizer(
-                            "https://help.netflix.com/en/titlerequest?netflixsource=android&fromApp=true"
-                        )
+            "matches" should
+                {
+                    "match netflix.com" { matches("https://netflix.com") shouldBe true }
 
-                    result shouldBe "https://help.netflix.com/en/titlerequest"
+                    "match help.netflix.com" { matches("https://help.netflix.com") shouldBe true }
+
+                    "not match host which only starts with netflix.com" {
+                        matches("https://netflix.com.evil.com") shouldBe false
+                    }
+
+                    "not match host where the dot is another character" {
+                        matches("https://netflix-com") shouldBe false
+                    }
                 }
-
-                "remove all query arguments from US title URL" {
-                    val result =
-                        sanitizer(
-                            "https://www.netflix.com/us/title/81461530?s=a&trkid=13747225&shareType=Title" +
-                                "&shareUuid=8266283d-94f3-42b5-83ac-ad2be3c826c9&trg=cp" +
-                                "&unifiedEntityIdEncoded=Video%3A81461530&vlang=en&clip=82633134"
-                        )
-
-                    result shouldBe "https://www.netflix.com/us/title/81461530"
-                }
-            }
-
-        "matchesDomain" should
-            {
-                "match netflix.com" { sanitizer.matchesDomain("https://netflix.com") shouldBe true }
-
-                "match help.netflix.com" {
-                    sanitizer.matchesDomain("https://help.netflix.com") shouldBe true
-                }
-
-                "not match host which only starts with netflix.com" {
-                    sanitizer.matchesDomain("https://netflix.com.evil.com") shouldBe false
-                }
-
-                "not match host where the dot is another character" {
-                    sanitizer.matchesDomain("https://netflix-com") shouldBe false
-                }
-            }
-    })
+        },
+    )
