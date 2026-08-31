@@ -57,4 +57,14 @@
     <string name="about_sponsor">Den Entwickler unter %1$s sponsern.</string>
     <string name="about_version">Version: %1$s</string>
     <string name="close">Schließen</string>
+    <string name="changes_title">Änderungen</string>
+    <string name="sanitizer_bluesky_redirect_name">Bluesky Weiterleitung</string>
+    <string name="sanitizer_amazon_product_name">Amazon Produkte</string>
+    <string name="sanitizer_aol_search_name">AOL Suche</string>
+    <string name="sanitizer_empty_parameters_name">Leere Parameter</string>
+    <string name="sanitizer_google_search_name">Google Suche</string>
+    <string name="sanitizer_mydealz_parameters_name">MyDealz Parameter</string>
+    <string name="sanitizer_mydealz_redirects_name">MyDealz Weiterleitungen</string>
+    <string name="sanitizer_yahoo_search_name">Yahoo Suche</string>
+    <string name="sanitizer_youtube_redirect_name">YouTube Weiterleitung</string>
 </resources>

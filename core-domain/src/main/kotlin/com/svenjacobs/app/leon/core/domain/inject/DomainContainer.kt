@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,31 @@
  */
 package com.svenjacobs.app.leon.core.domain.inject
 
-import android.content.Context
+import com.svenjacobs.app.leon.core.domain.sanitizer.AlwaysEnabled
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 
+/**
+ * Holds what `Cleaner` needs.
+ *
+ * Both are usable without [init]: a caller which has nowhere to store the user's preferences — a
+ * command line front end, a test — gets the complete catalog with every sanitizer enabled. The app
+ * calls [init] to plug in its own repository.
+ */
 object DomainContainer {
 
     fun init(
-        appContext: Context,
         sanitizerRepositoryProvider: () -> SanitizerRepository,
-        sanitizers: SanitizersCollection,
+        sanitizers: SanitizersCollection = AllSanitizers,
     ) {
-        this.AppContext = appContext
         this.SanitizerRepositoryProvider = sanitizerRepositoryProvider
         this.Sanitizers = sanitizers
     }
 
-    private lateinit var SanitizerRepositoryProvider: () -> SanitizerRepository
+    private var SanitizerRepositoryProvider: () -> SanitizerRepository = { AlwaysEnabled }
 
-    lateinit var AppContext: Context
-        private set
-
-    lateinit var Sanitizers: SanitizersCollection
+    var Sanitizers: SanitizersCollection = AllSanitizers
         private set
 
     val SanitizerRepository: SanitizerRepository by lazy { SanitizerRepositoryProvider() }

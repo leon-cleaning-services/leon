@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,176 +19,17 @@ package com.svenjacobs.app.leon.startup
 
 import android.content.Context
 import com.svenjacobs.app.leon.core.domain.inject.DomainContainer
-import com.svenjacobs.app.leon.core.domain.sanitizer.adobemarketo.AdobeMarketoEngageSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.aliexpress.AliexpressSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.amazon.AmazonProductSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.amazon.AmazonSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.aol.AolSearchSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.at.AtAnalyticsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.autotrader.AutoTraderSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.bilibili.BilibiliSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.bluesky.BlueskyRedirectSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.cargurus.CarGurusSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.change.ChangeSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.cx.CxAnalyticsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.dianping.DianpingSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.dingtalk.DingtalkSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.douyin.DouyinSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.ebay.EbaySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.echobox.EchoboxSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.elfinanciero.ElFinancieroSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.emptyparameters.EmptyParametersSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.facebook.FacebookAnalyticsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.facebook.FacebookSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.fastcompany.FastCompanySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.feishu.FeishuSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.flipkart.FlipkartSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.georiot.GeoRiotSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleAdsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleAnalyticsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleMapsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleSearchSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.google.GoogleStoreSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.heise.HeiseSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.ikea.IkeaSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.ilmessaggero.IlMessaggeroSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.instagram.InstagramSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.jd.JdSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.jdoqocy.JdoqocySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.jodel.JodelSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.kogan.KoganSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.kuaishou.KuaishouSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.latinatoday.LatinaTodaySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.lazada.LazadaSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.linkedin.LinkedInSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.linksynergy.LinkSynergySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.meituan.MeituanSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.meta.MetaAdSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.mydealz.MyDealzParametersSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.mydealz.MyDealzRedirectsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.netflix.NetflixSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.newegg.NewEggSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.pearl.PearlSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.pinduoduo.PddSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.reddit.RedditMailSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.reddit.RedditOutSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.reddit.RedditSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.salesforce.SalesforceParametersSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.sessionids.SessionIdsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.shopee.ShopeeSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.snapchat.SnapchatSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.spiegel.SpiegelSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.spotify.SpotifySanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.substack.SubstackSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.taobao.TaobaoSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.theguardian.TheGuardianSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.threads.ThreadsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.tiktok.TiktokSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.webtrekk.WebtrekkSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.wechat.WechatSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.weibo.WeiboSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.wikipedia.WikipediaSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.x.XSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.xiaohongshu.XiaohongshuSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.yahoo.YahooReferrerSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.yahoo.YahooSearchSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.yandex.YandexSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeMusicSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeRedirectSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.youtube.YoutubeShortUrlSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.zhihu.ZhihuSanitizer
+import com.svenjacobs.app.leon.inject.AppContainer
 import com.svenjacobs.app.leon.sanitizer.SanitizerRepositoryImpl
-import kotlinx.collections.immutable.persistentListOf
 
 class ContainerInitializer : DistinctInitializer<Unit> {
 
+    /**
+     * The sanitizers themselves come from the catalog in `core-domain`; the app only supplies the
+     * repository which remembers which of them the user turned off.
+     */
     override fun create(context: Context) {
-        DomainContainer.init(
-            appContext = context,
-            sanitizerRepositoryProvider = { SanitizerRepositoryImpl() },
-            sanitizers =
-                persistentListOf(
-                    AdobeMarketoEngageSanitizer(),
-                    AliexpressSanitizer(),
-                    BlueskyRedirectSanitizer(),
-                    AmazonProductSanitizer(),
-                    AmazonSanitizer(),
-                    AolSearchSanitizer(),
-                    AtAnalyticsSanitizer(),
-                    AutoTraderSanitizer(),
-                    BilibiliSanitizer(),
-                    CarGurusSanitizer(),
-                    ChangeSanitizer(),
-                    CxAnalyticsSanitizer(),
-                    DouyinSanitizer(),
-                    DingtalkSanitizer(),
-                    DianpingSanitizer(),
-                    EbaySanitizer(),
-                    EchoboxSanitizer(),
-                    ElFinancieroSanitizer(),
-                    EmptyParametersSanitizer(),
-                    FacebookAnalyticsSanitizer(),
-                    FacebookSanitizer(),
-                    FastCompanySanitizer(),
-                    FlipkartSanitizer(),
-                    FeishuSanitizer(),
-                    GeoRiotSanitizer(),
-                    GoogleAdsSanitizer(),
-                    GoogleAnalyticsSanitizer(),
-                    GoogleMapsSanitizer(),
-                    GoogleSearchSanitizer(),
-                    GoogleStoreSanitizer(),
-                    HeiseSanitizer(),
-                    IkeaSanitizer(),
-                    IlMessaggeroSanitizer(),
-                    InstagramSanitizer(),
-                    JdoqocySanitizer(),
-                    JodelSanitizer(),
-                    JdSanitizer(),
-                    KoganSanitizer(),
-                    KuaishouSanitizer(),
-                    LatinaTodaySanitizer(),
-                    LazadaSanitizer(),
-                    LinkedInSanitizer(),
-                    LinkSynergySanitizer(),
-                    MetaAdSanitizer(),
-                    MyDealzParametersSanitizer(),
-                    MyDealzRedirectsSanitizer(),
-                    MeituanSanitizer(),
-                    NetflixSanitizer(),
-                    NewEggSanitizer(),
-                    PearlSanitizer(),
-                    PddSanitizer(),
-                    RedditMailSanitizer(),
-                    RedditOutSanitizer(),
-                    RedditSanitizer(),
-                    SalesforceParametersSanitizer(),
-                    SessionIdsSanitizer(),
-                    ShopeeSanitizer(),
-                    SnapchatSanitizer(),
-                    SpiegelSanitizer(),
-                    SpotifySanitizer(),
-                    SubstackSanitizer(),
-                    TheGuardianSanitizer(),
-                    ThreadsSanitizer(),
-                    TiktokSanitizer(),
-                    TaobaoSanitizer(),
-                    WebtrekkSanitizer(),
-                    WikipediaSanitizer(),
-                    WechatSanitizer(),
-                    WeiboSanitizer(),
-                    XSanitizer(),
-                    XiaohongshuSanitizer(),
-                    YahooReferrerSanitizer(),
-                    YahooSearchSanitizer(),
-                    YandexSanitizer(),
-                    YoutubeMusicSanitizer(),
-                    YoutubeRedirectSanitizer(),
-                    YoutubeSanitizer(),
-                    YoutubeShortUrlSanitizer(),
-                    ZhihuSanitizer(),
-                ),
-        )
+        AppContainer.init(appContext = context)
+        DomainContainer.init(sanitizerRepositoryProvider = { SanitizerRepositoryImpl() })
     }
 }

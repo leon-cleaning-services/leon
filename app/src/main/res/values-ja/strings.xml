@@ -57,4 +57,14 @@
     <string name="about_sponsor">%1$s から開発者をスポンサーできます。</string>
     <string name="about_version">バージョン: %1$s</string>
     <string name="close">閉じる</string>
+    <string name="changes_title">変更</string>
+    <string name="sanitizer_bluesky_redirect_name">Bluesky リダイレクト</string>
+    <string name="sanitizer_amazon_product_name">Amazon 商品</string>
+    <string name="sanitizer_aol_search_name">AOL 検索</string>
+    <string name="sanitizer_empty_parameters_name">空のパラメーター</string>
+    <string name="sanitizer_google_search_name">Google 検索</string>
+    <string name="sanitizer_mydealz_parameters_name">MyDealz パラメーター</string>
+    <string name="sanitizer_mydealz_redirects_name">MyDealz リダイレクト</string>
+    <string name="sanitizer_yahoo_search_name">Yahoo 検索</string>
+    <string name="sanitizer_youtube_redirect_name">YouTube リダイレクト</string>
 </resources>

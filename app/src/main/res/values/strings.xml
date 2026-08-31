@@ -58,4 +58,14 @@
     <string name="about_sponsor">Sponsor the developer at %1$s.</string>
     <string name="about_version">Version: %1$s</string>
     <string name="close">Close</string>
+    <string name="changes_title">Changes</string>
+    <string name="sanitizer_bluesky_redirect_name">Bluesky Redirect</string>
+    <string name="sanitizer_amazon_product_name">Amazon Products</string>
+    <string name="sanitizer_aol_search_name">AOL Search</string>
+    <string name="sanitizer_empty_parameters_name">Empty Parameters</string>
+    <string name="sanitizer_google_search_name">Google Search</string>
+    <string name="sanitizer_mydealz_parameters_name">MyDealz Parameters</string>
+    <string name="sanitizer_mydealz_redirects_name">MyDealz Redirects</string>
+    <string name="sanitizer_yahoo_search_name">Yahoo Search</string>
+    <string name="sanitizer_youtube_redirect_name">YouTube Redirect</string>
 </resources>

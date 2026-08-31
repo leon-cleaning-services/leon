@@ -122,7 +122,6 @@ dependencies {
     implementation(composeBom)
     implementation(platform(libs.kotlin.bom))
 
-    implementation(project(":core-common"))
     implementation(project(":core-domain"))
 
     implementation(libs.kotlin.stdlib.jdk8)

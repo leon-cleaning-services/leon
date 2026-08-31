@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2024 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,10 +98,12 @@ import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
 import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel
+import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.screens.main.model.Screen
 import com.svenjacobs.app.leon.ui.screens.main.views.BackgroundImage
 import com.svenjacobs.app.leon.ui.screens.main.views.BottomBar
+import com.svenjacobs.app.leon.ui.screens.main.views.ChangesCard
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsScreen
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import kotlinx.collections.immutable.persistentListOf
@@ -244,6 +246,7 @@ fun MainScreen(
                             },
                             onUrlDecodeCheckedChange = viewModel::onUrlDecodeCheckedChange,
                             onExtractUrlCheckedChange = viewModel::onExtractUrlCheckedChange,
+                            onChangeToggled = viewModel::onChangeToggled,
                         )
                     }
 
@@ -271,6 +274,7 @@ private fun Content(
     onResetClick: () -> Unit,
     onUrlDecodeCheckedChange: (Boolean) -> Unit,
     onExtractUrlCheckedChange: (Boolean) -> Unit,
+    onChangeToggled: (ChangeRow, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
@@ -291,6 +295,7 @@ private fun Content(
                             onResetClick = onResetClick,
                             onUrlDecodeCheckedChange = onUrlDecodeCheckedChange,
                             onExtractUrlCheckedChange = onExtractUrlCheckedChange,
+                            onChangeToggled = onChangeToggled,
                         )
 
                     else -> HowToBody(onImportFromClipboardClick = onImportFromClipboardClick)
@@ -311,6 +316,7 @@ private fun SuccessBody(
     onResetClick: () -> Unit,
     onUrlDecodeCheckedChange: (Boolean) -> Unit,
     onExtractUrlCheckedChange: (Boolean) -> Unit,
+    onChangeToggled: (ChangeRow, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -324,6 +330,7 @@ private fun SuccessBody(
             UrlDisplaySection(
                 result = result,
                 onUrlTap = onCopyToClipboardClick,
+                onChangeToggled = onChangeToggled,
                 modifier = Modifier.weight(1f),
             )
             ActionsSection(
@@ -343,7 +350,11 @@ private fun SuccessBody(
         }
     } else {
         Column(modifier = modifier.fillMaxWidth()) {
-            UrlDisplaySection(result = result, onUrlTap = onCopyToClipboardClick)
+            UrlDisplaySection(
+                result = result,
+                onUrlTap = onCopyToClipboardClick,
+                onChangeToggled = onChangeToggled,
+            )
             ActionsSection(
                 result = result,
                 isUrlDecodeEnabled = isUrlDecodeEnabled,
@@ -365,6 +376,7 @@ private fun SuccessBody(
 private fun UrlDisplaySection(
     result: Result.Success,
     onUrlTap: (String) -> Unit,
+    onChangeToggled: (ChangeRow, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -415,6 +427,8 @@ private fun UrlDisplaySection(
                 }
             }
         }
+
+        ChangesCard(changes = result.changes, onChangeToggled = onChangeToggled)
     }
 }
 
@@ -626,6 +640,7 @@ private fun SuccessBodyPreview() {
             onResetClick = {},
             onUrlDecodeCheckedChange = {},
             onExtractUrlCheckedChange = {},
+            onChangeToggled = { _, _ -> },
         )
     }
 }
@@ -649,6 +664,7 @@ private fun SuccessBodyWidePreview() {
             onResetClick = {},
             onUrlDecodeCheckedChange = {},
             onExtractUrlCheckedChange = {},
+            onChangeToggled = { _, _ -> },
         )
     }
 }

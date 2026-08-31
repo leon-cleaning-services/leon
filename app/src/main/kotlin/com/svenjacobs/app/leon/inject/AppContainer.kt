@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,18 @@
  */
 package com.svenjacobs.app.leon.inject
 
+import android.content.Context
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.datastore.SanitizerDataStoreManager
 
 object AppContainer {
+
+    fun init(appContext: Context) {
+        this.AppContext = appContext
+    }
+
+    lateinit var AppContext: Context
+        private set
 
     val AppDataStoreManager: AppDataStoreManager by lazy { AppDataStoreManager() }
     val SanitizerDataStoreManager: SanitizerDataStoreManager by lazy { SanitizerDataStoreManager() }

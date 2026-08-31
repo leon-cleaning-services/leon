@@ -57,4 +57,14 @@
     <string name="about_sponsor">Sponsoruj dewelopera pod adresem %1$s.</string>
     <string name="about_version">Wersja: %1$s</string>
     <string name="close">Zamknij</string>
+    <string name="changes_title">Zmiany</string>
+    <string name="sanitizer_bluesky_redirect_name">Przekierowanie Bluesky</string>
+    <string name="sanitizer_amazon_product_name">Produkty Amazon</string>
+    <string name="sanitizer_aol_search_name">Wyszukiwanie AOL</string>
+    <string name="sanitizer_empty_parameters_name">Puste parametry</string>
+    <string name="sanitizer_google_search_name">Wyszukiwarka Google</string>
+    <string name="sanitizer_mydealz_parameters_name">Parametry MyDealz</string>
+    <string name="sanitizer_mydealz_redirects_name">Przekierowania MyDealz</string>
+    <string name="sanitizer_yahoo_search_name">Wyszukiwanie Yahoo</string>
+    <string name="sanitizer_youtube_redirect_name">Przekierowanie YouTube</string>
 </resources>

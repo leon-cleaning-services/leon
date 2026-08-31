@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,25 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer
 
-import android.content.Context
-import androidx.compose.runtime.Composable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 /**
- * Performs sanitization of URLs.
+ * Removes tracking from the URLs of one site or one tracking product.
  *
- * Might just remove a few parameters or completely rewrite an URL.
+ * A sanitizer is data, not code: [match] says which URLs it applies to and [rules] say what it
+ * would do to them. Interpreting either of those is `Cleaner`'s job, which is what lets it propose
+ * the changes to the user before any of them is applied.
+ *
+ * @param name Displayed in the settings. For a brand this is the brand's name and is not
+ *   translated; a descriptive name is translated by the app, which looks up [id].
+ * @param match The URLs this sanitizer applies to. A URL matching *any* entry is sanitized; the
+ *   default matches every URL, for sanitizers which remove a tracking product's parameters from
+ *   wherever they appear.
  */
-interface Sanitizer {
-
-    data class Metadata(val name: String, val hasSettingsScreen: Boolean = false)
-
-    val id: SanitizerId
-
-    fun getMetadata(context: Context): Metadata
-
-    fun matchesDomain(input: String): Boolean = true
-
-    operator fun invoke(input: String): String
-
-    @Composable @Suppress("unused") fun SettingsScreen() {}
-}
+data class Sanitizer(
+    val id: SanitizerId,
+    val name: String,
+    val rules: ImmutableList<Rule>,
+    val match: ImmutableList<Match> = persistentListOf(Match()),
+)

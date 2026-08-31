@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.AppContext
 import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.Sanitizers
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
+import com.svenjacobs.app.leon.inject.AppContainer.AppContext
+import com.svenjacobs.app.leon.sanitizer.displayName
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel.UiState.Sanitizer
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -64,7 +65,7 @@ class SettingsSanitizersScreenViewModel(
                             Sanitizer(
                                 id = state.id,
                                 name =
-                                    sanitizersById[state.id]?.getMetadata(context)?.name
+                                    sanitizersById[state.id]?.displayName(context)
                                         ?: state.id.value,
                                 enabled = state.enabled,
                             )

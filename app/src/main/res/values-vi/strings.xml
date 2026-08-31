@@ -57,4 +57,14 @@
     <string name="about_sponsor">Tài trợ cho nhà phát triển tại %1$s.</string>
     <string name="about_version">Phiên bản: %1$s</string>
     <string name="close">Đóng</string>
+    <string name="changes_title">Thay đổi</string>
+    <string name="sanitizer_bluesky_redirect_name">Chuyển hướng Bluesky</string>
+    <string name="sanitizer_amazon_product_name">Sản phẩm Amazon</string>
+    <string name="sanitizer_aol_search_name">Tìm kiếm AOL</string>
+    <string name="sanitizer_empty_parameters_name">Tham số trống</string>
+    <string name="sanitizer_google_search_name">Tìm kiếm Google</string>
+    <string name="sanitizer_mydealz_parameters_name">Tham số MyDealz</string>
+    <string name="sanitizer_mydealz_redirects_name">Chuyển hướng MyDealz</string>
+    <string name="sanitizer_yahoo_search_name">Tìm kiếm Yahoo</string>
+    <string name="sanitizer_youtube_redirect_name">Chuyển hướng YouTube</string>
 </resources>

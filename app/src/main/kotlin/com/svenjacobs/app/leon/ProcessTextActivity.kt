@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2024 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
-import com.svenjacobs.app.leon.core.domain.CleanerService
+import com.svenjacobs.app.leon.core.domain.Cleaner
 import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -76,7 +76,7 @@ class ProcessTextActivity : ComponentActivity() {
         // Needs to run with runBlocking or else setResult() won't work
         runBlocking {
             val decodeUrl = AppDataStoreManager.urlDecodeEnabled.firstOrNull() ?: false
-            val result = CleanerService().clean(text = text, decodeUrl = decodeUrl)
+            val result = Cleaner().clean(text = text, decodeUrl = decodeUrl)
 
             setResult(RESULT_OK, Intent().apply { putExtra(key, result.cleanedText) })
         }
