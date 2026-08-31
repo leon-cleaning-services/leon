@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.tiktok
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
 import io.kotest.matchers.shouldBe
 
 class TiktokSanitizerTest :
     SanitizerSpec(
-        TiktokSanitizer,
+        Tiktok,
         {
             "clean" should
                 {

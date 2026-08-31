@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.jd
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.JdSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Jd
 import io.kotest.matchers.shouldBe
 
 class JdSanitizerTest :
     SanitizerSpec(
-        JdSanitizer,
+        Jd,
         {
             "clean" should
                 {

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.ikea
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.IkeaSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Ikea
 import io.kotest.matchers.shouldBe
 
 class IkeaSanitizerTest :
     SanitizerSpec(
-        IkeaSanitizer,
+        Ikea,
         {
             "clean" should
                 {

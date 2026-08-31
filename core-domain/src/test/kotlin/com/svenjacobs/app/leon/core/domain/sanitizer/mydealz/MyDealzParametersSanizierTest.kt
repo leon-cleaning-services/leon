@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MyDealzParametersSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MyDealzParameters
 import io.kotest.matchers.shouldBe
 
 class MyDealzParametersSanizierTest :
     SanitizerSpec(
-        MyDealzParametersSanitizer,
+        MyDealzParameters,
         {
             "clean" should
                 {

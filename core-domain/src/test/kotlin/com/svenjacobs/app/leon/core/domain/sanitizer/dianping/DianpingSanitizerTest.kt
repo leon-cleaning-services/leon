@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.dianping
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.DianpingSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Dianping
 import io.kotest.matchers.shouldBe
 
 class DianpingSanitizerTest :
     SanitizerSpec(
-        DianpingSanitizer,
+        Dianping,
         {
             "clean" should
                 {

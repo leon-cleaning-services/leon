@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.xiaohongshu
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.XiaohongshuSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Xiaohongshu
 import io.kotest.matchers.shouldBe
 
 class XiaohongshuSanitizerTest :
     SanitizerSpec(
-        XiaohongshuSanitizer,
+        Xiaohongshu,
         {
             "clean" should
                 {

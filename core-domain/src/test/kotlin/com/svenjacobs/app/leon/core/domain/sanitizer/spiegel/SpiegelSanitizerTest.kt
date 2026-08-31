@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.spiegel
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SpiegelSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Spiegel
 import io.kotest.matchers.shouldBe
 
 class SpiegelSanitizerTest :
     SanitizerSpec(
-        SpiegelSanitizer,
+        Spiegel,
         {
             "clean" should
                 {

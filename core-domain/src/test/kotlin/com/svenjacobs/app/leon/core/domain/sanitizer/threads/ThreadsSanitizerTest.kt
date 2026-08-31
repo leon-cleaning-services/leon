@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.threads
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ThreadsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Threads
 import io.kotest.matchers.shouldBe
 
 class ThreadsSanitizerTest :
     SanitizerSpec(
-        ThreadsSanitizer,
+        Threads,
         {
             "clean" should
                 {

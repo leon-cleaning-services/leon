@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.mydealz
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MyDealzRedirectsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MyDealzRedirects
 import io.kotest.matchers.shouldBe
 
 class MyDealzRedirectsSanizierTest :
     SanitizerSpec(
-        MyDealzRedirectsSanitizer,
+        MyDealzRedirects,
         {
             "clean" should
                 {

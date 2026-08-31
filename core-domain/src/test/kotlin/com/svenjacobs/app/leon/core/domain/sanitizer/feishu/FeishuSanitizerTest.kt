@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.feishu
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.FeishuSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Feishu
 import io.kotest.matchers.shouldBe
 
 class FeishuSanitizerTest :
     SanitizerSpec(
-        FeishuSanitizer,
+        Feishu,
         {
             "clean" should
                 {

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.heise
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.HeiseSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Heise
 import io.kotest.matchers.shouldBe
 
 class HeiseSanitizerTest :
     SanitizerSpec(
-        HeiseSanitizer,
+        Heise,
         {
             "clean" should
                 {

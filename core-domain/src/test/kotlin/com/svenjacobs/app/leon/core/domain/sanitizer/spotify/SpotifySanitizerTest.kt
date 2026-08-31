@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.spotify
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SpotifySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Spotify
 import io.kotest.matchers.shouldBe
 
 class SpotifySanitizerTest :
     SanitizerSpec(
-        SpotifySanitizer,
+        Spotify,
         {
             "clean" should
                 {

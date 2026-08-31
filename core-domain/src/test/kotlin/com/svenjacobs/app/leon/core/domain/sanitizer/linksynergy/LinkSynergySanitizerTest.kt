@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.linksynergy
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.LinkSynergySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.LinkSynergy
 import io.kotest.matchers.shouldBe
 
 class LinkSynergySanitizerTest :
     SanitizerSpec(
-        LinkSynergySanitizer,
+        LinkSynergy,
         {
             "clean" should
                 {

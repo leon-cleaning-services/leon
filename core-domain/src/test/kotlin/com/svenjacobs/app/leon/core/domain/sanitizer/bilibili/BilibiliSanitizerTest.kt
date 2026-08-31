@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.bilibili
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.BilibiliSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Bilibili
 import io.kotest.matchers.shouldBe
 
 class BilibiliSanitizerTest :
     SanitizerSpec(
-        BilibiliSanitizer,
+        Bilibili,
         {
             "clean" should
                 {

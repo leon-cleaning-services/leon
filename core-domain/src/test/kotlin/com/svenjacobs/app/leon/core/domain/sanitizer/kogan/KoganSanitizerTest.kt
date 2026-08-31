@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.kogan
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.KoganSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Kogan
 import io.kotest.matchers.shouldBe
 
 class KoganSanitizerTest :
     SanitizerSpec(
-        KoganSanitizer,
+        Kogan,
         {
             "clean" should
                 {

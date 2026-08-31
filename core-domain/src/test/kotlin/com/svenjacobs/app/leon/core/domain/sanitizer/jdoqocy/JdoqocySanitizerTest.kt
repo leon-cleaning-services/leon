@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.jdoqocy
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.JdoqocySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Jdoqocy
 import io.kotest.matchers.shouldBe
 
 class JdoqocySanitizerTest :
     SanitizerSpec(
-        JdoqocySanitizer,
+        Jdoqocy,
         {
             "clean" should
                 {

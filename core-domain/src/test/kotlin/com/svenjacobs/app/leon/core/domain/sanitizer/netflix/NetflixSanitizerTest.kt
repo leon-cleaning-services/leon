@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.netflix
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.NetflixSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Netflix
 import io.kotest.matchers.shouldBe
 
 class NetflixSanitizerTest :
     SanitizerSpec(
-        NetflixSanitizer,
+        Netflix,
         {
             "clean" should
                 {

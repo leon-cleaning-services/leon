@@ -24,7 +24,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val ThreadsSanitizer =
+val Threads =
     Sanitizer(
         id = SanitizerId("threads"),
         name = "Threads",

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.wikipedia
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.WikipediaSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Wikipedia
 import io.kotest.matchers.shouldBe
 
 class WikipediaSanitizerTest :
     SanitizerSpec(
-        WikipediaSanitizer,
+        Wikipedia,
         {
             "clean" should
                 {

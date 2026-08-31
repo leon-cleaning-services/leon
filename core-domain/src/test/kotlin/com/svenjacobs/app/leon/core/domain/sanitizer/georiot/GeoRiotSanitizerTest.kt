@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.georiot
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GeoRiotSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GeoRiot
 import io.kotest.matchers.shouldBe
 
 class GeoRiotSanitizerTest :
     SanitizerSpec(
-        GeoRiotSanitizer,
+        GeoRiot,
         {
             "clean" should
                 {

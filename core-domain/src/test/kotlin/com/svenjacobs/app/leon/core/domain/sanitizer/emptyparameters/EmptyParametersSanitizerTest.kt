@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.emptyparameters
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EmptyParametersSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EmptyParameters
 import io.kotest.matchers.shouldBe
 
 class EmptyParametersSanitizerTest :
     SanitizerSpec(
-        EmptyParametersSanitizer,
+        EmptyParameters,
         {
             "clean" should
                 {

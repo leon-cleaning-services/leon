@@ -24,7 +24,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val AmazonSanitizer =
+val Amazon =
     Sanitizer(
         id = SanitizerId("amazon2"),
         name = "Amazon",
@@ -32,7 +32,7 @@ val AmazonSanitizer =
         match = persistentListOf(Match(HostMatch.Pattern("amazon\\.[^/?#:]+"), pathPrefix = "/")),
     )
 
-val AmazonProductSanitizer =
+val AmazonProduct =
     Sanitizer(
         id = SanitizerId("amazon"),
         name = "Amazon Products",

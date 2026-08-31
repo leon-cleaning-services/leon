@@ -25,7 +25,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val SubstackSanitizer =
+val Substack =
     Sanitizer(
         id = SanitizerId("substack"),
         name = "Substack",

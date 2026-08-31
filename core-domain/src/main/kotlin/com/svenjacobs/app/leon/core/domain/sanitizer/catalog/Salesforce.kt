@@ -22,11 +22,11 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val SalesforceParametersSanitizer =
+val SalesforceParameters =
     Sanitizer(
         id = SanitizerId("salesforce"),
         name = "Salesforce",
         // "utm_*" is deliberately not included here: it is generic Google Analytics tracking,
-        // already covered by GoogleAnalyticsSanitizer, not something specific to Salesforce.
+        // already covered by GoogleAnalytics, not something specific to Salesforce.
         rules = persistentListOf(Rule.RemoveParameters("sfmc_.*")),
     )

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.aliexpress
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AliexpressSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Aliexpress
 import io.kotest.matchers.shouldBe
 
 class AliexpressSanitizerTest :
     SanitizerSpec(
-        AliexpressSanitizer,
+        Aliexpress,
         {
             "clean" should
                 {

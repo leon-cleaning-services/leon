@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.bluesky
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.BlueskyRedirectSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.BlueskyRedirect
 import io.kotest.matchers.shouldBe
 
 class BlueskyRedirectSanitizerTest :
     SanitizerSpec(
-        BlueskyRedirectSanitizer,
+        BlueskyRedirect,
         {
             "clean" should
                 {

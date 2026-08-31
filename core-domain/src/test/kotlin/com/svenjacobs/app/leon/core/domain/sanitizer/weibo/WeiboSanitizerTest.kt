@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.weibo
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.WeiboSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Weibo
 import io.kotest.matchers.shouldBe
 
 class WeiboSanitizerTest :
     SanitizerSpec(
-        WeiboSanitizer,
+        Weibo,
         {
             "clean" should
                 {

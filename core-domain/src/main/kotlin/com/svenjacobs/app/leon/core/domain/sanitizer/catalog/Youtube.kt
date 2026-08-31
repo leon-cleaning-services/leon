@@ -26,7 +26,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val YoutubeSanitizer =
+val Youtube =
     Sanitizer(
         id = SanitizerId("youtube"),
         name = "YouTube",
@@ -41,7 +41,7 @@ val YoutubeSanitizer =
             ),
     )
 
-val YoutubeRedirectSanitizer =
+val YoutubeRedirect =
     Sanitizer(
         id = SanitizerId("youtube_redirect"),
         name = "YouTube Redirect",
@@ -52,7 +52,7 @@ val YoutubeRedirectSanitizer =
         match = persistentListOf(Match(HostMatch.Domain("youtube.com"), pathPrefix = "/redirect")),
     )
 
-val YoutubeMusicSanitizer =
+val YoutubeMusic =
     Sanitizer(
         id = SanitizerId("youtube_music"),
         name = "YouTube Music",
@@ -60,7 +60,7 @@ val YoutubeMusicSanitizer =
         match = persistentListOf(Match(HostMatch.Domain("music.youtube.com"))),
     )
 
-val YoutubeShortUrlSanitizer =
+val YoutubeShortUrl =
     Sanitizer(
         id = SanitizerId("youtube_short_url"),
         name = "Youtu.be",

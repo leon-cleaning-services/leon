@@ -24,7 +24,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val AliexpressSanitizer =
+val Aliexpress =
     Sanitizer(
         id = SanitizerId("aliexpress"),
         name = "AliExpress",

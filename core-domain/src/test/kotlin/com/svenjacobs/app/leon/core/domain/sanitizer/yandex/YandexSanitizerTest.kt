@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.yandex
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YandexSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Yandex
 import io.kotest.matchers.shouldBe
 
 class YandexSanitizerTest :
     SanitizerSpec(
-        YandexSanitizer,
+        Yandex,
         {
             "clean" should
                 {

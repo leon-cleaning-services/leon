@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.at
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AtAnalyticsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AtAnalytics
 import io.kotest.matchers.shouldBe
 
 class AtAnalyticsSanitizerTest :
     SanitizerSpec(
-        AtAnalyticsSanitizer,
+        AtAnalytics,
         {
             "clean" should
                 {

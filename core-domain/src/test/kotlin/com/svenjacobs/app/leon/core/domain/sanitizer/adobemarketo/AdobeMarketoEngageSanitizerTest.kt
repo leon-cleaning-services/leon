@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.adobemarketo
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AdobeMarketoEngageSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AdobeMarketoEngage
 import io.kotest.matchers.shouldBe
 
 class AdobeMarketoEngageSanitizerTest :
     SanitizerSpec(
-        AdobeMarketoEngageSanitizer,
+        AdobeMarketoEngage,
         {
             "clean" should
                 {

@@ -24,9 +24,9 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Rule
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EchoboxSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalyticsSanitizer
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearchSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Echobox
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalytics
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
@@ -119,7 +119,7 @@ class MainScreenViewModelTest :
                             },
                         cleaner =
                             Cleaner(
-                                sanitizers = persistentListOf(GoogleAnalyticsSanitizer),
+                                sanitizers = persistentListOf(GoogleAnalytics),
                                 repository = repository,
                             ),
                     )
@@ -137,7 +137,7 @@ class MainScreenViewModelTest :
 
                         val removal = result.changes.first { it.sanitizerIds.isNotEmpty() }
                         removal.applied shouldBe true
-                        removal.sanitizerIds shouldBe persistentListOf(GoogleAnalyticsSanitizer.id)
+                        removal.sanitizerIds shouldBe persistentListOf(GoogleAnalytics.id)
 
                         // The untouched parameter is offered as well, unchecked.
                         val kept = result.changes.first { it.sanitizerIds.isEmpty() }
@@ -279,7 +279,7 @@ class MainScreenViewModelTest :
                                 appDataStoreManager = dataStore(),
                                 cleaner =
                                     Cleaner(
-                                        sanitizers = persistentListOf(EchoboxSanitizer),
+                                        sanitizers = persistentListOf(Echobox),
                                         repository =
                                             mockk<SanitizerRepository> {
                                                 coEvery { isEnabled(any()) } returns true
@@ -297,7 +297,7 @@ class MainScreenViewModelTest :
                         val rows = result.changes
                         rows shouldHaveSize 1
                         rows.first().applied shouldBe true
-                        rows.first().sanitizerIds shouldBe persistentListOf(EchoboxSanitizer.id)
+                        rows.first().sanitizerIds shouldBe persistentListOf(Echobox.id)
                     }
                 }
 
@@ -336,10 +336,7 @@ class MainScreenViewModelTest :
                                 cleaner =
                                     Cleaner(
                                         sanitizers =
-                                            persistentListOf(
-                                                GoogleSearchSanitizer,
-                                                GoogleAnalyticsSanitizer,
-                                            ),
+                                            persistentListOf(GoogleSearch, GoogleAnalytics),
                                         repository =
                                             mockk<SanitizerRepository> {
                                                 coEvery { isEnabled(any()) } returns true

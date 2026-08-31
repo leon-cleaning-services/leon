@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.meituan
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MeituanSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Meituan
 import io.kotest.matchers.shouldBe
 
 class MeituanSanitizerTest :
     SanitizerSpec(
-        MeituanSanitizer,
+        Meituan,
         {
             "clean" should
                 {

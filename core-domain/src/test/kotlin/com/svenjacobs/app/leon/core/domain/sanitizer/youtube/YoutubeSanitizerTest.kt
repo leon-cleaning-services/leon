@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.youtube
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YoutubeSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Youtube
 import io.kotest.matchers.shouldBe
 
 class YoutubeSanitizerTest :
     SanitizerSpec(
-        YoutubeSanitizer,
+        Youtube,
         {
             "clean" should
                 {

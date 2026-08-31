@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.reddit
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.RedditOutSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.RedditOut
 import io.kotest.matchers.shouldBe
 
 class RedditOutSanitizerTest :
     SanitizerSpec(
-        RedditOutSanitizer,
+        RedditOut,
         {
             "clean" should
                 {

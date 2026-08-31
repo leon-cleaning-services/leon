@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.aol
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AolSearchSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AolSearch
 import io.kotest.matchers.shouldBe
 
 class AolSearchSanitizerTest :
     SanitizerSpec(
-        AolSearchSanitizer,
+        AolSearch,
         {
             "clean" should
                 {

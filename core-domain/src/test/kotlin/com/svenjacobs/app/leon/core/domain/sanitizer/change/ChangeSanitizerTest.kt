@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.change
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ChangeSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Change
 import io.kotest.matchers.shouldBe
 
 class ChangeSanitizerTest :
     SanitizerSpec(
-        ChangeSanitizer,
+        Change,
         {
             "clean" should
                 {

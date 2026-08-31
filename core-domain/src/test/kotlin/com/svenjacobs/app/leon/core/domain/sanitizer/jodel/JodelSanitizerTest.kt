@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.jodel
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.JodelSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Jodel
 import io.kotest.matchers.shouldBe
 
 class JodelSanitizerTest :
     SanitizerSpec(
-        JodelSanitizer,
+        Jodel,
         {
             "clean" should
                 {

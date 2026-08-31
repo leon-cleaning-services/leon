@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.pinduoduo
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.PddSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Pdd
 import io.kotest.matchers.shouldBe
 
 class PddSanitizerTest :
     SanitizerSpec(
-        PddSanitizer,
+        Pdd,
         {
             "clean" should
                 {

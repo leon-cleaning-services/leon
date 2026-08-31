@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.instagram
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.InstagramSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Instagram
 import io.kotest.matchers.shouldBe
 
 class InstagramSanitizerTest :
     SanitizerSpec(
-        InstagramSanitizer,
+        Instagram,
         {
             "clean" should
                 {

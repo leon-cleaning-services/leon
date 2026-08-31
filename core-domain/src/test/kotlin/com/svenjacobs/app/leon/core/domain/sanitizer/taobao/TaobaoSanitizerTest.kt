@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.taobao
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TaobaoSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Taobao
 import io.kotest.matchers.shouldBe
 
 class TaobaoSanitizerTest :
     SanitizerSpec(
-        TaobaoSanitizer,
+        Taobao,
         {
             "clean" should
                 {

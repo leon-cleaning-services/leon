@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.sessionids
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SessionIdsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SessionIds
 import io.kotest.matchers.shouldBe
 
 class SessionIdsSanitizerTest :
     SanitizerSpec(
-        SessionIdsSanitizer,
+        SessionIds,
         {
             "clean" should
                 {

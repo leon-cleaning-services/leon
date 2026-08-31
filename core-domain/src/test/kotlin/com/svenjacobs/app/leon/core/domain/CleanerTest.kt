@@ -21,7 +21,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Rule
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearchSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -115,7 +115,7 @@ class CleanerTest :
                 "repeat cleaning until iteration doesn't yield new value" {
                     val googleService =
                         Cleaner(
-                            sanitizers = persistentListOf(GoogleSearchSanitizer),
+                            sanitizers = persistentListOf(GoogleSearch),
                             repository = repository,
                         )
 

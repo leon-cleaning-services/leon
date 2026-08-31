@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.pearl
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.PearlSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Pearl
 import io.kotest.matchers.shouldBe
 
 class PearlSanitizerTest :
     SanitizerSpec(
-        PearlSanitizer,
+        Pearl,
         {
             "clean" should
                 {

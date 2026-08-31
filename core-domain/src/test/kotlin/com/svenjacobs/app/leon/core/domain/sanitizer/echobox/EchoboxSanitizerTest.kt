@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.echobox
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EchoboxSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Echobox
 import io.kotest.matchers.shouldBe
 
 class EchoboxSanitizerTest :
     SanitizerSpec(
-        EchoboxSanitizer,
+        Echobox,
         {
             "clean" should
                 {

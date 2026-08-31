@@ -185,7 +185,7 @@ Add a `val` to the vendor's file in
 `<Vendor>.kt` if it does not exist yet:
 
 ```kotlin
-val ExampleSanitizer =
+val Example =
     Sanitizer(
         id = SanitizerId("example"),
         name = "Example",
@@ -272,12 +272,12 @@ Tests live in the corresponding `src/test` source set, mirroring the production 
 package com.svenjacobs.app.leon.core.domain.sanitizer.example
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ExampleSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Example
 import io.kotest.matchers.shouldBe
 
 class ExampleSanitizerTest :
     SanitizerSpec(
-        ExampleSanitizer,
+        Example,
         {
             "clean" should {
 

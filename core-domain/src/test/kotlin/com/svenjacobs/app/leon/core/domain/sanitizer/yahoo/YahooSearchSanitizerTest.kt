@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.yahoo
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YahooSearchSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YahooSearch
 import io.kotest.matchers.shouldBe
 
 class YahooSearchSanitizerTest :
     SanitizerSpec(
-        YahooSearchSanitizer,
+        YahooSearch,
         {
             "clean" should
                 {

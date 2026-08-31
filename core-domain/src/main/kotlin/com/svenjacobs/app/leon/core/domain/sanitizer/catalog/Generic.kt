@@ -22,14 +22,14 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val EmptyParametersSanitizer =
+val EmptyParameters =
     Sanitizer(
         id = SanitizerId("empty_parameters"),
         name = "Empty Parameters",
         rules = persistentListOf(Rule.RemoveEmptyParameters),
     )
 
-val SessionIdsSanitizer =
+val SessionIds =
     Sanitizer(
         id = SanitizerId("session_ids"),
         name = "Session IDs",

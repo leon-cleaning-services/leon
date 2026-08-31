@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.x
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.XSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.X
 import io.kotest.matchers.shouldBe
 
 class XSanitizerTest :
     SanitizerSpec(
-        XSanitizer,
+        X,
         {
             "clean" should
                 {

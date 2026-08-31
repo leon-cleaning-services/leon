@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.wechat
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.WechatSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Wechat
 import io.kotest.matchers.shouldBe
 
 class WechatSanitizerTest :
     SanitizerSpec(
-        WechatSanitizer,
+        Wechat,
         {
             "clean" should
                 {

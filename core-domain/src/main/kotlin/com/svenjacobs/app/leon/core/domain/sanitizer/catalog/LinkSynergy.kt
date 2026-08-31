@@ -26,7 +26,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val LinkSynergySanitizer =
+val LinkSynergy =
     Sanitizer(
         id = SanitizerId("linksynergy"),
         name = "LinkSynergy",

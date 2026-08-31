@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.webtrekk
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.WebtrekkSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Webtrekk
 import io.kotest.matchers.shouldBe
 
 class WebtrekkSanitizerTest :
     SanitizerSpec(
-        WebtrekkSanitizer,
+        Webtrekk,
         {
             "clean" should
                 {

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.lazada
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.LazadaSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Lazada
 import io.kotest.matchers.shouldBe
 
 class LazadaSanitizerTest :
     SanitizerSpec(
-        LazadaSanitizer,
+        Lazada,
         {
             "clean" should
                 {

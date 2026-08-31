@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.douyin
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.DouyinSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Douyin
 import io.kotest.matchers.shouldBe
 
 class DouyinSanitizerTest :
     SanitizerSpec(
-        DouyinSanitizer,
+        Douyin,
         {
             "clean" should
                 {

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.snapchat
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SnapchatSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Snapchat
 import io.kotest.matchers.shouldBe
 
 class SnapchatSanitizerTest :
     SanitizerSpec(
-        SnapchatSanitizer,
+        Snapchat,
         {
             "clean" should
                 {

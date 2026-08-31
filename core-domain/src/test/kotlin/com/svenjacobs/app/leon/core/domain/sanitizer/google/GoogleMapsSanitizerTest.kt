@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.google
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleMapsSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleMaps
 import io.kotest.matchers.shouldBe
 
 class GoogleMapsSanitizerTest :
     SanitizerSpec(
-        GoogleMapsSanitizer,
+        GoogleMaps,
         {
             "clean" should
                 {

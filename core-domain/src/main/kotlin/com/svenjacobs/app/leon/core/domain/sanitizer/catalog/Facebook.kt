@@ -24,14 +24,14 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val FacebookAnalyticsSanitizer =
+val FacebookAnalytics =
     Sanitizer(
         id = SanitizerId("facebook"),
         name = "Facebook Analytics",
         rules = persistentListOf(Rule.RemoveParameters("(?:fb_|fbclid|sfnsn|cHash).*")),
     )
 
-val FacebookSanitizer =
+val Facebook =
     Sanitizer(
         id = SanitizerId("facebook_com"),
         name = "Facebook.com",

@@ -26,7 +26,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val BlueskyRedirectSanitizer =
+val BlueskyRedirect =
     Sanitizer(
         id = SanitizerId("bluesky_redirect"),
         name = "Bluesky Redirect",

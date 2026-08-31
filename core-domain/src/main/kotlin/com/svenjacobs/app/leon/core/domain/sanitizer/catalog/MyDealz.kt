@@ -24,7 +24,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val MyDealzParametersSanitizer =
+val MyDealzParameters =
     Sanitizer(
         id = SanitizerId("mydealz_parameters"),
         name = "MyDealz Parameters",
@@ -46,7 +46,7 @@ val MyDealzParametersSanitizer =
             ),
     )
 
-val MyDealzRedirectsSanitizer =
+val MyDealzRedirects =
     Sanitizer(
         id = SanitizerId("mydealz_redirects"),
         name = "MyDealz Redirects",

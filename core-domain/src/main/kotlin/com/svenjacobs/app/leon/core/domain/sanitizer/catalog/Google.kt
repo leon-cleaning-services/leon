@@ -26,14 +26,14 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val GoogleAnalyticsSanitizer =
+val GoogleAnalytics =
     Sanitizer(
         id = SanitizerId("google_analytics"),
         name = "Google Analytics",
         rules = persistentListOf(Rule.RemoveParameters("(?:ga_|utm_|gclid|gad_).*")),
     )
 
-val GoogleStoreSanitizer =
+val GoogleStore =
     Sanitizer(
         id = SanitizerId("google_play_store"),
         name = "Google Play Store",
@@ -41,7 +41,7 @@ val GoogleStoreSanitizer =
         match = persistentListOf(Match(HostMatch.Domain("store.google.com"))),
     )
 
-val GoogleAdsSanitizer =
+val GoogleAds =
     Sanitizer(
         id = SanitizerId("google_ad_services"),
         name = "Google Ads",
@@ -52,7 +52,7 @@ val GoogleAdsSanitizer =
         match = persistentListOf(Match(HostMatch.Domain("googleadservices.com"))),
     )
 
-val GoogleSearchSanitizer =
+val GoogleSearch =
     Sanitizer(
         id = SanitizerId("google_search"),
         name = "Google Search",
@@ -63,7 +63,7 @@ val GoogleSearchSanitizer =
         match = persistentListOf(Match(HostMatch.Pattern("google\\.[^/?#:]+"), pathPrefix = "/url")),
     )
 
-val GoogleMapsSanitizer =
+val GoogleMaps =
     Sanitizer(
         id = SanitizerId("google_maps"),
         name = "Google Maps",

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.salesforce
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SalesforceParametersSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.SalesforceParameters
 import io.kotest.matchers.shouldBe
 
 class SalesforceParametersSanitizerTest :
     SanitizerSpec(
-        SalesforceParametersSanitizer,
+        SalesforceParameters,
         {
             "clean" should
                 {

@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.facebook
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.FacebookSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Facebook
 import io.kotest.matchers.shouldBe
 
 class FacebookSanitizerTest :
     SanitizerSpec(
-        FacebookSanitizer,
+        Facebook,
         {
             "clean" should
                 {

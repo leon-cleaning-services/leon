@@ -22,7 +22,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val AtAnalyticsSanitizer =
+val AtAnalytics =
     Sanitizer(
         id = SanitizerId("at_analytics"),
         name = "AT Analytics",

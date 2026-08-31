@@ -24,7 +24,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val InstagramSanitizer =
+val Instagram =
     Sanitizer(
         id = SanitizerId("instagram"),
         name = "Instagram",

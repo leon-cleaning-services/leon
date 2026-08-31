@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.flipkart
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.FlipkartSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Flipkart
 import io.kotest.matchers.shouldBe
 
 class FlipkartSanitizerTest :
     SanitizerSpec(
-        FlipkartSanitizer,
+        Flipkart,
         {
             "clean" should
                 {

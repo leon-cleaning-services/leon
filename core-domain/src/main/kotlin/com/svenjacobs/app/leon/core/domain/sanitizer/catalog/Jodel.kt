@@ -26,7 +26,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val JodelSanitizer =
+val Jodel =
     Sanitizer(
         id = SanitizerId("jodel"),
         name = "Jodel",

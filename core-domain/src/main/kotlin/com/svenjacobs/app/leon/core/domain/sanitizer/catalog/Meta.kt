@@ -22,7 +22,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val MetaAdSanitizer =
+val MetaAd =
     Sanitizer(
         id = SanitizerId("meta_ad"),
         name = "Meta Ads",

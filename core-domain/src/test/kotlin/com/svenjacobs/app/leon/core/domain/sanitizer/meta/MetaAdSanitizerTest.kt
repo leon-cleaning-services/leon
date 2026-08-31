@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.meta
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MetaAdSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.MetaAd
 import io.kotest.matchers.shouldBe
 
 class MetaAdSanitizerTest :
     SanitizerSpec(
-        MetaAdSanitizer,
+        MetaAd,
         {
             "clean" should
                 {

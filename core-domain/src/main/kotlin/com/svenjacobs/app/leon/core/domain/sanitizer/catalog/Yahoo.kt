@@ -26,7 +26,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val YahooReferrerSanitizer =
+val YahooReferrer =
     Sanitizer(
         id = SanitizerId("yahooReferrer"),
         name = "Yahoo Referrer",
@@ -34,7 +34,7 @@ val YahooReferrerSanitizer =
             persistentListOf(Rule.RemoveParameters("guccounter|guce_referrer|guce_referrer_sig")),
     )
 
-val YahooSearchSanitizer =
+val YahooSearch =
     Sanitizer(
         id = SanitizerId("yahoo_search"),
         name = "Yahoo Search",

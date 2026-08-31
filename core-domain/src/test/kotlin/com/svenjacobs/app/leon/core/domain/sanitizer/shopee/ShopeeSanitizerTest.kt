@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.shopee
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.ShopeeSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Shopee
 import io.kotest.matchers.shouldBe
 
 class ShopeeSanitizerTest :
     SanitizerSpec(
-        ShopeeSanitizer,
+        Shopee,
         {
             "clean" should
                 {

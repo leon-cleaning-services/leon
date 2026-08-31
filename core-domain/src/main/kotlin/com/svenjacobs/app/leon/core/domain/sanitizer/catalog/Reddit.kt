@@ -26,7 +26,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
-val RedditSanitizer =
+val Reddit =
     Sanitizer(
         id = SanitizerId("reddit"),
         name = "Reddit",
@@ -34,7 +34,7 @@ val RedditSanitizer =
         match = persistentListOf(Match(HostMatch.Domain("reddit.com"))),
     )
 
-val RedditOutSanitizer =
+val RedditOut =
     Sanitizer(
         id = SanitizerId("reddit_out"),
         name = "Reddit (out.reddit.com)",
@@ -45,7 +45,7 @@ val RedditOutSanitizer =
         match = persistentListOf(Match(HostMatch.Domain("out.reddit.com"))),
     )
 
-val RedditMailSanitizer =
+val RedditMail =
     Sanitizer(
         id = SanitizerId("reddit_mail"),
         name = "Reddit (click.redditmail.com)",

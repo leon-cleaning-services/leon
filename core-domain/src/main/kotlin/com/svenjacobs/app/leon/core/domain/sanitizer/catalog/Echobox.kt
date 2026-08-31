@@ -22,7 +22,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import kotlinx.collections.immutable.persistentListOf
 
-val EchoboxSanitizer =
+val Echobox =
     Sanitizer(
         id = SanitizerId("echobox"),
         name = "Echobox",

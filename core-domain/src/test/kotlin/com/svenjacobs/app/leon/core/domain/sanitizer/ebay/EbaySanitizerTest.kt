@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.ebay
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.EbaySanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Ebay
 import io.kotest.matchers.shouldBe
 
 class EbaySanitizerTest :
     SanitizerSpec(
-        EbaySanitizer,
+        Ebay,
         {
             "clean" should
                 {

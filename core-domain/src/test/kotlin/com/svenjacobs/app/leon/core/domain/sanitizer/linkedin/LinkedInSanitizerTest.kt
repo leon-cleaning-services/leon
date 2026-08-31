@@ -18,12 +18,12 @@
 package com.svenjacobs.app.leon.core.domain.sanitizer.linkedin
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerSpec
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.LinkedInSanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.LinkedIn
 import io.kotest.matchers.shouldBe
 
 class LinkedInSanitizerTest :
     SanitizerSpec(
-        LinkedInSanitizer,
+        LinkedIn,
         {
             "clean" should
                 {
