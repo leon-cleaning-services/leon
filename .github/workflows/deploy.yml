@@ -112,6 +112,8 @@ jobs:
     needs: deploy
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: main
 
       - name: Increment version code
         run: sed -i 's/versionCode = [0-9]*/versionCode = '$(awk '/versionCode =/{print $3=$3+1}' app/build.gradle.kts)'/g' app/build.gradle.kts
