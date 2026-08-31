@@ -80,13 +80,12 @@ class Cleaner(
         declined: Set<Change> = emptySet(),
         additional: Set<Change> = emptySet(),
     ): Result {
-        if (text.isNullOrEmpty()) throw IllegalArgumentException()
+        val input = requireNotNull(text?.takeIf(String::isNotEmpty))
 
-        val originalText: String = text
         val urls = mutableListOf<CleanedUrl>()
-        var cleanedText = originalText
+        var cleanedText = input
 
-        for (match in URL_REGEX.findAll(originalText)) {
+        for (match in URL_REGEX.findAll(input)) {
             // A URL which cannot be parsed is left alone rather than mangled.
             val original = Url.parse(match.value) ?: continue
             val url = cleanUrl(original, declined, additional)
@@ -99,45 +98,42 @@ class Cleaner(
             }
         }
 
-        val result =
-            if (decodeUrl) {
-                withContext(Dispatchers.Default) { decodeUrl(cleanedText) }
-            } else {
-                cleanedText
-            }
-
         return Result(
-            originalText = originalText,
-            cleanedText = result,
+            originalText = input,
+            cleanedText =
+                if (decodeUrl) {
+                    withContext(Dispatchers.Default) { decodeUrl(cleanedText) }
+                } else {
+                    cleanedText
+                },
             urls = urls.toImmutableList(),
         )
     }
 
     /**
-     * Repeatedly asks every enabled sanitizer what it would change until nothing new is applied.
+     * Repeatedly asks every enabled sanitizer what it would change until nothing is left to apply.
      *
      * Cleaning is iterative because a change can reveal further work: following a redirect yields a
-     * URL of a different site, which its own sanitizers then clean.
+     * URL of a different site, which its own sanitizers then clean. Settling is the normal exit —
+     * [MAX_ITERATION] only bounds a catalog which never settles, such as a rewrite that appends to
+     * the path on every pass, or two sanitizers rewriting a host back and forth.
      */
     private suspend fun cleanUrl(
         original: Url,
         declined: Set<Change>,
         additional: Set<Change>,
     ): CleanedUrl {
-        val available = mutableListOf<Change>()
+        // A set, so a change proposed again on a later pass is listed once, where it first
+        // appeared.
+        val available = mutableSetOf<Change>()
         val applied = mutableListOf<Change>()
         var current = original
 
-        for (iteration in 0 until MAX_ITERATION) {
-            val proposed =
-                sanitizers
-                    .filter { repository.isEnabled(it.id) }
-                    .filter { it.matches(current) }
-                    .flatMap { sanitizer ->
-                        sanitizer.sanitize(current).map { Change(sanitizer.id, it) }
-                    }
-
-            available += proposed.filterNot { it in available }
+        // `repeat` is deliberately not used here: its `return@repeat` would continue rather than
+        // stop, and settling early is the whole point of the check below.
+        for (pass in 1..MAX_ITERATION) {
+            val proposed = propose(current)
+            available += proposed
 
             val apply = proposed.filterNot { it in declined }
             if (apply.isEmpty()) break
@@ -146,11 +142,9 @@ class Cleaner(
             applied += apply
         }
 
-        val extra = additional.toList().filterNot { it in applied }
-        if (extra.isNotEmpty()) {
-            current = current.apply(extra.map { it.action })
-            applied += extra
-        }
+        val extra = additional.filterNot { it in applied }
+        current = current.apply(extra.map { it.action })
+        applied += extra
 
         return CleanedUrl(
             original = original,
@@ -159,6 +153,13 @@ class Cleaner(
             applied = applied.toImmutableList(),
         )
     }
+
+    /** What every enabled sanitizer which applies to [url] would change about it. */
+    private suspend fun propose(url: Url): List<Change> =
+        sanitizers
+            .filter { repository.isEnabled(it.id) }
+            .filter { it.matches(url) }
+            .flatMap { sanitizer -> sanitizer.sanitize(url).map { Change(sanitizer.id, it) } }
 
     private companion object {
         private val URL_REGEX = Regex("https?://.\\S*")
@@ -213,46 +214,34 @@ internal fun Rule.sanitize(url: Url): List<Change.Action> =
                 .filter { it.value?.isEmpty() == true }
                 .map { Change.Action.RemoveParameter(it) }
 
-        is Rule.RemoveFragment -> {
-            val fragment = url.fragment
-            when {
-                fragment == null -> emptyList()
-                pattern != null && !Regex(pattern).matches(fragment) -> emptyList()
-                else ->
-                    listOf(
-                        Change.Action.SetComponent(
-                            Change.Component.FRAGMENT,
-                            from = fragment,
-                            to = null,
-                        )
-                    )
-            }
-        }
+        is Rule.RemoveFragment ->
+            url.fragment
+                ?.takeIf { pattern == null || Regex(pattern).matches(it) }
+                ?.let { setComponent(Change.Component.FRAGMENT, from = it, to = null) }
+                .orEmpty()
 
         is Rule.RewriteHost ->
-            rewrite(pattern, replacement, url.read(from), current = url.host)?.let {
-                listOf(Change.Action.SetComponent(Change.Component.HOST, from = url.host, to = it))
-            } ?: emptyList()
+            rewrite(pattern, replacement, url.read(from), current = url.host)
+                ?.let { setComponent(Change.Component.HOST, from = url.host, to = it) }
+                .orEmpty()
 
         is Rule.RewritePath ->
-            rewrite(pattern, replacement, url.read(from), current = url.path)?.let {
-                listOf(Change.Action.SetComponent(Change.Component.PATH, from = url.path, to = it))
-            } ?: emptyList()
+            rewrite(pattern, replacement, url.read(from), current = url.path)
+                ?.let { setComponent(Change.Component.PATH, from = url.path, to = it) }
+                .orEmpty()
 
-        is Rule.Follow -> {
-            val target =
-                steps
-                    .fold(url.read(from)) { value, step -> value?.let(step::apply) }
-                    ?.let(Url::parse)
-                    ?.let { if (dropParameters) it.copy(parameters = persistentListOf()) else it }
-
-            if (target == null || target == url) {
-                emptyList()
-            } else {
-                listOf(Change.Action.Replace(from = url, to = target))
-            }
-        }
+        is Rule.Follow ->
+            steps
+                .fold(url.read(from)) { value, step -> value?.let(step::apply) }
+                ?.let(Url::parse)
+                ?.let { if (dropParameters) it.copy(parameters = persistentListOf()) else it }
+                ?.takeUnless { it == url }
+                ?.let { listOf(Change.Action.Replace(from = url, to = it)) }
+                .orEmpty()
     }
+
+private fun setComponent(component: Change.Component, from: String?, to: String?) =
+    listOf(Change.Action.SetComponent(component, from = from, to = to))
 
 /** The value this [Source] names, or `null` when the URL does not have it. */
 private fun Url.read(source: Source): String? =
@@ -271,9 +260,9 @@ private fun Url.read(source: Source): String? =
 private fun Decode.apply(value: String): String? =
     when (this) {
         is Decode.Capture ->
-            Regex(pattern).find(value)?.let { match ->
-                // Expand the replacement from this match alone, so that "$1" refers to its groups.
-                Regex(pattern).replaceFirst(match.value, replacement)
+            with(Regex(pattern)) {
+                // Expanded from the match alone, so that "$1" refers to that match's groups.
+                find(value)?.let { replaceFirst(it.value, replacement) }
             }
 
         is Decode.PercentDecode -> decodeUrl(value)
