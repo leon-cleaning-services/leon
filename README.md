@@ -6,7 +6,7 @@
 parameters from a URL before sharing. Its usage is simple, integrating into Android's standard
 sharing mechanism.
 
-Léon runs on Android 6.0 and later, is open source and does not contain any tracking or advertising
+Léon runs on Android 7.0 and later, is open source and does not contain any tracking or advertising
 frameworks. Léon does not collect any data about you.
 
 The benefits of removing tracking parameters are:
