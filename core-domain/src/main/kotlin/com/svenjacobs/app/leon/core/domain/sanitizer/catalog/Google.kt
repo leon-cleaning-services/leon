@@ -60,7 +60,8 @@ val GoogleSearch =
             persistentListOf(
                 Rule.Follow(Source.Parameter("url|q"), persistentListOf(Decode.PercentDecode))
             ),
-        match = persistentListOf(Match(HostMatch.Pattern("google\\.[^/?#:]+"), pathPrefix = "/url")),
+        match =
+            persistentListOf(Match(HostMatch.Pattern("google\\.[^/?#:]+"), pathPrefix = "/url")),
     )
 
 val GoogleMaps =

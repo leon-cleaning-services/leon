@@ -219,7 +219,10 @@ class RuleTest :
 
                     Rule.Follow(
                             Source.Parameter("data"),
-                            persistentListOf(Decode.Base64Decode, Decode.JsonField("\$android_url")),
+                            persistentListOf(
+                                Decode.Base64Decode,
+                                Decode.JsonField("\$android_url"),
+                            ),
                         )
                         .clean("https://shared.example.com/a?data=$payload") shouldBe
                         "https://example.com/post?id=1"
@@ -235,7 +238,10 @@ class RuleTest :
                     // {"other":"x"}
                     Rule.Follow(
                             Source.Parameter("data"),
-                            persistentListOf(Decode.Base64Decode, Decode.JsonField("\$android_url")),
+                            persistentListOf(
+                                Decode.Base64Decode,
+                                Decode.JsonField("\$android_url"),
+                            ),
                         )
                         .sanitize(url("https://example.com/a?data=eyJvdGhlciI6IngifQ=="))
                         .shouldBeEmpty()
