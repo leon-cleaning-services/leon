@@ -83,7 +83,8 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
                         buildLinkedAnnotatedString(
                             template = licenseTemplate,
                             linkStyles = linkStyles,
-                            SettingsScreenViewModel.GITHUB_URL to SettingsScreenViewModel.GITHUB_URL,
+                            SettingsScreenViewModel.GITHUB_URL to
+                                SettingsScreenViewModel.GITHUB_URL,
                         ),
                 )
 
@@ -93,7 +94,8 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
                         buildLinkedAnnotatedString(
                             template = bugsTemplate,
                             linkStyles = linkStyles,
-                            SettingsScreenViewModel.ISSUES_URL to SettingsScreenViewModel.ISSUES_URL,
+                            SettingsScreenViewModel.ISSUES_URL to
+                                SettingsScreenViewModel.ISSUES_URL,
                         ),
                 )
 
