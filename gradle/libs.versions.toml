@@ -11,7 +11,7 @@ mikepenz-aboutlibraries = "15.2.0"
 [libraries]
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
+androidx-appcompat = "androidx.appcompat:appcompat:1.8.0"
 androidx-browser = "androidx.browser:browser:1.10.0"
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
