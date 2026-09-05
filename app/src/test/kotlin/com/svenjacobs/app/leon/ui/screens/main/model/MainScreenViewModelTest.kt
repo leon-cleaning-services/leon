@@ -45,6 +45,7 @@ import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -484,6 +485,60 @@ class MainScreenViewModelTest :
 
                         viewModel.uiState.value.result.shouldBeInstanceOf<Result.Success>()
                         viewModel.uiState.value.autoResetAt shouldBe null
+                    }
+                }
+
+                "start a new deadline for a URL shared after a reset" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        // A live data store, so that the timestamp written by setText is read back
+                        // the way it is on a device.
+                        val lastInput = MutableStateFlow<AppDataStoreManager.LastInput?>(null)
+                        val viewModel =
+                            MainScreenViewModel(
+                                appDataStoreManager =
+                                    mockk<AppDataStoreManager> {
+                                        every { urlDecodeEnabled } returns flowOf(false)
+                                        every { extractUrlEnabled } returns flowOf(false)
+                                        every { customTabsEnabled } returns flowOf(false)
+                                        every { actionAfterClean } returns
+                                            flowOf(ActionAfterClean.DoNothing)
+                                        every { autoReset } returns flowOf(AutoReset.OneMinute)
+                                        every { this@mockk.lastInput } returns lastInput
+                                        coEvery { setLastInput(any(), any()) } answers
+                                            {
+                                                lastInput.value =
+                                                    AppDataStoreManager.LastInput(
+                                                        id = firstArg(),
+                                                        at = secondArg(),
+                                                    )
+                                            }
+                                    },
+                                cleaner =
+                                    Cleaner(
+                                        sanitizers = persistentListOf(GoogleAnalytics),
+                                        repository =
+                                            mockk<SanitizerRepository> {
+                                                coEvery { isEnabled(any()) } returns true
+                                            },
+                                    ),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/a", id = "id-1")
+                        val first = viewModel.uiState.value.autoResetAt
+                        first shouldNotBe null
+
+                        // What auto-reset does when the deadline passes.
+                        viewModel.onResetClick()
+                        viewModel.uiState.value.result shouldBe Result.Empty
+                        viewModel.uiState.value.autoResetAt shouldBe null
+
+                        viewModel.setText("https://example.com/b", id = "id-2")
+
+                        viewModel.uiState.value.result.shouldBeInstanceOf<Result.Success>()
+                        val second = viewModel.uiState.value.autoResetAt
+                        second shouldNotBe null
+                        (second!! >= first!!) shouldBe true
                     }
                 }
 
