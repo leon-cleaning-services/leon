@@ -71,6 +71,7 @@ val AllSanitizers: SanitizersCollection =
         Kuaishou,
         LatinaToday,
         Lazada,
+        Liberation,
         LinkSynergy,
         LinkedIn,
         Meituan,
