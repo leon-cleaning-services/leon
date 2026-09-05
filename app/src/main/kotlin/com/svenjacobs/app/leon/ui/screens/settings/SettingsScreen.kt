@@ -109,26 +109,7 @@ private fun Content(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
             Column(modifier = Modifier.padding(16.dp)) {
-                OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onSanitizersClick) {
-                    Text(stringResource(R.string.sanitizers))
-                }
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                    onClick = onLicensesClick,
-                ) {
-                    Text(stringResource(R.string.licenses))
-                }
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                    onClick = { showAboutDialog = true },
-                ) {
-                    Text(stringResource(R.string.about))
-                }
-
                 SwitchRow(
-                    modifier = Modifier.padding(top = 16.dp),
                     text = stringResource(R.string.register_as_browser),
                     checked = browserEnabled,
                     onCheckedChange = onBrowserSwitchCheckedChange,
@@ -289,6 +270,27 @@ private fun Content(
                             )
                         }
                     }
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = onSanitizersClick,
+                ) {
+                    Text(stringResource(R.string.sanitizers))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = onLicensesClick,
+                ) {
+                    Text(stringResource(R.string.licenses))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = { showAboutDialog = true },
+                ) {
+                    Text(stringResource(R.string.about))
                 }
             }
         }
