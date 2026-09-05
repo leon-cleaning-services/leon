@@ -63,6 +63,7 @@ val AllSanitizers: SanitizersCollection =
         Heise,
         Ikea,
         IlMessaggero,
+        IlSole24Ore,
         Instagram,
         Jd,
         Jdoqocy,
