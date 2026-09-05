@@ -35,6 +35,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,6 +53,11 @@ class MainScreenViewModel(
         val isCustomTabsEnabled: Boolean = false,
         val result: Result = Result.Empty,
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
+        /**
+         * The epoch-millis instant at which the screen must reset itself, or `null` when auto-reset
+         * is off or the deadline is not known yet.
+         */
+        val autoResetAt: Long? = null,
     ) {
         sealed interface Result {
 
@@ -111,26 +117,54 @@ class MainScreenViewModel(
     /** Id of the input for which the action after clean has already been performed. */
     private var handledActionInputId: String? = null
 
+    /**
+     * The input, the user's selection and the auto-reset deadline for that same input, combined
+     * ahead of the outer [combine] so that it stays within its five-flow limit.
+     */
+    private data class Session(val input: Input?, val selection: Selection, val autoResetAt: Long?)
+
     val uiState =
         combine(
-                combine(input, selection, ::Pair),
+                combine(
+                    input,
+                    selection,
+                    appDataStoreManager.autoReset,
+                    appDataStoreManager.lastInput,
+                ) { input, selection, autoReset, last ->
+                    // The deadline is a wall-clock timestamp, not a countdown, so it survives the
+                    // app being backgrounded, the device sleeping, or the process being killed and
+                    // the share intent redelivered. It only applies to `last` when `last` really
+                    // belongs to the current input — a redelivered intent carries the same id, and
+                    // must not be treated as if it arrived just now. A fresh input whose timestamp
+                    // write has not landed in the data store yet has no deadline for a moment,
+                    // which is harmless: it simply cannot be expired until it has one.
+                    val autoResetAt =
+                        autoReset
+                            ?.minutes
+                            ?.takeIf { last != null && last.id == input?.id }
+                            ?.let { last!!.at + it * 60_000L }
+                    Session(input, selection, autoResetAt)
+                },
                 appDataStoreManager.urlDecodeEnabled,
                 appDataStoreManager.extractUrlEnabled,
                 appDataStoreManager.customTabsEnabled,
                 appDataStoreManager.actionAfterClean,
-            ) {
-                (input, selection),
-                urlDecodeEnabled,
-                extractUrlEnabled,
-                isCustomTabsEnabled,
-                actionAfterClean ->
+            ) { session, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean
+                ->
+                // An input whose deadline already passed is the process-death case: the intent was
+                // redelivered, but auto-reset should already have fired. Treating it as absent here
+                // avoids a flash of the stale URL while the screen catches up.
+                val expired =
+                    session.autoResetAt != null && System.currentTimeMillis() >= session.autoResetAt
+                val input = if (expired) null else session.input
+
                 val result =
                     input?.let {
                         clean(
                             text = it.text,
                             decodeUrl = urlDecodeEnabled,
                             extractUrl = extractUrlEnabled,
-                            selection = selection,
+                            selection = session.selection,
                         )
                     } ?: Result.Empty
 
@@ -142,6 +176,7 @@ class MainScreenViewModel(
                     isCustomTabsEnabled = isCustomTabsEnabled,
                     result = result,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+                    autoResetAt = if (expired) null else session.autoResetAt,
                 )
             }
             .stateIn(
@@ -154,6 +189,16 @@ class MainScreenViewModel(
         if (text == null && uiState.value.result is Result.Success) return
         selection.value = Selection()
         input.value = text?.let { Input(id = id, text = it) }
+
+        if (text != null) {
+            viewModelScope.launch {
+                // A redelivered intent (configuration change, or the activity being recreated
+                // after process death) carries the same id and must not restart the clock.
+                if (appDataStoreManager.lastInput.first()?.id != id) {
+                    appDataStoreManager.setLastInput(id, System.currentTimeMillis())
+                }
+            }
+        }
     }
 
     fun onResetClick() {

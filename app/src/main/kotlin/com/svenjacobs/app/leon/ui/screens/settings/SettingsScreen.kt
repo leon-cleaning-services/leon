@@ -49,6 +49,7 @@ import com.svenjacobs.app.leon.BuildConfig
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
+import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsScreenViewModel
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
@@ -69,12 +70,14 @@ fun SettingsScreen(
         customTabsEnabled = uiState.customTabsEnabled,
         protectScreenEnabled = uiState.protectScreenEnabled,
         actionAfterClean = uiState.actionAfterClean,
+        autoReset = uiState.autoReset,
         onSanitizersClick = onNavigateToSettingsSanitizers,
         onLicensesClick = onNavigateToSettingsLicenses,
         onBrowserSwitchCheckedChange = viewModel::onBrowserSwitchCheckedChange,
         onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
         onProtectScreenSwitchCheckedChange = viewModel::onProtectScreenSwitchCheckedChange,
         onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
+        onAutoResetClick = viewModel::onAutoResetClick,
     )
 }
 
@@ -85,12 +88,14 @@ private fun Content(
     customTabsEnabled: Boolean,
     protectScreenEnabled: Boolean,
     actionAfterClean: ActionAfterClean,
+    autoReset: AutoReset,
     onSanitizersClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onBrowserSwitchCheckedChange: (Boolean) -> Unit,
     onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
     onProtectScreenSwitchCheckedChange: (Boolean) -> Unit,
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
+    onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showAboutDialog by rememberSaveable { mutableStateOf(false) }
@@ -104,26 +109,7 @@ private fun Content(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
             Column(modifier = Modifier.padding(16.dp)) {
-                OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onSanitizersClick) {
-                    Text(stringResource(R.string.sanitizers))
-                }
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                    onClick = onLicensesClick,
-                ) {
-                    Text(stringResource(R.string.licenses))
-                }
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                    onClick = { showAboutDialog = true },
-                ) {
-                    Text(stringResource(R.string.about))
-                }
-
                 SwitchRow(
-                    modifier = Modifier.padding(top = 16.dp),
                     text = stringResource(R.string.register_as_browser),
                     checked = browserEnabled,
                     onCheckedChange = onBrowserSwitchCheckedChange,
@@ -206,6 +192,106 @@ private fun Content(
                         }
                     }
                 }
+
+                Column(modifier = Modifier.padding(top = 8.dp)) {
+                    var expanded by rememberSaveable { mutableStateOf(false) }
+
+                    Text(stringResource(R.string.auto_reset_after))
+
+                    ExposedDropdownMenuBox(
+                        modifier = Modifier.padding(top = 8.dp),
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                    ) {
+                        TextField(
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                            value = autoReset.text(),
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        )
+
+                        ExposedDropdownMenu(
+                            modifier = Modifier.exposedDropdownSize(),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(AutoReset.Off.text()) },
+                                onClick = {
+                                    expanded = false
+                                    onAutoResetClick(AutoReset.Off)
+                                },
+                            )
+
+                            DropdownMenuItem(
+                                text = { Text(AutoReset.OneMinute.text()) },
+                                onClick = {
+                                    expanded = false
+                                    onAutoResetClick(AutoReset.OneMinute)
+                                },
+                            )
+
+                            DropdownMenuItem(
+                                text = { Text(AutoReset.FiveMinutes.text()) },
+                                onClick = {
+                                    expanded = false
+                                    onAutoResetClick(AutoReset.FiveMinutes)
+                                },
+                            )
+
+                            DropdownMenuItem(
+                                text = { Text(AutoReset.TenMinutes.text()) },
+                                onClick = {
+                                    expanded = false
+                                    onAutoResetClick(AutoReset.TenMinutes)
+                                },
+                            )
+
+                            DropdownMenuItem(
+                                text = { Text(AutoReset.ThirtyMinutes.text()) },
+                                onClick = {
+                                    expanded = false
+                                    onAutoResetClick(AutoReset.ThirtyMinutes)
+                                },
+                            )
+
+                            DropdownMenuItem(
+                                text = { Text(AutoReset.SixtyMinutes.text()) },
+                                onClick = {
+                                    expanded = false
+                                    onAutoResetClick(AutoReset.SixtyMinutes)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = onSanitizersClick,
+                ) {
+                    Text(stringResource(R.string.sanitizers))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = onLicensesClick,
+                ) {
+                    Text(stringResource(R.string.licenses))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = { showAboutDialog = true },
+                ) {
+                    Text(stringResource(R.string.about))
+                }
             }
         }
 
@@ -242,6 +328,13 @@ private fun ActionAfterClean.text(): String =
     }
 
 @Composable
+private fun AutoReset.text(): String =
+    when (val minutes = minutes) {
+        null -> stringResource(R.string.auto_reset_off)
+        else -> stringResource(R.string.auto_reset_minutes, minutes)
+    }
+
+@Composable
 @DayNightPreviews
 private fun ContentPreview() {
     AppTheme {
@@ -251,12 +344,14 @@ private fun ContentPreview() {
             customTabsEnabled = false,
             protectScreenEnabled = false,
             actionAfterClean = ActionAfterClean.OpenShareMenu,
+            autoReset = AutoReset.Off,
             onSanitizersClick = {},
             onLicensesClick = {},
             onBrowserSwitchCheckedChange = {},
             onCustomTabsSwitchCheckedChange = {},
             onProtectScreenSwitchCheckedChange = {},
             onActionAfterCleanClick = {},
+            onAutoResetClick = {},
         )
     }
 }

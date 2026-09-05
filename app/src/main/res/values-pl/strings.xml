@@ -47,6 +47,9 @@
     <string name="open_share_menu">Otwórz menu udostępniania</string>
     <string name="open_url">Otwórz URL</string>
     <string name="copy_to_clipboard">Kopiuj do schowka</string>
+    <string name="auto_reset_after">Automatyczne zerowanie po</string>
+    <string name="auto_reset_off">Wyłączone</string>
+    <string name="auto_reset_minutes">%1$d min</string>
     <string name="process_text_action_name">Wyczyść URL (Léon)</string>
     <string name="protect_screen">Chroń ekran aplikacji</string>
     <string name="about">O aplikacji</string>

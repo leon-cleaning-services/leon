@@ -47,6 +47,9 @@
     <string name="open_share_menu">Mở menu chia sẻ</string>
     <string name="open_url">Mở URL</string>
     <string name="copy_to_clipboard">Sao chép vào clipboard</string>
+    <string name="auto_reset_after">Tự động đặt lại sau</string>
+    <string name="auto_reset_off">Tắt</string>
+    <string name="auto_reset_minutes">%1$d phút</string>
     <string name="process_text_action_name">Làm sạch URL (Léon)</string>
     <string name="protect_screen">Bảo vệ màn hình ứng dụng</string>
     <string name="about">Thông tin</string>

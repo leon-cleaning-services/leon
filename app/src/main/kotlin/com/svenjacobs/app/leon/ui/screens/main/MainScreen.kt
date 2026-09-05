@@ -88,6 +88,7 @@ import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -107,6 +108,7 @@ import com.svenjacobs.app.leon.ui.screens.main.views.ChangesCard
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsScreen
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -132,7 +134,21 @@ fun MainScreen(
     val clipboardEmptyMessage = stringResource(R.string.clipboard_empty_message)
     val view = LocalView.current
 
-    LaunchedEffect(sourceText.value) { sourceText.value?.let { viewModel.setText(it.text, it.id) } }
+    LaunchedEffect(sourceText.value) {
+        val sourceText = sourceText.value ?: return@LaunchedEffect
+
+        viewModel.setText(sourceText.text, sourceText.id)
+
+        // The activity is a singleTask, so a share arrives at whichever tab was open when the app
+        // was last left — without this, the cleaned URL waits unseen behind the settings.
+        if (sourceText.text != null) {
+            navController.navigate(Screen.Main.route) {
+                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         val window = view.context.findWindow() ?: return@LaunchedEffect
@@ -202,6 +218,24 @@ fun MainScreen(
 
                 NavHost(navController = navController, startDestination = Screen.Main.route) {
                     composable(Screen.Main.route) {
+                        // Waits out the auto-reset deadline. The loop, rather than a single delay
+                        // for the whole duration, is what makes this work across a backgrounded app
+                        // or a sleeping device: `delay` runs on uptime and does not tick while the
+                        // process is frozen, so it wakes up short, re-reads the wall clock and
+                        // fires straight away.
+                        LaunchedEffect(uiState.autoResetAt) {
+                            val at = uiState.autoResetAt ?: return@LaunchedEffect
+
+                            while (true) {
+                                val remaining = at - System.currentTimeMillis()
+                                if (remaining <= 0) break
+                                delay(remaining)
+                            }
+
+                            viewModel.onResetClick()
+                            onResetClick()
+                        }
+
                         LaunchedEffect(uiState.inputId, uiState.actionAfterClean) {
                             val inputId = uiState.inputId ?: return@LaunchedEffect
                             val result = uiState.result as? Result.Success ?: return@LaunchedEffect

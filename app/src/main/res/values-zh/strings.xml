@@ -48,6 +48,9 @@
     <string name="open_share_menu">打开分享菜单</string>
     <string name="open_url">打开链接</string>
     <string name="copy_to_clipboard">复制到剪贴板</string>
+    <string name="auto_reset_after">自动重置延时</string>
+    <string name="auto_reset_off">关闭</string>
+    <string name="auto_reset_minutes">%1$d 分钟</string>
     <string name="process_text_action_name">链接清理 (Léon)</string>
     <string name="protect_screen">应用截屏保护</string>
     <string name="about">关于</string>

@@ -27,6 +27,7 @@ import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.inject.AppContainer.AppContext
 import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
+import com.svenjacobs.app.leon.ui.model.AutoReset
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -46,6 +47,7 @@ class SettingsScreenViewModel(
         val customTabsEnabled: Boolean = false,
         val protectScreenEnabled: Boolean = false,
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
+        val autoReset: AutoReset = AutoReset.Off,
     )
 
     private val browserEnabled = MutableStateFlow(false)
@@ -56,13 +58,16 @@ class SettingsScreenViewModel(
                 appDataStoreManager.customTabsEnabled,
                 appDataStoreManager.protectScreenEnabled,
                 appDataStoreManager.actionAfterClean,
-            ) { browserEnabled, customTabsEnabled, protectScreenEnabled, actionAfterClean ->
+                appDataStoreManager.autoReset,
+            ) { browserEnabled, customTabsEnabled, protectScreenEnabled, actionAfterClean, autoReset
+                ->
                 UiState(
                     isLoading = false,
                     browserEnabled = browserEnabled,
                     customTabsEnabled = customTabsEnabled,
                     protectScreenEnabled = protectScreenEnabled,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+                    autoReset = autoReset ?: AutoReset.Off,
                 )
             }
             .stateIn(
@@ -99,6 +104,10 @@ class SettingsScreenViewModel(
 
     fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {
         viewModelScope.launch { appDataStoreManager.setActionAfterClean(actionAfterClean) }
+    }
+
+    fun onAutoResetClick(autoReset: AutoReset) {
+        viewModelScope.launch { appDataStoreManager.setAutoReset(autoReset) }
     }
 
     private val packageManager: PackageManager

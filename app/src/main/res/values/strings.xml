@@ -48,6 +48,9 @@
     <string name="open_share_menu">Open share menu</string>
     <string name="open_url">Open URL</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="auto_reset_after">Auto-reset after</string>
+    <string name="auto_reset_off">Off</string>
+    <string name="auto_reset_minutes">%1$d min</string>
     <string name="process_text_action_name">Clean URL (Léon)</string>
     <string name="protect_screen">Protect app screen</string>
     <string name="about">About</string>

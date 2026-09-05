@@ -47,6 +47,9 @@
     <string name="open_share_menu">Открыть меню «Поделиться»</string>
     <string name="open_url">Открыть URL</string>
     <string name="copy_to_clipboard">Копировать в буфер обмена</string>
+    <string name="auto_reset_after">Автосброс через</string>
+    <string name="auto_reset_off">Выкл.</string>
+    <string name="auto_reset_minutes">%1$d мин</string>
     <string name="process_text_action_name">Очистить URL (Léon)</string>
     <string name="protect_screen">Защитить экран приложения</string>
     <string name="about">О программе</string>
