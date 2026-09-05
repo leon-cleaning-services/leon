@@ -88,6 +88,7 @@ import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -133,7 +134,21 @@ fun MainScreen(
     val clipboardEmptyMessage = stringResource(R.string.clipboard_empty_message)
     val view = LocalView.current
 
-    LaunchedEffect(sourceText.value) { sourceText.value?.let { viewModel.setText(it.text, it.id) } }
+    LaunchedEffect(sourceText.value) {
+        val sourceText = sourceText.value ?: return@LaunchedEffect
+
+        viewModel.setText(sourceText.text, sourceText.id)
+
+        // The activity is a singleTask, so a share arrives at whichever tab was open when the app
+        // was last left — without this, the cleaned URL waits unseen behind the settings.
+        if (sourceText.text != null) {
+            navController.navigate(Screen.Main.route) {
+                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         val window = view.context.findWindow() ?: return@LaunchedEffect
