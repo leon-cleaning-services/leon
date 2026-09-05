@@ -50,6 +50,7 @@ val AllSanitizers: SanitizersCollection =
         EmptyParameters,
         FacebookAnalytics,
         Facebook,
+        FacebookRedirect,
         FastCompany,
         Feishu,
         Flipkart,
