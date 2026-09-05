@@ -19,6 +19,7 @@ package com.svenjacobs.app.leon.ui.screens.main.model
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,6 +37,14 @@ sealed class Screen(
             icon = Icons.Filled.Home,
             label = R.string.screen_main,
             iconContentDescription = R.string.screen_main,
+        )
+
+    data object History :
+        Screen(
+            route = "history",
+            icon = Icons.Filled.History,
+            label = R.string.screen_history,
+            iconContentDescription = R.string.screen_history,
         )
 
     data object Settings :

@@ -34,7 +34,7 @@ import com.svenjacobs.app.leon.ui.screens.main.model.Screen
 
 @Composable
 internal fun BottomBar(navController: NavHostController, modifier: Modifier = Modifier) {
-    val bottomNavItems = listOf(Screen.Main, Screen.Settings)
+    val bottomNavItems = listOf(Screen.Main, Screen.History, Screen.Settings)
 
     NavigationBar(modifier = modifier) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()

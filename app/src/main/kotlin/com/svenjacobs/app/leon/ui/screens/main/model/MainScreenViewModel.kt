@@ -25,7 +25,9 @@ import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
+import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
+import com.svenjacobs.app.leon.inject.AppContainer.HistoryDao
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import java.util.UUID
@@ -43,6 +45,7 @@ import kotlinx.coroutines.launch
 class MainScreenViewModel(
     private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
     private val cleaner: Cleaner = Cleaner(),
+    private val historyDao: HistoryDao = HistoryDao,
 ) : ViewModel() {
 
     data class UiState(
@@ -117,6 +120,26 @@ class MainScreenViewModel(
     /** Id of the input for which the action after clean has already been performed. */
     private var handledActionInputId: String? = null
 
+    /** The (inputId, url) pair last recorded, so an unchanged one is not written again. */
+    private var recorded: Pair<String, String>? = null
+
+    /**
+     * Records [url], cleaned from the input [id], to the history.
+     *
+     * The outer [combine] re-emits on every DataStore tick and again on resubscribe after a
+     * configuration change, even though nothing about the cleaned URL actually changed — so this is
+     * called far more often than the URL itself changes. [recorded] guards against turning those
+     * re-emissions into duplicate or reverted history rows.
+     */
+    private fun record(id: String, url: String) {
+        if (recorded == (id to url)) return
+        recorded = id to url
+        viewModelScope.launch {
+            if (!appDataStoreManager.historyEnabled.first()) return@launch
+            historyDao.record(id = id, url = url, at = System.currentTimeMillis())
+        }
+    }
+
     /**
      * The input, the user's selection and the auto-reset deadline for that same input, combined
      * ahead of the outer [combine] so that it stays within its five-flow limit.
@@ -167,6 +190,10 @@ class MainScreenViewModel(
                             selection = session.selection,
                         )
                     } ?: Result.Empty
+
+                if (input != null && result is Result.Success && result.urls.isNotEmpty()) {
+                    record(input.id, result.urls.first())
+                }
 
                 UiState(
                     isLoading = input == null,

@@ -69,6 +69,7 @@ fun SettingsScreen(
         browserEnabled = uiState.browserEnabled,
         customTabsEnabled = uiState.customTabsEnabled,
         protectScreenEnabled = uiState.protectScreenEnabled,
+        historyEnabled = uiState.historyEnabled,
         actionAfterClean = uiState.actionAfterClean,
         autoReset = uiState.autoReset,
         onSanitizersClick = onNavigateToSettingsSanitizers,
@@ -76,6 +77,7 @@ fun SettingsScreen(
         onBrowserSwitchCheckedChange = viewModel::onBrowserSwitchCheckedChange,
         onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
         onProtectScreenSwitchCheckedChange = viewModel::onProtectScreenSwitchCheckedChange,
+        onHistorySwitchCheckedChange = viewModel::onHistorySwitchCheckedChange,
         onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
         onAutoResetClick = viewModel::onAutoResetClick,
     )
@@ -87,6 +89,7 @@ private fun Content(
     browserEnabled: Boolean,
     customTabsEnabled: Boolean,
     protectScreenEnabled: Boolean,
+    historyEnabled: Boolean,
     actionAfterClean: ActionAfterClean,
     autoReset: AutoReset,
     onSanitizersClick: () -> Unit,
@@ -94,6 +97,7 @@ private fun Content(
     onBrowserSwitchCheckedChange: (Boolean) -> Unit,
     onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
     onProtectScreenSwitchCheckedChange: (Boolean) -> Unit,
+    onHistorySwitchCheckedChange: (Boolean) -> Unit,
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
     onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
@@ -128,6 +132,13 @@ private fun Content(
                     text = stringResource(R.string.protect_screen),
                     checked = protectScreenEnabled,
                     onCheckedChange = onProtectScreenSwitchCheckedChange,
+                )
+
+                SwitchRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(R.string.history_enabled),
+                    checked = historyEnabled,
+                    onCheckedChange = onHistorySwitchCheckedChange,
                 )
 
                 Column(modifier = Modifier.padding(top = 8.dp)) {
@@ -343,6 +354,7 @@ private fun ContentPreview() {
             browserEnabled = false,
             customTabsEnabled = false,
             protectScreenEnabled = false,
+            historyEnabled = true,
             actionAfterClean = ActionAfterClean.OpenShareMenu,
             autoReset = AutoReset.Off,
             onSanitizersClick = {},
@@ -350,6 +362,7 @@ private fun ContentPreview() {
             onBrowserSwitchCheckedChange = {},
             onCustomTabsSwitchCheckedChange = {},
             onProtectScreenSwitchCheckedChange = {},
+            onHistorySwitchCheckedChange = {},
             onActionAfterCleanClick = {},
             onAutoResetClick = {},
         )

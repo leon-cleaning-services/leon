@@ -29,6 +29,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalytics
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
+import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import io.kotest.core.spec.style.WordSpec
@@ -39,6 +40,7 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -58,19 +60,35 @@ class MainScreenViewModelTest :
     WordSpec({
         lateinit var viewModel: MainScreenViewModel
 
+        /**
+         * A mocked [AppDataStoreManager] with every flow defaulted, so a test overrides only what
+         * it needs.
+         */
+        fun appDataStoreManager(
+            autoReset: AutoReset = AutoReset.Off,
+            lastInput: AppDataStoreManager.LastInput? = null,
+            actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
+            historyEnabled: Boolean = true,
+        ): AppDataStoreManager = mockk {
+            every { urlDecodeEnabled } returns flowOf(false)
+            every { extractUrlEnabled } returns flowOf(false)
+            every { customTabsEnabled } returns flowOf(false)
+            every { this@mockk.actionAfterClean } returns flowOf(actionAfterClean)
+            every { this@mockk.autoReset } returns flowOf(autoReset)
+            every { this@mockk.lastInput } returns flowOf(lastInput)
+            every { this@mockk.historyEnabled } returns flowOf(historyEnabled)
+            coEvery { setLastInput(any(), any()) } just Runs
+        }
+
+        fun historyDao(): HistoryDao = mockk {
+            coEvery { record(any(), any(), any(), any()) } just Runs
+        }
+
         beforeEach {
             Dispatchers.setMain(UnconfinedTestDispatcher())
 
             val appDataStoreManager =
-                mockk<AppDataStoreManager> {
-                    every { urlDecodeEnabled } returns flowOf(false)
-                    every { extractUrlEnabled } returns flowOf(false)
-                    every { customTabsEnabled } returns flowOf(false)
-                    every { actionAfterClean } returns flowOf(ActionAfterClean.OpenShareMenu)
-                    every { autoReset } returns flowOf(AutoReset.Off)
-                    every { lastInput } returns flowOf(null)
-                    coEvery { setLastInput(any(), any()) } just Runs
-                }
+                appDataStoreManager(actionAfterClean = ActionAfterClean.OpenShareMenu)
 
             val cleaner =
                 mockk<Cleaner> {
@@ -95,23 +113,18 @@ class MainScreenViewModelTest :
                 }
 
             viewModel =
-                MainScreenViewModel(appDataStoreManager = appDataStoreManager, cleaner = cleaner)
+                MainScreenViewModel(
+                    appDataStoreManager = appDataStoreManager,
+                    cleaner = cleaner,
+                    historyDao = historyDao(),
+                )
         }
 
         afterEach { Dispatchers.resetMain() }
 
         "onChangeToggled" should
             {
-                fun dataStore() =
-                    mockk<AppDataStoreManager> {
-                        every { urlDecodeEnabled } returns flowOf(false)
-                        every { extractUrlEnabled } returns flowOf(false)
-                        every { customTabsEnabled } returns flowOf(false)
-                        every { actionAfterClean } returns flowOf(ActionAfterClean.DoNothing)
-                        every { autoReset } returns flowOf(AutoReset.Off)
-                        every { lastInput } returns flowOf(null)
-                        coEvery { setLastInput(any(), any()) } just Runs
-                    }
+                fun dataStore() = appDataStoreManager()
 
                 /** A view model on a real [Cleaner], so that changes are actually proposed. */
                 fun realViewModel(): MainScreenViewModel {
@@ -119,22 +132,13 @@ class MainScreenViewModelTest :
                         mockk<SanitizerRepository> { coEvery { isEnabled(any()) } returns true }
 
                     return MainScreenViewModel(
-                        appDataStoreManager =
-                            mockk<AppDataStoreManager> {
-                                every { urlDecodeEnabled } returns flowOf(false)
-                                every { extractUrlEnabled } returns flowOf(false)
-                                every { customTabsEnabled } returns flowOf(false)
-                                every { actionAfterClean } returns
-                                    flowOf(ActionAfterClean.DoNothing)
-                                every { autoReset } returns flowOf(AutoReset.Off)
-                                every { lastInput } returns flowOf(null)
-                                coEvery { setLastInput(any(), any()) } just Runs
-                            },
+                        appDataStoreManager = appDataStoreManager(),
                         cleaner =
                             Cleaner(
                                 sanitizers = persistentListOf(GoogleAnalytics),
                                 repository = repository,
                             ),
+                        historyDao = historyDao(),
                     )
                 }
 
@@ -223,6 +227,7 @@ class MainScreenViewModelTest :
                                                 coEvery { isEnabled(any()) } returns true
                                             },
                                     ),
+                                historyDao = historyDao(),
                             )
                         backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -298,6 +303,7 @@ class MainScreenViewModelTest :
                                                 coEvery { isEnabled(any()) } returns true
                                             },
                                     ),
+                                historyDao = historyDao(),
                             )
                         backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -355,6 +361,7 @@ class MainScreenViewModelTest :
                                                 coEvery { isEnabled(any()) } returns true
                                             },
                                     ),
+                                historyDao = historyDao(),
                             )
                         backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -411,16 +418,7 @@ class MainScreenViewModelTest :
                 fun viewModel(autoReset: AutoReset, lastInput: AppDataStoreManager.LastInput?) =
                     MainScreenViewModel(
                         appDataStoreManager =
-                            mockk<AppDataStoreManager> {
-                                every { urlDecodeEnabled } returns flowOf(false)
-                                every { extractUrlEnabled } returns flowOf(false)
-                                every { customTabsEnabled } returns flowOf(false)
-                                every { actionAfterClean } returns
-                                    flowOf(ActionAfterClean.DoNothing)
-                                every { this@mockk.autoReset } returns flowOf(autoReset)
-                                every { this@mockk.lastInput } returns flowOf(lastInput)
-                                coEvery { setLastInput(any(), any()) } just Runs
-                            },
+                            appDataStoreManager(autoReset = autoReset, lastInput = lastInput),
                         cleaner =
                             Cleaner(
                                 sanitizers = persistentListOf(GoogleAnalytics),
@@ -429,6 +427,7 @@ class MainScreenViewModelTest :
                                         coEvery { isEnabled(any()) } returns true
                                     },
                             ),
+                        historyDao = historyDao(),
                     )
 
                 "report the deadline of an input which is still fresh" {
@@ -504,6 +503,7 @@ class MainScreenViewModelTest :
                                             flowOf(ActionAfterClean.DoNothing)
                                         every { autoReset } returns flowOf(AutoReset.OneMinute)
                                         every { this@mockk.lastInput } returns lastInput
+                                        every { historyEnabled } returns flowOf(true)
                                         coEvery { setLastInput(any(), any()) } answers
                                             {
                                                 lastInput.value =
@@ -521,6 +521,7 @@ class MainScreenViewModelTest :
                                                 coEvery { isEnabled(any()) } returns true
                                             },
                                     ),
+                                historyDao = historyDao(),
                             )
                         backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -572,6 +573,125 @@ class MainScreenViewModelTest :
                 "return true again for a new inputId, even with identical text (#775)" {
                     viewModel.consumeActionAfterClean("id-1") shouldBe true
                     viewModel.consumeActionAfterClean("id-2") shouldBe true
+                }
+            }
+
+        "history" should
+            {
+                /** A view model on a real [Cleaner], recording to [dao]. */
+                fun viewModel(dao: HistoryDao, historyEnabled: Boolean = true) =
+                    MainScreenViewModel(
+                        appDataStoreManager = appDataStoreManager(historyEnabled = historyEnabled),
+                        cleaner =
+                            Cleaner(
+                                sanitizers = persistentListOf(GoogleAnalytics),
+                                repository =
+                                    mockk<SanitizerRepository> {
+                                        coEvery { isEnabled(any()) } returns true
+                                    },
+                            ),
+                        historyDao = dao,
+                    )
+
+                "record a new input's cleaned URL exactly once" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val dao = historyDao()
+                        val viewModel = viewModel(dao)
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText(
+                            "https://example.com/p?utm_source=x",
+                            id = "id-1",
+                        )
+
+                        coVerify(exactly = 1) {
+                            dao.record(
+                                id = "id-1",
+                                url = "https://example.com/p",
+                                at = any(),
+                                max = any(),
+                            )
+                        }
+                    }
+                }
+
+                "record again with the new URL when a change is toggled" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val dao = historyDao()
+                        val viewModel = viewModel(dao)
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText(
+                            "https://example.com/p?utm_source=x",
+                            id = "id-1",
+                        )
+                        val removal =
+                            (viewModel.uiState.value.result as Result.Success).changes.first {
+                                it.sanitizerIds.isNotEmpty()
+                            }
+                        viewModel.onChangeToggled(removal, apply = false)
+
+                        coVerify(exactly = 1) {
+                            dao.record(
+                                id = "id-1",
+                                url = "https://example.com/p?utm_source=x",
+                                at = any(),
+                                max = any(),
+                            )
+                        }
+                    }
+                }
+
+                "record a second setText under a different id" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val dao = historyDao()
+                        val viewModel = viewModel(dao)
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/a", id = "id-1")
+                        viewModel.setText("https://example.com/b", id = "id-2")
+
+                        coVerify(exactly = 1) {
+                            dao.record(
+                                id = "id-1",
+                                url = "https://example.com/a",
+                                at = any(),
+                                max = any(),
+                            )
+                        }
+                        coVerify(exactly = 1) {
+                            dao.record(
+                                id = "id-2",
+                                url = "https://example.com/b",
+                                at = any(),
+                                max = any(),
+                            )
+                        }
+                    }
+                }
+
+                "not record when history is disabled" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val dao = historyDao()
+                        val viewModel = viewModel(dao, historyEnabled = false)
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p?utm_source=x", id = "id-1")
+
+                        coVerify(exactly = 0) { dao.record(any(), any(), any(), any()) }
+                    }
+                }
+
+                "not record text that yields no URL" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val dao = historyDao()
+                        val viewModel = viewModel(dao)
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("just some text, no link here", id = "id-1")
+
+                        coVerify(exactly = 0) { dao.record(any(), any(), any(), any()) }
+                    }
                 }
             }
     })

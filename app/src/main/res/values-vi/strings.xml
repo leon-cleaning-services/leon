@@ -19,6 +19,7 @@
 <resources>
     <string name="screen_main">Trang chủ</string>
     <string name="screen_settings">Thiết đặt</string>
+    <string name="screen_history">Lịch sử</string>
     <string name="scaffold_title">Léon – Trình dọn dẹp URL</string>
     <string name="share">Chia sẻ</string>
     <string name="open">Mở</string>
@@ -50,6 +51,14 @@
     <string name="auto_reset_after">Tự động đặt lại sau</string>
     <string name="auto_reset_off">Tắt</string>
     <string name="auto_reset_minutes">%1$d phút</string>
+    <string name="history_enabled">Lưu lịch sử URL đã làm sạch</string>
+    <string name="history_empty_title">Chưa có gì ở đây</string>
+    <string name="history_empty_text">Các URL bạn làm sạch sẽ xuất hiện ở đây, để bạn có thể chia sẻ, sao chép hoặc mở lại sau này. Mười mục gần nhất được lưu giữ.</string>
+    <string name="history_disabled_text">Lịch sử đang tắt. Hãy bật trong phần thiết đặt để lưu mười URL đã làm sạch gần nhất.</string>
+    <string name="history_clear_all">Xóa lịch sử</string>
+    <string name="history_clear_all_confirm">Xóa tất cả mục trong lịch sử?</string>
+    <string name="history_delete">Xóa</string>
+    <string name="cancel">Hủy</string>
     <string name="process_text_action_name">Làm sạch URL (Léon)</string>
     <string name="protect_screen">Bảo vệ màn hình ứng dụng</string>
     <string name="about">Thông tin</string>

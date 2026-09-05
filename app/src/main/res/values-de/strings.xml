@@ -19,6 +19,7 @@
 <resources>
     <string name="screen_main">Start</string>
     <string name="screen_settings">Einstellungen</string>
+    <string name="screen_history">Verlauf</string>
     <string name="scaffold_title">Léon – Der URL Cleaner</string>
     <string name="share">Teilen</string>
     <string name="open">Öffnen</string>
@@ -50,6 +51,14 @@
     <string name="auto_reset_after">Automatisch zurücksetzen nach</string>
     <string name="auto_reset_off">Aus</string>
     <string name="auto_reset_minutes">%1$d Min.</string>
+    <string name="history_enabled">Verlauf bereinigter URLs speichern</string>
+    <string name="history_empty_title">Hier ist noch nichts</string>
+    <string name="history_empty_text">Bereinigte URLs erscheinen hier, damit du sie später erneut teilen, kopieren oder öffnen kannst. Die letzten zehn werden gespeichert.</string>
+    <string name="history_disabled_text">Der Verlauf ist deaktiviert. Aktiviere ihn in den Einstellungen, um die letzten zehn bereinigten URLs zu speichern.</string>
+    <string name="history_clear_all">Verlauf löschen</string>
+    <string name="history_clear_all_confirm">Alle Einträge aus dem Verlauf entfernen?</string>
+    <string name="history_delete">Löschen</string>
+    <string name="cancel">Abbrechen</string>
     <string name="process_text_action_name">URL säubern (Léon)</string>
     <string name="protect_screen">App-Bildschirm schützen</string>
     <string name="about">Über</string>

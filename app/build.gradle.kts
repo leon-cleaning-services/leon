@@ -26,6 +26,8 @@ plugins {
     kotlin("plugin.parcelize")
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room3)
 }
 
 java {
@@ -117,6 +119,8 @@ kotlin {
     }
 }
 
+room3 { schemaDirectory("$projectDir/schemas") }
+
 dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
@@ -148,10 +152,15 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.browser)
     implementation(libs.jakewharton.timber)
+    implementation(libs.androidx.room3.runtime)
+    ksp(libs.androidx.room3.compiler)
 
     debugImplementation(libs.facebook.stetho)
 
     androidTestImplementation(composeBom)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)

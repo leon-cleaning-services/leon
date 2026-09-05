@@ -18,8 +18,12 @@
 package com.svenjacobs.app.leon.inject
 
 import android.content.Context
+import androidx.room3.Room
+import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.datastore.SanitizerDataStoreManager
+import com.svenjacobs.app.leon.db.AppDatabase
+import com.svenjacobs.app.leon.db.HistoryDao
 
 object AppContainer {
 
@@ -32,4 +36,11 @@ object AppContainer {
 
     val AppDataStoreManager: AppDataStoreManager by lazy { AppDataStoreManager() }
     val SanitizerDataStoreManager: SanitizerDataStoreManager by lazy { SanitizerDataStoreManager() }
+
+    val AppDatabase: AppDatabase by lazy {
+        Room.databaseBuilder<AppDatabase>(AppContext, "leon")
+            .setDriver(AndroidSQLiteDriver())
+            .build()
+    }
+    val HistoryDao: HistoryDao by lazy { AppDatabase.historyDao() }
 }
