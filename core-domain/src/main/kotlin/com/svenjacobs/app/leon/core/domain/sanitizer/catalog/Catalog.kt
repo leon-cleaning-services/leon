@@ -64,6 +64,7 @@ val AllSanitizers: SanitizersCollection =
         HumbleBundle,
         Ikea,
         IlMessaggero,
+        IlSole24Ore,
         Instagram,
         Jd,
         Jdoqocy,
