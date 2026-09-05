@@ -41,10 +41,11 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -228,7 +229,20 @@ private fun HistoryRow(
     val clipboardMessage = stringResource(R.string.clipboard_message)
     var menuFor by remember { mutableStateOf<String?>(null) }
 
-    val dismissState = rememberSwipeToDismissBoxState()
+    // Deliberately `remember`, not `rememberSwipeToDismissBoxState`: that one is backed by
+    // `rememberSaveable`, and a LazyColumn stores an item's saveable state under the item's key.
+    // A row swiped away and then brought back by Undo would therefore return with its swipe
+    // restored — dismissed, drawn fully off to the side, an invisible gap in the list. A
+    // half-finished swipe is not worth preserving across anything, so this state is not saved at
+    // all and a re-entering row always starts settled.
+    val positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
+    val dismissState =
+        remember(positionalThreshold) {
+            SwipeToDismissBoxState(
+                initialValue = SwipeToDismissBoxValue.Settled,
+                positionalThreshold = positionalThreshold,
+            )
+        }
 
     Box(modifier = modifier) {
         SwipeToDismissBox(
@@ -249,11 +263,9 @@ private fun HistoryRow(
                     SwipeToDismissBoxValue.Settled -> {}
                 }
 
-                // Always spring the card back rather than leaving the box in its dismissed state:
-                // a LazyColumn item's state is restored under its key, so an entry brought back by
-                // Undo would otherwise reappear as an invisible, already-swiped row. What removes
-                // the row is the data — the DAO delete drops it from the Flow — not the box's own
-                // dismissal. Share has to spring back regardless, since sharing keeps the entry.
+                // Neither gesture removes the row by itself: share keeps the entry, and a delete
+                // is removed by the data — the DAO delete drops it from the Flow — so the card is
+                // always sent back to its resting position rather than left sitting dismissed.
                 coroutineScope.launch { dismissState.reset() }
             },
             content = {
