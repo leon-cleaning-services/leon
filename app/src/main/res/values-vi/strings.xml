@@ -58,6 +58,8 @@
     <string name="history_clear_all">Xóa lịch sử</string>
     <string name="history_clear_all_confirm">Xóa tất cả mục trong lịch sử?</string>
     <string name="history_delete">Xóa</string>
+    <string name="history_deleted">Đã xóa mục</string>
+    <string name="undo">Hoàn tác</string>
     <string name="cancel">Hủy</string>
     <string name="process_text_action_name">Làm sạch URL (Léon)</string>
     <string name="protect_screen">Bảo vệ màn hình ứng dụng</string>

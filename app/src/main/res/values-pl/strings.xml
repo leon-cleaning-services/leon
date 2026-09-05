@@ -58,6 +58,8 @@
     <string name="history_clear_all">Wyczyść historię</string>
     <string name="history_clear_all_confirm">Usunąć wszystkie wpisy z historii?</string>
     <string name="history_delete">Usuń</string>
+    <string name="history_deleted">Wpis usunięty</string>
+    <string name="undo">Cofnij</string>
     <string name="cancel">Anuluj</string>
     <string name="process_text_action_name">Wyczyść URL (Léon)</string>
     <string name="protect_screen">Chroń ekran aplikacji</string>

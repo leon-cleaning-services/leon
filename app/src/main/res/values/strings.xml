@@ -59,6 +59,8 @@
     <string name="history_clear_all">Clear history</string>
     <string name="history_clear_all_confirm">Remove all entries from the history?</string>
     <string name="history_delete">Delete</string>
+    <string name="history_deleted">Entry deleted</string>
+    <string name="undo">Undo</string>
     <string name="cancel">Cancel</string>
     <string name="process_text_action_name">Clean URL (Léon)</string>
     <string name="protect_screen">Protect app screen</string>

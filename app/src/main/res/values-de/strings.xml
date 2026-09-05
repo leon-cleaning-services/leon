@@ -58,6 +58,8 @@
     <string name="history_clear_all">Verlauf löschen</string>
     <string name="history_clear_all_confirm">Alle Einträge aus dem Verlauf entfernen?</string>
     <string name="history_delete">Löschen</string>
+    <string name="history_deleted">Eintrag gelöscht</string>
+    <string name="undo">Rückgängig</string>
     <string name="cancel">Abbrechen</string>
     <string name="process_text_action_name">URL säubern (Léon)</string>
     <string name="protect_screen">App-Bildschirm schützen</string>

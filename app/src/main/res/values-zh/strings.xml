@@ -59,6 +59,8 @@
     <string name="history_clear_all">清空历史记录</string>
     <string name="history_clear_all_confirm">确定要删除历史记录中的所有条目吗？</string>
     <string name="history_delete">删除</string>
+    <string name="history_deleted">条目已删除</string>
+    <string name="undo">撤销</string>
     <string name="cancel">取消</string>
     <string name="process_text_action_name">链接清理 (Léon)</string>
     <string name="protect_screen">应用截屏保护</string>

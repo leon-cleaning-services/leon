@@ -58,6 +58,8 @@
     <string name="history_clear_all">Очистить историю</string>
     <string name="history_clear_all_confirm">Удалить все записи из истории?</string>
     <string name="history_delete">Удалить</string>
+    <string name="history_deleted">Запись удалена</string>
+    <string name="undo">Отменить</string>
     <string name="cancel">Отмена</string>
     <string name="process_text_action_name">Очистить URL (Léon)</string>
     <string name="protect_screen">Защитить экран приложения</string>

@@ -58,6 +58,8 @@
     <string name="history_clear_all">履歴を消去</string>
     <string name="history_clear_all_confirm">履歴からすべての項目を削除しますか？</string>
     <string name="history_delete">削除</string>
+    <string name="history_deleted">項目を削除しました</string>
+    <string name="undo">元に戻す</string>
     <string name="cancel">キャンセル</string>
     <string name="process_text_action_name">URL をクリーン (Léon)</string>
     <string name="protect_screen">アプリ画面を保護</string>

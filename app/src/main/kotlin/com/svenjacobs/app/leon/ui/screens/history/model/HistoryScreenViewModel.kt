@@ -66,6 +66,11 @@ class HistoryScreenViewModel(
         viewModelScope.launch { historyDao.delete(id) }
     }
 
+    /** Puts a swiped-away entry back, timestamp and all, so it returns to the position it had. */
+    fun onUndoDeleteClick(entry: HistoryEntry) {
+        viewModelScope.launch { historyDao.record(id = entry.id, url = entry.url, at = entry.at) }
+    }
+
     fun onClearAllClick() {
         viewModelScope.launch { historyDao.clear() }
     }
