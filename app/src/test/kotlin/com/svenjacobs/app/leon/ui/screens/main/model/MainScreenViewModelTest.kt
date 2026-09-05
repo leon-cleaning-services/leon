@@ -29,6 +29,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalytics
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
+import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -36,8 +37,10 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +66,9 @@ class MainScreenViewModelTest :
                     every { extractUrlEnabled } returns flowOf(false)
                     every { customTabsEnabled } returns flowOf(false)
                     every { actionAfterClean } returns flowOf(ActionAfterClean.OpenShareMenu)
+                    every { autoReset } returns flowOf(AutoReset.Off)
+                    every { lastInput } returns flowOf(null)
+                    coEvery { setLastInput(any(), any()) } just Runs
                 }
 
             val cleaner =
@@ -101,6 +107,9 @@ class MainScreenViewModelTest :
                         every { extractUrlEnabled } returns flowOf(false)
                         every { customTabsEnabled } returns flowOf(false)
                         every { actionAfterClean } returns flowOf(ActionAfterClean.DoNothing)
+                        every { autoReset } returns flowOf(AutoReset.Off)
+                        every { lastInput } returns flowOf(null)
+                        coEvery { setLastInput(any(), any()) } just Runs
                     }
 
                 /** A view model on a real [Cleaner], so that changes are actually proposed. */
@@ -116,6 +125,9 @@ class MainScreenViewModelTest :
                                 every { customTabsEnabled } returns flowOf(false)
                                 every { actionAfterClean } returns
                                     flowOf(ActionAfterClean.DoNothing)
+                                every { autoReset } returns flowOf(AutoReset.Off)
+                                every { lastInput } returns flowOf(null)
+                                coEvery { setLastInput(any(), any()) } just Runs
                             },
                         cleaner =
                             Cleaner(
@@ -389,6 +401,108 @@ class MainScreenViewModelTest :
                         firstId shouldNotBe null
                         secondId shouldNotBe null
                         secondId shouldNotBe firstId
+                    }
+                }
+            }
+
+        "autoReset" should
+            {
+                fun viewModel(autoReset: AutoReset, lastInput: AppDataStoreManager.LastInput?) =
+                    MainScreenViewModel(
+                        appDataStoreManager =
+                            mockk<AppDataStoreManager> {
+                                every { urlDecodeEnabled } returns flowOf(false)
+                                every { extractUrlEnabled } returns flowOf(false)
+                                every { customTabsEnabled } returns flowOf(false)
+                                every { actionAfterClean } returns
+                                    flowOf(ActionAfterClean.DoNothing)
+                                every { this@mockk.autoReset } returns flowOf(autoReset)
+                                every { this@mockk.lastInput } returns flowOf(lastInput)
+                                coEvery { setLastInput(any(), any()) } just Runs
+                            },
+                        cleaner =
+                            Cleaner(
+                                sanitizers = persistentListOf(GoogleAnalytics),
+                                repository =
+                                    mockk<SanitizerRepository> {
+                                        coEvery { isEnabled(any()) } returns true
+                                    },
+                            ),
+                    )
+
+                "report the deadline of an input which is still fresh" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val at = System.currentTimeMillis()
+                        val viewModel =
+                            viewModel(
+                                AutoReset.OneMinute,
+                                AppDataStoreManager.LastInput(id = "id-1", at = at),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p", id = "id-1")
+
+                        viewModel.uiState.value.result.shouldBeInstanceOf<Result.Success>()
+                        viewModel.uiState.value.autoResetAt shouldBe at + 60_000L
+                    }
+                }
+
+                "drop an input whose deadline has already passed" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        // The process-death case: the share intent is redelivered, but the timeout
+                        // ran out while the app was gone.
+                        val viewModel =
+                            viewModel(
+                                AutoReset.OneMinute,
+                                AppDataStoreManager.LastInput(
+                                    id = "id-1",
+                                    at = System.currentTimeMillis() - 120_000L,
+                                ),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p", id = "id-1")
+
+                        viewModel.uiState.value.result shouldBe Result.Empty
+                        viewModel.uiState.value.autoResetAt shouldBe null
+                    }
+                }
+
+                "ignore a stale timestamp which belongs to another input" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel =
+                            viewModel(
+                                AutoReset.OneMinute,
+                                AppDataStoreManager.LastInput(
+                                    id = "id-1",
+                                    at = System.currentTimeMillis() - 120_000L,
+                                ),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p", id = "id-2")
+
+                        viewModel.uiState.value.result.shouldBeInstanceOf<Result.Success>()
+                        viewModel.uiState.value.autoResetAt shouldBe null
+                    }
+                }
+
+                "never expire an input when auto-reset is off" {
+                    runTest(UnconfinedTestDispatcher()) {
+                        val viewModel =
+                            viewModel(
+                                AutoReset.Off,
+                                AppDataStoreManager.LastInput(
+                                    id = "id-1",
+                                    at = System.currentTimeMillis() - 120_000L,
+                                ),
+                            )
+                        backgroundScope.launch { viewModel.uiState.collect {} }
+
+                        viewModel.setText("https://example.com/p", id = "id-1")
+
+                        viewModel.uiState.value.result.shouldBeInstanceOf<Result.Success>()
+                        viewModel.uiState.value.autoResetAt shouldBe null
                     }
                 }
             }

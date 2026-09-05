@@ -107,6 +107,7 @@ import com.svenjacobs.app.leon.ui.screens.main.views.ChangesCard
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsScreen
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -202,6 +203,24 @@ fun MainScreen(
 
                 NavHost(navController = navController, startDestination = Screen.Main.route) {
                     composable(Screen.Main.route) {
+                        // Waits out the auto-reset deadline. The loop, rather than a single delay
+                        // for the whole duration, is what makes this work across a backgrounded app
+                        // or a sleeping device: `delay` runs on uptime and does not tick while the
+                        // process is frozen, so it wakes up short, re-reads the wall clock and
+                        // fires straight away.
+                        LaunchedEffect(uiState.autoResetAt) {
+                            val at = uiState.autoResetAt ?: return@LaunchedEffect
+
+                            while (true) {
+                                val remaining = at - System.currentTimeMillis()
+                                if (remaining <= 0) break
+                                delay(remaining)
+                            }
+
+                            viewModel.onResetClick()
+                            onResetClick()
+                        }
+
                         LaunchedEffect(uiState.inputId, uiState.actionAfterClean) {
                             val inputId = uiState.inputId ?: return@LaunchedEffect
                             val result = uiState.result as? Result.Success ?: return@LaunchedEffect

@@ -22,10 +22,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.inject.AppContainer.AppContext
+import com.svenjacobs.app.leon.ui.model.AutoReset
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -75,6 +77,35 @@ class AppDataStoreManager(private val context: Context = AppContext) {
     val protectScreenEnabled: Flow<Boolean> =
         context.dataStore.data.map { preferences -> preferences[KEY_PROTECT_SCREEN] ?: false }
 
+    suspend fun setAutoReset(autoReset: AutoReset) {
+        context.dataStore.edit { it[KEY_AUTO_RESET] = autoReset.name }
+    }
+
+    val autoReset: Flow<AutoReset?> =
+        context.dataStore.data.map { preferences ->
+            runCatching { preferences[KEY_AUTO_RESET]?.let(AutoReset::valueOf) }.getOrNull()
+        }
+
+    /**
+     * The id of the last text the main screen was given and the wall-clock time in epoch
+     * milliseconds at which it arrived. Auto-reset measures its timeout from this.
+     */
+    data class LastInput(val id: String, val at: Long)
+
+    suspend fun setLastInput(id: String, at: Long) {
+        context.dataStore.edit {
+            it[KEY_LAST_INPUT_ID] = id
+            it[KEY_LAST_INPUT_AT] = at
+        }
+    }
+
+    val lastInput: Flow<LastInput?> =
+        context.dataStore.data.map { preferences ->
+            val id = preferences[KEY_LAST_INPUT_ID]
+            val at = preferences[KEY_LAST_INPUT_AT]
+            if (id != null && at != null) LastInput(id, at) else null
+        }
+
     private companion object {
         private val KEY_VERSION_CODE = intPreferencesKey("version_code")
         private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
@@ -82,5 +113,8 @@ class AppDataStoreManager(private val context: Context = AppContext) {
         private val KEY_EXTRACT_URL = booleanPreferencesKey("extract_url")
         private val KEY_CUSTOM_TABS = booleanPreferencesKey("custom_tabs")
         private val KEY_PROTECT_SCREEN = booleanPreferencesKey("protect_screen")
+        private val KEY_AUTO_RESET = stringPreferencesKey("auto_reset")
+        private val KEY_LAST_INPUT_ID = stringPreferencesKey("last_input_id")
+        private val KEY_LAST_INPUT_AT = longPreferencesKey("last_input_at")
     }
 }

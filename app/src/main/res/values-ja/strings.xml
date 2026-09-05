@@ -47,6 +47,9 @@
     <string name="open_share_menu">共有メニューを開く</string>
     <string name="open_url">URL を開く</string>
     <string name="copy_to_clipboard">クリップボードにコピー</string>
+    <string name="auto_reset_after">自動リセットまでの時間</string>
+    <string name="auto_reset_off">オフ</string>
+    <string name="auto_reset_minutes">%1$d 分</string>
     <string name="process_text_action_name">URL をクリーン (Léon)</string>
     <string name="protect_screen">アプリ画面を保護</string>
     <string name="about">アプリについて</string>

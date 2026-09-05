@@ -47,6 +47,9 @@
     <string name="open_share_menu">Teilenmenü öffnen</string>
     <string name="open_url">URL öffnen</string>
     <string name="copy_to_clipboard">In Zwischenablage kopieren</string>
+    <string name="auto_reset_after">Automatisch zurücksetzen nach</string>
+    <string name="auto_reset_off">Aus</string>
+    <string name="auto_reset_minutes">%1$d Min.</string>
     <string name="process_text_action_name">URL säubern (Léon)</string>
     <string name="protect_screen">App-Bildschirm schützen</string>
     <string name="about">Über</string>
