@@ -36,6 +36,7 @@ val AllSanitizers: SanitizersCollection =
         AolSearch,
         AtAnalytics,
         AutoTrader,
+        AvantLink,
         Bilibili,
         BlueskyRedirect,
         CarGurus,
