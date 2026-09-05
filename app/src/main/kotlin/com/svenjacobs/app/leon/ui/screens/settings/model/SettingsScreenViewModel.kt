@@ -25,8 +25,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
+import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.inject.AppContainer.AppContext
 import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
+import com.svenjacobs.app.leon.inject.AppContainer.HistoryDao
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -39,6 +41,7 @@ import kotlinx.coroutines.launch
 class SettingsScreenViewModel(
     private val context: Context = AppContext,
     private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
+    private val historyDao: HistoryDao = HistoryDao,
 ) : ViewModel() {
 
     data class UiState(
@@ -46,26 +49,37 @@ class SettingsScreenViewModel(
         val browserEnabled: Boolean = false,
         val customTabsEnabled: Boolean = false,
         val protectScreenEnabled: Boolean = false,
+        val historyEnabled: Boolean = true,
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
         val autoReset: AutoReset = AutoReset.Off,
     )
 
     private val browserEnabled = MutableStateFlow(false)
 
+    /**
+     * The browser and history switches, combined ahead of the outer [combine] so that it stays
+     * within its five-flow limit.
+     */
+    private data class Toggles(val browserEnabled: Boolean, val historyEnabled: Boolean)
+
     val uiState: StateFlow<UiState> =
         combine(
-                browserEnabled,
+                combine(browserEnabled, appDataStoreManager.historyEnabled) {
+                    browserEnabled,
+                    historyEnabled ->
+                    Toggles(browserEnabled, historyEnabled)
+                },
                 appDataStoreManager.customTabsEnabled,
                 appDataStoreManager.protectScreenEnabled,
                 appDataStoreManager.actionAfterClean,
                 appDataStoreManager.autoReset,
-            ) { browserEnabled, customTabsEnabled, protectScreenEnabled, actionAfterClean, autoReset
-                ->
+            ) { toggles, customTabsEnabled, protectScreenEnabled, actionAfterClean, autoReset ->
                 UiState(
                     isLoading = false,
-                    browserEnabled = browserEnabled,
+                    browserEnabled = toggles.browserEnabled,
                     customTabsEnabled = customTabsEnabled,
                     protectScreenEnabled = protectScreenEnabled,
+                    historyEnabled = toggles.historyEnabled,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
                     autoReset = autoReset ?: AutoReset.Off,
                 )
@@ -100,6 +114,14 @@ class SettingsScreenViewModel(
 
     fun onProtectScreenSwitchCheckedChange(checked: Boolean) {
         viewModelScope.launch { appDataStoreManager.setProtectScreenEnabled(checked) }
+    }
+
+    fun onHistorySwitchCheckedChange(checked: Boolean) {
+        viewModelScope.launch {
+            appDataStoreManager.setHistoryEnabled(checked)
+            // Turning the history off must leave nothing behind.
+            if (!checked) historyDao.clear()
+        }
     }
 
     fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {

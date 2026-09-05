@@ -19,6 +19,7 @@
 <resources>
     <string name="screen_main">Ekran główny</string>
     <string name="screen_settings">Ustawienia</string>
+    <string name="screen_history">Historia</string>
     <string name="scaffold_title">Léon – Oczyszczacz URL</string>
     <string name="share">Udostępnij</string>
     <string name="open">Otwórz</string>
@@ -50,6 +51,16 @@
     <string name="auto_reset_after">Automatyczne zerowanie po</string>
     <string name="auto_reset_off">Wyłączone</string>
     <string name="auto_reset_minutes">%1$d min</string>
+    <string name="history_enabled">Zachowuj historię wyczyszczonych adresów URL</string>
+    <string name="history_empty_title">Nic tu jeszcze nie ma</string>
+    <string name="history_empty_text">Wyczyszczone adresy URL pojawiają się tutaj, dzięki czemu możesz je później udostępnić, skopiować lub otworzyć ponownie. Zachowywanych jest ostatnich dziesięć.</string>
+    <string name="history_disabled_text">Historia jest wyłączona. Włącz ją w ustawieniach, aby zachowywać ostatnie dziesięć wyczyszczonych adresów URL.</string>
+    <string name="history_clear_all">Wyczyść historię</string>
+    <string name="history_clear_all_confirm">Usunąć wszystkie wpisy z historii?</string>
+    <string name="history_delete">Usuń</string>
+    <string name="history_deleted">Wpis usunięty</string>
+    <string name="undo">Cofnij</string>
+    <string name="cancel">Anuluj</string>
     <string name="process_text_action_name">Wyczyść URL (Léon)</string>
     <string name="protect_screen">Chroń ekran aplikacji</string>
     <string name="about">O aplikacji</string>

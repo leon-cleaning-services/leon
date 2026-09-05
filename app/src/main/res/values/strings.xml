@@ -20,6 +20,7 @@
     <string name="app_name" translatable="false">URL Cleaner</string>
     <string name="screen_main">Home</string>
     <string name="screen_settings">Settings</string>
+    <string name="screen_history">History</string>
     <string name="scaffold_title">Léon – The URL Cleaner</string>
     <string name="share">Share</string>
     <string name="open">Open</string>
@@ -51,6 +52,16 @@
     <string name="auto_reset_after">Auto-reset after</string>
     <string name="auto_reset_off">Off</string>
     <string name="auto_reset_minutes">%1$d min</string>
+    <string name="history_enabled">Keep history of cleaned URLs</string>
+    <string name="history_empty_title">Nothing here yet</string>
+    <string name="history_empty_text">URLs you clean appear here, so you can share, copy or open them again later. The last ten are kept.</string>
+    <string name="history_disabled_text">The history is turned off. Turn it on in the settings to keep the last ten cleaned URLs.</string>
+    <string name="history_clear_all">Clear history</string>
+    <string name="history_clear_all_confirm">Remove all entries from the history?</string>
+    <string name="history_delete">Delete</string>
+    <string name="history_deleted">Entry deleted</string>
+    <string name="undo">Undo</string>
+    <string name="cancel">Cancel</string>
     <string name="process_text_action_name">Clean URL (Léon)</string>
     <string name="protect_screen">Protect app screen</string>
     <string name="about">About</string>

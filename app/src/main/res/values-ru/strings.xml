@@ -19,6 +19,7 @@
 <resources>
     <string name="screen_main">Дом</string>
     <string name="screen_settings">Настройки</string>
+    <string name="screen_history">История</string>
     <string name="scaffold_title">Léon – Очиститель URL</string>
     <string name="share">Поделиться</string>
     <string name="open">Открыть</string>
@@ -50,6 +51,16 @@
     <string name="auto_reset_after">Автосброс через</string>
     <string name="auto_reset_off">Выкл.</string>
     <string name="auto_reset_minutes">%1$d мин</string>
+    <string name="history_enabled">Сохранять историю очищенных URL-адресов</string>
+    <string name="history_empty_title">Здесь пока пусто</string>
+    <string name="history_empty_text">Очищенные вами URL-адреса появляются здесь, чтобы вы могли позже поделиться ими, скопировать или открыть их снова. Хранятся последние десять.</string>
+    <string name="history_disabled_text">История отключена. Включите её в настройках, чтобы сохранять последние десять очищенных URL-адресов.</string>
+    <string name="history_clear_all">Очистить историю</string>
+    <string name="history_clear_all_confirm">Удалить все записи из истории?</string>
+    <string name="history_delete">Удалить</string>
+    <string name="history_deleted">Запись удалена</string>
+    <string name="undo">Отменить</string>
+    <string name="cancel">Отмена</string>
     <string name="process_text_action_name">Очистить URL (Léon)</string>
     <string name="protect_screen">Защитить экран приложения</string>
     <string name="about">О программе</string>

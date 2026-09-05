@@ -20,6 +20,7 @@
     <string name="app_name" translatable="false">URL 清理器</string>
     <string name="screen_main">首页</string>
     <string name="screen_settings">设置</string>
+    <string name="screen_history">历史记录</string>
     <string name="scaffold_title">Léon – 链接清理器</string>
     <string name="share">分享</string>
     <string name="open">打开</string>
@@ -51,6 +52,16 @@
     <string name="auto_reset_after">自动重置延时</string>
     <string name="auto_reset_off">关闭</string>
     <string name="auto_reset_minutes">%1$d 分钟</string>
+    <string name="history_enabled">保留已清理链接的历史记录</string>
+    <string name="history_empty_title">暂无内容</string>
+    <string name="history_empty_text">你清理过的链接会显示在这里，方便你之后再次分享、复制或打开。最多保留最近十条。</string>
+    <string name="history_disabled_text">历史记录功能已关闭。在设置中开启后，将保留最近清理的十条链接。</string>
+    <string name="history_clear_all">清空历史记录</string>
+    <string name="history_clear_all_confirm">确定要删除历史记录中的所有条目吗？</string>
+    <string name="history_delete">删除</string>
+    <string name="history_deleted">条目已删除</string>
+    <string name="undo">撤销</string>
+    <string name="cancel">取消</string>
     <string name="process_text_action_name">链接清理 (Léon)</string>
     <string name="protect_screen">应用截屏保护</string>
     <string name="about">关于</string>

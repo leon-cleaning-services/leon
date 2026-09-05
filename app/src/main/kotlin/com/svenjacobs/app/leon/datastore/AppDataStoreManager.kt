@@ -106,6 +106,13 @@ class AppDataStoreManager(private val context: Context = AppContext) {
             if (id != null && at != null) LastInput(id, at) else null
         }
 
+    suspend fun setHistoryEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[KEY_HISTORY_ENABLED] = enabled }
+    }
+
+    val historyEnabled: Flow<Boolean> =
+        context.dataStore.data.map { preferences -> preferences[KEY_HISTORY_ENABLED] ?: true }
+
     private companion object {
         private val KEY_VERSION_CODE = intPreferencesKey("version_code")
         private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
@@ -116,5 +123,6 @@ class AppDataStoreManager(private val context: Context = AppContext) {
         private val KEY_AUTO_RESET = stringPreferencesKey("auto_reset")
         private val KEY_LAST_INPUT_ID = stringPreferencesKey("last_input_id")
         private val KEY_LAST_INPUT_AT = longPreferencesKey("last_input_at")
+        private val KEY_HISTORY_ENABLED = booleanPreferencesKey("history_enabled")
     }
 }

@@ -18,13 +18,9 @@
 package com.svenjacobs.app.leon.ui.screens.main
 
 import android.app.Activity
-import android.content.ClipData
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.Intent
-import android.net.Uri
 import android.view.Window
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -78,13 +74,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -95,9 +89,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
+import com.svenjacobs.app.leon.ui.common.copyToClipboard
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
+import com.svenjacobs.app.leon.ui.common.openUrl
+import com.svenjacobs.app.leon.ui.common.shareText
 import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.model.SourceText
+import com.svenjacobs.app.leon.ui.screens.history.HistoryScreen
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
@@ -157,53 +155,27 @@ fun MainScreen(
     }
 
     fun openShareMenu(result: Result.Success) {
-        val intent =
-            Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                addCategory(Intent.CATEGORY_DEFAULT)
-                putExtra(Intent.EXTRA_TEXT, result.cleanedText)
-            }
-
-        context.startActivity(Intent.createChooser(intent, shareTitle))
-    }
-
-    fun openInDefaultApp(result: Result.Success) {
-        val uri =
-            result.urls.firstOrNull()?.let { url -> runCatching { Uri.parse(url) }.getOrNull() }
-                ?: return
-
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-
-        context.startActivity(Intent.createChooser(intent, openTitle))
-    }
-
-    fun openInCustomTabs(result: Result.Success) {
-        result.urls.firstOrNull()?.let { url ->
-            val intent =
-                CustomTabsIntent.Builder()
-                    .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
-                    .build()
-
-            intent.launchUrl(context, url.toUri())
-        }
+        shareText(context = context, text = result.cleanedText, chooserTitle = shareTitle)
     }
 
     fun openUrl(result: Result.Success) {
-        // When Leon is the system default browser we neither can open the URL in custom tabs nor
-        // in the default browser because this would just open Leon again.
-        if (isDefaultBrowser(context)) return
-
-        if (uiState.isCustomTabsEnabled) {
-            openInCustomTabs(result)
-        } else {
-            openInDefaultApp(result)
-        }
+        val url = result.urls.firstOrNull() ?: return
+        openUrl(
+            context = context,
+            url = url,
+            customTabs = uiState.isCustomTabsEnabled,
+            chooserTitle = openTitle,
+        )
     }
 
     fun copyToClipboard(text: String) {
         coroutineScope.launch {
-            clipboard.setClipEntry(ClipData.newPlainText(text, text).toClipEntry())
-            snackbarHostState.showSnackbar(copiedToClipboardMessage)
+            copyToClipboard(
+                clipboard = clipboard,
+                snackbarHostState = snackbarHostState,
+                text = text,
+                message = copiedToClipboardMessage,
+            )
         }
     }
 
@@ -282,6 +254,10 @@ fun MainScreen(
                             onExtractUrlCheckedChange = viewModel::onExtractUrlCheckedChange,
                             onChangeToggled = viewModel::onChangeToggled,
                         )
+                    }
+
+                    composable(Screen.History.route) {
+                        HistoryScreen(snackbarHostState = snackbarHostState)
                     }
 
                     composable(Screen.Settings.route) {
