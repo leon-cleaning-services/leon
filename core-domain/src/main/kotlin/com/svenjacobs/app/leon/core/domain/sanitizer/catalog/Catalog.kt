@@ -61,6 +61,7 @@ val AllSanitizers: SanitizersCollection =
         GoogleSearch,
         GoogleStore,
         Heise,
+        HumbleBundle,
         Ikea,
         IlMessaggero,
         Instagram,
