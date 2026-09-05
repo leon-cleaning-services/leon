@@ -32,6 +32,7 @@ val AllSanitizers: SanitizersCollection =
         Aliexpress,
         AmazonProduct,
         Amazon,
+        AmazonSponsoredProduct,
         AolSearch,
         AtAnalytics,
         AutoTrader,

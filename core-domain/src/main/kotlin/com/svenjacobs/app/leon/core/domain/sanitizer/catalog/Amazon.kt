@@ -22,6 +22,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Match
 import com.svenjacobs.app.leon.core.domain.sanitizer.Rule
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
+import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import kotlinx.collections.immutable.persistentListOf
 
 val Amazon =
@@ -42,4 +43,25 @@ val AmazonProduct =
                 Rule.RemoveParameters(".*"),
             ),
         match = persistentListOf(Match(HostMatch.Pattern("amazon\\.[^/?#:]+"))),
+    )
+
+val AmazonSponsoredProduct =
+    Sanitizer(
+        id = SanitizerId("amazonSponsoredProduct"),
+        name = "Amazon Sponsored Products",
+        // The product page is not the URL itself but hidden, percent-encoded, in its "url"
+        // parameter: /sspa/click?...&url=%2F...%2Fdp%2F<asin>%2F...
+        rules =
+            persistentListOf(
+                Rule.RewritePath(
+                    pattern = "(?i).*%2F(?:dp?|gp%2Fproduct)%2F([^%]*).*",
+                    replacement = "/dp/$1/",
+                    from = Source.Parameter("url"),
+                ),
+                Rule.RemoveParameters(".*"),
+            ),
+        match =
+            persistentListOf(
+                Match(HostMatch.Pattern("amazon\\.[^/?#:]+"), pathPrefix = "/sspa/click")
+            ),
     )
