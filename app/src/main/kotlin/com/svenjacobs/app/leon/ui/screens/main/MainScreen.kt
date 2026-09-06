@@ -17,14 +17,9 @@
  */
 package com.svenjacobs.app.leon.ui.screens.main
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.view.Window
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,8 +49,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -73,19 +66,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
@@ -93,17 +80,11 @@ import com.svenjacobs.app.leon.ui.common.copyToClipboard
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
 import com.svenjacobs.app.leon.ui.common.openUrl
 import com.svenjacobs.app.leon.ui.common.shareText
-import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.model.SourceText
-import com.svenjacobs.app.leon.ui.screens.history.HistoryScreen
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
-import com.svenjacobs.app.leon.ui.screens.main.model.Screen
-import com.svenjacobs.app.leon.ui.screens.main.views.BackgroundImage
-import com.svenjacobs.app.leon.ui.screens.main.views.BottomBar
 import com.svenjacobs.app.leon.ui.screens.main.views.ChangesCard
-import com.svenjacobs.app.leon.ui.screens.settings.SettingsScreen
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -112,47 +93,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(
     sourceText: State<SourceText?>,
-    onNavigateToSettingsSanitizers: () -> Unit,
-    onNavigateToSettingsLicenses: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MainScreenViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val navController = rememberNavController()
-    val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-    val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     val clipboard = LocalClipboard.current
     val shareTitle = stringResource(R.string.share)
     val openTitle = stringResource(R.string.open)
     val copiedToClipboardMessage = stringResource(R.string.clipboard_message)
     val clipboardEmptyMessage = stringResource(R.string.clipboard_empty_message)
-    val view = LocalView.current
-
-    LaunchedEffect(sourceText.value) {
-        val sourceText = sourceText.value ?: return@LaunchedEffect
-
-        viewModel.setText(sourceText.text, sourceText.id)
-
-        // The activity is a singleTask, so a share arrives at whichever tab was open when the app
-        // was last left — without this, the cleaned URL waits unseen behind the settings.
-        if (sourceText.text != null) {
-            navController.navigate(Screen.Main.route) {
-                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        val window = view.context.findWindow() ?: return@LaunchedEffect
-        val insetsController = WindowCompat.getInsetsController(window, view)
-        insetsController.isAppearanceLightStatusBars = !isDarkTheme
-    }
 
     fun openShareMenu(result: Result.Success) {
         shareText(context = context, text = result.cleanedText, chooserTitle = shareTitle)
@@ -179,96 +133,68 @@ fun MainScreen(
         }
     }
 
-    Scaffold(
+    LaunchedEffect(sourceText.value) {
+        val sourceText = sourceText.value ?: return@LaunchedEffect
+
+        viewModel.setText(sourceText.text, sourceText.id)
+    }
+
+    // Waits out the auto-reset deadline. The loop, rather than a single delay for the whole
+    // duration, is what makes this work across a backgrounded app or a sleeping device: `delay`
+    // runs on uptime and does not tick while the process is frozen, so it wakes up short, re-reads
+    // the wall clock and fires straight away.
+    LaunchedEffect(uiState.autoResetAt) {
+        val at = uiState.autoResetAt ?: return@LaunchedEffect
+
+        while (true) {
+            val remaining = at - System.currentTimeMillis()
+            if (remaining <= 0) break
+            delay(remaining)
+        }
+
+        viewModel.onResetClick()
+        onResetClick()
+    }
+
+    LaunchedEffect(uiState.inputId, uiState.actionAfterClean) {
+        val inputId = uiState.inputId ?: return@LaunchedEffect
+        val result = uiState.result as? Result.Success ?: return@LaunchedEffect
+        if (!viewModel.consumeActionAfterClean(inputId)) return@LaunchedEffect
+
+        when (uiState.actionAfterClean) {
+            ActionAfterClean.OpenShareMenu -> openShareMenu(result)
+            ActionAfterClean.OpenUrl -> openUrl(result)
+            ActionAfterClean.CopyToClipboard -> copyToClipboard(result.cleanedText)
+            ActionAfterClean.DoNothing -> {}
+        }
+    }
+
+    Content(
         modifier = modifier,
-        topBar = { TopAppBar() },
-        bottomBar = { BottomBar(navController = navController) },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        content = { padding ->
-            Box(modifier = Modifier.padding(padding)) {
-                BackgroundImage()
+        result = uiState.result,
+        isUrlDecodeEnabled = uiState.isUrlDecodeEnabled,
+        isExtractUrlEnabled = uiState.isExtractUrlEnabled,
+        onImportFromClipboardClick = {
+            coroutineScope.launch {
+                val text = clipboard.getClipEntry()?.clipData?.getItemAt(0)?.text?.toString()
 
-                NavHost(navController = navController, startDestination = Screen.Main.route) {
-                    composable(Screen.Main.route) {
-                        // Waits out the auto-reset deadline. The loop, rather than a single delay
-                        // for the whole duration, is what makes this work across a backgrounded app
-                        // or a sleeping device: `delay` runs on uptime and does not tick while the
-                        // process is frozen, so it wakes up short, re-reads the wall clock and
-                        // fires straight away.
-                        LaunchedEffect(uiState.autoResetAt) {
-                            val at = uiState.autoResetAt ?: return@LaunchedEffect
-
-                            while (true) {
-                                val remaining = at - System.currentTimeMillis()
-                                if (remaining <= 0) break
-                                delay(remaining)
-                            }
-
-                            viewModel.onResetClick()
-                            onResetClick()
-                        }
-
-                        LaunchedEffect(uiState.inputId, uiState.actionAfterClean) {
-                            val inputId = uiState.inputId ?: return@LaunchedEffect
-                            val result = uiState.result as? Result.Success ?: return@LaunchedEffect
-                            if (!viewModel.consumeActionAfterClean(inputId)) return@LaunchedEffect
-
-                            when (uiState.actionAfterClean) {
-                                ActionAfterClean.OpenShareMenu -> openShareMenu(result)
-                                ActionAfterClean.OpenUrl -> openUrl(result)
-                                ActionAfterClean.CopyToClipboard ->
-                                    copyToClipboard(result.cleanedText)
-                                ActionAfterClean.DoNothing -> {}
-                            }
-                        }
-
-                        Content(
-                            result = uiState.result,
-                            isUrlDecodeEnabled = uiState.isUrlDecodeEnabled,
-                            isExtractUrlEnabled = uiState.isExtractUrlEnabled,
-                            onImportFromClipboardClick = {
-                                coroutineScope.launch {
-                                    val text =
-                                        clipboard
-                                            .getClipEntry()
-                                            ?.clipData
-                                            ?.getItemAt(0)
-                                            ?.text
-                                            ?.toString()
-
-                                    if (text.isNullOrBlank()) {
-                                        snackbarHostState.showSnackbar(clipboardEmptyMessage)
-                                    } else {
-                                        viewModel.setText(text)
-                                    }
-                                }
-                            },
-                            onShareClick = ::openShareMenu,
-                            onCopyToClipboardClick = ::copyToClipboard,
-                            onOpenClick = ::openUrl,
-                            onResetClick = {
-                                viewModel.onResetClick()
-                                onResetClick()
-                            },
-                            onUrlDecodeCheckedChange = viewModel::onUrlDecodeCheckedChange,
-                            onExtractUrlCheckedChange = viewModel::onExtractUrlCheckedChange,
-                            onChangeToggled = viewModel::onChangeToggled,
-                        )
-                    }
-
-                    composable(Screen.History.route) {
-                        HistoryScreen(snackbarHostState = snackbarHostState)
-                    }
-
-                    composable(Screen.Settings.route) {
-                        SettingsScreen(
-                            onNavigateToSettingsSanitizers = onNavigateToSettingsSanitizers,
-                            onNavigateToSettingsLicenses = onNavigateToSettingsLicenses,
-                        )
-                    }
+                if (text.isNullOrBlank()) {
+                    snackbarHostState.showSnackbar(clipboardEmptyMessage)
+                } else {
+                    viewModel.setText(text)
                 }
             }
         },
+        onShareClick = ::openShareMenu,
+        onCopyToClipboardClick = ::copyToClipboard,
+        onOpenClick = ::openUrl,
+        onResetClick = {
+            viewModel.onResetClick()
+            onResetClick()
+        },
+        onUrlDecodeCheckedChange = viewModel::onUrlDecodeCheckedChange,
+        onExtractUrlCheckedChange = viewModel::onExtractUrlCheckedChange,
+        onChangeToggled = viewModel::onChangeToggled,
     )
 }
 
@@ -623,13 +549,6 @@ private fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick:
         }
     }
 }
-
-private tailrec fun Context.findWindow(): Window? =
-    when (this) {
-        is Activity -> window
-        is ContextWrapper -> baseContext.findWindow()
-        else -> null
-    }
 
 @Preview(showBackground = true)
 @Composable
