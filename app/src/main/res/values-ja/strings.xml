@@ -36,6 +36,7 @@
     <string name="sanitizers_search_placeholder">サニタイザーを検索</string>
     <string name="sanitizers_search_clear">検索をクリア</string>
     <string name="sanitizers_no_results">サニタイザーが見つかりません</string>
+    <string name="settings_detail_placeholder">設定項目を選択</string>
     <string name="decode_url">URL をデコード</string>
     <string name="import_from_clipboard">クリップボードからインポート</string>
     <string name="reset">リセット</string>

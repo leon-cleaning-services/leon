@@ -36,6 +36,7 @@
     <string name="sanitizers_search_placeholder">Szukaj sanityzatorów</string>
     <string name="sanitizers_search_clear">Wyczyść wyszukiwanie</string>
     <string name="sanitizers_no_results">Nie znaleziono sanityzatorów</string>
+    <string name="settings_detail_placeholder">Wybierz sekcję ustawień</string>
     <string name="decode_url">Odkoduj URL</string>
     <string name="import_from_clipboard">Importuj ze schowka</string>
     <string name="reset">Wyzeruj</string>

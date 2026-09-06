@@ -36,6 +36,7 @@
     <string name="sanitizers_search_placeholder">Tìm kiếm chất khử trùng</string>
     <string name="sanitizers_search_clear">Xóa tìm kiếm</string>
     <string name="sanitizers_no_results">Không tìm thấy chất khử trùng</string>
+    <string name="settings_detail_placeholder">Chọn một mục thiết đặt</string>
     <string name="decode_url">Giải mã URL</string>
     <string name="import_from_clipboard">Nhập từ clipboard</string>
     <string name="reset">Đặt lại</string>

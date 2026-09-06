@@ -36,6 +36,7 @@
     <string name="sanitizers_search_placeholder">Поиск очистки</string>
     <string name="sanitizers_search_clear">Очистить поиск</string>
     <string name="sanitizers_no_results">Очистка не найдена</string>
+    <string name="settings_detail_placeholder">Выберите раздел настроек</string>
     <string name="decode_url">Декодировать URL-адрес</string>
     <string name="import_from_clipboard">Импорт из буфера обмена</string>
     <string name="reset">Сброс</string>
