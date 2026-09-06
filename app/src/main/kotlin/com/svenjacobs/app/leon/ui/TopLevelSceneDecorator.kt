@@ -17,6 +17,7 @@
  */
 package com.svenjacobs.app.leon.ui
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -29,11 +30,13 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneDecoratorStrategyScope
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.svenjacobs.app.leon.ui.common.views.BottomBar
 import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.screens.main.views.BackgroundImage
 
 internal const val TOP_LEVEL_METADATA_KEY = "com.svenjacobs.app.leon.topLevel"
+private const val BOTTOM_BAR_SHARED_KEY = "com.svenjacobs.app.leon.bottomNavigationBar"
 
 internal fun topLevelMetadata(destination: Destination.TopLevel): Map<String, Any> =
     mapOf(TOP_LEVEL_METADATA_KEY to destination)
@@ -46,6 +49,7 @@ internal fun topLevelMetadata(destination: Destination.TopLevel): Map<String, An
  * own `Scaffold` and back-arrow top bar.
  */
 internal class TopLevelSceneDecoratorStrategy(
+    private val sharedTransitionScope: SharedTransitionScope,
     private val snackbarHostState: SnackbarHostState,
     private val onTopLevelClick: (Destination.TopLevel) -> Unit,
 ) : SceneDecoratorStrategy<NavKey> {
@@ -56,13 +60,20 @@ internal class TopLevelSceneDecoratorStrategy(
         val current =
             scene.entries.lastOrNull()?.metadata?.get(TOP_LEVEL_METADATA_KEY)
                 as? Destination.TopLevel ?: return scene
-        return TopLevelScene(scene, current, snackbarHostState, onTopLevelClick)
+        return TopLevelScene(
+            scene,
+            current,
+            sharedTransitionScope,
+            snackbarHostState,
+            onTopLevelClick,
+        )
     }
 }
 
 private class TopLevelScene(
     private val scene: Scene<NavKey>,
     current: Destination.TopLevel,
+    sharedTransitionScope: SharedTransitionScope,
     snackbarHostState: SnackbarHostState,
     onTopLevelClick: (Destination.TopLevel) -> Unit,
 ) : Scene<NavKey> {
@@ -80,7 +91,20 @@ private class TopLevelScene(
     override val content: @Composable () -> Unit = {
         Scaffold(
             topBar = { TopAppBar() },
-            bottomBar = { BottomBar(current = current, onClick = onTopLevelClick) },
+            bottomBar = {
+                with(sharedTransitionScope) {
+                    BottomBar(
+                        current = current,
+                        onClick = onTopLevelClick,
+                        modifier =
+                            Modifier.sharedElement(
+                                sharedContentState =
+                                    rememberSharedContentState(BOTTOM_BAR_SHARED_KEY),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            ),
+                    )
+                }
+            },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { padding ->
             Box(modifier = Modifier.padding(padding)) {

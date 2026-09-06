@@ -21,6 +21,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.view.Window
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -76,53 +77,59 @@ fun MainRouter(
         insetsController.isAppearanceLightStatusBars = !isDarkTheme
     }
 
-    NavDisplay(
-        backStack = backStack,
-        modifier = modifier,
-        onBack = { backStack.removeLastOrNull() },
-        entryDecorators =
-            listOf(
-                rememberSaveableStateHolderNavEntryDecorator(),
-                rememberViewModelStoreNavEntryDecorator(),
-            ),
-        sceneDecoratorStrategies =
-            listOf(remember { TopLevelSceneDecoratorStrategy(snackbarHostState, ::goToTopLevel) }),
-        entryProvider =
-            entryProvider {
-                entry<Destination.Main>(metadata = topLevelMetadata(Destination.Main)) {
-                    MainScreen(
-                        sourceText = sourceText,
-                        snackbarHostState = snackbarHostState,
-                        onResetClick = onResetClick,
-                    )
-                }
+    SharedTransitionLayout {
+        NavDisplay(
+            backStack = backStack,
+            modifier = modifier,
+            onBack = { backStack.removeLastOrNull() },
+            entryDecorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator(),
+                ),
+            sceneDecoratorStrategies =
+                listOf(
+                    remember {
+                        TopLevelSceneDecoratorStrategy(this, snackbarHostState, ::goToTopLevel)
+                    }
+                ),
+            entryProvider =
+                entryProvider {
+                    entry<Destination.Main>(metadata = topLevelMetadata(Destination.Main)) {
+                        MainScreen(
+                            sourceText = sourceText,
+                            snackbarHostState = snackbarHostState,
+                            onResetClick = onResetClick,
+                        )
+                    }
 
-                entry<Destination.History>(metadata = topLevelMetadata(Destination.History)) {
-                    HistoryScreen(snackbarHostState = snackbarHostState)
-                }
+                    entry<Destination.History>(metadata = topLevelMetadata(Destination.History)) {
+                        HistoryScreen(snackbarHostState = snackbarHostState)
+                    }
 
-                entry<Destination.Settings>(metadata = topLevelMetadata(Destination.Settings)) {
-                    SettingsScreen(
-                        onNavigateToSettingsSanitizers =
-                            dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
-                        onNavigateToSettingsLicenses =
-                            dropUnlessResumed { backStack.add(Destination.SettingsLicenses) },
-                    )
-                }
+                    entry<Destination.Settings>(metadata = topLevelMetadata(Destination.Settings)) {
+                        SettingsScreen(
+                            onNavigateToSettingsSanitizers =
+                                dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
+                            onNavigateToSettingsLicenses =
+                                dropUnlessResumed { backStack.add(Destination.SettingsLicenses) },
+                        )
+                    }
 
-                entry<Destination.SettingsSanitizers> {
-                    SettingsSanitizersScreen(
-                        onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
-                    )
-                }
+                    entry<Destination.SettingsSanitizers> {
+                        SettingsSanitizersScreen(
+                            onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
+                        )
+                    }
 
-                entry<Destination.SettingsLicenses> {
-                    SettingsLicensesScreen(
-                        onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
-                    )
-                }
-            },
-    )
+                    entry<Destination.SettingsLicenses> {
+                        SettingsLicensesScreen(
+                            onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
+                        )
+                    }
+                },
+        )
+    }
 }
 
 private tailrec fun Context.findWindow(): Window? =
