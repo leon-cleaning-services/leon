@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.view.Window
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -80,62 +79,56 @@ fun MainRouter(
         insetsController.isAppearanceLightStatusBars = !isDarkTheme
     }
 
-    SharedTransitionLayout {
-        NavDisplay(
-            backStack = backStack,
-            modifier = modifier,
-            onBack = { backStack.removeLastOrNull() },
-            // The default predictive back transition scales the outgoing scene down; a fade matches
-            // the other transitions instead.
-            predictivePopTransitionSpec = { ContentTransform(fadeIn(), fadeOut()) },
-            entryDecorators =
-                listOf(
-                    rememberSaveableStateHolderNavEntryDecorator(),
-                    rememberViewModelStoreNavEntryDecorator(),
-                ),
-            sceneDecoratorStrategies =
-                listOf(
-                    remember {
-                        TopLevelSceneDecoratorStrategy(this, snackbarHostState, ::goToTopLevel)
-                    }
-                ),
-            entryProvider =
-                entryProvider {
-                    entry<Destination.Main>(metadata = topLevelMetadata(Destination.Main)) {
-                        MainScreen(
-                            sourceText = sourceText,
-                            snackbarHostState = snackbarHostState,
-                            onResetClick = onResetClick,
-                        )
-                    }
+    NavDisplay(
+        backStack = backStack,
+        modifier = modifier,
+        onBack = { backStack.removeLastOrNull() },
+        // The default predictive back transition scales the outgoing scene down; a fade matches
+        // the other transitions instead.
+        predictivePopTransitionSpec = { ContentTransform(fadeIn(), fadeOut()) },
+        entryDecorators =
+            listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
+        sceneDecoratorStrategies =
+            listOf(remember { TopLevelSceneDecoratorStrategy(snackbarHostState, ::goToTopLevel) }),
+        entryProvider =
+            entryProvider {
+                entry<Destination.Main>(metadata = topLevelMetadata(Destination.Main)) {
+                    MainScreen(
+                        sourceText = sourceText,
+                        snackbarHostState = snackbarHostState,
+                        onResetClick = onResetClick,
+                    )
+                }
 
-                    entry<Destination.History>(metadata = topLevelMetadata(Destination.History)) {
-                        HistoryScreen(snackbarHostState = snackbarHostState)
-                    }
+                entry<Destination.History>(metadata = topLevelMetadata(Destination.History)) {
+                    HistoryScreen(snackbarHostState = snackbarHostState)
+                }
 
-                    entry<Destination.Settings>(metadata = topLevelMetadata(Destination.Settings)) {
-                        SettingsScreen(
-                            onNavigateToSettingsSanitizers =
-                                dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
-                            onNavigateToSettingsLicenses =
-                                dropUnlessResumed { backStack.add(Destination.SettingsLicenses) },
-                        )
-                    }
+                entry<Destination.Settings>(metadata = topLevelMetadata(Destination.Settings)) {
+                    SettingsScreen(
+                        onNavigateToSettingsSanitizers =
+                            dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
+                        onNavigateToSettingsLicenses =
+                            dropUnlessResumed { backStack.add(Destination.SettingsLicenses) },
+                    )
+                }
 
-                    entry<Destination.SettingsSanitizers> {
-                        SettingsSanitizersScreen(
-                            onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
-                        )
-                    }
+                entry<Destination.SettingsSanitizers> {
+                    SettingsSanitizersScreen(
+                        onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
+                    )
+                }
 
-                    entry<Destination.SettingsLicenses> {
-                        SettingsLicensesScreen(
-                            onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
-                        )
-                    }
-                },
-        )
-    }
+                entry<Destination.SettingsLicenses> {
+                    SettingsLicensesScreen(
+                        onBackClick = dropUnlessResumed { backStack.removeLastOrNull() }
+                    )
+                }
+            },
+    )
 }
 
 private tailrec fun Context.findWindow(): Window? =
