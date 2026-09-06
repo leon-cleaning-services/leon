@@ -19,11 +19,16 @@ package com.svenjacobs.app.leon.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.Scene
@@ -86,9 +91,28 @@ private class TopLevelScene(
     override val metadata: Map<String, Any>
         get() = scene.metadata
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override val content: @Composable () -> Unit = {
+        // The current top-level destination of this scene, used only to key the app bar's scroll
+        // state below — detail entries (SettingsSanitizers/SettingsLicenses) shown alongside
+        // Settings in a two-pane scene are not TopLevel, so navigating between them does not reset
+        // the bar; only an actual tab switch does.
+        val current =
+            scene.entries
+                .map { it.contentKey }
+                .filterIsInstance<Destination.TopLevel>()
+                .lastOrNull()
+
+        // ponytail: state is keyed on `current`, so switching tabs resets the bar to fully shown
+        // rather
+        // than restoring that tab's previous offset. Swap in a per-destination map of saved
+        // TopAppBarStates if the reset ever reads as wrong.
+        val topBarState = remember(current) { TopAppBarState(-Float.MAX_VALUE, 0f, 0f) }
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarState)
+
         Scaffold(
-            topBar = { TopAppBar() },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = { TopAppBar(scrollBehavior = scrollBehavior) },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { padding ->
             Box(modifier = Modifier.padding(padding)) {

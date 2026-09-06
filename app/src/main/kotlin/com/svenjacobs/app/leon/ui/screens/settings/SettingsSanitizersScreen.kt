@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,10 +38,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +52,7 @@ import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsSanitizersScreen(
     onBackClick: (() -> Unit)?,
@@ -56,12 +60,17 @@ fun SettingsSanitizersScreen(
     viewModel: SettingsSanitizersScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         // No top bar (and no back arrow) when shown as the detail pane of a two-pane layout; the
         // list pane's own top-level chrome already covers it.
-        topBar = { if (onBackClick != null) TopAppBar(onBackClick = onBackClick) },
+        topBar = {
+            if (onBackClick != null) {
+                TopAppBar(onBackClick = onBackClick, scrollBehavior = scrollBehavior)
+            }
+        },
         // Let the list draw and scroll behind the navigation bar instead of stopping short of it;
         // the navigation bar inset is added back below as the list's own contentPadding.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),

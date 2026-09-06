@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -522,7 +523,12 @@ private fun SwitchRow(
 
 @Composable
 internal fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
-    Card(modifier = modifier.fillMaxWidth()) {
+    // The how-to paragraph is the one piece of running prose in the app, so it is the one place
+    // where a full-width tablet window turns into an uncomfortable line length. It is capped here
+    // rather than around the whole screen on purpose: `SuccessBody` is cards in a two column split
+    // and reads fine at full width, and capping it would starve `ActionsSection`'s Grid of the
+    // width it needs to lay the action buttons out four across.
+    Card(modifier = modifier.fillMaxWidth().widthIn(max = 840.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
             Button(modifier = Modifier.fillMaxWidth(), onClick = onImportFromClipboardClick) {
                 Icon(
