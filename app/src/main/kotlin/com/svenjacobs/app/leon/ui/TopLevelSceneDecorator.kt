@@ -45,10 +45,13 @@ internal fun topLevelMetadata(destination: Destination.TopLevel): Map<String, An
 
 /**
  * Places the top app bar, navigation area (bottom bar on phones, rail on wide windows), snackbar
- * host and background image around every scene whose top entry is a [Destination.TopLevel] — the
- * chrome that used to live in `MainScreen`'s `Scaffold`. Scenes reached from
- * [Destination.SettingsSanitizers] or [Destination.SettingsLicenses] carry no such metadata and are
- * returned untouched, keeping their own `Scaffold` and back-arrow top bar.
+ * host and background image around every scene that contains a [Destination.TopLevel] entry — the
+ * chrome that used to live in `MainScreen`'s `Scaffold`. On phones, a scene reached from
+ * [Destination.SettingsSanitizers] or [Destination.SettingsLicenses] holds only that single entry,
+ * carries no such metadata and is returned untouched, keeping its own `Scaffold` and back-arrow top
+ * bar. On wide windows the list-detail scene holds both the [Destination.Settings] list entry and
+ * the detail entry side by side, so entries are scanned rather than only the last one — otherwise
+ * the chrome would vanish whenever a detail pane is open.
  */
 internal class TopLevelSceneDecoratorStrategy(
     private val snackbarHostState: SnackbarHostState,
@@ -58,9 +61,12 @@ internal class TopLevelSceneDecoratorStrategy(
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(
         scene: Scene<NavKey>
     ): Scene<NavKey> {
+        // In a two-pane list-detail scene the LAST entry is the detail pane, which carries no
+        // top-level metadata — scan all entries so the rail still knows which item is selected.
         val current =
-            scene.entries.lastOrNull()?.metadata?.get(TOP_LEVEL_METADATA_KEY)
-                as? Destination.TopLevel ?: return scene
+            scene.entries.firstNotNullOfOrNull {
+                it.metadata[TOP_LEVEL_METADATA_KEY] as? Destination.TopLevel
+            } ?: return scene
         return TopLevelScene(scene, current, snackbarHostState, onTopLevelClick)
     }
 }
@@ -72,7 +78,13 @@ private class TopLevelScene(
     onTopLevelClick: (Destination.TopLevel) -> Unit,
 ) : Scene<NavKey> {
 
-    override val key: Any = TopLevelScene::class to scene.key
+    // ListDetailSceneStrategy's own scene key is constant (Unit) across every list/detail
+    // combination unless a caller passes a distinct `sceneKey`, which we don't — so basing this
+    // key on `scene.key` alone would make every two-pane Settings scene compare equal to every
+    // other one, and whatever machinery in NavDisplay decides to skip recomposition when a scene
+    // key repeats would then never notice the detail pane changing. Keying off the actual set of
+    // entries keeps identity stable when nothing changed while still reflecting real navigation.
+    override val key: Any = TopLevelScene::class to scene.entries.map { it.contentKey }
     override val entries: List<NavEntry<NavKey>>
         get() = scene.entries
 

@@ -37,6 +37,7 @@
     <string name="sanitizers_search_placeholder">Search sanitizers</string>
     <string name="sanitizers_search_clear">Clear search</string>
     <string name="sanitizers_no_results">No sanitizers found</string>
+    <string name="settings_detail_placeholder">Select a settings section</string>
     <string name="decode_url">Decode URL</string>
     <string name="import_from_clipboard">Import from clipboard</string>
     <string name="reset">Reset</string>

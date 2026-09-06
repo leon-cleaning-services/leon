@@ -49,7 +49,7 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun SettingsSanitizersScreen(
-    onBackClick: () -> Unit,
+    onBackClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
     viewModel: SettingsSanitizersScreenViewModel = metroViewModel(),
 ) {
@@ -57,7 +57,9 @@ fun SettingsSanitizersScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = { TopAppBar(onBackClick = onBackClick) },
+        // No top bar (and no back arrow) when shown as the detail pane of a two-pane layout; the
+        // list pane's own top-level chrome already covers it.
+        topBar = { if (onBackClick != null) TopAppBar(onBackClick = onBackClick) },
         // Let the list draw and scroll behind the navigation bar instead of stopping short of it;
         // the navigation bar inset is added back below as the list's own contentPadding.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
