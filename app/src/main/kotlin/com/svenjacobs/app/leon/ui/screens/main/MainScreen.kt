@@ -23,6 +23,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -368,6 +370,7 @@ private fun UrlDisplaySection(
     }
 }
 
+@OptIn(ExperimentalGridApi::class)
 @Composable
 private fun ActionsSection(
     result: Result.Success,
@@ -384,11 +387,23 @@ private fun ActionsSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        Row(
+        Grid(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            config = {
+                // ActionsSection sits inside SuccessBody's own even split on wide windows (see
+                // above), so its local width is roughly half the window's — not the window's own
+                // breakpoint. 500.dp keeps a comfortable margin above what a phone or the folded
+                // two-pane layout ever measures locally (~355-395dp) and below what a genuinely
+                // wide window's half-share measures (~568dp+ on a 1280dp-wide tablet).
+                val columns = if (constraints.maxWidth.toDp() < 500.dp) 2 else 4
+                repeat(columns) { column(1f / columns) }
+                gap(8.dp)
+            },
         ) {
-            FilledTonalButton(modifier = Modifier.weight(1f), onClick = { onShareClick(result) }) {
+            FilledTonalButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onShareClick(result) },
+            ) {
                 Icon(
                     imageVector = Icons.Default.Share,
                     contentDescription = null,
@@ -402,7 +417,7 @@ private fun ActionsSection(
             }
 
             FilledTonalButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = { onCopyToClipboardClick(result.cleanedText) },
             ) {
                 Icon(
@@ -416,14 +431,9 @@ private fun ActionsSection(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
             OutlinedButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = { onOpenClick(result) },
                 enabled = !isDefaultBrowser(LocalContext.current),
             ) {
@@ -439,7 +449,7 @@ private fun ActionsSection(
                 )
             }
 
-            OutlinedButton(modifier = Modifier.weight(1f), onClick = onResetClick) {
+            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onResetClick) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = null,
