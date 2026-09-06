@@ -396,7 +396,12 @@ private fun ActionsSection(
                 // breakpoint. 500.dp keeps a comfortable margin above what a phone or the folded
                 // two-pane layout ever measures locally (~355-395dp) and below what a genuinely
                 // wide window's half-share measures (~568dp+ on a 1280dp-wide tablet).
-                val columns = if (constraints.maxWidth.toDp() < 500.dp) 2 else 4
+                // `hasBoundedWidth` guards the `toDp()`: a transient unbounded measure would
+                // otherwise compare against Constraints.Infinity, pick four columns and then size
+                // each one to a quarter of infinity.
+                val columns =
+                    if (constraints.hasBoundedWidth && constraints.maxWidth.toDp() >= 500.dp) 4
+                    else 2
                 repeat(columns) { column(1f / columns) }
                 gap(8.dp)
             },
@@ -528,7 +533,10 @@ internal fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick
     // rather than around the whole screen on purpose: `SuccessBody` is cards in a two column split
     // and reads fine at full width, and capping it would starve `ActionsSection`'s Grid of the
     // width it needs to lay the action buttons out four across.
-    Card(modifier = modifier.fillMaxWidth().widthIn(max = 840.dp)) {
+    // `widthIn` must come before `fillMaxWidth`: the other way round, `fillMaxWidth` fixes the
+    // width to the parent's before `widthIn` is reached, and a max below that fixed width cannot
+    // be applied any more — the cap silently does nothing.
+    Card(modifier = modifier.widthIn(max = 840.dp).fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Button(modifier = Modifier.fillMaxWidth(), onClick = onImportFromClipboardClick) {
                 Icon(
