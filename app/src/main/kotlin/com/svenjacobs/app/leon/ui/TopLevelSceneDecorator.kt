@@ -29,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneDecoratorStrategy
@@ -70,26 +69,25 @@ internal class TopLevelSceneDecoratorStrategy(private val snackbarHostState: Sna
     }
 }
 
-private class TopLevelScene(
+/**
+ * Follows the structure of AndroidX's own `navscenedecorator` recipe: delegate every [Scene] member
+ * to the wrapped scene, be a `data class`, and take the key straight from that scene.
+ *
+ * Both halves matter, and getting either wrong is visible on screen:
+ * * The **key** must stay stable while only the panes change. [ListDetailSceneStrategy] gives every
+ *   list/detail combination the same `sceneKey` on purpose — the pane swap is meant to animate
+ *   inside the scaffold, not as a scene change — so deriving a key from the entries here made
+ *   `NavDisplay` run a whole scene transition and the settings list pane flickered on every tap.
+ * * **Equality** must include the wrapped scene, which the generated `data class` equals does. A
+ *   hand-written equals comparing only the key made two structurally different scenes compare
+ *   equal, so the stale wrapper was kept and the detail pane never appeared at all.
+ */
+private data class TopLevelScene(
     private val scene: Scene<NavKey>,
-    snackbarHostState: SnackbarHostState,
-) : Scene<NavKey> {
+    private val snackbarHostState: SnackbarHostState,
+) : Scene<NavKey> by scene {
 
-    // ListDetailSceneStrategy's own scene key is constant (Unit) across every list/detail
-    // combination unless a caller passes a distinct `sceneKey`, which we don't — so basing this
-    // key on `scene.key` alone would make every two-pane Settings scene compare equal to every
-    // other one, and whatever machinery in NavDisplay decides to skip recomposition when a scene
-    // key repeats would then never notice the detail pane changing. Keying off the actual set of
-    // entries keeps identity stable when nothing changed while still reflecting real navigation.
-    override val key: Any = TopLevelScene::class to scene.entries.map { it.contentKey }
-    override val entries: List<NavEntry<NavKey>>
-        get() = scene.entries
-
-    override val previousEntries: List<NavEntry<NavKey>>
-        get() = scene.previousEntries
-
-    override val metadata: Map<String, Any>
-        get() = scene.metadata
+    override val key: Any = TopLevelScene::class to scene.key
 
     @OptIn(ExperimentalMaterial3Api::class)
     override val content: @Composable () -> Unit = {
@@ -121,8 +119,4 @@ private class TopLevelScene(
             }
         }
     }
-
-    override fun equals(other: Any?): Boolean = other is TopLevelScene && key == other.key
-
-    override fun hashCode(): Int = key.hashCode()
 }
