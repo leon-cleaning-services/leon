@@ -72,7 +72,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
@@ -86,6 +85,7 @@ import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.screens.main.views.ChangesCard
 import com.svenjacobs.app.leon.ui.theme.AppTheme
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -96,7 +96,7 @@ fun MainScreen(
     snackbarHostState: SnackbarHostState,
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MainScreenViewModel = viewModel(),
+    viewModel: MainScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

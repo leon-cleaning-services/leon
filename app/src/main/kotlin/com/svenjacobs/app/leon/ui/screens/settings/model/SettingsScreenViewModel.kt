@@ -26,10 +26,11 @@ import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
-import com.svenjacobs.app.leon.inject.AppContainer.AppContext
-import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
-import com.svenjacobs.app.leon.inject.AppContainer.HistoryDao
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -38,10 +39,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
+@Inject
+@ViewModelKey
+@ContributesIntoMap(AppScope::class)
 class SettingsScreenViewModel(
-    private val context: Context = AppContext,
-    private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
-    private val historyDao: HistoryDao = HistoryDao,
+    private val context: Context,
+    private val appDataStoreManager: AppDataStoreManager,
+    private val historyDao: HistoryDao,
 ) : ViewModel() {
 
     data class UiState(

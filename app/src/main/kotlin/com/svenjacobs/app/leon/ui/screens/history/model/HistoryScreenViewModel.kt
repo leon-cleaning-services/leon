@@ -22,8 +22,10 @@ import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.db.HistoryEntry
-import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
-import com.svenjacobs.app.leon.inject.AppContainer.HistoryDao
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -33,9 +35,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Inject
+@ViewModelKey
+@ContributesIntoMap(AppScope::class)
 class HistoryScreenViewModel(
-    private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
-    private val historyDao: HistoryDao = HistoryDao,
+    private val appDataStoreManager: AppDataStoreManager,
+    private val historyDao: HistoryDao,
 ) : ViewModel() {
 
     data class UiState(

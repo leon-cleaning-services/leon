@@ -26,13 +26,17 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
-import com.svenjacobs.app.leon.inject.AppContainer.AppContext
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /** Manages app specific preferences stored via [DataStore]. */
-class AppDataStoreManager(private val context: Context = AppContext) {
+@Inject
+@SingleIn(AppScope::class)
+class AppDataStoreManager(private val context: Context) {
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
     suspend fun setVersionCode(versionCode: Int) {

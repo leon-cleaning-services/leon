@@ -21,14 +21,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.SanitizerRepository
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.Sanitizers
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
-import com.svenjacobs.app.leon.inject.AppContainer.AppContext
 import com.svenjacobs.app.leon.sanitizer.displayName
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel.UiState.Sanitizer
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -40,10 +41,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
+@Inject
+@ViewModelKey
+@ContributesIntoMap(AppScope::class)
 class SettingsSanitizersScreenViewModel(
-    private val context: Context = AppContext,
-    private val sanitizers: SanitizersCollection = Sanitizers,
-    private val repository: SanitizerRepository = SanitizerRepository,
+    private val context: Context,
+    private val sanitizers: SanitizersCollection,
+    private val repository: SanitizerRepository,
 ) : ViewModel() {
 
     data class UiState(

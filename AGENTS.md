@@ -10,17 +10,18 @@ sharing mechanism and is also meant as a blueprint for modern Android developmen
 
 ```
 leon/
-├── app/                  # Android application module (UI, DI bootstrap)
+├── app/                  # Android application module (UI, Metro dependency graph)
 └── core-domain/          # URL model, sanitizer catalog, Cleaner
 ```
 
-- **`app`** – Activities, Jetpack Compose screens, ViewModels, DataStore managers, and
-  `ContainerInitializer` (plugs the app's `SanitizerRepository` into `DomainContainer`).
+- **`app`** – Activities, Jetpack Compose screens, ViewModels, DataStore managers, and `AppGraph`,
+  the Metro dependency graph that binds the app's `SanitizerRepository` implementation into
+  `core-domain`.
 - **`core-domain`** – Everything about cleaning a URL: the `Url` model, `Match`, `Rule`, `Change`,
   `Cleaner`, and the sanitizer catalog under
   `com.svenjacobs.app.leon.core.domain.sanitizer.catalog/`.
 
-`core-domain` contains **no Android and no `java.*` API** and depends on no service locator, so it
+`core-domain` contains **no Android and no `java.*` API** and uses no DI framework at all, so it
 can be lifted out into a standalone Kotlin library — for a command line cleaner, for example. Keep
 it that way; this check must stay empty:
 

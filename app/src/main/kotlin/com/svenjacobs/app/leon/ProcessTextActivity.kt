@@ -22,8 +22,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
-import com.svenjacobs.app.leon.core.domain.Cleaner
-import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 
@@ -75,8 +73,8 @@ class ProcessTextActivity : ComponentActivity() {
     private fun result(text: String, key: String) {
         // Needs to run with runBlocking or else setResult() won't work
         runBlocking {
-            val decodeUrl = AppDataStoreManager.urlDecodeEnabled.firstOrNull() ?: false
-            val result = Cleaner().clean(text = text, decodeUrl = decodeUrl)
+            val decodeUrl = appGraph.appDataStoreManager.urlDecodeEnabled.firstOrNull() ?: false
+            val result = appGraph.cleaner.clean(text = text, decodeUrl = decodeUrl)
 
             setResult(RESULT_OK, Intent().apply { putExtra(key, result.cleanedText) })
         }

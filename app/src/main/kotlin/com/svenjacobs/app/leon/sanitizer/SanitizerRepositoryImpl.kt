@@ -17,22 +17,27 @@
  */
 package com.svenjacobs.app.leon.sanitizer
 
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.Sanitizers
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository.SanitizerState
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
 import com.svenjacobs.app.leon.datastore.SanitizerDataStoreManager
-import com.svenjacobs.app.leon.inject.AppContainer.SanitizerDataStoreManager
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+@Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class SanitizerRepositoryImpl(
-    private val dataStoreManager: SanitizerDataStoreManager = SanitizerDataStoreManager,
-    private val sanitizers: SanitizersCollection = Sanitizers,
+    private val dataStoreManager: SanitizerDataStoreManager,
+    private val sanitizers: SanitizersCollection,
 ) : SanitizerRepository {
 
     override val state: Flow<ImmutableList<SanitizerState>>
