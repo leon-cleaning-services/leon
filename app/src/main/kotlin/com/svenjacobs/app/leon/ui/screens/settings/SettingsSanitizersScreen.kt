@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
@@ -98,18 +100,18 @@ fun SettingsSanitizersScreen(
                 )
             } else {
                 Card {
-                    LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
-                        //noinspection NewApi
-                        uiState.sanitizers.forEach { sanitizer ->
-                            item(key = sanitizer.id.value) {
-                                Item(
-                                    name = sanitizer.name,
-                                    isEnabled = sanitizer.enabled,
-                                    onCheckedChange = { enabled ->
-                                        viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
-                                    },
-                                )
-                            }
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(280.dp),
+                        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+                    ) {
+                        items(uiState.sanitizers, key = { it.id.value }) { sanitizer ->
+                            Item(
+                                name = sanitizer.name,
+                                isEnabled = sanitizer.enabled,
+                                onCheckedChange = { enabled ->
+                                    viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
+                                },
+                            )
                         }
                     }
                 }

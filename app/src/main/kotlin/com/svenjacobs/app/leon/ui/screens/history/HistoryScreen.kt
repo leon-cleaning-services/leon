@@ -19,14 +19,16 @@ package com.svenjacobs.app.leon.ui.screens.history
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
@@ -166,7 +168,12 @@ internal fun Content(
 
             else ->
                 Column(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    LazyVerticalGrid(
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        columns = GridCells.Adaptive(320.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         items(entries, key = { it.id }) { entry ->
                             HistoryRow(
                                 entry = entry,
@@ -186,7 +193,7 @@ internal fun Content(
                                         }
                                     }
                                 },
-                                modifier = Modifier.padding(bottom = 8.dp).animateItem(),
+                                modifier = Modifier.animateItem(),
                             )
                         }
                     }
