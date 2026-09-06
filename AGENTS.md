@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Léon – The URL Cleaner** is an Android application (minSdk 23, Kotlin) that removes tracking
+**Léon – The URL Cleaner** is an Android application (minSdk 24, Kotlin) that removes tracking
 and other unwanted parameters from URLs before sharing. It integrates into Android's standard
 sharing mechanism and is also meant as a blueprint for modern Android development.
 
