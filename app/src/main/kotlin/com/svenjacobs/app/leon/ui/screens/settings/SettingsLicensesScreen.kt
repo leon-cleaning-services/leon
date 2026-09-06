@@ -43,7 +43,14 @@ fun SettingsLicensesScreen(modifier: Modifier = Modifier, onBackClick: (() -> Un
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
+        // Only attach the nested scroll connection while a top app bar is actually composed — see
+        // SettingsSanitizersScreen for what goes wrong otherwise.
+        modifier =
+            if (onBackClick != null) {
+                modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)
+            } else {
+                modifier.fillMaxSize()
+            },
         // No top bar (and no back arrow) when shown as the detail pane of a two-pane layout; the
         // list pane's own top-level chrome already covers it.
         topBar = {

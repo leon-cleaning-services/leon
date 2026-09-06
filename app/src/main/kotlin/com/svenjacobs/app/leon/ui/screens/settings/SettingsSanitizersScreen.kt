@@ -63,7 +63,17 @@ fun SettingsSanitizersScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        // The nested scroll connection may only be attached while a top app bar is actually
+        // composed. `enterAlwaysScrollBehavior` consumes scroll into the bar's height offset, and
+        // the limit on that offset is set by the bar itself as it lays out. With no bar there is no
+        // limit, so the connection swallows every scroll delta for ever and the list below it never
+        // scrolls at all — which is exactly what happened in the two-pane layout.
+        modifier =
+            if (onBackClick != null) {
+                modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            } else {
+                modifier
+            },
         // No top bar (and no back arrow) when shown as the detail pane of a two-pane layout; the
         // list pane's own top-level chrome already covers it.
         topBar = {
