@@ -24,10 +24,13 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,10 +38,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,17 +52,35 @@ import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsSanitizersScreen(
-    onBackClick: () -> Unit,
+    onBackClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
     viewModel: SettingsSanitizersScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier,
-        topBar = { TopAppBar(onBackClick = onBackClick) },
+        // The nested scroll connection may only be attached while a top app bar is actually
+        // composed. `enterAlwaysScrollBehavior` consumes scroll into the bar's height offset, and
+        // the limit on that offset is set by the bar itself as it lays out. With no bar there is no
+        // limit, so the connection swallows every scroll delta for ever and the list below it never
+        // scrolls at all — which is exactly what happened in the two-pane layout.
+        modifier =
+            if (onBackClick != null) {
+                modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            } else {
+                modifier
+            },
+        // No top bar (and no back arrow) when shown as the detail pane of a two-pane layout; the
+        // list pane's own top-level chrome already covers it.
+        topBar = {
+            if (onBackClick != null) {
+                TopAppBar(onBackClick = onBackClick, scrollBehavior = scrollBehavior)
+            }
+        },
         // Let the list draw and scroll behind the navigation bar instead of stopping short of it;
         // the navigation bar inset is added back below as the list's own contentPadding.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -96,18 +119,18 @@ fun SettingsSanitizersScreen(
                 )
             } else {
                 Card {
-                    LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
-                        //noinspection NewApi
-                        uiState.sanitizers.forEach { sanitizer ->
-                            item(key = sanitizer.id.value) {
-                                Item(
-                                    name = sanitizer.name,
-                                    isEnabled = sanitizer.enabled,
-                                    onCheckedChange = { enabled ->
-                                        viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
-                                    },
-                                )
-                            }
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(280.dp),
+                        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+                    ) {
+                        items(uiState.sanitizers, key = { it.id.value }) { sanitizer ->
+                            Item(
+                                name = sanitizer.name,
+                                isEnabled = sanitizer.enabled,
+                                onCheckedChange = { enabled ->
+                                    viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
+                                },
+                            )
                         }
                     }
                 }

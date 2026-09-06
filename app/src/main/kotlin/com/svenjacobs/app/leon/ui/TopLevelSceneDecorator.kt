@@ -17,94 +17,100 @@
  */
 package com.svenjacobs.app.leon.ui
 
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavEntry
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneDecoratorStrategyScope
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import com.svenjacobs.app.leon.ui.common.views.BottomBar
 import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.screens.main.views.BackgroundImage
 
 internal const val TOP_LEVEL_METADATA_KEY = "com.svenjacobs.app.leon.topLevel"
-private const val BOTTOM_BAR_SHARED_KEY = "com.svenjacobs.app.leon.bottomNavigationBar"
 
 internal fun topLevelMetadata(destination: Destination.TopLevel): Map<String, Any> =
     mapOf(TOP_LEVEL_METADATA_KEY to destination)
 
 /**
- * Places the top app bar, bottom navigation bar, snackbar host and background image around every
- * scene whose top entry is a [Destination.TopLevel] — the chrome that used to live in
- * `MainScreen`'s `Scaffold`. Scenes reached from [Destination.SettingsSanitizers] or
- * [Destination.SettingsLicenses] carry no such metadata and are returned untouched, keeping their
- * own `Scaffold` and back-arrow top bar.
+ * Places the top app bar, snackbar host and background image around every scene that contains a
+ * [Destination.TopLevel] entry — the chrome that used to live in `MainScreen`'s `Scaffold`. On
+ * phones, a scene reached from [Destination.SettingsSanitizers] or [Destination.SettingsLicenses]
+ * holds only that single entry, carries no such metadata and is returned untouched, keeping its own
+ * `Scaffold` and back-arrow top bar. On wide windows the list-detail scene holds both the
+ * [Destination.Settings] list entry and the detail entry side by side, so entries are scanned
+ * rather than only the last one — otherwise the chrome would vanish whenever a detail pane is open.
+ *
+ * The navigation area itself (bottom bar / rail) is hoisted into `MainRouter`'s
+ * `NavigationSuiteScaffold`, wrapping `NavDisplay` — composed once, outside every scene's animated
+ * content, so switching tabs can no longer make it flicker.
  */
-internal class TopLevelSceneDecoratorStrategy(
-    private val sharedTransitionScope: SharedTransitionScope,
-    private val snackbarHostState: SnackbarHostState,
-    private val onTopLevelClick: (Destination.TopLevel) -> Unit,
-) : SceneDecoratorStrategy<NavKey> {
+internal class TopLevelSceneDecoratorStrategy(private val snackbarHostState: SnackbarHostState) :
+    SceneDecoratorStrategy<NavKey> {
 
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(
         scene: Scene<NavKey>
     ): Scene<NavKey> {
-        val current =
-            scene.entries.lastOrNull()?.metadata?.get(TOP_LEVEL_METADATA_KEY)
-                as? Destination.TopLevel ?: return scene
-        return TopLevelScene(
-            scene,
-            current,
-            sharedTransitionScope,
-            snackbarHostState,
-            onTopLevelClick,
-        )
+        // In a two-pane list-detail scene the LAST entry is the detail pane, which carries no
+        // top-level metadata — scan all entries to know whether this scene belongs to a top-level
+        // destination at all.
+        val isTopLevelScene = scene.entries.any { TOP_LEVEL_METADATA_KEY in it.metadata }
+        if (!isTopLevelScene) return scene
+        return TopLevelScene(scene, snackbarHostState)
     }
 }
 
-private class TopLevelScene(
+/**
+ * Follows the structure of AndroidX's own `navscenedecorator` recipe: delegate every [Scene] member
+ * to the wrapped scene, be a `data class`, and take the key straight from that scene.
+ *
+ * Both halves matter, and getting either wrong is visible on screen:
+ * * The **key** must stay stable while only the panes change. [ListDetailSceneStrategy] gives every
+ *   list/detail combination the same `sceneKey` on purpose — the pane swap is meant to animate
+ *   inside the scaffold, not as a scene change — so deriving a key from the entries here made
+ *   `NavDisplay` run a whole scene transition and the settings list pane flickered on every tap.
+ * * **Equality** must include the wrapped scene, which the generated `data class` equals does. A
+ *   hand-written equals comparing only the key made two structurally different scenes compare
+ *   equal, so the stale wrapper was kept and the detail pane never appeared at all.
+ */
+private data class TopLevelScene(
     private val scene: Scene<NavKey>,
-    current: Destination.TopLevel,
-    sharedTransitionScope: SharedTransitionScope,
-    snackbarHostState: SnackbarHostState,
-    onTopLevelClick: (Destination.TopLevel) -> Unit,
-) : Scene<NavKey> {
+    private val snackbarHostState: SnackbarHostState,
+) : Scene<NavKey> by scene {
 
     override val key: Any = TopLevelScene::class to scene.key
-    override val entries: List<NavEntry<NavKey>>
-        get() = scene.entries
 
-    override val previousEntries: List<NavEntry<NavKey>>
-        get() = scene.previousEntries
-
-    override val metadata: Map<String, Any>
-        get() = scene.metadata
-
+    @OptIn(ExperimentalMaterial3Api::class)
     override val content: @Composable () -> Unit = {
+        // The current top-level destination of this scene, used only to key the app bar's scroll
+        // state below — detail entries (SettingsSanitizers/SettingsLicenses) shown alongside
+        // Settings in a two-pane scene are not TopLevel, so navigating between them does not reset
+        // the bar; only an actual tab switch does.
+        val current =
+            scene.entries
+                .map { it.contentKey }
+                .filterIsInstance<Destination.TopLevel>()
+                .lastOrNull()
+
+        // ponytail: state is keyed on `current`, so switching tabs resets the bar to fully shown
+        // rather
+        // than restoring that tab's previous offset. Swap in a per-destination map of saved
+        // TopAppBarStates if the reset ever reads as wrong.
+        val topBarState = remember(current) { TopAppBarState(-Float.MAX_VALUE, 0f, 0f) }
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topBarState)
+
         Scaffold(
-            topBar = { TopAppBar() },
-            bottomBar = {
-                with(sharedTransitionScope) {
-                    BottomBar(
-                        current = current,
-                        onClick = onTopLevelClick,
-                        modifier =
-                            Modifier.sharedElement(
-                                sharedContentState =
-                                    rememberSharedContentState(BOTTOM_BAR_SHARED_KEY),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            ),
-                    )
-                }
-            },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = { TopAppBar(scrollBehavior = scrollBehavior) },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { padding ->
             Box(modifier = Modifier.padding(padding)) {
@@ -113,8 +119,4 @@ private class TopLevelScene(
             }
         }
     }
-
-    override fun equals(other: Any?): Boolean = other is TopLevelScene && key == other.key
-
-    override fun hashCode(): Int = key.hashCode()
 }

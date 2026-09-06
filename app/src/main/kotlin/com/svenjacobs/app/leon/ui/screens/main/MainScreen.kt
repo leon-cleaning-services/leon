@@ -23,12 +23,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -53,7 +56,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -242,7 +245,7 @@ private fun Content(
 }
 
 @Composable
-private fun SuccessBody(
+internal fun SuccessBody(
     result: Result.Success,
     isUrlDecodeEnabled: Boolean,
     isExtractUrlEnabled: Boolean,
@@ -255,7 +258,7 @@ private fun SuccessBody(
     onChangeToggled: (ChangeRow, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     var optionsExpanded by remember { mutableStateOf(false) }
 
     if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
@@ -368,6 +371,7 @@ private fun UrlDisplaySection(
     }
 }
 
+@OptIn(ExperimentalGridApi::class)
 @Composable
 private fun ActionsSection(
     result: Result.Success,
@@ -384,11 +388,28 @@ private fun ActionsSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        Row(
+        Grid(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            config = {
+                // ActionsSection sits inside SuccessBody's own even split on wide windows (see
+                // above), so its local width is roughly half the window's — not the window's own
+                // breakpoint. 500.dp keeps a comfortable margin above what a phone or the folded
+                // two-pane layout ever measures locally (~355-395dp) and below what a genuinely
+                // wide window's half-share measures (~568dp+ on a 1280dp-wide tablet).
+                // `hasBoundedWidth` guards the `toDp()`: a transient unbounded measure would
+                // otherwise compare against Constraints.Infinity, pick four columns and then size
+                // each one to a quarter of infinity.
+                val columns =
+                    if (constraints.hasBoundedWidth && constraints.maxWidth.toDp() >= 500.dp) 4
+                    else 2
+                repeat(columns) { column(1f / columns) }
+                gap(8.dp)
+            },
         ) {
-            FilledTonalButton(modifier = Modifier.weight(1f), onClick = { onShareClick(result) }) {
+            FilledTonalButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onShareClick(result) },
+            ) {
                 Icon(
                     imageVector = Icons.Default.Share,
                     contentDescription = null,
@@ -402,7 +423,7 @@ private fun ActionsSection(
             }
 
             FilledTonalButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = { onCopyToClipboardClick(result.cleanedText) },
             ) {
                 Icon(
@@ -416,14 +437,9 @@ private fun ActionsSection(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
             OutlinedButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = { onOpenClick(result) },
                 enabled = !isDefaultBrowser(LocalContext.current),
             ) {
@@ -439,7 +455,7 @@ private fun ActionsSection(
                 )
             }
 
-            OutlinedButton(modifier = Modifier.weight(1f), onClick = onResetClick) {
+            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onResetClick) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = null,
@@ -511,8 +527,16 @@ private fun SwitchRow(
 }
 
 @Composable
-private fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
-    Card(modifier = modifier.fillMaxWidth()) {
+internal fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
+    // The how-to paragraph is the one piece of running prose in the app, so it is the one place
+    // where a full-width tablet window turns into an uncomfortable line length. It is capped here
+    // rather than around the whole screen on purpose: `SuccessBody` is cards in a two column split
+    // and reads fine at full width, and capping it would starve `ActionsSection`'s Grid of the
+    // width it needs to lay the action buttons out four across.
+    // `widthIn` must come before `fillMaxWidth`: the other way round, `fillMaxWidth` fixes the
+    // width to the parent's before `widthIn` is reached, and a max below that fixed width cannot
+    // be applied any more — the cap silently does nothing.
+    Card(modifier = modifier.widthIn(max = 840.dp).fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Button(modifier = Modifier.fillMaxWidth(), onClick = onImportFromClipboardClick) {
                 Icon(

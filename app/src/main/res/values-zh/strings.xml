@@ -37,6 +37,7 @@
     <string name="sanitizers_search_placeholder">搜索清理规则</string>
     <string name="sanitizers_search_clear">清空搜索</string>
     <string name="sanitizers_no_results">未找到相关清理规则</string>
+    <string name="settings_detail_placeholder">选择一个设置项</string>
     <string name="decode_url">解码链接</string>
     <string name="import_from_clipboard">从剪贴板导入</string>
     <string name="reset">重置</string>

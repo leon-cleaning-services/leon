@@ -84,7 +84,7 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun Content(
+internal fun Content(
     isLoading: Boolean,
     browserEnabled: Boolean,
     customTabsEnabled: Boolean,

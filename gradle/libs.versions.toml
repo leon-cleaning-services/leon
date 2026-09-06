@@ -1,4 +1,5 @@
 [versions]
+android-compose-screenshot = "0.0.1-alpha15"
 android-gradle-plugin = "9.4.0"
 androidx-activity = "1.13.0"
 androidx-compose-bom = "2026.08.00" # https://developer.android.com/jetpack/compose/bom/bom-mapping
@@ -14,6 +15,7 @@ mikepenz-aboutlibraries = "15.2.0"
 
 [libraries]
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
+android-tools-screenshot-validation-api = { module = "com.android.tools.screenshot:screenshot-validation-api", version.ref = "android-compose-screenshot" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appcompat = "androidx.appcompat:appcompat:1.8.0"
 androidx-browser = "androidx.browser:browser:1.10.0"
@@ -22,6 +24,8 @@ androidx-compose-material-icons-core = { module = "androidx.compose.material:mat
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
+androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
+androidx-compose-material3-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3" }
 androidx-compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
@@ -69,6 +73,7 @@ androidx-compose = [
 
 [plugins]
 adarshr-test-logger = "com.adarshr.test-logger:4.0.0"
+android-compose-screenshot = { id = "com.android.compose.screenshot", version.ref = "android-compose-screenshot" }
 ben-manes-versions = "com.github.ben-manes.versions:0.61.0"
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "mikepenz-aboutlibraries" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

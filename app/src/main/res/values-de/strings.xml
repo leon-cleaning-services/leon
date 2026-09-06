@@ -36,6 +36,7 @@
     <string name="sanitizers_search_placeholder">Reiniger suchen</string>
     <string name="sanitizers_search_clear">Suche löschen</string>
     <string name="sanitizers_no_results">Keine Reiniger gefunden</string>
+    <string name="settings_detail_placeholder">Wähle einen Einstellungsbereich</string>
     <string name="decode_url">URL dekodieren</string>
     <string name="import_from_clipboard">Aus Zwischenablage importieren</string>
     <string name="reset">Zurücksetzen</string>
