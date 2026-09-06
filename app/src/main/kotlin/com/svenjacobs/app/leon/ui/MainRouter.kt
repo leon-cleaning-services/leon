@@ -21,7 +21,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.view.Window
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -82,6 +85,9 @@ fun MainRouter(
             backStack = backStack,
             modifier = modifier,
             onBack = { backStack.removeLastOrNull() },
+            // The default predictive back transition scales the outgoing scene down; a fade matches
+            // the other transitions instead.
+            predictivePopTransitionSpec = { ContentTransform(fadeIn(), fadeOut()) },
             entryDecorators =
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator(),
