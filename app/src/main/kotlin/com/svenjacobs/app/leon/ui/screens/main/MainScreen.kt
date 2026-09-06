@@ -242,7 +242,7 @@ private fun Content(
 }
 
 @Composable
-private fun SuccessBody(
+internal fun SuccessBody(
     result: Result.Success,
     isUrlDecodeEnabled: Boolean,
     isExtractUrlEnabled: Boolean,
@@ -511,7 +511,7 @@ private fun SwitchRow(
 }
 
 @Composable
-private fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
+internal fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Button(modifier = Modifier.fillMaxWidth(), onClick = onImportFromClipboardClick) {

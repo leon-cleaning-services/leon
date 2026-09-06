@@ -26,6 +26,7 @@ plugins {
     kotlin("plugin.parcelize")
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.android.compose.screenshot)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.metro)
@@ -96,6 +97,8 @@ android {
         buildConfig = true
     }
 
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
@@ -138,6 +141,8 @@ dependencies {
     implementation(libs.bundles.androidx.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.compose.material3.adaptive.navigation3)
     implementation(libs.androidx.compose.material3.window.size)
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.compose.material.icons.extended)
@@ -162,6 +167,9 @@ dependencies {
     ksp(libs.androidx.room3.compiler)
 
     debugImplementation(libs.facebook.stetho)
+
+    screenshotTestImplementation(libs.android.tools.screenshot.validation.api)
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 
     androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.test.ext.junit)

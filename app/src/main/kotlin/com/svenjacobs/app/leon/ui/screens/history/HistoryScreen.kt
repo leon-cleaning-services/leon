@@ -101,7 +101,7 @@ fun HistoryScreen(
 }
 
 @Composable
-private fun Content(
+internal fun Content(
     isEnabled: Boolean,
     isCustomTabsEnabled: Boolean,
     entries: ImmutableList<HistoryEntry>,
