@@ -20,7 +20,7 @@ package com.svenjacobs.app.leon.startup
 import android.content.Context
 import androidx.startup.Initializer
 import com.svenjacobs.app.leon.BuildConfig
-import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
+import com.svenjacobs.app.leon.appGraph
 import kotlinx.coroutines.runBlocking
 
 /** Performs (initial) initialization of app. */
@@ -32,9 +32,10 @@ class AppInitializer : Initializer<Unit> {
 
         stethoHelper.initialize(context)
 
-        runBlocking { AppDataStoreManager.setVersionCode(BuildConfig.VERSION_CODE) }
+        runBlocking {
+            context.appGraph.appDataStoreManager.setVersionCode(BuildConfig.VERSION_CODE)
+        }
     }
 
-    override fun dependencies() =
-        listOf(ContainerInitializer::class.java, TimberInitializer::class.java)
+    override fun dependencies() = listOf(TimberInitializer::class.java)
 }

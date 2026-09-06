@@ -66,7 +66,7 @@ recommended and cutting-edge technologies, patterns and libraries such as:
 - Jetpack [Compose](https://developer.android.com/jetpack/compose)
 - Jetpack [Navigation 3](https://developer.android.com/guide/navigation/navigation-3)
 - [Material Design 3](https://m3.material.io/)
-- Dependency Injection pattern with custom implementation
+- Dependency Injection with [Metro](https://zacsweers.github.io/metro/)
 - several other Jetpack & AndroidX libraries
 
 ## Alternatives

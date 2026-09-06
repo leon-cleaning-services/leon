@@ -42,16 +42,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun SettingsSanitizersScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingsSanitizersScreenViewModel = viewModel(),
+    viewModel: SettingsSanitizersScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

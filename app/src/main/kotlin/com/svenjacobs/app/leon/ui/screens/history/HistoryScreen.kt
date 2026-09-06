@@ -66,7 +66,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.db.HistoryEntry
 import com.svenjacobs.app.leon.ui.common.copyToClipboard
@@ -76,6 +75,7 @@ import com.svenjacobs.app.leon.ui.common.shareText
 import com.svenjacobs.app.leon.ui.screens.history.model.HistoryScreenViewModel
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -84,7 +84,7 @@ import kotlinx.coroutines.launch
 fun HistoryScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    viewModel: HistoryScreenViewModel = viewModel(),
+    viewModel: HistoryScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

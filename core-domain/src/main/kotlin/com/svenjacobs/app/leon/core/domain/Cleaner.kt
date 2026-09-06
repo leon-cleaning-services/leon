@@ -19,8 +19,7 @@ package com.svenjacobs.app.leon.core.domain
 
 import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.change.apply
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.SanitizerRepository
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer.Sanitizers
+import com.svenjacobs.app.leon.core.domain.sanitizer.AlwaysEnabled
 import com.svenjacobs.app.leon.core.domain.sanitizer.Decode
 import com.svenjacobs.app.leon.core.domain.sanitizer.HostMatch
 import com.svenjacobs.app.leon.core.domain.sanitizer.Match
@@ -29,6 +28,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.core.domain.url.decodeUrl
 import kotlin.io.encoding.Base64
@@ -44,8 +44,8 @@ import kotlinx.serialization.json.jsonPrimitive
 
 /** Performs cleaning of a URL taking all enabled [Sanitizers][Sanitizer] into account. */
 class Cleaner(
-    private val sanitizers: SanitizersCollection = Sanitizers,
-    private val repository: SanitizerRepository = SanitizerRepository,
+    private val sanitizers: SanitizersCollection = AllSanitizers,
+    private val repository: SanitizerRepository = AlwaysEnabled,
 ) {
 
     data class Result(

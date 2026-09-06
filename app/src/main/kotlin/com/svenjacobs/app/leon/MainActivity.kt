@@ -27,14 +27,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsServiceConnection
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
 import com.svenjacobs.app.leon.ui.MainRouter
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.theme.AppTheme
+import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import java.util.UUID
 import kotlinx.coroutines.launch
 
@@ -51,14 +52,18 @@ class MainActivity : ComponentActivity() {
         onIntent(intent)
 
         setContent {
-            AppTheme {
-                MainRouter(sourceText = sourceText, onResetClick = { sourceText.value = null })
+            CompositionLocalProvider(
+                LocalMetroViewModelFactory provides appGraph.metroViewModelFactory
+            ) {
+                AppTheme {
+                    MainRouter(sourceText = sourceText, onResetClick = { sourceText.value = null })
+                }
             }
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                AppDataStoreManager.customTabsEnabled.collect { customTabsEnabled ->
+                appGraph.appDataStoreManager.customTabsEnabled.collect { customTabsEnabled ->
                     if (customTabsEnabled) {
                         setupCustomTabsService()
                     }
@@ -68,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                AppDataStoreManager.protectScreenEnabled.collect { protectScreenEnabled ->
+                appGraph.appDataStoreManager.protectScreenEnabled.collect { protectScreenEnabled ->
                     if (protectScreenEnabled) {
                         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
                     } else {

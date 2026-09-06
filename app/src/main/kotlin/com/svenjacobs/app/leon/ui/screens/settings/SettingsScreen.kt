@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
@@ -53,13 +52,14 @@ import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsScreenViewModel
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun SettingsScreen(
     onNavigateToSettingsSanitizers: () -> Unit,
     onNavigateToSettingsLicenses: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingsScreenViewModel = viewModel(),
+    viewModel: SettingsScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

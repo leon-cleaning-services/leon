@@ -26,10 +26,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
-import com.svenjacobs.app.leon.inject.AppContainer.AppDataStoreManager
-import com.svenjacobs.app.leon.inject.AppContainer.HistoryDao
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import java.util.UUID
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -42,10 +44,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@Inject
+@ViewModelKey
+@ContributesIntoMap(AppScope::class)
 class MainScreenViewModel(
-    private val appDataStoreManager: AppDataStoreManager = AppDataStoreManager,
-    private val cleaner: Cleaner = Cleaner(),
-    private val historyDao: HistoryDao = HistoryDao,
+    private val appDataStoreManager: AppDataStoreManager,
+    private val cleaner: Cleaner,
+    private val historyDao: HistoryDao,
 ) : ViewModel() {
 
     data class UiState(

@@ -24,12 +24,16 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
-import com.svenjacobs.app.leon.inject.AppContainer.AppContext
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /** Manages [Sanitizer] specific preferences stored via [DataStore]. */
-class SanitizerDataStoreManager(private val context: Context = AppContext) {
+@Inject
+@SingleIn(AppScope::class)
+class SanitizerDataStoreManager(private val context: Context) {
     private val Context.dataStore by preferencesDataStore(name = "sanitizers")
 
     internal fun preferencesKey(id: String) = booleanPreferencesKey(name = "sanitizer_$id")

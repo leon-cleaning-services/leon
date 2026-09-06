@@ -10,17 +10,18 @@ sharing mechanism and is also meant as a blueprint for modern Android developmen
 
 ```
 leon/
-├── app/                  # Android application module (UI, DI bootstrap)
+├── app/                  # Android application module (UI, Metro dependency graph)
 └── core-domain/          # URL model, sanitizer catalog, Cleaner
 ```
 
-- **`app`** – Activities, Jetpack Compose screens, ViewModels, DataStore managers, and
-  `ContainerInitializer` (plugs the app's `SanitizerRepository` into `DomainContainer`).
+- **`app`** – Activities, Jetpack Compose screens, ViewModels, DataStore managers, and `AppGraph`,
+  the Metro dependency graph that binds the app's `SanitizerRepository` implementation into
+  `core-domain`.
 - **`core-domain`** – Everything about cleaning a URL: the `Url` model, `Match`, `Rule`, `Change`,
   `Cleaner`, and the sanitizer catalog under
   `com.svenjacobs.app.leon.core.domain.sanitizer.catalog/`.
 
-`core-domain` contains **no Android and no `java.*` API** and depends on no service locator, so it
+`core-domain` contains **no Android and no `java.*` API** and uses no DI framework at all, so it
 can be lifted out into a standalone Kotlin library — for a command line cleaner, for example. Keep
 it that way; this check must stay empty:
 
@@ -253,6 +254,40 @@ Add the `val` to `AllSanitizers` in `catalog/Catalog.kt`, keeping the list alpha
 A `SanitizerId` is persisted — it is the DataStore key (`sanitizer_<id>`) behind the switch in
 Settings. **Never change or reuse the id of an existing sanitizer**: renaming one silently resets
 whether the user had it turned off, and reusing one inherits that setting.
+
+## Adding a New ViewModel
+
+Dependencies come from `AppGraph`, the [Metro](https://zacsweers.github.io/metro/) graph in
+`app/.../inject/`. A ViewModel declares what it needs and **never** takes a default argument — the
+graph is what decides where an instance comes from:
+
+```kotlin
+@Inject
+@ViewModelKey
+@ContributesIntoMap(AppScope::class)
+class ExampleScreenViewModel(
+    private val appDataStoreManager: AppDataStoreManager,
+    private val historyDao: HistoryDao,
+) : ViewModel()
+```
+
+The screen takes it as a parameter defaulting to `metroViewModel()`, from `metrox-viewmodel-compose`:
+
+```kotlin
+@Composable
+fun ExampleScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ExampleScreenViewModel = metroViewModel(),
+)
+```
+
+That resolves through `LocalMetroViewModelFactory`, which `MainActivity` provides around the whole
+content — a `@Preview` therefore cannot call it, and must be given its state as a parameter instead.
+
+A new *dependency* is added the same way: annotate the class `@Inject` (plus
+`@SingleIn(AppScope::class)` if it must be a singleton, and `@ContributesBinding(AppScope::class)`
+if it implements an interface others depend on). Only what Metro cannot construct itself — the
+Room database, or a `core-domain` type which has no annotations — needs a `@Provides` in `AppGraph`.
 
 ## Unit Tests
 

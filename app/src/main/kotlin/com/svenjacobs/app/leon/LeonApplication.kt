@@ -15,21 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.svenjacobs.app.leon.startup
+package com.svenjacobs.app.leon
 
+import android.app.Application
 import android.content.Context
-import com.svenjacobs.app.leon.core.domain.inject.DomainContainer
-import com.svenjacobs.app.leon.inject.AppContainer
-import com.svenjacobs.app.leon.sanitizer.SanitizerRepositoryImpl
+import com.svenjacobs.app.leon.inject.AppGraph
+import dev.zacsweers.metro.createGraphFactory
 
-class ContainerInitializer : DistinctInitializer<Unit> {
+class LeonApplication : Application() {
 
-    /**
-     * The sanitizers themselves come from the catalog in `core-domain`; the app only supplies the
-     * repository which remembers which of them the user turned off.
-     */
-    override fun create(context: Context) {
-        AppContainer.init(appContext = context)
-        DomainContainer.init(sanitizerRepositoryProvider = { SanitizerRepositoryImpl() })
-    }
+    // `by lazy` is essential: androidx.startup's `InitializationProvider` runs before
+    // `Application.onCreate()`, so the graph must be creatable on first touch from an initializer.
+    val graph: AppGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
 }
+
+val Context.appGraph: AppGraph
+    get() = (applicationContext as LeonApplication).graph
