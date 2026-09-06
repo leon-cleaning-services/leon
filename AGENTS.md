@@ -255,6 +255,40 @@ A `SanitizerId` is persisted — it is the DataStore key (`sanitizer_<id>`) behi
 Settings. **Never change or reuse the id of an existing sanitizer**: renaming one silently resets
 whether the user had it turned off, and reusing one inherits that setting.
 
+## Adding a New ViewModel
+
+Dependencies come from `AppGraph`, the [Metro](https://zacsweers.github.io/metro/) graph in
+`app/.../inject/`. A ViewModel declares what it needs and **never** takes a default argument — the
+graph is what decides where an instance comes from:
+
+```kotlin
+@Inject
+@ViewModelKey
+@ContributesIntoMap(AppScope::class)
+class ExampleScreenViewModel(
+    private val appDataStoreManager: AppDataStoreManager,
+    private val historyDao: HistoryDao,
+) : ViewModel()
+```
+
+The screen takes it as a parameter defaulting to `metroViewModel()`, from `metrox-viewmodel-compose`:
+
+```kotlin
+@Composable
+fun ExampleScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ExampleScreenViewModel = metroViewModel(),
+)
+```
+
+That resolves through `LocalMetroViewModelFactory`, which `MainActivity` provides around the whole
+content — a `@Preview` therefore cannot call it, and must be given its state as a parameter instead.
+
+A new *dependency* is added the same way: annotate the class `@Inject` (plus
+`@SingleIn(AppScope::class)` if it must be a singleton, and `@ContributesBinding(AppScope::class)`
+if it implements an interface others depend on). Only what Metro cannot construct itself — the
+Room database, or a `core-domain` type which has no annotations — needs a `@Provides` in `AppGraph`.
+
 ## Unit Tests
 
 Tests live in the corresponding `src/test` source set, mirroring the production package structure.
