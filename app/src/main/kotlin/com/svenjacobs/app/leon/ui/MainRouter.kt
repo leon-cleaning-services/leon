@@ -27,6 +27,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -36,6 +37,9 @@ import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -101,6 +105,27 @@ fun MainRouter(
         if (destination != Destination.Main) backStack.add(destination)
     }
 
+    // The Main entry is never removed (see goToTopLevel above), so once the user has navigated to
+    // History or Settings the back stack holds BOTH Main (at index 0) and the real current
+    // destination — the selected item is therefore the LAST TopLevel entry, not the first.
+    val selectedTopLevel =
+        backStack.filterIsInstance<Destination.TopLevel>().lastOrNull() ?: Destination.Main
+
+    // Settings' detail pane (SettingsSanitizers/SettingsLicenses) ends the back stack on a
+    // non-TopLevel key even though, in the two-pane layout, it is shown alongside the Settings list
+    // — so the rail must stay visible there. On a single pane the same detail screen fills the
+    // whole window and the nav area must disappear, exactly as the phone does today.
+    val shouldShowNavBar = isTwoPane || backStack.lastOrNull() is Destination.TopLevel
+    val navigationSuiteScaffoldState = rememberNavigationSuiteScaffoldState()
+
+    LaunchedEffect(shouldShowNavBar) {
+        if (shouldShowNavBar) {
+            navigationSuiteScaffoldState.show()
+        } else {
+            navigationSuiteScaffoldState.hide()
+        }
+    }
+
     // The activity is a singleTask, so a share arrives at whichever tab was open when the app was
     // last left — without this, the cleaned URL waits unseen behind the settings. Switching to the
     // main tab is also what composes `MainScreen`, which is where the text is handed to the view
@@ -117,77 +142,96 @@ fun MainRouter(
         insetsController.isAppearanceLightStatusBars = !isDarkTheme
     }
 
-    NavDisplay(
-        backStack = backStack,
+    NavigationSuiteScaffold(
+        navigationItems = {
+            TopLevelDestinations.forEach { destination ->
+                NavigationSuiteItem(
+                    selected = destination == selectedTopLevel,
+                    onClick = dropUnlessResumed { goToTopLevel(destination) },
+                    icon = {
+                        Icon(
+                            imageVector = destination.icon,
+                            contentDescription = stringResource(destination.iconContentDescription),
+                        )
+                    },
+                    label = { Text(stringResource(destination.label)) },
+                )
+            }
+        },
+        state = navigationSuiteScaffoldState,
         modifier = modifier,
-        onBack = { backStack.removeLastOrNull() },
-        // The default predictive back transition scales the outgoing scene down; a fade matches
-        // the other transitions instead.
-        predictivePopTransitionSpec = { ContentTransform(fadeIn(), fadeOut()) },
-        entryDecorators =
-            listOf(
-                rememberSaveableStateHolderNavEntryDecorator(),
-                rememberViewModelStoreNavEntryDecorator(),
-            ),
-        sceneStrategies = listOf(listDetailStrategy),
-        sceneDecoratorStrategies =
-            listOf(remember { TopLevelSceneDecoratorStrategy(snackbarHostState, ::goToTopLevel) }),
-        entryProvider =
-            entryProvider {
-                entry<Destination.Main>(metadata = topLevelMetadata(Destination.Main)) {
-                    MainScreen(
-                        sourceText = sourceText,
-                        snackbarHostState = snackbarHostState,
-                        onResetClick = onResetClick,
-                    )
-                }
+    ) {
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.removeLastOrNull() },
+            // The default predictive back transition scales the outgoing scene down; a fade
+            // matches the other transitions instead.
+            predictivePopTransitionSpec = { ContentTransform(fadeIn(), fadeOut()) },
+            entryDecorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator(),
+                ),
+            sceneStrategies = listOf(listDetailStrategy),
+            sceneDecoratorStrategies =
+                listOf(remember { TopLevelSceneDecoratorStrategy(snackbarHostState) }),
+            entryProvider =
+                entryProvider {
+                    entry<Destination.Main>(metadata = topLevelMetadata(Destination.Main)) {
+                        MainScreen(
+                            sourceText = sourceText,
+                            snackbarHostState = snackbarHostState,
+                            onResetClick = onResetClick,
+                        )
+                    }
 
-                entry<Destination.History>(metadata = topLevelMetadata(Destination.History)) {
-                    HistoryScreen(snackbarHostState = snackbarHostState)
-                }
+                    entry<Destination.History>(metadata = topLevelMetadata(Destination.History)) {
+                        HistoryScreen(snackbarHostState = snackbarHostState)
+                    }
 
-                entry<Destination.Settings>(
-                    metadata =
-                        topLevelMetadata(Destination.Settings) +
-                            ListDetailSceneStrategy.listPane(
-                                detailPlaceholder = { SettingsDetailPlaceholder() }
-                            )
-                ) {
-                    SettingsScreen(
-                        onNavigateToSettingsSanitizers =
-                            dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
-                        onNavigateToSettingsLicenses =
-                            dropUnlessResumed { backStack.add(Destination.SettingsLicenses) },
-                    )
-                }
+                    entry<Destination.Settings>(
+                        metadata =
+                            topLevelMetadata(Destination.Settings) +
+                                ListDetailSceneStrategy.listPane(
+                                    detailPlaceholder = { SettingsDetailPlaceholder() }
+                                )
+                    ) {
+                        SettingsScreen(
+                            onNavigateToSettingsSanitizers =
+                                dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
+                            onNavigateToSettingsLicenses =
+                                dropUnlessResumed { backStack.add(Destination.SettingsLicenses) },
+                        )
+                    }
 
-                entry<Destination.SettingsSanitizers>(
-                    metadata = ListDetailSceneStrategy.detailPane()
-                ) {
-                    SettingsSanitizersScreen(
-                        onBackClick =
-                            if (isTwoPane) {
-                                null
-                            } else {
-                                dropUnlessResumed { backStack.removeLastOrNull() }
-                            }
-                    )
-                }
+                    entry<Destination.SettingsSanitizers>(
+                        metadata = ListDetailSceneStrategy.detailPane()
+                    ) {
+                        SettingsSanitizersScreen(
+                            onBackClick =
+                                if (isTwoPane) {
+                                    null
+                                } else {
+                                    dropUnlessResumed { backStack.removeLastOrNull() }
+                                }
+                        )
+                    }
 
-                entry<Destination.SettingsLicenses>(
-                    metadata = ListDetailSceneStrategy.detailPane()
-                ) {
-                    SettingsLicensesScreen(
-                        onBackClick =
-                            if (isTwoPane) {
-                                null
-                            } else {
-                                dropUnlessResumed { backStack.removeLastOrNull() }
-                            }
-                    )
-                }
-            },
-    )
+                    entry<Destination.SettingsLicenses>(
+                        metadata = ListDetailSceneStrategy.detailPane()
+                    ) {
+                        SettingsLicensesScreen(
+                            onBackClick =
+                                if (isTwoPane) {
+                                    null
+                                } else {
+                                    dropUnlessResumed { backStack.removeLastOrNull() }
+                                }
+                        )
+                    }
+                },
+        )
+    }
 }
 
 @Composable

@@ -19,17 +19,11 @@ package com.svenjacobs.app.leon.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.Scene
@@ -44,38 +38,36 @@ internal fun topLevelMetadata(destination: Destination.TopLevel): Map<String, An
     mapOf(TOP_LEVEL_METADATA_KEY to destination)
 
 /**
- * Places the top app bar, navigation area (bottom bar on phones, rail on wide windows), snackbar
- * host and background image around every scene that contains a [Destination.TopLevel] entry — the
- * chrome that used to live in `MainScreen`'s `Scaffold`. On phones, a scene reached from
- * [Destination.SettingsSanitizers] or [Destination.SettingsLicenses] holds only that single entry,
- * carries no such metadata and is returned untouched, keeping its own `Scaffold` and back-arrow top
- * bar. On wide windows the list-detail scene holds both the [Destination.Settings] list entry and
- * the detail entry side by side, so entries are scanned rather than only the last one — otherwise
- * the chrome would vanish whenever a detail pane is open.
+ * Places the top app bar, snackbar host and background image around every scene that contains a
+ * [Destination.TopLevel] entry — the chrome that used to live in `MainScreen`'s `Scaffold`. On
+ * phones, a scene reached from [Destination.SettingsSanitizers] or [Destination.SettingsLicenses]
+ * holds only that single entry, carries no such metadata and is returned untouched, keeping its own
+ * `Scaffold` and back-arrow top bar. On wide windows the list-detail scene holds both the
+ * [Destination.Settings] list entry and the detail entry side by side, so entries are scanned
+ * rather than only the last one — otherwise the chrome would vanish whenever a detail pane is open.
+ *
+ * The navigation area itself (bottom bar / rail) is hoisted into `MainRouter`'s
+ * `NavigationSuiteScaffold`, wrapping `NavDisplay` — composed once, outside every scene's animated
+ * content, so switching tabs can no longer make it flicker.
  */
-internal class TopLevelSceneDecoratorStrategy(
-    private val snackbarHostState: SnackbarHostState,
-    private val onTopLevelClick: (Destination.TopLevel) -> Unit,
-) : SceneDecoratorStrategy<NavKey> {
+internal class TopLevelSceneDecoratorStrategy(private val snackbarHostState: SnackbarHostState) :
+    SceneDecoratorStrategy<NavKey> {
 
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(
         scene: Scene<NavKey>
     ): Scene<NavKey> {
         // In a two-pane list-detail scene the LAST entry is the detail pane, which carries no
-        // top-level metadata — scan all entries so the rail still knows which item is selected.
-        val current =
-            scene.entries.firstNotNullOfOrNull {
-                it.metadata[TOP_LEVEL_METADATA_KEY] as? Destination.TopLevel
-            } ?: return scene
-        return TopLevelScene(scene, current, snackbarHostState, onTopLevelClick)
+        // top-level metadata — scan all entries to know whether this scene belongs to a top-level
+        // destination at all.
+        val isTopLevelScene = scene.entries.any { TOP_LEVEL_METADATA_KEY in it.metadata }
+        if (!isTopLevelScene) return scene
+        return TopLevelScene(scene, snackbarHostState)
     }
 }
 
 private class TopLevelScene(
     private val scene: Scene<NavKey>,
-    current: Destination.TopLevel,
     snackbarHostState: SnackbarHostState,
-    onTopLevelClick: (Destination.TopLevel) -> Unit,
 ) : Scene<NavKey> {
 
     // ListDetailSceneStrategy's own scene key is constant (Unit) across every list/detail
@@ -95,32 +87,13 @@ private class TopLevelScene(
         get() = scene.metadata
 
     override val content: @Composable () -> Unit = {
-        NavigationSuiteScaffold(
-            navigationItems = {
-                TopLevelDestinations.forEach { destination ->
-                    NavigationSuiteItem(
-                        selected = destination == current,
-                        onClick = dropUnlessResumed { onTopLevelClick(destination) },
-                        icon = {
-                            Icon(
-                                imageVector = destination.icon,
-                                contentDescription =
-                                    stringResource(destination.iconContentDescription),
-                            )
-                        },
-                        label = { Text(stringResource(destination.label)) },
-                    )
-                }
-            }
-        ) {
-            Scaffold(
-                topBar = { TopAppBar() },
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-            ) { padding ->
-                Box(modifier = Modifier.padding(padding)) {
-                    BackgroundImage()
-                    scene.content()
-                }
+        Scaffold(
+            topBar = { TopAppBar() },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+        ) { padding ->
+            Box(modifier = Modifier.padding(padding)) {
+                BackgroundImage()
+                scene.content()
             }
         }
     }
