@@ -23,12 +23,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -45,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.svenjacobs.app.leon.BuildConfig
 import com.svenjacobs.app.leon.R
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.common.isDefaultBrowser
@@ -112,7 +112,7 @@ private fun Content(
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
                 SwitchRow(
                     text = stringResource(R.string.register_as_browser),
                     checked = browserEnabled,
@@ -305,12 +305,6 @@ private fun Content(
                 }
             }
         }
-
-        Text(
-            modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 8.dp, end = 8.dp),
-            text = "v${BuildConfig.VERSION_NAME}",
-            style = MaterialTheme.typography.bodySmall,
-        )
     }
 }
 
