@@ -19,7 +19,10 @@ package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -52,8 +55,13 @@ fun SettingsSanitizersScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(modifier = modifier, topBar = { TopAppBar(onBackClick = onBackClick) }) {
-        contentPadding ->
+    Scaffold(
+        modifier = modifier,
+        topBar = { TopAppBar(onBackClick = onBackClick) },
+        // Let the list draw and scroll behind the navigation bar instead of stopping short of it;
+        // the navigation bar inset is added back below as the list's own contentPadding.
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { contentPadding ->
         Column(modifier = Modifier.padding(contentPadding).padding(horizontal = 16.dp)) {
             Text(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
@@ -88,7 +96,7 @@ fun SettingsSanitizersScreen(
                 )
             } else {
                 Card {
-                    LazyColumn {
+                    LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
                         //noinspection NewApi
                         uiState.sanitizers.forEach { sanitizer ->
                             item(key = sanitizer.id.value) {
