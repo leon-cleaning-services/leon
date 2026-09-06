@@ -64,7 +64,7 @@ recommended and cutting-edge technologies, patterns and libraries such as:
 - [Kotlin](https://kotlinlang.org/) programming language
 - Kotlin [coroutines](https://kotlinlang.org/docs/coroutines-overview.html)
 - Jetpack [Compose](https://developer.android.com/jetpack/compose)
-- Jetpack [Navigation](https://developer.android.com/guide/navigation)
+- Jetpack [Navigation 3](https://developer.android.com/guide/navigation/navigation-3)
 - [Material Design 3](https://m3.material.io/)
 - Dependency Injection pattern with custom implementation
 - several other Jetpack & AndroidX libraries

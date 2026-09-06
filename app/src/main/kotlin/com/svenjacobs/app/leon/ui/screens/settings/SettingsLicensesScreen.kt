@@ -17,7 +17,10 @@
  */
 package com.svenjacobs.app.leon.ui.screens.settings
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,12 +39,16 @@ fun SettingsLicensesScreen(modifier: Modifier = Modifier, onBackClick: () -> Uni
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = { TopAppBar(onBackClick = onBackClick) },
+        // Let the list draw and scroll behind the navigation bar instead of stopping short of it;
+        // the navigation bar inset is added back below as the list's own contentPadding.
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { contentPadding ->
         val libs by produceLibraries()
 
         LibrariesContainer(
             modifier = Modifier.padding(contentPadding).fillMaxSize(),
             libraries = libs,
+            contentPadding = WindowInsets.navigationBars.asPaddingValues(),
             colors =
                 LibraryDefaults.libraryColors(
                     libraryBackgroundColor = MaterialTheme.colorScheme.background,

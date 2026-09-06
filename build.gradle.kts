@@ -38,6 +38,7 @@ plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.adarshr.test.logger)
     alias(libs.plugins.aboutlibraries) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.room3) apply false
 }
