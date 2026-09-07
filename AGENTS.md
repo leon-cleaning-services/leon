@@ -364,3 +364,31 @@ style:
 # Auto-format
 ./gradlew spotlessApply
 ```
+
+## Fastlane
+
+Release automation lives in `fastlane/`. Fastlane is a Ruby bundle pinned by `Gemfile.lock`.
+Install it **into the project**, not into the system gem home — that avoids clashing with the Ruby
+packages a package manager such as Homebrew installs globally:
+
+```bash
+bundle config set --local path vendor/bundle
+bundle update
+```
+
+The resulting `/.bundle` and `/vendor/bundle` are git-ignored.
+
+Two lanes are available:
+
+```bash
+# Build and publish a release to the production track, screenshots included
+bundle exec fastlane deploy
+
+# Upload only the store listing screenshots, without publishing a release
+bundle exec fastlane screenshots
+```
+
+Both need the decrypted `google-play-service-account.json` (`git secret reveal -f`).
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for the full setup, the store listing layout and how to
+update the Play Store screenshots.
