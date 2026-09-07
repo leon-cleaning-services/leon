@@ -19,7 +19,21 @@ platform :android do
         skip_upload_metadata: true,
         skip_upload_changelogs: true,
         skip_upload_images: true,
-        skip_upload_screenshots: true,
+        skip_upload_screenshots: false,
+      )
+  end
+
+  desc "Upload the store listing screenshots without publishing a release"
+  lane :screenshots do
+    # Without a binary and a version code, supply leaves the track untouched and
+    # only replaces the screenshots of every device type that has local images.
+    upload_to_play_store(
+        skip_upload_apk: true,
+        skip_upload_aab: true,
+        skip_upload_metadata: true,
+        skip_upload_changelogs: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: false,
       )
   end
 end
