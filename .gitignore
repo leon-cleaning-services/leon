@@ -18,3 +18,7 @@ upload-keystore.jks
 signing.properties
 google-play-service-account.json
 .kotlin
+
+# Ruby & Fastlane
+/.bundle
+/vendor/bundle
