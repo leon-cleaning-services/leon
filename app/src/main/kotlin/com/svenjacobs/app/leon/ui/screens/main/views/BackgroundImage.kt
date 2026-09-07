@@ -19,8 +19,10 @@ package com.svenjacobs.app.leon.ui.screens.main.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.svenjacobs.app.leon.BuildConfig
@@ -36,5 +38,8 @@ internal fun BackgroundImage(modifier: Modifier = Modifier) {
             ),
         contentDescription = null,
         contentScale = ContentScale.Crop,
+        // The drawable is black; without a tint it disappears against a dark surface. Its own
+        // 5% fillAlpha survives the SrcIn tint, so this only swaps the hue, not the subtlety.
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
     )
 }
