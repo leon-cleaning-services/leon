@@ -33,6 +33,11 @@ jobs:
       - name: Build and test app
         run: ./gradlew check build
 
+      # Ubuntu/.deb is the first packaged desktop target; Windows, macOS and other Linux formats
+      # (rpm, AppImage, Flatpak) follow by adding runners to a matrix.
+      - name: Package desktop app
+        run: ./gradlew :desktopApp:packageDeb
+
       - uses: actions/upload-artifact@v7
         id: upload-artifact
         with:
@@ -40,6 +45,11 @@ jobs:
           path: |
             androidApp/build/outputs/apk/**/*.apk
             androidApp/build/outputs/bundle/**/*.aab
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Desktop artifacts
+          path: desktopApp/build/compose/binaries/main/deb/*.deb
 
       - name: Comment artifact link on pull request
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository

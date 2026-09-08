@@ -52,6 +52,11 @@ jobs:
       - name: Deploy production version
         run: bundle exec fastlane deploy
 
+      # Ubuntu/.deb is the first packaged desktop target; Windows, macOS and other Linux formats
+      # (rpm, AppImage, Flatpak) follow by adding runners to a matrix.
+      - name: Package desktop app
+        run: ./gradlew :desktopApp:packageDeb
+
       - name: Build changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v6
@@ -98,6 +103,7 @@ jobs:
           files: |
             androidApp/build/outputs/apk/**/*.apk
             androidApp/build/outputs/bundle/**/*.aab
+            desktopApp/build/compose/binaries/main/deb/*.deb
 
       - uses: actions/upload-artifact@v7
         with:
@@ -105,6 +111,11 @@ jobs:
           path: |
             androidApp/build/outputs/apk/**/*.apk
             androidApp/build/outputs/bundle/**/*.aab
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Desktop artifacts
+          path: desktopApp/build/compose/binaries/main/deb/*.deb
 
   increment-version:
     timeout-minutes: 30

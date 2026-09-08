@@ -8,7 +8,10 @@ For the code conventions — sanitizers, ViewModels, tests, formatting — see
 
 ```bash
 # Run the core-domain unit tests
-./gradlew :core-domain:test
+./gradlew :core-domain:jvmTest
+
+# Run the shared module's unit tests (ViewModels, Room DAO) on the JVM
+./gradlew :shared:desktopTest
 
 # Check formatting
 ./gradlew spotlessCheck
@@ -16,6 +19,33 @@ For the code conventions — sanitizers, ViewModels, tests, formatting — see
 # Auto-format
 ./gradlew spotlessApply
 ```
+
+## Desktop
+
+Léon also runs as a Compose Desktop application, built from the `desktopApp` module against the
+same `shared` code as Android.
+
+```bash
+# Run it locally
+./gradlew :desktopApp:run
+
+# Package it as a Linux .deb (the only format packaged today; see "Releasing" below)
+./gradlew :desktopApp:packageDeb
+```
+
+The packaged `.deb` is at `desktopApp/build/compose/binaries/main/deb/*.deb`; install it with
+`sudo apt install ./desktopApp/build/compose/binaries/main/deb/leon_*.deb` and run `leon`, or a URL
+as its argument.
+
+Desktop data (the Room database and DataStore preference files) lives under
+`~/.local/share/leon`. There is no per-OS data directory yet — that is a follow-up for when Windows
+and macOS packages ship.
+
+CI (`.github/workflows/build.yml`) builds and uploads the `.deb` on every PR; `deploy.yml` attaches
+it to the GitHub release. Ubuntu/`.deb` is deliberately the first packaged target; Windows (`.msi`),
+macOS (`.dmg`) and other Linux formats (`.rpm`, AppImage, Flatpak) are intended follow-ups — Compose
+Desktop's `nativeDistributions` already supports them, they only need runners of that OS added to
+the workflow as a matrix.
 
 ## Secrets
 
@@ -80,13 +110,30 @@ Releases are automated. Pushing a `v*` tag triggers
 bundle exec fastlane deploy
 ```
 
-That lane reads `versionCode` out of `app/build.gradle.kts`, builds `assembleRelease` and
+That lane reads `versionCode` out of `androidApp/build.gradle.kts`, builds `assembleRelease` and
 `bundleRelease`, and uploads the AAB to the **production** track as a completed release, together
 with the store listing screenshots.
 
 The lane deliberately skips metadata, changelogs and the icon/feature graphic
 (`skip_upload_metadata`, `skip_upload_changelogs`, `skip_upload_images`); those are maintained in
 the Play Console.
+
+### Releasing after the KMP migration
+
+The [KMP migration](https://github.com/svenjacobs/leon) renamed the Android application module
+from `app` to `androidApp`. Play Store and F-Droid builds both keep working — Fastlane and the two
+workflows were repointed at `androidApp/` — with **one exception that needs a manual step before
+the next tag**: F-Droid's build recipe, `metadata/com.svenjacobs.app.leon.yml` in the separate
+[fdroiddata](https://gitlab.com/fdroid/fdroiddata) repository, still says `subdir: app`. Submit a
+merge request there changing the **last** build block to `subdir: androidApp` before tagging the
+first release after this migration — F-Droid's `AutoUpdateMode: Version` copies that last build
+block for every new tag, so it keeps using the stale `subdir` (and fails to find a
+`build.gradle.kts` there) until the recipe is edited.
+
+The recipe's `prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts` line needs no change: it
+still strips the Foojay resolver plugin before F-Droid's offline build, and `gradle assembleRelease`
+still only matches the `:androidApp` task — `shared` and `desktopApp` are never built there, so no
+Skiko (Compose Desktop's rendering backend) binaries are ever downloaded on the F-Droid builder.
 
 ## Play Store Screenshots
 

@@ -155,11 +155,6 @@ dependencies {
     screenshotTestImplementation(libs.android.tools.screenshot.validation.api)
     screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 
-    androidTestImplementation(composeBom)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
-
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.mockk)
