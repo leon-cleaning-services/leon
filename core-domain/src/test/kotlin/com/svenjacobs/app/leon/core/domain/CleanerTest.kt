@@ -109,7 +109,17 @@ class CleanerTest :
                             decodeUrl = true,
                         )
 
-                    result.cleanedText shouldBe "https://www.some.site/Hello/World"
+                    result.cleanedText shouldBe "https://www.some.site/Hello%2FWorld"
+                }
+
+                "URL decode keeps %20 intact but decodes UTF-8 text" {
+                    val result =
+                        service.clean(
+                            text = "https://www.some.site/?q=Hello%20M%C3%BCnchen&paramA=A",
+                            decodeUrl = true,
+                        )
+
+                    result.cleanedText shouldBe "https://www.some.site/?q=Hello%20München"
                 }
 
                 "repeat cleaning until iteration doesn't yield new value" {

@@ -102,7 +102,9 @@ class Cleaner(
             originalText = input,
             cleanedText =
                 if (decodeUrl) {
-                    withContext(Dispatchers.Default) { decodeUrl(cleanedText) }
+                    withContext(Dispatchers.Default) {
+                        decodeUrl(cleanedText, keepStructure = true)
+                    }
                 } else {
                     cleanedText
                 },

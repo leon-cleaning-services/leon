@@ -24,8 +24,16 @@ package com.svenjacobs.app.leon.core.domain.url
  * `%` which is not followed by two hexadecimal digits is kept as it is instead of throwing, because
  * a URL somebody shares is not necessarily well formed and is better returned unchanged than not at
  * all.
+ *
+ * @param keepStructure When `true`, an escape whose decoded byte is a delimiter the URL syntax
+ *   relies on — `/ ? # & = : + %`, space, or any other byte below `0x21` — is left in its original
+ *   spelling (e.g. `%2f` stays `%2f`, not `/`) instead of being decoded, and a literal `+` stays a
+ *   literal `+` instead of becoming a space. Decoding those would change what the URL addresses
+ *   (`%2F` inside a path segment turning into a `/` that splits it) rather than merely how it is
+ *   displayed, which is what this is for: showing a human-readable URL (`%C3%BC` → `ü`) without
+ *   rewriting its structure.
  */
-fun decodeUrl(encoded: String): String {
+fun decodeUrl(encoded: String, keepStructure: Boolean = false): String {
     if ('%' !in encoded && '+' !in encoded) return encoded
 
     val bytes = ArrayList<Byte>(encoded.length)
@@ -34,7 +42,7 @@ fun decodeUrl(encoded: String): String {
     while (i < encoded.length) {
         when (val char = encoded[i]) {
             '+' -> {
-                bytes += ' '.code.toByte()
+                bytes += if (keepStructure) '+'.code.toByte() else ' '.code.toByte()
                 i++
             }
             '%' -> {
@@ -42,6 +50,10 @@ fun decodeUrl(encoded: String): String {
                 if (byte == null) {
                     bytes += char.code.toByte()
                     i++
+                } else if (keepStructure && byte.isStructural()) {
+                    // Original spelling, not the decoded byte, so `%2f` does not become `%2F`.
+                    encoded.substring(i, i + 3).encodeToByteArray().forEach { bytes += it }
+                    i += 3
                 } else {
                     bytes += byte
                     i += 3
@@ -64,3 +76,9 @@ private fun String.hexByteAt(index: Int): Byte? {
     val low = this[index + 1].digitToIntOrNull(radix = 16) ?: return null
     return ((high shl 4) or low).toByte()
 }
+
+/** The ASCII delimiters and control characters a URL's syntax depends on. */
+private val STRUCTURAL_BYTES = "/?#&=:+%".map { it.code.toByte() }.toSet()
+
+/** Whether decoding this byte would change what a URL addresses rather than just how it reads. */
+private fun Byte.isStructural(): Boolean = (toInt() and 0xFF) < 0x21 || this in STRUCTURAL_BYTES
