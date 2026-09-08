@@ -39,6 +39,8 @@
     <string name="settings_detail_placeholder">Select a settings section</string>
     <string name="decode_url">Decode URL</string>
     <string name="import_from_clipboard">Import from clipboard</string>
+    <string name="submit">Submit</string>
+    <string name="text_field_placeholder">Enter or paste text to clean</string>
     <string name="reset">Reset</string>
     <string name="options">Options</string>
     <string name="extract_url">Extract only URL</string>

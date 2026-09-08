@@ -39,6 +39,8 @@
     <string name="settings_detail_placeholder">Wähle einen Einstellungsbereich</string>
     <string name="decode_url">URL dekodieren</string>
     <string name="import_from_clipboard">Aus Zwischenablage importieren</string>
+    <string name="submit">Absenden</string>
+    <string name="text_field_placeholder">Text zum Bereinigen eingeben oder einfügen</string>
     <string name="reset">Zurücksetzen</string>
     <string name="options">Optionen</string>
     <string name="extract_url">Nur URL extrahieren</string>

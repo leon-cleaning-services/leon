@@ -52,6 +52,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -64,6 +65,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,6 +92,8 @@ import com.svenjacobs.app.leon.shared.resources.options
 import com.svenjacobs.app.leon.shared.resources.original_url
 import com.svenjacobs.app.leon.shared.resources.reset
 import com.svenjacobs.app.leon.shared.resources.share
+import com.svenjacobs.app.leon.shared.resources.submit
+import com.svenjacobs.app.leon.shared.resources.text_field_placeholder
 import com.svenjacobs.app.leon.ui.common.copyToClipboard
 import com.svenjacobs.app.leon.ui.common.readText
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
@@ -199,6 +203,7 @@ fun MainScreen(
                 }
             }
         },
+        onSubmit = viewModel::setText,
         onShareClick = ::openShareMenu,
         onCopyToClipboardClick = ::copyToClipboard,
         onOpenClick = ::openUrl,
@@ -218,6 +223,7 @@ private fun Content(
     isUrlDecodeEnabled: Boolean,
     isExtractUrlEnabled: Boolean,
     onImportFromClipboardClick: () -> Unit,
+    onSubmit: (String) -> Unit,
     onShareClick: (Result.Success) -> Unit,
     onCopyToClipboardClick: (String) -> Unit,
     onOpenClick: (Result.Success) -> Unit,
@@ -248,7 +254,11 @@ private fun Content(
                             onChangeToggled = onChangeToggled,
                         )
 
-                    else -> HowToBody(onImportFromClipboardClick = onImportFromClipboardClick)
+                    else ->
+                        HowToBody(
+                            onImportFromClipboardClick = onImportFromClipboardClick,
+                            onSubmit = onSubmit,
+                        )
                 }
             }
         }
@@ -542,7 +552,13 @@ private fun SwitchRow(
 }
 
 @Composable
-fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> Unit) {
+fun HowToBody(
+    onImportFromClipboardClick: () -> Unit,
+    onSubmit: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var text by rememberSaveable { mutableStateOf("") }
+
     // The how-to paragraph is the one piece of running prose in the app, so it is the one place
     // where a full-width tablet window turns into an uncomfortable line length. It is capped here
     // rather than around the whole screen on purpose: `SuccessBody` is cards in a two column split
@@ -553,17 +569,44 @@ fun HowToBody(modifier: Modifier = Modifier, onImportFromClipboardClick: () -> U
     // be applied any more — the cap silently does nothing.
     Card(modifier = modifier.widthIn(max = 840.dp).fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Button(modifier = Modifier.fillMaxWidth(), onClick = onImportFromClipboardClick) {
-                Icon(
-                    imageVector = Icons.Default.ContentPaste,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(
-                    text = stringResource(Res.string.import_from_clipboard),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = text,
+                onValueChange = { text = it },
+                placeholder = { Text(text = stringResource(Res.string.text_field_placeholder)) },
+                singleLine = true,
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(
+                    modifier = Modifier.weight(1f),
+                    enabled = text.isNotBlank(),
+                    onClick = { onSubmit(text) },
+                ) {
+                    Text(
+                        text = stringResource(Res.string.submit),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = onImportFromClipboardClick,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ContentPaste,
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(
+                        text = stringResource(Res.string.import_from_clipboard),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
 
             Text(

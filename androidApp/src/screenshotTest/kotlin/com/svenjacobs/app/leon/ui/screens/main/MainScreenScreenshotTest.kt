@@ -53,5 +53,5 @@ private fun SuccessBodyScreenshot() {
 @FormFactorPreviews
 @Composable
 private fun HowToBodyScreenshot() {
-    AppTheme { HowToBody(onImportFromClipboardClick = {}) }
+    AppTheme { HowToBody(onImportFromClipboardClick = {}, onSubmit = {}) }
 }

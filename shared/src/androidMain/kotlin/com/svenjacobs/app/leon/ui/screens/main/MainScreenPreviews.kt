@@ -74,5 +74,5 @@ private fun SuccessBodyWidePreview() {
 @Preview(showBackground = true)
 @Composable
 private fun HowToBodyPreview() {
-    AppTheme { HowToBody(onImportFromClipboardClick = {}) }
+    AppTheme { HowToBody(onImportFromClipboardClick = {}, onSubmit = {}) }
 }
