@@ -81,6 +81,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.androidx.datastore.preferences)
+            implementation(libs.androidx.browser)
         }
 
         val desktopMain by getting {

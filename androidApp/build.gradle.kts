@@ -26,8 +26,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.android.compose.screenshot)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.metro)
 }
 
@@ -127,7 +125,6 @@ dependencies {
     implementation(composeBom)
     implementation(platform(libs.kotlin.bom))
 
-    implementation(projects.coreDomain)
     implementation(projects.shared)
 
     implementation(libs.kotlin.stdlib.jdk8)
@@ -137,20 +134,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.bundles.androidx.compose)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.adaptive)
-    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
-    implementation(libs.androidx.compose.material3.adaptive.navigation3)
-    implementation(libs.androidx.compose.material3.window.size)
-    implementation(libs.androidx.compose.material.icons.core)
-    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.metro.viewmodel)
     implementation(libs.metro.viewmodel.compose)
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-    implementation(libs.mikepenz.aboutlibraries.compose.m3)
 
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.lifecycle.runtime.ktx)

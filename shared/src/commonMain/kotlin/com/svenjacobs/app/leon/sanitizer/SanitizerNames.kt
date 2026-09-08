@@ -55,11 +55,11 @@ private val TRANSLATED_NAMES: Map<SanitizerId, StringResource> =
 
 // Kotlin does not allow `suspend fun displayName()` and `fun displayName()` to overload each other
 // even though their JVM signatures differ (the compiler reports "conflicting overloads" /
-// "overload resolution ambiguity") - the plan's identically-named pair does not compile, hence the
-// `Suspend` suffix below.
+// "overload resolution ambiguity") - the plan's identically-named pair does not compile, hence
+// `resolveDisplayName` below for the suspend variant.
 
 /** The name to show for this sanitizer, translated where it is not a brand name. */
-suspend fun Sanitizer.displayNameSuspend(): String =
+suspend fun Sanitizer.resolveDisplayName(): String =
     TRANSLATED_NAMES[id]?.let { getString(it) } ?: name
 
 /** The name to show for this sanitizer, translated where it is not a brand name. */

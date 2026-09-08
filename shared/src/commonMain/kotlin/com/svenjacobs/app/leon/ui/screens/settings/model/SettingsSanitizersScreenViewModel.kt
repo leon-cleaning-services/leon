@@ -22,7 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
-import com.svenjacobs.app.leon.sanitizer.displayNameSuspend
+import com.svenjacobs.app.leon.sanitizer.resolveDisplayName
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel.UiState.Sanitizer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
@@ -65,7 +65,7 @@ class SettingsSanitizersScreenViewModel(
                             Sanitizer(
                                 id = state.id,
                                 name =
-                                    sanitizersById[state.id]?.displayNameSuspend()
+                                    sanitizersById[state.id]?.resolveDisplayName()
                                         ?: state.id.value,
                                 enabled = state.enabled,
                             )

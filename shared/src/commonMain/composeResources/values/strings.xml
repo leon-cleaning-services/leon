@@ -27,7 +27,7 @@
     <string name="clipboard_message">Link copied to clipboard</string>
     <string name="clipboard_empty_message">Clipboard is empty</string>
     <string name="how_to_title">How-to</string>
-    <string name="how_to_text">When sharing text, choose \"URL Cleaner\". Then click on \"Share\" in this app to send text to target app. Alternatively, click the button above to import contents from the clipboard.\n\nIt\'s also possible to select editable text in an application, then in the context menu choose Léon to sanitize text in place.</string>
+    <string name="how_to_text">When sharing text, choose "URL Cleaner". Then click on "Share" in this app to send text to target app. Alternatively, click the button above to import contents from the clipboard.\n\nIt's also possible to select editable text in an application, then in the context menu choose Léon to sanitize text in place.</string>
     <string name="cleaned_url">Cleaned URL</string>
     <string name="original_url">Original URL</string>
     <string name="sanitizers">Sanitizers</string>

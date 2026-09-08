@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Room KMP needs the no-arg constructor of the generated implementation, which R8 otherwise
+# strips as apparently unused.
+-keep class * extends androidx.room3.RoomDatabase { <init>(); }

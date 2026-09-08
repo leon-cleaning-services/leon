@@ -32,7 +32,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.svenjacobs.app.leon.ui.BuildInfo
+import com.svenjacobs.app.leon.ui.LocalBuildInfo
 import com.svenjacobs.app.leon.ui.MainRouter
+import com.svenjacobs.app.leon.ui.SystemBarsAppearance
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
@@ -53,8 +56,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider(
-                LocalMetroViewModelFactory provides appGraph.metroViewModelFactory
+                LocalMetroViewModelFactory provides appGraph.metroViewModelFactory,
+                LocalBuildInfo provides
+                    BuildInfo(isDebug = BuildConfig.DEBUG, versionName = BuildConfig.VERSION_NAME),
             ) {
+                SystemBarsAppearance()
+
                 AppTheme {
                     MainRouter(sourceText = sourceText, onResetClick = { sourceText.value = null })
                 }

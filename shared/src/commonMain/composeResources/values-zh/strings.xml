@@ -27,7 +27,7 @@
     <string name="clipboard_message">链接已复制到剪贴板</string>
     <string name="clipboard_empty_message">剪贴板为空</string>
     <string name="how_to_title">使用教程</string>
-    <string name="how_to_text">分享内容时，选择 \"URL 清理器\". 随后在本应用内点击 \"分享\" 即可将内容发送至目标应用。 你也可以点击上方按钮，从剪贴板导入内容。\n\n也可以在其他应用程序中选择待清理的链接，然后在菜单中选择 Léon 来清理它。</string>
+    <string name="how_to_text">分享内容时，选择 "URL 清理器". 随后在本应用内点击 "分享" 即可将内容发送至目标应用。 你也可以点击上方按钮，从剪贴板导入内容。\n\n也可以在其他应用程序中选择待清理的链接，然后在菜单中选择 Léon 来清理它。</string>
     <string name="cleaned_url">清理后链接</string>
     <string name="original_url">原始链接</string>
     <string name="sanitizers">清理规则</string>

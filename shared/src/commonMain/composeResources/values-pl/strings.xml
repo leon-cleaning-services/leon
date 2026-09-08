@@ -27,7 +27,7 @@
     <string name="clipboard_message">Link skopiowany do schowka</string>
     <string name="clipboard_empty_message">Schowek jest pusty</string>
     <string name="how_to_title">Jak wykonać</string>
-    <string name="how_to_text">Podczas udostępniania tekstu wybierz \"URL Cleaner\". Następnie kliknij \"Udostępnij\" w tej aplikacji, aby wysłać tekst do docelowej aplikacji. Alternatywnie kliknij przycisk powyżej, aby zaimportować zawartość ze schowka.\n\nMożliwe jest również zaznaczenie edytowalnego tekstu w aplikacji, a następnie wybranie z menu kontekstowego opcji Léon, aby wyczyścić tekst w miejscu.</string>
+    <string name="how_to_text">Podczas udostępniania tekstu wybierz "URL Cleaner". Następnie kliknij "Udostępnij" w tej aplikacji, aby wysłać tekst do docelowej aplikacji. Alternatywnie kliknij przycisk powyżej, aby zaimportować zawartość ze schowka.\n\nMożliwe jest również zaznaczenie edytowalnego tekstu w aplikacji, a następnie wybranie z menu kontekstowego opcji Léon, aby wyczyścić tekst w miejscu.</string>
     <string name="cleaned_url">URL Oczyszczony</string>
     <string name="original_url">URL Źródłowy</string>
     <string name="sanitizers">Sanityzatory</string>
