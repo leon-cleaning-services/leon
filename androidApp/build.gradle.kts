@@ -123,7 +123,10 @@ kotlin {
     }
 }
 
-room3 { schemaDirectory("$projectDir/schemas") }
+// The room3 Gradle plugin fails project configuration if schemaDirectory is unset, so this stays
+// until WP2 moves AppDatabase out of androidApp. Points at the same directory as :shared so the
+// schema history isn't forked in the meantime.
+room3 { schemaDirectory(rootProject.file("shared/schemas").path) }
 
 dependencies {
     val composeBom = platform(libs.androidx.compose.bom)

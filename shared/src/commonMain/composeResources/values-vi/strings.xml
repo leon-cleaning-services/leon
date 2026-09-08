@@ -1,0 +1,86 @@
+<!--
+  ~ Léon - The URL Cleaner
+  ~ Copyright (C) 2024 Sven Jacobs
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="screen_main">Trang chủ</string>
+    <string name="screen_settings">Thiết đặt</string>
+    <string name="screen_history">Lịch sử</string>
+    <string name="scaffold_title">Léon – Trình dọn dẹp URL</string>
+    <string name="share">Chia sẻ</string>
+    <string name="open">Mở</string>
+    <string name="copy">Sao chép</string>
+    <string name="clipboard_message">Đã chép liên kết vào clipboard</string>
+    <string name="clipboard_empty_message">Clipboard trống</string>
+    <string name="how_to_title">Cách-để</string>
+    <string name="how_to_text">Khi chia sẻ văn bản, chọn \"URL Cleaner\". Sau đó nhấp vào \"Chia sẻ\" trong ứng dụng này để gửi văn bản đến ứng dụng mục tiêu. Ngoài ra, hãy nhấp vào nút bên trên để nhập nội dung từ clipboard.</string>
+    <string name="cleaned_url">URL đã làm sạch</string>
+    <string name="original_url">URL gốc</string>
+    <string name="sanitizers">Chất khử trùng</string>
+    <string name="licenses">Giấy phép</string>
+    <string name="sanitizers_description">Bật hoặc tắt chất khử trùng</string>
+    <string name="sanitizers_search_placeholder">Tìm kiếm chất khử trùng</string>
+    <string name="sanitizers_search_clear">Xóa tìm kiếm</string>
+    <string name="sanitizers_no_results">Không tìm thấy chất khử trùng</string>
+    <string name="settings_detail_placeholder">Chọn một mục thiết đặt</string>
+    <string name="decode_url">Giải mã URL</string>
+    <string name="import_from_clipboard">Nhập từ clipboard</string>
+    <string name="reset">Đặt lại</string>
+    <string name="options">Tùy chọn</string>
+    <string name="extract_url">Chỉ trích xuất URL</string>
+    <string name="register_as_browser">Đăng ký Léon làm trình duyệt</string>
+    <string name="open_in_custom_tabs">Mở URL trong tab tùy chỉnh của trình duyệt</string>
+    <string name="action_after_clean">Hành động sau khi làm sạch</string>
+    <string name="do_nothing">Không làm gì cả</string>
+    <string name="open_share_menu">Mở menu chia sẻ</string>
+    <string name="open_url">Mở URL</string>
+    <string name="copy_to_clipboard">Sao chép vào clipboard</string>
+    <string name="auto_reset_after">Tự động đặt lại sau</string>
+    <string name="auto_reset_off">Tắt</string>
+    <string name="auto_reset_minutes">%1$d phút</string>
+    <string name="history_enabled">Lưu lịch sử URL đã làm sạch</string>
+    <string name="history_empty_title">Chưa có gì ở đây</string>
+    <string name="history_empty_text">Các URL bạn làm sạch sẽ xuất hiện ở đây, để bạn có thể chia sẻ, sao chép hoặc mở lại sau này. Mười mục gần nhất được lưu giữ.</string>
+    <string name="history_disabled_text">Lịch sử đang tắt. Hãy bật trong phần thiết đặt để lưu mười URL đã làm sạch gần nhất.</string>
+    <string name="history_clear_all">Xóa lịch sử</string>
+    <string name="history_clear_all_confirm">Xóa tất cả mục trong lịch sử?</string>
+    <string name="history_delete">Xóa</string>
+    <string name="history_deleted">Đã xóa mục</string>
+    <string name="undo">Hoàn tác</string>
+    <string name="cancel">Hủy</string>
+    <string name="protect_screen">Bảo vệ màn hình ứng dụng</string>
+    <string name="about">Thông tin</string>
+    <string name="about_developer">Được phát triển bởi %1$s với sự giúp đỡ của nhiều %2$s.</string>
+    <string name="about_contributors">người đóng góp</string>
+    <string name="about_license">Được cấp phép theo GPL 3.0. Mã nguồn tại %1$s.</string>
+    <string name="about_bugs">Lỗi và yêu cầu tính năng tại %1$s.</string>
+    <string name="about_sponsor">Tài trợ cho nhà phát triển tại %1$s.</string>
+    <string name="about_version">Phiên bản: %1$s</string>
+    <string name="close">Đóng</string>
+    <string name="changes_title">Thay đổi</string>
+    <string name="sanitizer_bluesky_redirect_name">Chuyển hướng Bluesky</string>
+    <string name="sanitizer_amazon_product_name">Sản phẩm Amazon</string>
+    <string name="sanitizer_aol_search_name">Tìm kiếm AOL</string>
+    <string name="sanitizer_empty_parameters_name">Tham số trống</string>
+    <string name="sanitizer_google_search_name">Tìm kiếm Google</string>
+    <string name="sanitizer_mydealz_parameters_name">Tham số MyDealz</string>
+    <string name="sanitizer_mydealz_redirects_name">Chuyển hướng MyDealz</string>
+    <string name="sanitizer_yahoo_search_name">Tìm kiếm Yahoo</string>
+    <string name="sanitizer_youtube_redirect_name">Chuyển hướng YouTube</string>
+    <string name="a11y_howto">Mô tả ứng dụng giải thích trên điện thoại thông minh</string>
+    <string name="a11y_back_navigation">Biểu tượng điều hướng trở lại</string>
+</resources>

@@ -42,5 +42,6 @@ dependencyResolutionManagement {
 rootProject.name = "Leon"
 include(
     ":core-domain",
+    ":shared",
     ":androidApp",
 )
