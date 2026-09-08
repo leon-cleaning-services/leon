@@ -58,6 +58,9 @@ import com.svenjacobs.app.leon.ui.screens.main.MainScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsLicensesScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsSanitizersScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsScreen
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -67,7 +70,24 @@ fun MainRouter(
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backStack = rememberNavBackStack(SavedStateConfiguration.DEFAULT, Destination.Main)
+    // NavKey is a sealed interface, so its subtypes must be registered as polymorphic for
+    // serialization to/from the saved-state Bundle to work; SavedStateConfiguration.DEFAULT does
+    // not know about them. The desktop target validates this eagerly (crashing immediately without
+    // it); Android currently only serializes on process death, but would fail there too.
+    val savedStateConfiguration = remember {
+        SavedStateConfiguration {
+            serializersModule = SerializersModule {
+                polymorphic(NavKey::class) {
+                    subclass(Destination.Main::class)
+                    subclass(Destination.History::class)
+                    subclass(Destination.Settings::class)
+                    subclass(Destination.SettingsSanitizers::class)
+                    subclass(Destination.SettingsLicenses::class)
+                }
+            }
+        }
+    }
+    val backStack = rememberNavBackStack(savedStateConfiguration, Destination.Main)
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Override the default so there is no horizontal gap between the panes on wide windows.

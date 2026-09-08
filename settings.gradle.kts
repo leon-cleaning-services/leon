@@ -44,4 +44,5 @@ include(
     ":core-domain",
     ":shared",
     ":androidApp",
+    ":desktopApp",
 )
