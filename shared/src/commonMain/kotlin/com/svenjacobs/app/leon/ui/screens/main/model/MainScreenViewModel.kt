@@ -32,7 +32,8 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
-import java.util.UUID
+import kotlin.time.Clock
+import kotlin.uuid.Uuid
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -141,7 +142,7 @@ class MainScreenViewModel(
         recorded = id to url
         viewModelScope.launch {
             if (!appDataStoreManager.historyEnabled.first()) return@launch
-            historyDao.record(id = id, url = url, at = System.currentTimeMillis())
+            historyDao.record(id = id, url = url, at = Clock.System.now().toEpochMilliseconds())
         }
     }
 
@@ -183,7 +184,8 @@ class MainScreenViewModel(
                 // redelivered, but auto-reset should already have fired. Treating it as absent here
                 // avoids a flash of the stale URL while the screen catches up.
                 val expired =
-                    session.autoResetAt != null && System.currentTimeMillis() >= session.autoResetAt
+                    session.autoResetAt != null &&
+                        Clock.System.now().toEpochMilliseconds() >= session.autoResetAt
                 val input = if (expired) null else session.input
 
                 val result =
@@ -217,7 +219,7 @@ class MainScreenViewModel(
                 initialValue = UiState(),
             )
 
-    fun setText(text: String?, id: String = UUID.randomUUID().toString()) {
+    fun setText(text: String?, id: String = Uuid.random().toString()) {
         if (text == null && uiState.value.result is Result.Success) return
         selection.value = Selection()
         input.value = text?.let { Input(id = id, text = it) }
@@ -227,7 +229,7 @@ class MainScreenViewModel(
                 // A redelivered intent (configuration change, or the activity being recreated
                 // after process death) carries the same id and must not restart the clock.
                 if (appDataStoreManager.lastInput.first()?.id != id) {
-                    appDataStoreManager.setLastInput(id, System.currentTimeMillis())
+                    appDataStoreManager.setLastInput(id, Clock.System.now().toEpochMilliseconds())
                 }
             }
         }

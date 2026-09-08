@@ -17,10 +17,22 @@
  */
 package com.svenjacobs.app.leon.db
 
+import androidx.room3.ConstructedBy
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
 
 @Database(entities = [HistoryEntry::class], version = 1, exportSchema = true)
+@ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun historyDao(): HistoryDao
+}
+
+// Room KMP generates the `actual` implementation of this object per target at compile time via
+// KSP. "NO_ACTUAL_FOR_EXPECT" is the real Kotlin compiler diagnostic id for a missing actual (the
+// plan referenced "KotlinNoActualForExpect", which is not a real diagnostic id and would be a
+// no-op suppress).
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
+    override fun initialize(): AppDatabase
 }

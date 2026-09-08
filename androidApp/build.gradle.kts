@@ -29,7 +29,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.metro)
-    alias(libs.plugins.room3)
 }
 
 java {
@@ -123,17 +122,13 @@ kotlin {
     }
 }
 
-// The room3 Gradle plugin fails project configuration if schemaDirectory is unset, so this stays
-// until WP2 moves AppDatabase out of androidApp. Points at the same directory as :shared so the
-// schema history isn't forked in the meantime.
-room3 { schemaDirectory(rootProject.file("shared/schemas").path) }
-
 dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     implementation(platform(libs.kotlin.bom))
 
     implementation(projects.coreDomain)
+    implementation(projects.shared)
 
     implementation(libs.kotlin.stdlib.jdk8)
     implementation(libs.androidx.core.ktx)
@@ -166,7 +161,7 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.jakewharton.timber)
     implementation(libs.androidx.room3.runtime)
-    ksp(libs.androidx.room3.compiler)
+    implementation(libs.androidx.sqlite.framework)
 
     debugImplementation(libs.facebook.stetho)
 

@@ -17,12 +17,9 @@
  */
 package com.svenjacobs.app.leon.ui.screens.settings.model
 
-import android.annotation.SuppressLint
-import android.content.ComponentName
-import android.content.Context
-import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.svenjacobs.app.leon.Platform
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
@@ -38,12 +35,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@SuppressLint("StaticFieldLeak")
 @Inject
 @ViewModelKey
 @ContributesIntoMap(AppScope::class)
 class SettingsScreenViewModel(
-    private val context: Context,
+    private val platform: Platform,
     private val appDataStoreManager: AppDataStoreManager,
     private val historyDao: HistoryDao,
 ) : ViewModel() {
@@ -56,6 +52,9 @@ class SettingsScreenViewModel(
         val historyEnabled: Boolean = true,
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
         val autoReset: AutoReset = AutoReset.Off,
+        val supportsBrowserRegistration: Boolean = false,
+        val supportsCustomTabs: Boolean = false,
+        val supportsProtectScreen: Boolean = false,
     )
 
     private val browserEnabled = MutableStateFlow(false)
@@ -86,30 +85,29 @@ class SettingsScreenViewModel(
                     historyEnabled = toggles.historyEnabled,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
                     autoReset = autoReset ?: AutoReset.Off,
+                    supportsBrowserRegistration = platform.supportsBrowserRegistration,
+                    supportsCustomTabs = platform.supportsCustomTabs,
+                    supportsProtectScreen = platform.supportsProtectScreen,
                 )
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = UiState(),
+                initialValue =
+                    UiState(
+                        supportsBrowserRegistration = platform.supportsBrowserRegistration,
+                        supportsCustomTabs = platform.supportsCustomTabs,
+                        supportsProtectScreen = platform.supportsProtectScreen,
+                    ),
             )
 
     init {
-        val enabledSetting = packageManager.getComponentEnabledSetting(componentName)
-        browserEnabled.value = enabledSetting == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+        browserEnabled.value = platform.isRegisteredAsBrowser()
     }
 
     fun onBrowserSwitchCheckedChange(checked: Boolean) {
         browserEnabled.value = checked
-        packageManager.setComponentEnabledSetting(
-            componentName,
-            if (checked) {
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            } else {
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-            },
-            PackageManager.DONT_KILL_APP,
-        )
+        platform.setRegisteredAsBrowser(checked)
     }
 
     fun onCustomTabsSwitchCheckedChange(checked: Boolean) {
@@ -136,14 +134,7 @@ class SettingsScreenViewModel(
         viewModelScope.launch { appDataStoreManager.setAutoReset(autoReset) }
     }
 
-    private val packageManager: PackageManager
-        get() = context.packageManager
-
-    private val componentName: ComponentName
-        get() = ComponentName(context.packageName, "${context.packageName}.$COMPONENT_NAME_CLASS")
-
     companion object {
-        private const val COMPONENT_NAME_CLASS = "MainBrowserActivity"
         const val GITHUB_URL = "https://github.com/leon-cleaning-services/leon"
         const val CONTRIBUTORS_URL = "$GITHUB_URL?tab=readme-ov-file#contributors"
         const val ISSUES_URL = "$GITHUB_URL/issues"

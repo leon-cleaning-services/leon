@@ -17,18 +17,18 @@
  */
 package com.svenjacobs.app.leon.datastore
 
-import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -36,57 +36,56 @@ import kotlinx.coroutines.flow.map
 /** Manages app specific preferences stored via [DataStore]. */
 @Inject
 @SingleIn(AppScope::class)
-class AppDataStoreManager(private val context: Context) {
-    private val Context.dataStore by preferencesDataStore(name = "settings")
+class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Preferences>) {
 
     suspend fun setVersionCode(versionCode: Int) {
-        context.dataStore.edit { it[KEY_VERSION_CODE] = versionCode }
+        dataStore.edit { it[KEY_VERSION_CODE] = versionCode }
     }
 
     suspend fun setActionAfterClean(actionAfterClean: ActionAfterClean) {
-        context.dataStore.edit { it[KEY_ACTION_AFTER_CLEAN] = actionAfterClean.name }
+        dataStore.edit { it[KEY_ACTION_AFTER_CLEAN] = actionAfterClean.name }
     }
 
     val actionAfterClean: Flow<ActionAfterClean?> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             runCatching { preferences[KEY_ACTION_AFTER_CLEAN]?.let(ActionAfterClean::valueOf) }
                 .getOrNull()
         }
 
     suspend fun setUrlDecodeEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[KEY_URL_DECODE] = enabled }
+        dataStore.edit { it[KEY_URL_DECODE] = enabled }
     }
 
     val urlDecodeEnabled: Flow<Boolean> =
-        context.dataStore.data.map { preferences -> preferences[KEY_URL_DECODE] ?: false }
+        dataStore.data.map { preferences -> preferences[KEY_URL_DECODE] ?: false }
 
     suspend fun setExtractUrlEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[KEY_EXTRACT_URL] = enabled }
+        dataStore.edit { it[KEY_EXTRACT_URL] = enabled }
     }
 
     val extractUrlEnabled: Flow<Boolean> =
-        context.dataStore.data.map { preferences -> preferences[KEY_EXTRACT_URL] ?: false }
+        dataStore.data.map { preferences -> preferences[KEY_EXTRACT_URL] ?: false }
 
     suspend fun setCustomTabsEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[KEY_CUSTOM_TABS] = enabled }
+        dataStore.edit { it[KEY_CUSTOM_TABS] = enabled }
     }
 
     val customTabsEnabled: Flow<Boolean> =
-        context.dataStore.data.map { preferences -> preferences[KEY_CUSTOM_TABS] ?: false }
+        dataStore.data.map { preferences -> preferences[KEY_CUSTOM_TABS] ?: false }
 
     suspend fun setProtectScreenEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[KEY_PROTECT_SCREEN] = enabled }
+        dataStore.edit { it[KEY_PROTECT_SCREEN] = enabled }
     }
 
     val protectScreenEnabled: Flow<Boolean> =
-        context.dataStore.data.map { preferences -> preferences[KEY_PROTECT_SCREEN] ?: false }
+        dataStore.data.map { preferences -> preferences[KEY_PROTECT_SCREEN] ?: false }
 
     suspend fun setAutoReset(autoReset: AutoReset) {
-        context.dataStore.edit { it[KEY_AUTO_RESET] = autoReset.name }
+        dataStore.edit { it[KEY_AUTO_RESET] = autoReset.name }
     }
 
     val autoReset: Flow<AutoReset?> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             runCatching { preferences[KEY_AUTO_RESET]?.let(AutoReset::valueOf) }.getOrNull()
         }
 
@@ -97,25 +96,25 @@ class AppDataStoreManager(private val context: Context) {
     data class LastInput(val id: String, val at: Long)
 
     suspend fun setLastInput(id: String, at: Long) {
-        context.dataStore.edit {
+        dataStore.edit {
             it[KEY_LAST_INPUT_ID] = id
             it[KEY_LAST_INPUT_AT] = at
         }
     }
 
     val lastInput: Flow<LastInput?> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val id = preferences[KEY_LAST_INPUT_ID]
             val at = preferences[KEY_LAST_INPUT_AT]
             if (id != null && at != null) LastInput(id, at) else null
         }
 
     suspend fun setHistoryEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[KEY_HISTORY_ENABLED] = enabled }
+        dataStore.edit { it[KEY_HISTORY_ENABLED] = enabled }
     }
 
     val historyEnabled: Flow<Boolean> =
-        context.dataStore.data.map { preferences -> preferences[KEY_HISTORY_ENABLED] ?: true }
+        dataStore.data.map { preferences -> preferences[KEY_HISTORY_ENABLED] ?: true }
 
     private companion object {
         private val KEY_VERSION_CODE = intPreferencesKey("version_code")

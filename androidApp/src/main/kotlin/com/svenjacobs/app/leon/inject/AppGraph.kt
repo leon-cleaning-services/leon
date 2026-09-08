@@ -18,17 +18,18 @@
 package com.svenjacobs.app.leon.inject
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.svenjacobs.app.leon.core.domain.Cleaner
-import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
-import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
-import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.AppDatabase
-import com.svenjacobs.app.leon.db.HistoryDao
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metrox.viewmodel.ViewModelGraph
@@ -44,13 +45,23 @@ interface AppGraph : ViewModelGraph {
     fun provideDatabase(context: Context): AppDatabase =
         Room.databaseBuilder<AppDatabase>(context, "leon").setDriver(AndroidSQLiteDriver()).build()
 
-    @Provides fun provideHistoryDao(db: AppDatabase): HistoryDao = db.historyDao()
-
-    @Provides fun provideSanitizers(): SanitizersCollection = AllSanitizers
+    // The file path is `context.filesDir/datastore/<name>.preferences_pb`, identical to what the
+    // old `preferencesDataStore(name = ...)` delegate wrote, so existing users keep their settings.
+    @Provides
+    @SingleIn(AppScope::class)
+    @Named("settings")
+    fun provideSettingsDataStore(context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("settings")
+        }
 
     @Provides
-    fun provideCleaner(sanitizers: SanitizersCollection, repository: SanitizerRepository): Cleaner =
-        Cleaner(sanitizers, repository)
+    @SingleIn(AppScope::class)
+    @Named("sanitizers")
+    fun provideSanitizersDataStore(context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("sanitizers")
+        }
 
     @DependencyGraph.Factory
     fun interface Factory {

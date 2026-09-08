@@ -17,14 +17,12 @@
  */
 package com.svenjacobs.app.leon.ui.screens.settings.model
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
-import com.svenjacobs.app.leon.sanitizer.displayName
+import com.svenjacobs.app.leon.sanitizer.displayNameSuspend
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel.UiState.Sanitizer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
@@ -40,12 +38,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@SuppressLint("StaticFieldLeak")
 @Inject
 @ViewModelKey
 @ContributesIntoMap(AppScope::class)
 class SettingsSanitizersScreenViewModel(
-    private val context: Context,
     private val sanitizers: SanitizersCollection,
     private val repository: SanitizerRepository,
 ) : ViewModel() {
@@ -69,7 +65,7 @@ class SettingsSanitizersScreenViewModel(
                             Sanitizer(
                                 id = state.id,
                                 name =
-                                    sanitizersById[state.id]?.displayName(context)
+                                    sanitizersById[state.id]?.displayNameSuspend()
                                         ?: state.id.value,
                                 enabled = state.enabled,
                             )

@@ -27,10 +27,8 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -67,9 +65,10 @@ fun ChangesCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            val context = LocalContext.current
-            val names =
-                remember(context) { AllSanitizers.associate { it.id to it.displayName(context) } }
+            // Not wrapped in `remember`: WP3 moves this screen to `shared` and reworks it to read
+            // resources properly; this is a temporary, minimal fix to keep androidApp compiling
+            // after the sanitizer/SanitizerNames.kt Context -> Compose-resources API change.
+            val names = AllSanitizers.associate { it.id to it.displayName() }
 
             changes.forEach { row ->
                 ChangeItem(

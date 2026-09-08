@@ -17,15 +17,14 @@
  */
 package com.svenjacobs.app.leon.datastore
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -33,21 +32,22 @@ import kotlinx.coroutines.flow.map
 /** Manages [Sanitizer] specific preferences stored via [DataStore]. */
 @Inject
 @SingleIn(AppScope::class)
-class SanitizerDataStoreManager(private val context: Context) {
-    private val Context.dataStore by preferencesDataStore(name = "sanitizers")
+class SanitizerDataStoreManager(
+    @Named("sanitizers") private val dataStore: DataStore<Preferences>
+) {
 
     internal fun preferencesKey(id: String) = booleanPreferencesKey(name = "sanitizer_$id")
 
     val data: Flow<Preferences>
-        get() = context.dataStore.data
+        get() = dataStore.data
 
     suspend fun setSanitizerEnabled(id: String, enabled: Boolean) {
         val key = preferencesKey(id)
-        context.dataStore.edit { it[key] = enabled }
+        dataStore.edit { it[key] = enabled }
     }
 
     fun isSanitizerEnabled(id: String): Flow<Boolean?> {
         val key = preferencesKey(id)
-        return context.dataStore.data.map { it[key] }
+        return dataStore.data.map { it[key] }
     }
 }
