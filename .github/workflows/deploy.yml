@@ -96,15 +96,15 @@ jobs:
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: |
-            app/build/outputs/apk/**/*.apk
-            app/build/outputs/bundle/**/*.aab
+            androidApp/build/outputs/apk/**/*.apk
+            androidApp/build/outputs/bundle/**/*.aab
 
       - uses: actions/upload-artifact@v7
         with:
           name: Android artifacts
           path: |
-            app/build/outputs/apk/**/*.apk
-            app/build/outputs/bundle/**/*.aab
+            androidApp/build/outputs/apk/**/*.apk
+            androidApp/build/outputs/bundle/**/*.aab
 
   increment-version:
     timeout-minutes: 30
@@ -116,10 +116,10 @@ jobs:
           ref: main
 
       - name: Increment version code
-        run: sed -i 's/versionCode = [0-9]*/versionCode = '$(awk '/versionCode =/{print $3=$3+1}' app/build.gradle.kts)'/g' app/build.gradle.kts
+        run: sed -i 's/versionCode = [0-9]*/versionCode = '$(awk '/versionCode =/{print $3=$3+1}' androidApp/build.gradle.kts)'/g' androidApp/build.gradle.kts
 
       - name: Increment version name
-        run: sed -i 's/versionName = .*/versionName = "'$(awk '/versionName =/{print substr($3,2,length($3)-2)+1}' app/build.gradle.kts)'"/g' app/build.gradle.kts
+        run: sed -i 's/versionName = .*/versionName = "'$(awk '/versionName =/{print substr($3,2,length($3)-2)+1}' androidApp/build.gradle.kts)'"/g' androidApp/build.gradle.kts
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7

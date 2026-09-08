@@ -5,7 +5,7 @@ platform :android do
   desc "Deploy a new version to Google Play Store"
   lane :deploy do
     # https://docs.fastlane.tools/advanced/fastlane/#directory-behavior
-    version_code = File.read("../app/build.gradle.kts")[/^\s*versionCode\s*=\s*(\d+)/, 1]
+    version_code = File.read("../androidApp/build.gradle.kts")[/^\s*versionCode\s*=\s*(\d+)/, 1]
     UI.user_error!("Could not extract versionCode") if version_code.nil?
     UI.message("Using version code #{version_code}")
 
@@ -14,7 +14,7 @@ platform :android do
         track: 'production',
         release_status: 'completed',
         version_code: version_code.to_i,
-        aab: 'app/build/outputs/bundle/release/app-release.aab',
+        aab: 'androidApp/build/outputs/bundle/release/androidApp-release.aab',
         skip_upload_apk: true,
         skip_upload_metadata: true,
         skip_upload_changelogs: true,

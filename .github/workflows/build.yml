@@ -38,8 +38,8 @@ jobs:
         with:
           name: Android artifacts
           path: |
-            app/build/outputs/apk/**/*.apk
-            app/build/outputs/bundle/**/*.aab
+            androidApp/build/outputs/apk/**/*.apk
+            androidApp/build/outputs/bundle/**/*.aab
 
       - name: Comment artifact link on pull request
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository

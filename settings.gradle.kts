@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         google()
@@ -40,5 +42,5 @@ dependencyResolutionManagement {
 rootProject.name = "Leon"
 include(
     ":core-domain",
-    ":app",
+    ":androidApp",
 )

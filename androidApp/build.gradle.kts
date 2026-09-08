@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
-    kotlin("plugin.parcelize")
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.android.compose.screenshot)
@@ -131,7 +130,7 @@ dependencies {
     implementation(composeBom)
     implementation(platform(libs.kotlin.bom))
 
-    implementation(project(":core-domain"))
+    implementation(projects.coreDomain)
 
     implementation(libs.kotlin.stdlib.jdk8)
     implementation(libs.androidx.core.ktx)
