@@ -71,10 +71,19 @@ The AppImage needs nothing beyond `curl` and runs fine on the host — `appimage
 `appimagetool` with `--appimage-extract-and-run`, since there is no FUSE inside a container or on
 GitHub runners.
 
-Desktop data (the Room database and DataStore preference files) lives per OS: `%LOCALAPPDATA%\Leon`
-on Windows, `~/Library/Application Support/Leon` on macOS, and `$XDG_DATA_HOME/leon` (falling back
-to `~/.local/share/leon`) on Linux. The Linux path is unchanged from before per-OS data directories
-existed, so existing Linux installs keep their data.
+Desktop data follows the XDG Base Directory Specification on Linux, and the equivalent platform
+conventions on macOS and Windows, split into a data directory (the Room database) and a config
+directory (the DataStore preference files):
+
+- **Data**: `%LOCALAPPDATA%\Leon` on Windows, `~/Library/Application Support/Leon` on macOS,
+  `$XDG_DATA_HOME/leon` (falling back to `~/.local/share/leon`) on Linux.
+- **Config**: `%APPDATA%\Leon` on Windows, `~/Library/Application Support/Leon` on macOS (same
+  directory as data - macOS keeps app-managed files together), `$XDG_CONFIG_HOME/leon` (falling
+  back to `~/.config/leon`) on Linux.
+
+The Linux data path is unchanged from before per-OS data directories existed, so existing Linux
+installs keep their database; on first run the app moves the preference files that used to live
+alongside it into the new config directory.
 
 None of the installers are signed. On macOS, Gatekeeper blocks a plain double-click; open the app
 with right-click → Open, or clear the quarantine flag with

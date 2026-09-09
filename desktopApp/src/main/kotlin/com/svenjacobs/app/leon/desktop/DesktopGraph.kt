@@ -43,8 +43,8 @@ interface DesktopGraph : ViewModelGraph {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideDatabase(dataDir: File): AppDatabase =
-        Room.databaseBuilder<AppDatabase>(File(dataDir, "leon.db").absolutePath)
+    fun provideDatabase(dirs: DesktopDirs): AppDatabase =
+        Room.databaseBuilder<AppDatabase>(File(dirs.data, "leon.db").absolutePath)
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
@@ -52,21 +52,21 @@ interface DesktopGraph : ViewModelGraph {
     @Provides
     @SingleIn(AppScope::class)
     @Named("settings")
-    fun provideSettingsDataStore(dataDir: File): DataStore<Preferences> =
+    fun provideSettingsDataStore(dirs: DesktopDirs): DataStore<Preferences> =
         PreferenceDataStoreFactory.createWithPath {
-            File(dataDir, "settings.preferences_pb").absolutePath.toPath()
+            File(dirs.config, "settings.preferences_pb").absolutePath.toPath()
         }
 
     @Provides
     @SingleIn(AppScope::class)
     @Named("sanitizers")
-    fun provideSanitizersDataStore(dataDir: File): DataStore<Preferences> =
+    fun provideSanitizersDataStore(dirs: DesktopDirs): DataStore<Preferences> =
         PreferenceDataStoreFactory.createWithPath {
-            File(dataDir, "sanitizers.preferences_pb").absolutePath.toPath()
+            File(dirs.config, "sanitizers.preferences_pb").absolutePath.toPath()
         }
 
     @DependencyGraph.Factory
     fun interface Factory {
-        fun create(@Provides dataDir: File): DesktopGraph
+        fun create(@Provides dirs: DesktopDirs): DesktopGraph
     }
 }

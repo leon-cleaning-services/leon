@@ -33,8 +33,11 @@ import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import kotlin.uuid.Uuid
 
 fun main(args: Array<String>) {
-    val dataDir = desktopDataDir().apply { mkdirs() }
-    val graph = createGraphFactory<DesktopGraph.Factory>().create(dataDir)
+    val dirs = DesktopDirs(data = desktopDataDir(), config = desktopConfigDir())
+    dirs.data.mkdirs()
+    dirs.config.mkdirs()
+    migrateConfigFiles(dirs.data, dirs.config)
+    val graph = createGraphFactory<DesktopGraph.Factory>().create(dirs)
 
     val sourceText =
         mutableStateOf(
