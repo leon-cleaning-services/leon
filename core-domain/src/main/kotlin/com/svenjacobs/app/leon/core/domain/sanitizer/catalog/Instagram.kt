@@ -28,6 +28,6 @@ val Instagram =
     Sanitizer(
         id = SanitizerId("instagram"),
         name = "Instagram",
-        rules = persistentListOf(Rule.RemoveParameters("igsh|igsi")),
+        rules = persistentListOf(Rule.RemoveParameters("igsh|igsi|stkn")),
         match = persistentListOf(Match(HostMatch.Domain("instagram.com"))),
     )
