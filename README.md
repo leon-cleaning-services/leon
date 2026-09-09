@@ -42,7 +42,7 @@ _Painting by [Mondstern](https://mastodon.green/@mondstern/111993655182793928) (
 When sharing a link, select **URL Cleaner** as the receiving application. Then from within URL
 Cleaner share the cleaned URL to the actual target application.
 
-<img src="./app/src/main/res/drawable-nodpi/howto_pixel_5.webp" width="250" />
+<img src="./docs/screenshots/light-phone-1-main.png" width="300" />
 
 It's also possible to select editable text in any application which supports it, then in the
 context menu choose Léon to sanitize text in place.
