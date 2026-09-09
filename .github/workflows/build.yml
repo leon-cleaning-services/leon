@@ -3,6 +3,9 @@ name: Build & Verify
 on: [ pull_request, workflow_dispatch ]
 
 permissions:
+  # Declaring any permission sets every other scope to none, and resolving the reusable
+  # package-desktop.yml needs contents: read - without it the run fails before any job starts.
+  contents: read
   pull-requests: write
 
 jobs:
