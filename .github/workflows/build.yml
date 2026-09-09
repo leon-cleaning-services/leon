@@ -55,6 +55,3 @@ jobs:
               repo: context.repo.repo,
               body: '📦 Build artifacts are available [here](${{ steps.upload-artifact.outputs.artifact-url }}).',
             })
-
-  package-desktop:
-    uses: ./.github/workflows/package-desktop.yml
