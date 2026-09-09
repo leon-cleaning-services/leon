@@ -41,6 +41,13 @@ class InstagramTest :
                         result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
                     }
 
+                    "remove \"stkn\" parameter" {
+                        val result =
+                            clean("https://www.instagram.com/reel/Ceeg-VgI4yF/?stkn=YmMyMTA2M2Y=")
+
+                        result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                    }
+
                     "keep other parameters" {
                         val result =
                             clean("https://www.instagram.com/p/Ceeg-VgI4yF/?igsi=abc&img_index=2")
