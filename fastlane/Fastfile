@@ -9,7 +9,8 @@ platform :android do
     UI.user_error!("Could not extract versionCode") if version_code.nil?
     UI.message("Using version code #{version_code}")
 
-    gradle(task: "assembleRelease bundleRelease")
+    # CI builds the AAB in a separate job and downloads it into androidApp/build/outputs.
+    gradle(task: "assembleRelease bundleRelease") unless ENV["SKIP_GRADLE_BUILD"]
     upload_to_play_store(
         track: 'production',
         release_status: 'completed',

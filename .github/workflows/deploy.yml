@@ -6,21 +6,26 @@ on:
       - v*
   workflow_dispatch:
 
+# Every job gets read-only unless it says otherwise below. Only the two jobs that write to
+# this repository - the release and the version bump - get contents: write; the jobs holding
+# the signing keystore and the Play Store service account do not.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   package-desktop:
+    permissions:
+      contents: read
     uses: ./.github/workflows/package-desktop.yml
 
-  deploy:
+  build-android:
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    needs: package-desktop
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
           show-progress: false
 
       - uses: actions/setup-java@v6
@@ -38,23 +43,69 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # Reveals the upload keystore and signing.properties.
+      - uses: ./.github/actions/reveal-secrets
+        with:
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Build release APK & AAB
+        run: ./gradlew assembleRelease bundleRelease
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Android artifacts
+          path: |
+            androidApp/build/outputs/apk/**/*.apk
+            androidApp/build/outputs/bundle/**/*.aab
+
+  play-store:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    needs: build-android
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          show-progress: false
+
       - name: Setup Ruby & Fastlane
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3'
           bundler-cache: true
 
-      - name: Import GPG key for git-secret
-        run: echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --batch --yes
+      # Reveals google-play-service-account.json.
+      - uses: ./.github/actions/reveal-secrets
+        with:
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Install git-secret
-        run: sudo apt-get install git-secret
-
-      - name: Decrypt secrets
-        run: git secret reveal -f
+      - uses: actions/download-artifact@v7
+        with:
+          name: Android artifacts
+          path: androidApp/build/outputs
 
       - name: Deploy production version
         run: bundle exec fastlane deploy
+        env:
+          # The AAB comes from the build-android job, so the lane must not rebuild it.
+          SKIP_GRADLE_BUILD: 'true'
+
+  github-release:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    needs: [build-android, package-desktop]
+    permissions:
+      contents: write # Creates the GitHub release.
+      pull-requests: read # The changelog builder reads the merged pull requests and their labels.
+    steps:
+      # The only job that needs full history: the changelog builder resolves the previous tag.
+      # The build itself does not - versionCode/versionName are literals in build.gradle.kts
+      # since 10797c9 replaced latestTagName() with a hardcoded value.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          show-progress: false
 
       - name: Build changelog
         id: github_release
@@ -101,26 +152,26 @@ jobs:
           merge-multiple: true
           path: desktop-artifacts
 
+      - uses: actions/download-artifact@v7
+        with:
+          name: Android artifacts
+          path: android-artifacts
+
       - name: Create GitHub release
         uses: softprops/action-gh-release@v3
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: |
-            androidApp/build/outputs/apk/**/*.apk
-            androidApp/build/outputs/bundle/**/*.aab
+            android-artifacts/**/*.apk
+            android-artifacts/**/*.aab
             desktop-artifacts/**
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: Android artifacts
-          path: |
-            androidApp/build/outputs/apk/**/*.apk
-            androidApp/build/outputs/bundle/**/*.aab
 
   increment-version:
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: [play-store, github-release]
+    permissions:
+      contents: write # Commits the incremented version to main.
     steps:
       - uses: actions/checkout@v7
         with:
