@@ -551,6 +551,7 @@ private fun SwitchRow(
     }
 }
 
+@OptIn(ExperimentalGridApi::class)
 @Composable
 fun HowToBody(
     onImportFromClipboardClick: () -> Unit,
@@ -577,12 +578,23 @@ fun HowToBody(
                 singleLine = true,
             )
 
-            Row(
+            Grid(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                config = {
+                    // Side by side only while both buttons fit on one line. "Import from
+                    // clipboard" plus its icon needs about 190dp, so below ~400dp of grid width —
+                    // which is every phone, the card's own 16dp padding taken off — the two stack
+                    // full width instead of wrapping their labels over two lines.
+                    // `hasBoundedWidth` guards the `toDp()`, as in `ActionsSection` below.
+                    val columns =
+                        if (constraints.hasBoundedWidth && constraints.maxWidth.toDp() >= 400.dp) 2
+                        else 1
+                    repeat(columns) { column(1f / columns) }
+                    gap(8.dp)
+                },
             ) {
                 Button(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.fillMaxWidth(),
                     enabled = text.isNotBlank(),
                     onClick = { onSubmit(text) },
                 ) {
@@ -593,7 +605,7 @@ fun HowToBody(
                 }
 
                 Button(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = onImportFromClipboardClick,
                 ) {
                     Icon(
