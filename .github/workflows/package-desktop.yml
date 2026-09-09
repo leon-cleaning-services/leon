@@ -50,13 +50,10 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y rpm
 
-      # Required, not optional: Gradle configures every project including :androidApp, and AGP
-      # aborts with "SDK location not found" at configuration time. The macOS arm64 images ship no
-      # Android SDK; the Ubuntu and Windows images do.
-      - name: Setup Android SDK
-        if: runner.os == 'macOS'
-        uses: android-actions/setup-android@v3
-
+      # No setup-android step: Gradle configures every project including :androidApp, so AGP needs
+      # an SDK even for a desktop-only task - but all three runner images already ship one
+      # (macos-15-arm64 sets ANDROID_HOME=/Users/runner/Library/Android/sdk).
+      #
       # No WiX install step: windows-latest (Windows Server 2025) ships WiX Toolset 3.14 on PATH,
       # which is the v3 toolchain JDK 21's jpackage expects. If a future image drops it, add
       # `choco install wixtoolset -y --version 3.14.1`.

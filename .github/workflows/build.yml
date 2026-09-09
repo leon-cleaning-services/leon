@@ -3,9 +3,6 @@ name: Build & Verify
 on: [ pull_request, workflow_dispatch ]
 
 permissions:
-  # Declaring any permission sets every other scope to none, and resolving the reusable
-  # package-desktop.yml needs contents: read - without it the run fails before any job starts.
-  contents: read
   pull-requests: write
 
 jobs:
@@ -55,3 +52,6 @@ jobs:
               repo: context.repo.repo,
               body: '📦 Build artifacts are available [here](${{ steps.upload-artifact.outputs.artifact-url }}).',
             })
+
+  package-desktop:
+    uses: ./.github/workflows/package-desktop.yml
