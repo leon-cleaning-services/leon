@@ -30,10 +30,23 @@ private object DesktopUrlActions : UrlActions {
     override fun share(text: String, chooserTitle: String) {}
 
     override fun open(url: String, customTabs: Boolean, chooserTitle: String) {
-        if (!Desktop.isDesktopSupported()) return
-        val desktop = Desktop.getDesktop()
-        if (!desktop.isSupported(Desktop.Action.BROWSE)) return
-        runCatching { desktop.browse(URI(url)) }
+        val browsed =
+            Desktop.isDesktopSupported() &&
+                Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) &&
+                runCatching { Desktop.getDesktop().browse(URI(url)) }.isSuccess
+
+        // Desktop.Action.BROWSE is unsupported on most Linux desktops (the JDK reaches for gio,
+        // which frequently isn't resolvable), so fall back to the platform's own URL opener.
+        if (!browsed) {
+            val os = System.getProperty("os.name").orEmpty().lowercase()
+            val command =
+                when {
+                    os.contains("mac") -> listOf("open", url)
+                    os.contains("win") -> listOf("rundll32", "url.dll,FileProtocolHandler", url)
+                    else -> listOf("xdg-open", url)
+                }
+            runCatching { ProcessBuilder(command).start() }
+        }
     }
 }
 
