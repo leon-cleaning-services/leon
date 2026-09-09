@@ -1,0 +1,88 @@
+<!--
+  ~ Léon - The URL Cleaner
+  ~ Copyright (C) 2024 Sven Jacobs
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="screen_main">Home</string>
+    <string name="screen_settings">Settings</string>
+    <string name="screen_history">History</string>
+    <string name="scaffold_title">Léon – The URL Cleaner</string>
+    <string name="share">Share</string>
+    <string name="open">Open</string>
+    <string name="copy">Copy</string>
+    <string name="clipboard_message">Link copied to clipboard</string>
+    <string name="clipboard_empty_message">Clipboard is empty</string>
+    <string name="how_to_title">How-to</string>
+    <string name="how_to_text">When sharing text, choose "URL Cleaner". Then click on "Share" in this app to send text to target app. Alternatively, click the button above to import contents from the clipboard.\n\nIt's also possible to select editable text in an application, then in the context menu choose Léon to sanitize text in place.</string>
+    <string name="cleaned_url">Cleaned URL</string>
+    <string name="original_url">Original URL</string>
+    <string name="sanitizers">Sanitizers</string>
+    <string name="licenses">Licenses</string>
+    <string name="sanitizers_description">Enable or disable sanitizers</string>
+    <string name="sanitizers_search_placeholder">Search sanitizers</string>
+    <string name="sanitizers_search_clear">Clear search</string>
+    <string name="sanitizers_no_results">No sanitizers found</string>
+    <string name="settings_detail_placeholder">Select a settings section</string>
+    <string name="decode_url">Decode URL</string>
+    <string name="import_from_clipboard">Import from clipboard</string>
+    <string name="submit">Submit</string>
+    <string name="text_field_placeholder">Enter or paste text to clean</string>
+    <string name="reset">Reset</string>
+    <string name="options">Options</string>
+    <string name="extract_url">Extract only URL</string>
+    <string name="register_as_browser">Register Léon as browser</string>
+    <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string>
+    <string name="action_after_clean">Action after clean</string>
+    <string name="do_nothing">Do nothing</string>
+    <string name="open_share_menu">Open share menu</string>
+    <string name="open_url">Open URL</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="auto_reset_after">Auto-reset after</string>
+    <string name="auto_reset_off">Off</string>
+    <string name="auto_reset_minutes">%1$d min</string>
+    <string name="history_enabled">Keep history of cleaned URLs</string>
+    <string name="history_empty_title">Nothing here yet</string>
+    <string name="history_empty_text">URLs you clean appear here, so you can share, copy or open them again later. The last ten are kept.</string>
+    <string name="history_disabled_text">The history is turned off. Turn it on in the settings to keep the last ten cleaned URLs.</string>
+    <string name="history_clear_all">Clear history</string>
+    <string name="history_clear_all_confirm">Remove all entries from the history?</string>
+    <string name="history_delete">Delete</string>
+    <string name="history_deleted">Entry deleted</string>
+    <string name="undo">Undo</string>
+    <string name="cancel">Cancel</string>
+    <string name="protect_screen">Protect app screen</string>
+    <string name="about">About</string>
+    <string name="about_developer">Developed by %1$s with the help of many %2$s.</string>
+    <string name="about_contributors">contributors</string>
+    <string name="about_license">Licensed under GPL 3.0. Source code at %1$s.</string>
+    <string name="about_bugs">Bugs and feature requests at %1$s.</string>
+    <string name="about_sponsor">Sponsor the developer at %1$s.</string>
+    <string name="about_version">Version: %1$s</string>
+    <string name="close">Close</string>
+    <string name="changes_title">Changes</string>
+    <string name="sanitizer_bluesky_redirect_name">Bluesky Redirect</string>
+    <string name="sanitizer_amazon_product_name">Amazon Products</string>
+    <string name="sanitizer_aol_search_name">AOL Search</string>
+    <string name="sanitizer_empty_parameters_name">Empty Parameters</string>
+    <string name="sanitizer_google_search_name">Google Search</string>
+    <string name="sanitizer_mydealz_parameters_name">MyDealz Parameters</string>
+    <string name="sanitizer_mydealz_redirects_name">MyDealz Redirects</string>
+    <string name="sanitizer_yahoo_search_name">Yahoo Search</string>
+    <string name="sanitizer_youtube_redirect_name">YouTube Redirect</string>
+    <string name="a11y_howto">Depiction of a smartphone explaining application</string>
+    <string name="a11y_back_navigation">Icon which navigates back</string>
+</resources>

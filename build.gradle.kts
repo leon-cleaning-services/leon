@@ -18,7 +18,7 @@
 
 import com.adarshr.gradle.testlogger.theme.ThemeType.STANDARD
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 buildscript {
     repositories {
@@ -38,6 +38,7 @@ plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.adarshr.test.logger)
     alias(libs.plugins.aboutlibraries) apply false
+    alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.metro) apply false
@@ -51,12 +52,12 @@ subprojects {
         theme = STANDARD
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
+    tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
-            freeCompilerArgs.addAll(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            optIn.addAll(
+                "kotlin.RequiresOptIn",
+                "androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
+                "androidx.compose.material3.ExperimentalMaterial3Api",
             )
         }
     }
@@ -65,7 +66,7 @@ subprojects {
 spotless {
     kotlin {
         target("**/*.kt")
-        targetExclude("**/build/**/*.*", "buildSrc/**/Android.kt")
+        targetExclude("**/build/**/*.*", "**/buildSrc/**/Android.kt", ".claude/**")
         licenseHeaderFile(rootProject.file("spotless/license_header.txt"))
         ktfmt().kotlinlangStyle()
     }

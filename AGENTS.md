@@ -2,32 +2,69 @@
 
 ## Project Overview
 
-**Léon – The URL Cleaner** is an Android application (minSdk 24, Kotlin) that removes tracking
-and other unwanted parameters from URLs before sharing. It integrates into Android's standard
-sharing mechanism and is also meant as a blueprint for modern Android development.
+**Léon – The URL Cleaner** is a Kotlin Multiplatform application (Android, minSdk 24; and desktop)
+that removes tracking and other unwanted parameters from URLs before sharing. On Android it
+integrates into the standard sharing mechanism; it is also meant as a blueprint for modern Android
+development.
 
 ## Module Structure
 
+Léon is a Kotlin Multiplatform (KMP) project, using JetBrains' recommended default project
+structure: one `shared` KMP library carrying the common code, plus one thin application module per
+platform.
+
 ```
 leon/
-├── app/                  # Android application module (UI, Metro dependency graph)
-└── core-domain/          # URL model, sanitizer catalog, Cleaner
+├── core-domain/          # URL model, sanitizer catalog, Cleaner (KMP library: jvm + Android)
+├── shared/               # UI, ViewModels, data layer, Metro DI graph contributions (KMP library:
+│                         # Android + jvm("desktop")); Compose resources (strings, drawables)
+├── androidApp/           # Android application module (Activities, manifest, signing, Metro AppGraph)
+└── desktopApp/           # Compose Desktop application module (packages deb/rpm/msi/dmg)
 ```
 
-- **`app`** – Activities, Jetpack Compose screens, ViewModels, DataStore managers, and `AppGraph`,
-  the Metro dependency graph that binds the app's `SanitizerRepository` implementation into
-  `core-domain`.
 - **`core-domain`** – Everything about cleaning a URL: the `Url` model, `Match`, `Rule`, `Change`,
   `Cleaner`, and the sanitizer catalog under
   `com.svenjacobs.app.leon.core.domain.sanitizer.catalog/`.
+- **`shared`** – Every Compose screen, ViewModel, DataStore manager, the Room database and
+  `HistoryDao`, and the `SharedProviders`/`Platform` DI seams. `src/commonMain` holds the platform-
+  independent code; `src/androidMain` holds Android actuals and every `@Preview`; `src/desktopMain`
+  holds desktop actuals; `src/desktopTest` holds the JVM-run unit tests (Kotest + MockK, and the
+  Room DAO test against an in-memory database).
+- **`androidApp`** – The Android application: `LeonApplication`, `MainActivity`,
+  `ProcessTextActivity`, `AppGraph` (binds `AndroidPlatform` and the Android `SanitizerRepository`
+  implementation into `core-domain`/`shared`), manifest strings, mipmaps, signing, screenshot tests.
+  Same `applicationId`, signing and `versionCode`/`versionName` as before the KMP migration.
+- **`desktopApp`** – The Compose Desktop application: `Main.kt`, `DesktopGraph` (the desktop Metro
+  graph), packaged via `org.jetbrains.compose`'s `nativeDistributions` (currently `.deb`; msi/dmg/rpm
+  are follow-ups, see [DEVELOPMENT.md](DEVELOPMENT.md)).
 
 `core-domain` contains **no Android and no `java.*` API** and uses no DI framework at all, so it
 can be lifted out into a standalone Kotlin library — for a command line cleaner, for example. Keep
 it that way; this check must stay empty:
 
 ```bash
-grep -rn "^import android\|^import androidx\|^import java\.\|^import javax\." core-domain/src/main
+grep -rn "^import android\|^import androidx\|^import java\.\|^import javax\." core-domain/src/commonMain
 ```
+
+### Gotchas from the KMP migration
+
+- `androidResources { enable = true }` is **required** in the `android { }` block of `shared`'s
+  `kotlin { }` (the KMP Android target), or Compose resources silently vanish from the APK
+  (CMP-9547) — the app still builds and installs, it just renders blank strings and drawables.
+- Compose resources do not unescape `\"`/`\'` the way Android's `aapt` does; a literal backslash in
+  a shared `strings.xml` renders as a literal backslash on screen. Write a plain `"`/`'` instead.
+- The common `@Preview` annotation has no `device`/`uiMode` parameters, so every `@Preview` function
+  (and `DayNightPreviews`/`FormFactorPreviews`) lives in `shared/src/androidMain`, not `commonMain`.
+- Gradle plugins in `shared`/`desktopApp`/`core-domain` must be applied **bare**
+  (`id("org.jetbrains.compose")`), not via `alias(libs.plugins.…)`, because of how the root
+  buildscript classpath resolves them — `alias()` fails to find the plugin there.
+- `shared/src/commonMain/composeResources/files/aboutlibraries.json` must be regenerated whenever a
+  dependency changes:
+  ```bash
+  ./gradlew :androidApp:exportLibraryDefinitionsRelease -PaboutLibraries.outputFile=../shared/src/commonMain/composeResources/files/aboutlibraries.json
+  ```
+  Run it from the repo root; the relative `outputFile` is resolved against `androidApp/`, which is
+  why it starts with `../shared`.
 
 ## How Cleaning Works
 
@@ -101,7 +138,7 @@ Adds a sanitizer that removes `example_` tracking parameters from `example.com` 
 
 1. Share `https://www.example.com/path?example_ref=abc&keep=123` with Léon.
 2. The cleaned URL must no longer contain `example_ref`, while `keep=123` is preserved.
-3. Run `./gradlew :core-domain:test`.
+3. Run `./gradlew :core-domain:jvmTest`.
 ````
 
 ## Closing Keywords
@@ -197,8 +234,10 @@ val Example =
 ```
 
 `name` is the English display name. Brand names are shown as they are; for a *descriptive* name that
-should be translated, add a string resource to `app/src/main/res/values*/strings.xml` and an entry to
-`TRANSLATED_NAMES` in `app/src/main/kotlin/com/svenjacobs/app/leon/sanitizer/SanitizerNames.kt`.
+should be translated, add a string resource to
+`shared/src/commonMain/composeResources/values*/strings.xml` and an entry to `TRANSLATED_NAMES` in
+`shared/src/commonMain/kotlin/com/svenjacobs/app/leon/sanitizer/SanitizerNames.kt`, referenced as
+`Res.string.*`.
 
 **`match` — which URLs the sanitizer applies to** (a URL matching *any* entry is sanitized):
 
@@ -257,9 +296,17 @@ whether the user had it turned off, and reusing one inherits that setting.
 
 ## Adding a New ViewModel
 
-Dependencies come from `AppGraph`, the [Metro](https://zacsweers.github.io/metro/) graph in
-`app/.../inject/`. A ViewModel declares what it needs and **never** takes a default argument — the
-graph is what decides where an instance comes from:
+ViewModels live in `shared/src/commonMain`, so they must not take a `Context` or any other
+platform-specific type. Anything that differs between Android and desktop goes through the
+`Platform` interface (`shared/.../Platform.kt`, bound per platform as `AndroidPlatform` /
+`DesktopPlatform`) or one of the other expect/actual seams (`UrlActions`, `ClipboardText`,
+`formatDateTime`, …) — never a direct platform API call from common code.
+
+Dependencies come from each platform's Metro graph — `AppGraph` in `androidApp/.../inject/` for
+Android, `DesktopGraph` in `desktopApp/.../desktop/` for desktop — plus `SharedProviders` in
+`shared/.../inject/` for what both platforms provide the same way. A ViewModel declares what it
+needs and **never** takes a default argument — the graph is what decides where an instance comes
+from:
 
 ```kotlin
 @Inject
@@ -281,17 +328,25 @@ fun ExampleScreen(
 )
 ```
 
-That resolves through `LocalMetroViewModelFactory`, which `MainActivity` provides around the whole
-content — a `@Preview` therefore cannot call it, and must be given its state as a parameter instead.
+That resolves through `LocalMetroViewModelFactory`, which each platform's root composable
+(`MainActivity` on Android, `Main.kt` on desktop) provides around the whole content — a `@Preview`
+therefore cannot call it, and must be given its state as a parameter instead.
 
 A new *dependency* is added the same way: annotate the class `@Inject` (plus
 `@SingleIn(AppScope::class)` if it must be a singleton, and `@ContributesBinding(AppScope::class)`
 if it implements an interface others depend on). Only what Metro cannot construct itself — the
-Room database, or a `core-domain` type which has no annotations — needs a `@Provides` in `AppGraph`.
+Room database, or a `core-domain` type which has no annotations — needs a `@Provides`. Add it to
+`SharedProviders` (`shared/.../inject/`) when both platforms build it the same way, or to the
+platform's own graph (`AppGraph`, `DesktopGraph`) when it needs a platform-specific input such as
+`Context` or a data directory.
 
 ## Unit Tests
 
-Tests live in the corresponding `src/test` source set, mirroring the production package structure.
+Tests live in the JVM-run source set of the module they test, mirroring the production package
+structure: `core-domain/src/jvmTest` for sanitizers and the `Cleaner`, `shared/src/desktopTest` for
+ViewModels and the Room DAO. Both run as plain JVM tests — no emulator, no Robolectric — which is
+also why `shared/src/desktopTest` is what CI exercises; there is no `androidApp/src/androidTest`
+anymore.
 
 - **Framework**: [Kotest](https://kotest.io/) with `WordSpec` style.
 - **Assertions**: `io.kotest.matchers.shouldBe`.
@@ -355,8 +410,20 @@ style:
 ## Running Tests & Lint
 
 ```bash
-# Run unit tests for the core-domain module
-./gradlew :core-domain:test
+# Run unit tests for the core-domain module (sanitizers, Cleaner)
+./gradlew :core-domain:jvmTest
+
+# Run unit tests for the shared module (ViewModels, Room DAO), on the JVM
+./gradlew :shared:desktopTest
+
+# Android screenshot tests
+./gradlew :androidApp:validateDebugScreenshotTest
+
+# Run the desktop app locally
+./gradlew :desktopApp:run
+
+# Package the desktop app as a Linux .deb
+./gradlew :desktopApp:packageDeb
 
 # Lint (check formatting)
 ./gradlew spotlessCheck

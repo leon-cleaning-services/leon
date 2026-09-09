@@ -1,0 +1,158 @@
+/*
+ * Léon - The URL Cleaner
+ * Copyright (C) 2023 Sven Jacobs
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.svenjacobs.app.leon.ui.screens.settings
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.svenjacobs.app.leon.shared.resources.Res
+import com.svenjacobs.app.leon.shared.resources.sanitizers_description
+import com.svenjacobs.app.leon.shared.resources.sanitizers_no_results
+import com.svenjacobs.app.leon.shared.resources.sanitizers_search_clear
+import com.svenjacobs.app.leon.shared.resources.sanitizers_search_placeholder
+import com.svenjacobs.app.leon.ui.common.views.TopAppBar
+import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel
+import dev.zacsweers.metrox.viewmodel.metroViewModel
+import org.jetbrains.compose.resources.stringResource
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsSanitizersScreen(
+    onBackClick: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    viewModel: SettingsSanitizersScreenViewModel = metroViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    Scaffold(
+        // The nested scroll connection may only be attached while a top app bar is actually
+        // composed. `enterAlwaysScrollBehavior` consumes scroll into the bar's height offset, and
+        // the limit on that offset is set by the bar itself as it lays out. With no bar there is no
+        // limit, so the connection swallows every scroll delta for ever and the list below it never
+        // scrolls at all — which is exactly what happened in the two-pane layout.
+        modifier =
+            if (onBackClick != null) {
+                modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            } else {
+                modifier
+            },
+        // No top bar (and no back arrow) when shown as the detail pane of a two-pane layout; the
+        // list pane's own top-level chrome already covers it.
+        topBar = {
+            if (onBackClick != null) {
+                TopAppBar(onBackClick = onBackClick, scrollBehavior = scrollBehavior)
+            }
+        },
+        // Let the list draw and scroll behind the navigation bar instead of stopping short of it;
+        // the navigation bar inset is added back below as the list's own contentPadding.
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { contentPadding ->
+        Column(modifier = Modifier.padding(contentPadding).padding(horizontal = 16.dp)) {
+            Text(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                text = stringResource(Res.string.sanitizers_description),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                value = uiState.searchQuery,
+                onValueChange = viewModel::onSearchQueryChange,
+                placeholder = { Text(stringResource(Res.string.sanitizers_search_placeholder)) },
+                singleLine = true,
+                trailingIcon = {
+                    if (uiState.searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription =
+                                    stringResource(Res.string.sanitizers_search_clear),
+                            )
+                        }
+                    }
+                },
+            )
+
+            if (uiState.sanitizers.isEmpty() && uiState.searchQuery.isNotEmpty()) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = stringResource(Res.string.sanitizers_no_results),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            } else {
+                Card {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(280.dp),
+                        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+                    ) {
+                        items(uiState.sanitizers, key = { it.id.value }) { sanitizer ->
+                            Item(
+                                name = sanitizer.name,
+                                isEnabled = sanitizer.enabled,
+                                onCheckedChange = { enabled ->
+                                    viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Item(
+    name: String,
+    isEnabled: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(modifier = Modifier.weight(2f), text = name)
+
+        Switch(checked = isEnabled, onCheckedChange = onCheckedChange)
+    }
+}

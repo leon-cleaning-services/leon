@@ -9,6 +9,10 @@ sharing mechanism.
 Léon runs on Android 7.0 and later, is open source and does not contain any tracking or advertising
 frameworks. Léon does not collect any data about you.
 
+Léon also runs on the desktop, built with Kotlin Multiplatform and Compose Desktop. A Linux `.deb`
+package is the first packaged format; Windows, macOS and other Linux formats are intended to
+follow.
+
 The benefits of removing tracking parameters are:
 
 - Protects your and the recipient's privacy

@@ -17,11 +17,36 @@
  */
 
 plugins {
-    `kotlin-library`
+    kotlin("multiplatform")
+    id("com.android.kotlin.multiplatform.library")
 }
 
-dependencies {
-    api(libs.kotlinx.collections.immutable)
-    api(libs.kotlinx.serialization.json)
-    api(libs.kotlinx.coroutines.core)
+kotlin {
+    jvmToolchain(21)
+
+    jvm()
+
+    android {
+        namespace = "com.svenjacobs.app.leon.core.domain"
+        compileSdk = Android.compileSdk
+        minSdk = Android.minSdk
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            api(libs.kotlinx.collections.immutable)
+            api(libs.kotlinx.serialization.json)
+            api(libs.kotlinx.coroutines.core)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.kotest.runner.junit5)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.mockk)
+        }
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
