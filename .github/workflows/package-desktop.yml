@@ -27,7 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
           show-progress: false
 
       - uses: actions/setup-java@v6

@@ -1,0 +1,22 @@
+name: Reveal secrets
+description: Imports the GPG key and decrypts the git-secret files (keystore, signing properties, Play Store service account).
+
+inputs:
+  gpg-private-key:
+    description: The GPG private key which the git-secret files are encrypted for.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Import GPG key for git-secret
+      shell: bash
+      run: echo "${{ inputs.gpg-private-key }}" | gpg --import --batch --yes
+
+    - name: Install git-secret
+      shell: bash
+      run: sudo apt-get install git-secret
+
+    - name: Decrypt secrets
+      shell: bash
+      run: git secret reveal -f

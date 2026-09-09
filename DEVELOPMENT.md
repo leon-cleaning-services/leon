@@ -166,15 +166,27 @@ Commit the resulting `Gemfile.lock`. Watch two blocks in the diff:
 ## Releasing
 
 Releases are automated. Pushing a `v*` tag triggers
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which decrypts the secrets and runs
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), whose jobs run like this:
+
+```
+package-desktop ─┐
+build-android ─┬─┴─> github-release ─┐
+               └───> play-store ─────┴─> increment-version
+```
+
+`build-android` decrypts the signing secrets and runs `assembleRelease bundleRelease`, in parallel
+with the desktop matrix. `play-store` picks up the resulting AAB and runs
 
 ```bash
 bundle exec fastlane deploy
 ```
 
-That lane reads `versionCode` out of `androidApp/build.gradle.kts`, builds `assembleRelease` and
-`bundleRelease`, and uploads the AAB to the **production** track as a completed release, together
-with the store listing screenshots.
+That lane reads `versionCode` out of `androidApp/build.gradle.kts` and uploads the AAB to the
+**production** track as a completed release, together with the store listing screenshots. It builds
+the AAB itself when run locally; on CI, `SKIP_GRADLE_BUILD=true` tells it to use the one
+`build-android` already produced.
+
+The GitHub release does not wait for the Play Store upload — it needs only the two artifact jobs.
 
 The lane deliberately skips metadata, changelogs and the icon/feature graphic
 (`skip_upload_metadata`, `skip_upload_changelogs`, `skip_upload_images`); those are maintained in

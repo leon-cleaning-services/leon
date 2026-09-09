@@ -2,17 +2,25 @@ name: Build & Verify
 
 on: [ pull_request, workflow_dispatch ]
 
+# Every job gets read-only unless it says otherwise below.
 permissions:
-  pull-requests: write
+  contents: read
+
+# A new push to a pull request makes the run for the previous commit pointless.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Comments the artifact link on the pull request.
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
           show-progress: false
 
       - uses: actions/setup-java@v6
@@ -54,4 +62,6 @@ jobs:
             })
 
   package-desktop:
+    permissions:
+      contents: read
     uses: ./.github/workflows/package-desktop.yml
