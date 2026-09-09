@@ -19,7 +19,7 @@ leon/
 ├── shared/               # UI, ViewModels, data layer, Metro DI graph contributions (KMP library:
 │                         # Android + jvm("desktop")); Compose resources (strings, drawables)
 ├── androidApp/           # Android application module (Activities, manifest, signing, Metro AppGraph)
-└── desktopApp/           # Compose Desktop application module (packages deb/rpm/msi/dmg)
+└── desktopApp/           # Compose Desktop application module (packages deb/rpm/AppImage/msi/dmg)
 ```
 
 - **`core-domain`** – Everything about cleaning a URL: the `Url` model, `Match`, `Rule`, `Change`,
@@ -35,8 +35,11 @@ leon/
   implementation into `core-domain`/`shared`), manifest strings, mipmaps, signing, screenshot tests.
   Same `applicationId`, signing and `versionCode`/`versionName` as before the KMP migration.
 - **`desktopApp`** – The Compose Desktop application: `Main.kt`, `DesktopGraph` (the desktop Metro
-  graph), packaged via `org.jetbrains.compose`'s `nativeDistributions` (currently `.deb`; msi/dmg/rpm
-  are follow-ups, see [DEVELOPMENT.md](DEVELOPMENT.md)).
+  graph), packaged via `org.jetbrains.compose`'s `nativeDistributions` as `.deb`, `.rpm`, `.msi` and
+  `.dmg`, plus an `.AppImage` wrapped by `desktopApp/packaging/appimage.sh` (see
+  [DEVELOPMENT.md](DEVELOPMENT.md)). `desktopApp/packaging/icons/` holds the committed `.png`/
+  `.ico`/`.icns` icons and the `make-icons.sh` script that generates them from
+  `etc/ic_launcher.svg` — regenerate icons with that script, never by hand-editing the binaries.
 
 `core-domain` contains **no Android and no `java.*` API** and uses no DI framework at all, so it
 can be lifted out into a standalone Kotlin library — for a command line cleaner, for example. Keep
@@ -422,8 +425,11 @@ style:
 # Run the desktop app locally
 ./gradlew :desktopApp:run
 
-# Package the desktop app as a Linux .deb
-./gradlew :desktopApp:packageDeb
+# Package the desktop app for the host OS (jpackage only ever builds for the OS it runs on)
+./gradlew :desktopApp:packageDeb    # Linux
+./gradlew :desktopApp:packageRpm    # Linux
+./gradlew :desktopApp:packageMsi    # Windows
+./gradlew :desktopApp:packageDmg    # macOS
 
 # Lint (check formatting)
 ./gradlew spotlessCheck

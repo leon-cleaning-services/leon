@@ -23,29 +23,82 @@ For the code conventions — sanitizers, ViewModels, tests, formatting — see
 ## Desktop
 
 Léon also runs as a Compose Desktop application, built from the `desktopApp` module against the
-same `shared` code as Android.
+same `shared` code as Android. It packages as `.deb`, `.rpm` and `.AppImage` on Linux, `.msi` on
+Windows and an arm64-only `.dmg` on macOS.
 
 ```bash
 # Run it locally
 ./gradlew :desktopApp:run
 
-# Package it as a Linux .deb (the only format packaged today; see "Releasing" below)
-./gradlew :desktopApp:packageDeb
+# Package for the host OS; jpackage only ever builds for the OS and architecture it runs on
+./gradlew :desktopApp:packageDeb    # Linux, needs dpkg + fakeroot, see below
+./gradlew :desktopApp:packageRpm    # Linux, needs rpmbuild
+./gradlew :desktopApp:packageMsi    # Windows, needs the WiX Toolset (bundled on windows-latest)
+./gradlew :desktopApp:packageDmg    # macOS
+
+# AppImage: build the distributable, then wrap it
+./gradlew :desktopApp:createDistributable
+bash desktopApp/packaging/appimage.sh
 ```
 
-The packaged `.deb` is at `desktopApp/build/compose/binaries/main/deb/*.deb`; install it with
+That is why CI runs a matrix rather than a single job — see below. The packaged files land under
+`desktopApp/build/compose/binaries/main/{deb,rpm,msi,dmg}/` and, for the AppImage,
+`desktopApp/build/Leon-<version>-x86_64.AppImage`. Install the `.deb` with
 `sudo apt install ./desktopApp/build/compose/binaries/main/deb/leon_*.deb` and run `leon`, or a URL
 as its argument.
 
-Desktop data (the Room database and DataStore preference files) lives under
-`~/.local/share/leon`. There is no per-OS data directory yet — that is a follow-up for when Windows
-and macOS packages ship.
+On Fedora, `packageDeb` needs `dpkg` and `fakeroot`, `packageRpm` needs `rpm-build`; none of that is
+on a stock Fedora Atomic/Kinoite host, so run those two tasks inside a Distrobox:
 
-CI (`.github/workflows/build.yml`) builds and uploads the `.deb` on every PR; `deploy.yml` attaches
-it to the GitHub release. Ubuntu/`.deb` is deliberately the first packaged target; Windows (`.msi`),
-macOS (`.dmg`) and other Linux formats (`.rpm`, AppImage, Flatpak) are intended follow-ups — Compose
-Desktop's `nativeDistributions` already supports them, they only need runners of that OS added to
-the workflow as a matrix.
+```bash
+distrobox create --yes --name leon-pkg --image quay.io/fedora/fedora-toolbox:44
+distrobox enter leon-pkg -- sudo dnf install -y rpm-build dpkg fakeroot
+distrobox enter leon-pkg -- env JAVA_HOME="$HOME/.gradle/jdks/eclipse_adoptium-21-amd64-linux.2" \
+    ./gradlew --no-daemon :desktopApp:packageDeb :desktopApp:packageRpm
+distrobox rm --force leon-pkg
+```
+
+**Set `JAVA_HOME` explicitly**, or jpackage fails with the thoroughly misleading
+`Error: Invalid or unsupported type: [deb]` even though `dpkg-deb` is right there on the `PATH`.
+The cause is that a `java` exported from another Distrobox is a shim which re-enters *that*
+container, so Gradle — and the jpackage it spawns — runs somewhere the packaging tools were never
+installed. Pointing `JAVA_HOME` at a JDK directory keeps everything inside `leon-pkg`. Distrobox
+shares `$HOME`, so the toolchain JDK Gradle already downloaded is reachable as shown; check
+`ls ~/.gradle/jdks` for the exact directory name. `--no-daemon` stops a daemon outliving the
+container it was started in.
+
+The AppImage needs nothing beyond `curl` and runs fine on the host — `appimage.sh` invokes
+`appimagetool` with `--appimage-extract-and-run`, since there is no FUSE inside a container or on
+GitHub runners.
+
+Desktop data (the Room database and DataStore preference files) lives per OS: `%LOCALAPPDATA%\Leon`
+on Windows, `~/Library/Application Support/Leon` on macOS, and `$XDG_DATA_HOME/leon` (falling back
+to `~/.local/share/leon`) on Linux. The Linux path is unchanged from before per-OS data directories
+existed, so existing Linux installs keep their data.
+
+None of the installers are signed. On macOS, Gatekeeper blocks a plain double-click; open the app
+with right-click → Open, or clear the quarantine flag with
+`xattr -d com.apple.quarantine /Applications/Leon.app`. On Windows, SmartScreen shows a warning;
+choose *More info → Run anyway*. The `.dmg` is arm64-only — there is no Intel macOS build.
+
+CI (`.github/workflows/package-desktop.yml`, called from both `build.yml` and `deploy.yml`) builds
+all five packages on every PR across an `ubuntu-latest` / `windows-latest` / `macos-latest` matrix;
+`deploy.yml` attaches all of them to the GitHub release.
+
+### Desktop icons
+
+`etc/ic_launcher.svg` is the source of truth for Léon's mark on the desktop, the same as it is for
+the Android launcher icon. `desktopApp/packaging/icons/leon.png`, `leon.ico` and `leon.icns` are
+generated from it and committed, since jpackage needs one format per OS (`.png` for Linux, `.ico`
+for Windows, `.icns` for macOS) and the build itself does no rasterizing. Regenerate and commit all
+three whenever the SVG changes:
+
+```bash
+./desktopApp/packaging/icons/make-icons.sh
+```
+
+The script needs ImageMagick 7 (`magick`) and nothing else. Android's mipmaps under
+`androidApp/src/main/res/mipmap-*/` are not covered — those stay Android Studio's Image Asset job.
 
 ## Secrets
 
