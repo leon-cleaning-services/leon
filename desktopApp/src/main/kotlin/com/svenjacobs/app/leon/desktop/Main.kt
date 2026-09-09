@@ -30,13 +30,14 @@ import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import dev.zacsweers.metro.createGraphFactory
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
-import java.io.File
 import kotlin.uuid.Uuid
 
 fun main(args: Array<String>) {
-    // ponytail: one Linux-style path; switch to per-OS app-data dirs when Windows/macOS ship.
-    val dataDir = File(System.getProperty("user.home"), ".local/share/leon").apply { mkdirs() }
-    val graph = createGraphFactory<DesktopGraph.Factory>().create(dataDir)
+    val dirs = DesktopDirs(data = desktopDataDir(), config = desktopConfigDir())
+    dirs.data.mkdirs()
+    dirs.config.mkdirs()
+    migrateConfigFiles(dirs.data, dirs.config)
+    val graph = createGraphFactory<DesktopGraph.Factory>().create(dirs)
 
     val sourceText =
         mutableStateOf(

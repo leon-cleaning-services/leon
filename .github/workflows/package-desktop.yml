@@ -1,0 +1,84 @@
+name: Package Desktop
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  package-desktop:
+    timeout-minutes: 45
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            tasks: ':desktopApp:packageDeb :desktopApp:packageRpm :desktopApp:createDistributable'
+            artifact: desktop-linux
+          - os: windows-latest
+            tasks: ':desktopApp:packageMsi'
+            artifact: desktop-windows
+          - os: macos-latest
+            tasks: ':desktopApp:packageDmg'
+            artifact: desktop-macos
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # jpackage's rpm backend needs rpmbuild; dpkg-deb and fakeroot are already on the image.
+      - name: Install rpmbuild
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y rpm
+
+      # No setup-android step: Gradle configures every project including :androidApp, so AGP needs
+      # an SDK even for a desktop-only task - but all three runner images already ship one
+      # (macos-15-arm64 sets ANDROID_HOME=/Users/runner/Library/Android/sdk).
+      #
+      # No WiX install step: windows-latest (Windows Server 2025) ships WiX Toolset 3.14 on PATH,
+      # which is the v3 toolchain JDK 21's jpackage expects. If a future image drops it, add
+      # `choco install wixtoolset -y --version 3.14.1`.
+
+      - name: Package desktop app
+        run: ./gradlew ${{ matrix.tasks }}
+
+      - name: Build AppImage
+        if: runner.os == 'Linux'
+        run: bash desktopApp/packaging/appimage.sh
+
+      - name: Rename dmg to arm64
+        if: runner.os == 'macOS'
+        run: |
+          for f in desktopApp/build/compose/binaries/main/dmg/*.dmg; do
+            mv "$f" "${f%.dmg}-arm64.dmg"
+          done
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            desktopApp/build/compose/binaries/main/deb/*
+            desktopApp/build/compose/binaries/main/rpm/*
+            desktopApp/build/compose/binaries/main/msi/*
+            desktopApp/build/compose/binaries/main/dmg/*
+            # Leon-* rather than *.AppImage: appimage.sh caches appimagetool itself in build/.
+            desktopApp/build/Leon-*.AppImage

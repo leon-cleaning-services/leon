@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Léon
+GenericName=URL Cleaner
+Comment=Removes tracking parameters from URLs
+Exec=leon %u
+Icon=com.svenjacobs.app.leon
+Categories=Utility;
+Terminal=false

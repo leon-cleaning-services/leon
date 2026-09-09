@@ -58,6 +58,40 @@ compose.desktop {
             description = "Léon – The URL Cleaner"
             vendor = "Sven Jacobs"
             licenseFile.set(rootProject.file("LICENSE"))
+            copyright = "© 2026 Sven Jacobs. Licensed under GPL-3.0-or-later."
+            // jdeps' module auto-detection misses this: AndroidX DataStore's protobuf-lite uses
+            // sun.misc.Unsafe reflectively, so without it the packaged app crashes on startup with
+            // NoClassDefFoundError: sun/misc/Unsafe as soon as it touches the preferences DataStore.
+            modules("jdk.unsupported")
+
+            linux {
+                iconFile.set(project.file("packaging/icons/leon.png"))
+                debMaintainer = "github@svenjacobs.com"
+                // Without this the rpm's License tag reads "Unknown"; licenseFile only ships the
+                // text. SPDX identifier, as Fedora's packaging guidelines expect.
+                rpmLicenseType = "GPL-3.0-or-later"
+                appCategory = "Utility"
+                menuGroup = "Utility"
+                shortcut = true
+            }
+
+            windows {
+                iconFile.set(project.file("packaging/icons/leon.ico"))
+                packageVersion = "$versionName.0.0"
+                menuGroup = "Léon"
+                shortcut = true
+                dirChooser = true
+                // Generated once with `uuidgen`. NEVER change this: it is what makes an MSI upgrade
+                // replace the installed copy instead of installing a second one beside it.
+                upgradeUuid = "1c0f6d56-1fb8-4af9-867f-f518beb75083"
+            }
+
+            macOS {
+                iconFile.set(project.file("packaging/icons/leon.icns"))
+                bundleID = "com.svenjacobs.app.leon"
+                packageName = "Leon" // → Leon.app / Leon-65.0.0.dmg; the global `leon` stays the Linux binary
+                dockName = "Léon"
+            }
         }
 
         buildTypes.release.proguard {
