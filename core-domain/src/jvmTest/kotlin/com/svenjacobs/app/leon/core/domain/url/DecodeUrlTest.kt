@@ -22,78 +22,103 @@ import io.kotest.matchers.shouldBe
 
 class DecodeUrlTest :
     WordSpec({
+        /** Decodes [url] the way the "Decode URL" option displays it. */
+        fun decoded(url: String) = Url.parse(url)!!.decoded().toString()
+
         "decodeUrl" should
             {
-                "decode UTF-8 multi-byte sequences without keepStructure" {
+                "decode UTF-8 multi-byte sequences" {
                     decodeUrl("M%C3%BCnchen") shouldBe "München"
                 }
 
-                "decode UTF-8 multi-byte sequences with keepStructure" {
-                    decodeUrl("M%C3%BCnchen", keepStructure = true) shouldBe "München"
+                "decode + as space" { decodeUrl("Hello+World") shouldBe "Hello World" }
+
+                "decode %20 as space" { decodeUrl("Hello%20World") shouldBe "Hello World" }
+
+                "decode every delimiter" {
+                    decodeUrl("https%3A%2F%2Fa.site%2Fb%3Fc%3Dd%26e") shouldBe
+                        "https://a.site/b?c=d&e"
                 }
 
-                "decode + as space without keepStructure" {
-                    decodeUrl("Hello+World") shouldBe "Hello World"
-                }
+                "return a malformed trailing % unchanged" { decodeUrl("100%") shouldBe "100%" }
 
-                "keep a literal + as + with keepStructure" {
-                    decodeUrl("Hello+World", keepStructure = true) shouldBe "Hello+World"
-                }
-
-                "decode %20 as space without keepStructure" {
-                    decodeUrl("Hello%20World") shouldBe "Hello World"
-                }
-
-                "keep %20 as %20 with keepStructure" {
-                    decodeUrl("Hello%20World", keepStructure = true) shouldBe "Hello%20World"
-                }
-
-                "decode %2F without keepStructure" {
-                    decodeUrl("Hello%2FWorld") shouldBe "Hello/World"
-                }
-
-                "keep %2F as %2F with keepStructure" {
-                    decodeUrl("Hello%2FWorld", keepStructure = true) shouldBe "Hello%2FWorld"
-                }
-
-                "keep %26 as %26 with keepStructure" {
-                    decodeUrl("a%26b", keepStructure = true) shouldBe "a%26b"
-                }
-
-                "keep %3F as %3F with keepStructure" {
-                    decodeUrl("a%3Fb", keepStructure = true) shouldBe "a%3Fb"
-                }
-
-                "keep %23 as %23 with keepStructure" {
-                    decodeUrl("a%23b", keepStructure = true) shouldBe "a%23b"
-                }
-
-                "keep %25 as %25 with keepStructure" {
-                    decodeUrl("a%25b", keepStructure = true) shouldBe "a%25b"
-                }
-
-                "keep %3D as %3D with keepStructure" {
-                    decodeUrl("a%3Db", keepStructure = true) shouldBe "a%3Db"
-                }
-
-                "keep %3A as %3A with keepStructure" {
-                    decodeUrl("a%3Ab", keepStructure = true) shouldBe "a%3Ab"
-                }
-
-                "preserve the original escape casing with keepStructure" {
-                    decodeUrl("a%2fb%2Fc", keepStructure = true) shouldBe "a%2fb%2Fc"
-                }
-
-                "return a malformed trailing % unchanged without keepStructure" {
-                    decodeUrl("100%") shouldBe "100%"
-                }
-
-                "return a malformed trailing % unchanged with keepStructure" {
-                    decodeUrl("100%", keepStructure = true) shouldBe "100%"
-                }
-
-                "return text without escapes unchanged" {
+                "return input without escapes unchanged" {
                     decodeUrl("plain-text") shouldBe "plain-text"
+                }
+            }
+
+        "decoded" should
+            {
+                "decode an encoded URL inside a parameter value" {
+                    decoded(
+                        "https://a.site/gp/r.html?U=https%3A%2F%2Fb.site%2Fdp%2FB01%3Fref%3Dx"
+                    ) shouldBe "https://a.site/gp/r.html?U=https://b.site/dp/B01?ref=x"
+                }
+
+                "decode UTF-8 text in a parameter value" {
+                    decoded("https://a.site/?q=M%C3%BCnchen") shouldBe "https://a.site/?q=München"
+                }
+
+                "decode UTF-8 text in the path" {
+                    decoded("https://a.site/M%C3%BCnchen") shouldBe "https://a.site/München"
+                }
+
+                "decode UTF-8 text in the fragment" {
+                    decoded("https://a.site/#M%C3%BCnchen") shouldBe "https://a.site/#München"
+                }
+
+                "keep an encoded parameter separator inside a value" {
+                    decoded("https://a.site/?q=a%26b") shouldBe "https://a.site/?q=a%26b"
+                }
+
+                "keep an encoded fragment separator inside a value" {
+                    decoded("https://a.site/?q=a%23b") shouldBe "https://a.site/?q=a%23b"
+                }
+
+                "keep an encoded plus inside a value, which means a space" {
+                    decoded("https://a.site/?q=a%2Bb") shouldBe "https://a.site/?q=a%2Bb"
+                }
+
+                "keep a literal plus inside a value" {
+                    decoded("https://a.site/?q=a+b") shouldBe "https://a.site/?q=a+b"
+                }
+
+                "keep an encoded equals sign inside a parameter name" {
+                    decoded("https://a.site/?a%3Db=c") shouldBe "https://a.site/?a%3Db=c"
+                }
+
+                "keep an encoded slash inside the path" {
+                    decoded("https://a.site/Hello%2FWorld") shouldBe "https://a.site/Hello%2FWorld"
+                }
+
+                "keep an encoded question mark inside the path" {
+                    decoded("https://a.site/a%3Fb") shouldBe "https://a.site/a%3Fb"
+                }
+
+                "keep encoded spaces everywhere" {
+                    decoded("https://a.site/a%20b?c=d%20e#f%20g") shouldBe
+                        "https://a.site/a%20b?c=d%20e#f%20g"
+                }
+
+                "keep an encoded percent sign" {
+                    decoded("https://a.site/?q=100%25") shouldBe "https://a.site/?q=100%25"
+                }
+
+                "keep the original escape casing of what it does not decode" {
+                    decoded("https://a.site/a%2fb%2Fc") shouldBe "https://a.site/a%2fb%2Fc"
+                }
+
+                "leave the host alone" {
+                    decoded("https://a%2Eb.site/") shouldBe "https://a%2Eb.site/"
+                }
+
+                "keep a parameter without a value" {
+                    decoded("https://a.site/?flag&q=M%C3%BCnchen") shouldBe
+                        "https://a.site/?flag&q=München"
+                }
+
+                "return a URL without escapes unchanged" {
+                    decoded("https://a.site/path?q=1#f") shouldBe "https://a.site/path?q=1#f"
                 }
             }
     })

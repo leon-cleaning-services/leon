@@ -104,6 +104,7 @@ class MainScreenViewModelTest :
                                         Cleaner.CleanedUrl(
                                             original = url,
                                             cleaned = url,
+                                            display = url,
                                             available = persistentListOf(),
                                             applied = persistentListOf(),
                                         )

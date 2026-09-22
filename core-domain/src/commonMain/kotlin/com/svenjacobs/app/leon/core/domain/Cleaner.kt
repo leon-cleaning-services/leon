@@ -31,6 +31,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.core.domain.url.decodeUrl
+import com.svenjacobs.app.leon.core.domain.url.decoded
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.collections.immutable.ImmutableList
@@ -59,10 +60,14 @@ class Cleaner(
      *
      * @param available Every change which was proposed, whether it was applied or not.
      * @param applied The changes which produced [cleaned], in the order they were applied.
+     * @param display [cleaned] as it is shown and shared — decoded when the caller asked for that,
+     *   and the same object otherwise. [cleaned] stays encoded, because it is what the change list
+     *   is built from and what a change is applied to on the next pass.
      */
     data class CleanedUrl(
         val original: Url,
         val cleaned: Url,
+        val display: Url,
         val available: ImmutableList<Change>,
         val applied: ImmutableList<Change>,
     )
@@ -88,26 +93,19 @@ class Cleaner(
         for (match in URL_REGEX.findAll(input)) {
             // A URL which cannot be parsed is left alone rather than mangled.
             val original = Url.parse(match.value) ?: continue
-            val url = cleanUrl(original, declined, additional)
+            val url = cleanUrl(original, decodeUrl, declined, additional)
             urls += url
 
-            // Serializing an unchanged URL could normalize it, so only touch the text when a change
-            // was actually applied.
-            if (url.applied.isNotEmpty()) {
-                cleanedText = cleanedText.replace(match.value, url.cleaned.toString())
+            // Serializing an unchanged URL could normalize it, so only touch the text when
+            // cleaning or decoding actually changed something.
+            if (url.applied.isNotEmpty() || url.display != url.cleaned) {
+                cleanedText = cleanedText.replace(match.value, url.display.toString())
             }
         }
 
         return Result(
             originalText = input,
-            cleanedText =
-                if (decodeUrl) {
-                    withContext(Dispatchers.Default) {
-                        decodeUrl(cleanedText, keepStructure = true)
-                    }
-                } else {
-                    cleanedText
-                },
+            cleanedText = cleanedText,
             urls = urls.toImmutableList(),
         )
     }
@@ -122,6 +120,7 @@ class Cleaner(
      */
     private suspend fun cleanUrl(
         original: Url,
+        decodeUrl: Boolean,
         declined: Set<Change>,
         additional: Set<Change>,
     ): CleanedUrl {
@@ -151,6 +150,8 @@ class Cleaner(
         return CleanedUrl(
             original = original,
             cleaned = current,
+            display =
+                if (decodeUrl) withContext(Dispatchers.Default) { current.decoded() } else current,
             available = available.toImmutableList(),
             applied = applied.toImmutableList(),
         )

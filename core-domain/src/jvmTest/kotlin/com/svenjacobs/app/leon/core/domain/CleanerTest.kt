@@ -122,6 +122,29 @@ class CleanerTest :
                     result.cleanedText shouldBe "https://www.some.site/?q=Hello%20München"
                 }
 
+                "URL decode reveals an encoded URL inside a parameter value" {
+                    val result =
+                        service.clean(
+                            text =
+                                "https://www.some.site/gp/r.html?" +
+                                    "U=https%3A%2F%2Fwww.other.site%2Fdp%2FB01%3Fref%3Dx",
+                            decodeUrl = true,
+                        )
+
+                    result.cleanedText shouldBe
+                        "https://www.some.site/gp/r.html?U=https://www.other.site/dp/B01?ref=x"
+                }
+
+                "URL decode keeps an encoded parameter separator inside a value" {
+                    val result =
+                        service.clean(
+                            text = "https://www.some.site/?q=a%26b%3Dc&paramA=A",
+                            decodeUrl = true,
+                        )
+
+                    result.cleanedText shouldBe "https://www.some.site/?q=a%26b=c"
+                }
+
                 "repeat cleaning until iteration doesn't yield new value" {
                     val googleService =
                         Cleaner(
