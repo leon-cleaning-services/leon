@@ -310,10 +310,10 @@ class MainScreenViewModel(
                         cleanedText =
                             when {
                                 extractUrl ->
-                                    result.urls.firstOrNull()?.cleaned?.toString().orEmpty()
+                                    result.urls.firstOrNull()?.display?.toString().orEmpty()
                                 else -> result.cleanedText
                             },
-                        urls = result.urls.map { it.cleaned.toString() }.toImmutableList(),
+                        urls = result.urls.map { it.display.toString() }.toImmutableList(),
                         changes =
                             result.urls.flatMap { changeRows(it, selection) }.toImmutableList(),
                     )
