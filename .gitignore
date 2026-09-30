@@ -22,3 +22,6 @@ google-play-service-account.json
 # Ruby & Fastlane
 /.bundle
 /vendor/bundle
+
+# Nix dev shell cache (direnv)
+.direnv/
