@@ -16,7 +16,7 @@ jetbrains-navigation3 = "1.2.0-alpha02"
 kotest = "6.2.4"
 kotlin = "2.4.10"
 kotlinx-coroutines = "1.11.0"
-ksp = "2.3.11"
+ksp = "2.3.12"
 metro = "1.4.3"
 mikepenz-aboutlibraries = "15.2.0"
 
