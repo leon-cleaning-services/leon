@@ -108,4 +108,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 room3 = { id = "androidx.room3", version.ref = "androidx-room3" }
-spotless = "com.diffplug.spotless:8.10.1"
+spotless = "com.diffplug.spotless:8.10.3"
