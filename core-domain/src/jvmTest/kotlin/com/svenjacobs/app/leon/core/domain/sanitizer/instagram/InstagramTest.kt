@@ -40,6 +40,13 @@ class InstagramTest :
 
                         result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
                     }
+                    
+                    "remove \"rpxt\" parameter" {
+                        val result =
+                            clean("https://www.instagram.com/reel/Ceeg-VgI4yF/?rpxt=MXJjOFJsamxsdnQ3dg==")
+
+                        result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"
+                    }
 
                     "remove \"stkn\" parameter" {
                         val result =
