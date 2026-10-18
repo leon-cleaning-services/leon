@@ -6,7 +6,6 @@
       "release-type": "simple",
       "versioning": "always-bump-major",
       "include-component-in-tag": false,
-      "draft": true,
       "skip-changelog": true,
       "extra-files": [{ "type": "generic", "path": "version.properties" }],
       "changelog-sections": [
