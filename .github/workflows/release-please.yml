@@ -1,0 +1,95 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+# Every job gets read-only unless it says otherwise below.
+permissions:
+  contents: read
+
+# Runs must not overlap: each one rewrites the release PR from the state of main.
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag: v${{ steps.release.outputs.major }}
+      pr: ${{ steps.release.outputs.pr }}
+    steps:
+      # A token instead of GITHUB_TOKEN, so that the release PR triggers CI.
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+
+      # release-please only knows semver and would tag the release v69.0.0. It therefore creates
+      # a draft, which has no tag yet, and this step renames it to the plain v69 that F-Droid
+      # polls for and points it at the release commit. Publishing the draft in deploy.yml
+      # is what creates the tag. The notes heading is rewritten to match.
+      - name: Rename draft release to vMAJOR
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          TAG_NAME: ${{ steps.release.outputs.tag_name }}
+          MAJOR: ${{ steps.release.outputs.major }}
+          SHA: ${{ steps.release.outputs.sha }}
+        run: |
+          gh release edit "$TAG_NAME" --repo "$GITHUB_REPOSITORY" \
+            --tag "v$MAJOR" --title "v$MAJOR" --target "$SHA"
+          gh release view "v$MAJOR" --repo "$GITHUB_REPOSITORY" --json body --jq .body \
+            | sed "1s/^## .*/## v$MAJOR/" > "$RUNNER_TEMP/notes.md"
+          gh release edit "v$MAJOR" --repo "$GITHUB_REPOSITORY" --notes-file "$RUNNER_TEMP/notes.md"
+
+  # release-please cannot do arithmetic on versionCode, so it is incremented here, on the
+  # release PR branch. This is idempotent: release-please rebuilds the branch from main on
+  # every run, and this job then applies the bump again.
+  bump-version-code:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.pr != '' }}
+    permissions:
+      contents: read
+    steps:
+      # The push is made with the token so that CI runs on the final state of the PR.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          show-progress: false
+
+      - name: Increment version code
+        run: |
+          git fetch --depth=1 origin main
+          base=$(git show origin/main:version.properties | sed -n 's/^versionCode=//p')
+          new=$((base + 1))
+          sed -i "s/^versionCode=.*/versionCode=$new/" version.properties
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: increment versionCode to $new"
+          git push
+
+  # Called directly: the tag is created by GITHUB_TOKEN when deploy.yml publishes the draft,
+  # and events caused by GITHUB_TOKEN do not trigger other workflows, so a tag trigger
+  # would never fire.
+  deploy:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    permissions:
+      contents: write
+    uses: ./.github/workflows/deploy.yml
+    with:
+      tag: ${{ needs.release-please.outputs.tag }}
+    secrets: inherit

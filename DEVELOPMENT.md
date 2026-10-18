@@ -165,14 +165,35 @@ Commit the resulting `Gemfile.lock`. Watch two blocks in the diff:
 
 ## Releasing
 
-Releases are automated. Pushing a `v*` tag triggers
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), whose jobs run like this:
+Releases are driven by [release-please](https://github.com/googleapis/release-please)
+([`.github/workflows/release-please.yml`](.github/workflows/release-please.yml), configured in
+`release-please-config.json` and `.release-please-manifest.json`). On every push to `main` it keeps
+a release pull request open, collecting the commits since the last release. Every conventional
+commit type (`feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `chore`/`ci`/`build`) opens or
+updates that PR.
+
+The release PR bumps `versionName` in [`version.properties`](version.properties); the workflow's
+`bump-version-code` job then increments `versionCode` on the PR branch. Versions are plain integers
+(`69`, `70`, …) and only the major number counts. The `.0.0` in the manifest and in the PR title
+exists only because release-please insists on semver. Never edit `version.properties` by hand.
+
+To release, **squash-merge** the release PR. That creates a draft GitHub release, which the workflow
+renames to `vXX` and hands to [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), a
+reusable workflow whose jobs run like this:
 
 ```
 package-desktop ─┐
-build-android ─┬─┴─> github-release ─┐
-               └───> play-store ─────┴─> increment-version
+build-android ─┬─┴─> github-release
+               └───> play-store
 ```
+
+Publishing the release at the end of `github-release` is what creates the `vXX` tag. `deploy.yml`
+can also be started by hand (`workflow_dispatch`) with a `tag` input, for re-running a release from
+its release commit.
+
+The release PR only runs CI if it is created with a token other than `GITHUB_TOKEN`, so the
+repository needs a `RELEASE_PLEASE_TOKEN` secret: a fine-grained personal access token or GitHub App
+token with Contents, Pull requests and Issues read/write permissions.
 
 `build-android` decrypts the signing secrets and runs `assembleRelease bundleRelease`, in parallel
 with the desktop matrix. `play-store` picks up the resulting AAB and runs
@@ -181,10 +202,10 @@ with the desktop matrix. `play-store` picks up the resulting AAB and runs
 bundle exec fastlane deploy
 ```
 
-That lane reads `versionCode` out of `androidApp/build.gradle.kts` and uploads the AAB to the
-**production** track as a completed release, together with the store listing screenshots. It builds
-the AAB itself when run locally; on CI, `SKIP_GRADLE_BUILD=true` tells it to use the one
-`build-android` already produced.
+That lane reads `versionCode` out of `version.properties` and uploads the AAB to the **production**
+track as a completed release, together with the store listing screenshots. It builds the AAB itself
+when run locally; on CI, `SKIP_GRADLE_BUILD=true` tells it to use the one `build-android` already
+produced.
 
 The GitHub release does not wait for the Play Store upload — it needs only the two artifact jobs.
 
@@ -192,17 +213,19 @@ The lane deliberately skips metadata, changelogs and the icon/feature graphic
 (`skip_upload_metadata`, `skip_upload_changelogs`, `skip_upload_images`); those are maintained in
 the Play Console.
 
-### Releasing after the KMP migration
+### F-Droid
 
-The [KMP migration](https://github.com/svenjacobs/leon) renamed the Android application module
-from `app` to `androidApp`. Play Store and F-Droid builds both keep working — Fastlane and the two
-workflows were repointed at `androidApp/` — with **one exception that needs a manual step before
-the next tag**: F-Droid's build recipe, `metadata/com.svenjacobs.app.leon.yml` in the separate
-[fdroiddata](https://gitlab.com/fdroid/fdroiddata) repository, still says `subdir: app`. Submit a
-merge request there changing the **last** build block to `subdir: androidApp` before tagging the
-first release after this migration — F-Droid's `AutoUpdateMode: Version` copies that last build
-block for every new tag, so it keeps using the stale `subdir` (and fails to find a
-`build.gradle.kts` there) until the recipe is edited.
+F-Droid's build recipe, `metadata/com.svenjacobs.app.leon.yml` in the separate
+[fdroiddata](https://gitlab.com/fdroid/fdroiddata) repository, uses `UpdateCheckMode: Tags` and
+`AutoUpdateMode: Version`, so every new `vXX` tag becomes a new F-Droid build. Because the version
+lives in `version.properties` and no longer in `androidApp/build.gradle.kts`, the recipe needs
+
+```yaml
+UpdateCheckData: version.properties|versionCode=(\d+)|.|versionName=(\d+)
+```
+
+Without it, `checkupdates` looks for `versionCode` in `build.gradle.kts` and silently ignores new
+tags.
 
 The recipe's `prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts` line needs no change: it
 still strips the Foojay resolver plugin before F-Droid's offline build, and `gradle assembleRelease`

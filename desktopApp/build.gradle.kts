@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -41,11 +42,10 @@ dependencies {
 }
 
 // Keeps the desktop package version in lockstep with the Android app's versionName so the two
-// never drift; this file is read, never written to.
-val versionName =
-    Regex("""versionName = "(\d+)"""")
-        .find(rootProject.file("androidApp/build.gradle.kts").readText())!!
-        .groupValues[1]
+// never drift; both read the root version.properties, which release-please bumps.
+val versionProperties =
+    Properties().apply { rootProject.file("version.properties").inputStream().use { load(it) } }
+val versionName: String = versionProperties.getProperty("versionName")
 
 compose.desktop {
     application {
