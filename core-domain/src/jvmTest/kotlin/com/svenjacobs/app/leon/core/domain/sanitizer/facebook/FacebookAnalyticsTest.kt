@@ -37,7 +37,7 @@ class FacebookAnalyticsTest :
                     "remove \"cHash\" parameter" {
                         val result =
                             clean(
-                                "https://www.spiegel.de/de?fbclid=IwY2xjawOxH_hleHRuA2FlbQIxMQ&cHash=137531e2404b087d877282a"
+                                "https://www.spiegel.de/de?fbclid=IwY2xjawOxH_hleHRuA2FlbQIxMQ&cHash=137531e2404b087d877282a",
                             )
 
                         result shouldBe "https://www.spiegel.de/de"

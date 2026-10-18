@@ -43,7 +43,7 @@ val Jodel =
                             Decode.Base64Decode,
                             Decode.JsonField("\$android_url"),
                         ),
-                )
+                ),
             ),
         match = persistentListOf(Match(HostMatch.Domain("shared.jodel.com"))),
     )

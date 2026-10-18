@@ -30,7 +30,7 @@ class WeiboTest :
                     "remove tracking parameters from Weibo URL" {
                         val result =
                             clean(
-                                "https://weibo.com/123/profile?from=share&refer=user&share_token=abc"
+                                "https://weibo.com/123/profile?from=share&refer=user&share_token=abc",
                             )
                         result shouldBe "https://weibo.com/123/profile"
                     }

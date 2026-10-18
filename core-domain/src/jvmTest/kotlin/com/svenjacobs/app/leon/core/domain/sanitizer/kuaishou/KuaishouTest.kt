@@ -30,7 +30,7 @@ class KuaishouTest :
                     "remove tracking parameters from Kuaishou URL" {
                         val result =
                             clean(
-                                "https://www.kuaishou.com/short-video/abc?share=1&userId=123&photoId=456"
+                                "https://www.kuaishou.com/short-video/abc?share=1&userId=123&photoId=456",
                             )
                         result shouldBe "https://www.kuaishou.com/short-video/abc"
                     }

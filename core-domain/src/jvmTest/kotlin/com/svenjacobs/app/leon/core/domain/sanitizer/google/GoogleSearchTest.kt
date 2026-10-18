@@ -32,7 +32,7 @@ class GoogleSearchTest :
                             clean(
                                 "https://www.google.com/url?sa=t&source=web&rct=j&url=https://www.regex" +
                                     "tester.com/&ved=2ahUKEwiTpvflqP34AhXOgv0HHSNQCOIQFnoECAcQAQ&usg=AOvVaw1w" +
-                                    "BmEA7TD90QkZPu7zcsOa"
+                                    "BmEA7TD90QkZPu7zcsOa",
                             )
 
                         result shouldBe "https://www.regextester.com/"
@@ -43,7 +43,7 @@ class GoogleSearchTest :
                             clean(
                                 "https://www.google.com/url?sa=t&source=web&rct=j&q=https://www.regexte" +
                                     "ster.com/&ved=2ahUKEwiTpvflqP34AhXOgv0HHSNQCOIQFnoECAcQAQ&usg=AOvVaw1wBm" +
-                                    "EA7TD90QkZPu7zcsOa"
+                                    "EA7TD90QkZPu7zcsOa",
                             )
 
                         result shouldBe "https://www.regextester.com/"

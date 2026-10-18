@@ -41,7 +41,7 @@ class YoutubeMusicTest :
                     "convert music.youtube.com domain to youtube.com" {
                         clean(
                             "https://music.youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARW" +
-                                "cTZd1UrAH_0ZI"
+                                "cTZd1UrAH_0ZI",
                         ) shouldBe
                             "https://youtube.com/playlist?list=RDCLAK5uy_mPolD_J22gS1SKxufARWcTZd1" +
                                 "UrAH_0ZI"

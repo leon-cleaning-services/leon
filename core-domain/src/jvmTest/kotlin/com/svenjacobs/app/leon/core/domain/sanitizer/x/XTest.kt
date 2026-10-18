@@ -30,7 +30,7 @@ class XTest :
                     "remove all parameters (Twitter)" {
                         var result =
                             clean(
-                                "https://twitter.com/AndroidDev/status/1453763770334027781?t=QEv2BUR2LOumjgK18S72bA&s=09"
+                                "https://twitter.com/AndroidDev/status/1453763770334027781?t=QEv2BUR2LOumjgK18S72bA&s=09",
                             )
 
                         result shouldBe "https://twitter.com/AndroidDev/status/1453763770334027781"
@@ -41,7 +41,7 @@ class XTest :
                                     "_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E150156923288199578" +
                                     "5%7Ctwgr%5E%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fwww.coindesk.com%2Ft" +
                                     "ech%2F2022%2F03%2F10%2Ffantom-based-algo-protocol-fantasm-exploited-" +
-                                    "for-26m%2F"
+                                    "for-26m%2F",
                             )
 
                         result shouldBe
@@ -51,7 +51,7 @@ class XTest :
                     "remove all parameters (X.com)" {
                         var result =
                             clean(
-                                "https://x.com/AndroidDev/status/1453763770334027781?t=QEv2BUR2LOumjgK18S72bA&s=09"
+                                "https://x.com/AndroidDev/status/1453763770334027781?t=QEv2BUR2LOumjgK18S72bA&s=09",
                             )
 
                         result shouldBe "https://x.com/AndroidDev/status/1453763770334027781"
@@ -62,7 +62,7 @@ class XTest :
                                     "_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E150156923288199578" +
                                     "5%7Ctwgr%5E%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fwww.coindesk.com%2Ft" +
                                     "ech%2F2022%2F03%2F10%2Ffantom-based-algo-protocol-fantasm-exploited-" +
-                                    "for-26m%2F"
+                                    "for-26m%2F",
                             )
 
                         result shouldBe "https://x.com/fantasm_finance/status/1501569232881995785"

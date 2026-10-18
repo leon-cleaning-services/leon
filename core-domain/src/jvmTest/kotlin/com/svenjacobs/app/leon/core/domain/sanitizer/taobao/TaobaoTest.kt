@@ -30,7 +30,7 @@ class TaobaoTest :
                     "remove tracking parameters and handle &amp; entity" {
                         val result =
                             clean(
-                                "https://item.taobao.com/item.htm?id=123&amp;smid=abc&ut_ma=1&track_id=2&spm=3&share_crt_v=4&tbkt=5&isg=6&tk=7&keep=yes"
+                                "https://item.taobao.com/item.htm?id=123&amp;smid=abc&ut_ma=1&track_id=2&spm=3&share_crt_v=4&tbkt=5&isg=6&tk=7&keep=yes",
                             )
                         result shouldBe "https://item.taobao.com/item.htm?id=123&keep=yes"
                     }

@@ -31,7 +31,7 @@ class SpotifyTest :
                         var result =
                             clean(
                                 "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN?si=BICcHVzTTqmqt" +
-                                    "82Y6f2e_A&utm_source=native-share-menu"
+                                    "82Y6f2e_A&utm_source=native-share-menu",
                             )
 
                         result shouldBe "https://open.spotify.com/album/5N2BIKomahKMAAirp8tiBN"
@@ -39,7 +39,7 @@ class SpotifyTest :
                         result =
                             clean(
                                 "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59?si=CXCVCQplRkqNt" +
-                                    "DWW42dXgA&context=spotify%3Aplaylist%3A37i9dQZF1EpjSENbNnZRJr"
+                                    "DWW42dXgA&context=spotify%3Aplaylist%3A37i9dQZF1EpjSENbNnZRJr",
                             )
 
                         result shouldBe "https://open.spotify.com/track/5LEbg97KkVmAv9qHR7bS59"

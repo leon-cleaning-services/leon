@@ -32,19 +32,19 @@ class GoogleMapsTest :
                             "https://www.google.com/maps/place/Rotonda+Principessa+Mafalda+di+" +
                                 "Savoia,+40141+Bologna+BO,+Italy/@44.4596478,11.3745947,17z/data=" +
                                 "!4m6!3m5!1s0x477e2add34e42e53:0x8558150e6cd5413a!8m2!3d44.459786" +
-                                "!4d11.3750265!16s%2Fg%2F11g6bfwcnd"
+                                "!4d11.3750265!16s%2Fg%2F11g6bfwcnd",
                         ) shouldBe "https://www.google.com/maps/@44.4596478,11.3745947,17z"
                     }
 
                     "handle maps.google.com URL" {
                         clean(
-                            "https://maps.google.com/maps/place/SomePlace/@48.8566,2.3522,13z/data=!xyz"
+                            "https://maps.google.com/maps/place/SomePlace/@48.8566,2.3522,13z/data=!xyz",
                         ) shouldBe "https://www.google.com/maps/@48.8566,2.3522,13z"
                     }
 
                     "handle URL with negative coordinates" {
                         clean(
-                            "https://www.google.com/maps/place/Buenos+Aires/@-34.6037,-58.3816,12z/data=!xyz"
+                            "https://www.google.com/maps/place/Buenos+Aires/@-34.6037,-58.3816,12z/data=!xyz",
                         ) shouldBe "https://www.google.com/maps/@-34.6037,-58.3816,12z"
                     }
 

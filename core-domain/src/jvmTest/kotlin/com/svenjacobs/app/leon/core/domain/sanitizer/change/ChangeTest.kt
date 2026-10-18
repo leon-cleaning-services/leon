@@ -34,7 +34,7 @@ class ChangeTest :
                                     "onen-staedtetag-bmuv?utm_content=cl_sharecopy_12878233_de-DE%3Av3&recr" +
                                     "uiter=44645781&recruited_by_id=29ffed30-7385-0130-ec6e-3c764e044e9e&ut" +
                                     "m_source=share_petition&utm_medium=copylink&utm_campaign=psf_combo_sha" +
-                                    "re_initial&pt=AVBldGl0aW9uAJmBxABBBBBAAAY7fdDHYupoE1NzU0NzE3Zg%3D%3D"
+                                    "re_initial&pt=AVBldGl0aW9uAJmBxABBBBBAAAY7fdDHYupoE1NzU0NzE3Zg%3D%3D",
                             )
 
                         result shouldBe

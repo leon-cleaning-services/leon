@@ -30,7 +30,7 @@ class SessionIdsTest :
                     "remove \"sessionid\" parameter" {
                         val result =
                             clean(
-                                "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id=13241297"
+                                "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id=13241297",
                             )
 
                         result shouldBe "https://www.buch24.de/shopdirekt.cgi?id=13241297"
@@ -39,7 +39,7 @@ class SessionIdsTest :
                     "remove \"jsessionid\" parameter" {
                         val result =
                             clean(
-                                "https://www.buch24.de/shopdirekt.cgi?jsessionid=1650808921-319962258&id=13241297"
+                                "https://www.buch24.de/shopdirekt.cgi?jsessionid=1650808921-319962258&id=13241297",
                             )
 
                         result shouldBe "https://www.buch24.de/shopdirekt.cgi?id=13241297"

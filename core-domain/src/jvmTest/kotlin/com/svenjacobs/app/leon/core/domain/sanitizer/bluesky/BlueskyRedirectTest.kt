@@ -29,7 +29,7 @@ class BlueskyRedirectTest :
                 {
                     "extract URL from Bluesky redirect link" {
                         clean(
-                            "https://go.bsky.app/redirect?u=https%3A%2F%2Fexample.com%2Fsome%2Fpath%3Ffoo%3Dbar"
+                            "https://go.bsky.app/redirect?u=https%3A%2F%2Fexample.com%2Fsome%2Fpath%3Ffoo%3Dbar",
                         ) shouldBe "https://example.com/some/path?foo=bar"
                     }
                 }

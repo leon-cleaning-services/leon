@@ -33,7 +33,7 @@ val CarGurus =
                 Rule.RemoveParameters(
                     "(listingId|entitySelectingHelper\\.selectedEntity)",
                     negate = true,
-                )
+                ),
             ),
         match = persistentListOf(Match(HostMatch.Domain("cargurus.co.uk"), pathPrefix = "/")),
     )

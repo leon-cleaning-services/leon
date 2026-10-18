@@ -26,102 +26,108 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 
 class HistoryDaoTest :
-    WordSpec({
-        lateinit var db: AppDatabase
-        lateinit var dao: HistoryDao
+    WordSpec(
+        {
+            lateinit var db: AppDatabase
+            lateinit var dao: HistoryDao
 
-        beforeEach {
-            db =
-                Room.inMemoryDatabaseBuilder<AppDatabase>()
-                    .setDriver(BundledSQLiteDriver())
-                    .setQueryCoroutineContext(Dispatchers.IO)
-                    .build()
-            dao = db.historyDao()
-        }
+            beforeEach {
+                db =
+                    Room.inMemoryDatabaseBuilder<AppDatabase>()
+                        .setDriver(BundledSQLiteDriver())
+                        .setQueryCoroutineContext(Dispatchers.IO)
+                        .build()
+                dao = db.historyDao()
+            }
 
-        afterEach { db.close() }
+            afterEach { db.close() }
 
-        "record" should
-            {
-                "insert a new entry for a new id" {
-                    runTest {
-                        dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
+            "record" should
+                {
+                    "insert a new entry for a new id" {
+                        runTest {
+                            dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
 
-                        val entries = dao.entries().first()
+                            val entries = dao.entries().first()
 
-                        entries.map { it.id } shouldBe listOf("id-1")
-                    }
-                }
-
-                "update the url in place for a known id and keep the original at" {
-                    runTest {
-                        dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
-                        dao.record(id = "id-1", url = "https://example.com/a-edited", at = 2_000L)
-
-                        val entries = dao.entries().first()
-
-                        entries.size shouldBe 1
-                        entries.first().url shouldBe "https://example.com/a-edited"
-                        entries.first().at shouldBe 1_000L
-                    }
-                }
-
-                "trim to HISTORY_MAX_SIZE oldest-first" {
-                    runTest {
-                        repeat(HISTORY_MAX_SIZE + 1) { i ->
-                            dao.record(
-                                id = "id-$i",
-                                url = "https://example.com/$i",
-                                at = i.toLong(),
-                            )
+                            entries.map { it.id } shouldBe listOf("id-1")
                         }
+                    }
 
-                        val entries = dao.entries().first()
+                    "update the url in place for a known id and keep the original at" {
+                        runTest {
+                            dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
+                            dao.record(
+                                id = "id-1",
+                                url = "https://example.com/a-edited",
+                                at = 2_000L,
+                            )
 
-                        entries.size shouldBe HISTORY_MAX_SIZE
-                        entries.any { it.id == "id-0" } shouldBe false
-                        entries.any { it.id == "id-$HISTORY_MAX_SIZE" } shouldBe true
+                            val entries = dao.entries().first()
+
+                            entries.size shouldBe 1
+                            entries.first().url shouldBe "https://example.com/a-edited"
+                            entries.first().at shouldBe 1_000L
+                        }
+                    }
+
+                    "trim to HISTORY_MAX_SIZE oldest-first" {
+                        runTest {
+                            repeat(HISTORY_MAX_SIZE + 1) { i ->
+                                dao.record(
+                                    id = "id-$i",
+                                    url = "https://example.com/$i",
+                                    at = i.toLong(),
+                                )
+                            }
+
+                            val entries = dao.entries().first()
+
+                            entries.size shouldBe HISTORY_MAX_SIZE
+                            entries.any { it.id == "id-0" } shouldBe false
+                            entries.any { it.id == "id-$HISTORY_MAX_SIZE" } shouldBe true
+                        }
                     }
                 }
-            }
 
-        "delete" should
-            {
-                "remove only the entry with the given id" {
-                    runTest {
-                        dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
-                        dao.record(id = "id-2", url = "https://example.com/b", at = 2_000L)
+            "delete" should
+                {
+                    "remove only the entry with the given id" {
+                        runTest {
+                            dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
+                            dao.record(id = "id-2", url = "https://example.com/b", at = 2_000L)
 
-                        dao.delete("id-1")
+                            dao.delete("id-1")
 
-                        dao.entries().first().map { it.id } shouldBe listOf("id-2")
+                            dao.entries().first().map { it.id } shouldBe listOf("id-2")
+                        }
                     }
                 }
-            }
 
-        "clear" should
-            {
-                "remove every entry" {
-                    runTest {
-                        dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
-                        dao.record(id = "id-2", url = "https://example.com/b", at = 2_000L)
+            "clear" should
+                {
+                    "remove every entry" {
+                        runTest {
+                            dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
+                            dao.record(id = "id-2", url = "https://example.com/b", at = 2_000L)
 
-                        dao.clear()
+                            dao.clear()
 
-                        dao.entries().first() shouldBe emptyList()
+                            dao.entries().first() shouldBe emptyList()
+                        }
                     }
                 }
-            }
 
-        "entries" should
-            {
-                "order by at descending, newest first" {
-                    runTest {
-                        dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
-                        dao.record(id = "id-2", url = "https://example.com/b", at = 2_000L)
+            "entries" should
+                {
+                    "order by at descending, newest first" {
+                        runTest {
+                            dao.record(id = "id-1", url = "https://example.com/a", at = 1_000L)
+                            dao.record(id = "id-2", url = "https://example.com/b", at = 2_000L)
 
-                        dao.entries().first().map { it.id } shouldBe listOf("id-2", "id-1")
+                            dao.entries().first().map { it.id } shouldBe listOf("id-2", "id-1")
+                        }
                     }
                 }
-            }
-    })
+        },
+    )

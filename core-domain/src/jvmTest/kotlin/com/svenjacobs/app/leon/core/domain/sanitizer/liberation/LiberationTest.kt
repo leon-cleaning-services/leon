@@ -34,7 +34,7 @@ class LiberationTest :
                                 "0905_5LMA42SQEBGURDQHUGEODXOP3E/?at_email_type=retention&actId=~a6Zgr-mXM-" +
                                 "avkpSr6lbShiBgjb7Fy-bR-_bBxnYV8qMmlRT6xrLcvgEtun2B7RhPP7cWY116zwEgcHUYAUbk2" +
                                 "W-gJLfIFrMQ5Hr2EHeR4QacHi97DydZQcA%3D%3D&actCampaignType=CAMPAIGN_MAIL&actS" +
-                                "ource=559069"
+                                "ource=559069",
                         ) shouldBe
                             "https://www.liberation.fr/lifestyle/consommation/on-a-teste-le-premier-velo-a" +
                                 "-assistance-electrique-sans-batterie-un-entre-deux-pour-pedaler-leger-20250" +

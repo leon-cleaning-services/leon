@@ -32,7 +32,7 @@ val BlueskyRedirect =
         name = "Bluesky Redirect",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("u"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("u"), persistentListOf(Decode.PercentDecode)),
             ),
         match = persistentListOf(Match(HostMatch.Domain("go.bsky.app"), pathPrefix = "/redirect")),
     )

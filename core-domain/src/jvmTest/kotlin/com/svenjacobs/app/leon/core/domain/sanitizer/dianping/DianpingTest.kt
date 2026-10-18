@@ -30,7 +30,7 @@ class DianpingTest :
                     "remove tracking parameters from Dianping URL" {
                         val result =
                             clean(
-                                "https://www.dianping.com/shop/789?from=share&source=wx&channel=search&refer=user&wm=456&c=def&wx_extra=1"
+                                "https://www.dianping.com/shop/789?from=share&source=wx&channel=search&refer=user&wm=456&c=def&wx_extra=1",
                             )
                         result shouldBe "https://www.dianping.com/shop/789"
                     }

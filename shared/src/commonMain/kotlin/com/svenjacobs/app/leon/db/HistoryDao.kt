@@ -51,7 +51,7 @@ interface HistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insert(entry: HistoryEntry)
 
     @Query(
-        "DELETE FROM history WHERE id NOT IN (SELECT id FROM history ORDER BY at DESC LIMIT :max)"
+        "DELETE FROM history WHERE id NOT IN (SELECT id FROM history ORDER BY at DESC LIMIT :max)",
     )
     suspend fun trim(max: Int)
 

@@ -34,7 +34,7 @@ val AvantLink =
         // link: /click.php?...&url=<target>
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("url"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("url"), persistentListOf(Decode.PercentDecode)),
             ),
         match =
             persistentListOf(Match(HostMatch.Domain("avantlink.com"), pathPrefix = "/click.php")),

@@ -40,7 +40,7 @@ val RedditOut =
         name = "Reddit (out.reddit.com)",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("url"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("url"), persistentListOf(Decode.PercentDecode)),
             ),
         match = persistentListOf(Match(HostMatch.Domain("out.reddit.com"))),
     )
@@ -57,7 +57,7 @@ val RedditMail =
                     from = Source.Path,
                     steps = persistentListOf(Decode.Capture("/[^/]+/(.+)"), Decode.PercentDecode),
                     dropParameters = true,
-                )
+                ),
             ),
         match = persistentListOf(Match(HostMatch.Domain("click.redditmail.com"))),
     )

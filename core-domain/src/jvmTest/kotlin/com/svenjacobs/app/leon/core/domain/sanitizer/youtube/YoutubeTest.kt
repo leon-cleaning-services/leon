@@ -29,7 +29,7 @@ class YoutubeTest :
                 {
                     "remove all parameters except \"v\" from video URLs" {
                         clean(
-                            "https://m.youtube.com/watch?v=CvFH_6DNRCY&pp=ygUHZGVidXNzeQ%3D%3D"
+                            "https://m.youtube.com/watch?v=CvFH_6DNRCY&pp=ygUHZGVidXNzeQ%3D%3D",
                         ) shouldBe "https://m.youtube.com/watch?v=CvFH_6DNRCY"
                     }
 
@@ -40,33 +40,33 @@ class YoutubeTest :
 
                     "remove all parameters except \"search_query\" from search URLs" {
                         clean(
-                            "https://m.youtube.com/results?sp=mAEA&search_query=funny+dog+video"
+                            "https://m.youtube.com/results?sp=mAEA&search_query=funny+dog+video",
                         ) shouldBe "https://m.youtube.com/results?search_query=funny+dog+video"
                     }
 
                     "remove all parameters except \"list\" from playlist URLs" {
                         clean(
                             "https://youtube.com/playlist?list=PLkqz3S84Tw-QYEdfTLBzxJ1FAprtqeE" +
-                                "pJ&si=2tDDmSKejG2GTtj5"
+                                "pJ&si=2tDDmSKejG2GTtj5",
                         ) shouldBe
                             "https://youtube.com/playlist?list=PLkqz3S84Tw-QYEdfTLBzxJ1FAprtqeEpJ"
                     }
 
                     "remove all parameters except \"v\" from YouTube Music URLs" {
                         clean(
-                            "https://music.youtube.com/watch?v=KGFkMD2zotU&si=JrZ7QzX4VeMrfzp8"
+                            "https://music.youtube.com/watch?v=KGFkMD2zotU&si=JrZ7QzX4VeMrfzp8",
                         ) shouldBe "https://music.youtube.com/watch?v=KGFkMD2zotU"
                     }
 
                     "remove parameters from youtu.be domain" {
                         clean(
-                            "https://youtu.be/RvRhUHTV_8k?si=OXYBmGTMXib1jlA2?si=UA0UVnrmPbK612Lu"
+                            "https://youtu.be/RvRhUHTV_8k?si=OXYBmGTMXib1jlA2?si=UA0UVnrmPbK612Lu",
                         ) shouldBe "https://youtu.be/RvRhUHTV_8k"
                     }
 
                     "not remove \"channel_id\" from feed URLs" {
                         clean(
-                            "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw"
+                            "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw",
                         ) shouldBe
                             "https://www.youtube.com/feeds/videos.xml?channel_id=UCOfZQq8eZiMjyNfmnaVlBbw"
                     }

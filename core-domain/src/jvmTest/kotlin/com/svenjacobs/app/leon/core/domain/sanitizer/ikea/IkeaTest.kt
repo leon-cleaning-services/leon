@@ -30,7 +30,7 @@ class IkeaTest :
                     "remove all parameters from ikea.com URL" {
                         val result =
                             clean(
-                                "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/?gad_source=1&extProvId=5"
+                                "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/?gad_source=1&extProvId=5",
                             )
                         result shouldBe
                             "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/"
@@ -41,7 +41,7 @@ class IkeaTest :
                 {
                     "match for ikea.com" {
                         matches(
-                            "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/"
+                            "https://www.ikea.com/ch/en/p/billy-bookcase-white-30263844/",
                         ) shouldBe true
                     }
                     "not match for other domains" {

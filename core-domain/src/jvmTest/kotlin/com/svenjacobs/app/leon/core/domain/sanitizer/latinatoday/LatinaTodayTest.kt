@@ -29,7 +29,7 @@ class LatinaTodayTest :
                 {
                     "remove all parameters" {
                         clean(
-                            "https://www.latinatoday.it/cronaca/articolo.html?utm_source=facebook&utm_medium=social"
+                            "https://www.latinatoday.it/cronaca/articolo.html?utm_source=facebook&utm_medium=social",
                         ) shouldBe "https://www.latinatoday.it/cronaca/articolo.html"
                     }
                 }

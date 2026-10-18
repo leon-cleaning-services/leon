@@ -32,7 +32,7 @@ val Jdoqocy =
         name = "Jdoqocy",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("url"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("url"), persistentListOf(Decode.PercentDecode)),
             ),
         match = persistentListOf(Match(HostMatch.Domain("jdoqocy.com"), pathPrefix = "/click")),
     )

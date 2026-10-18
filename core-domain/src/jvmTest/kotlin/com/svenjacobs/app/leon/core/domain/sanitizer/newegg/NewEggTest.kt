@@ -31,7 +31,7 @@ class NewEggTest :
                         val result =
                             clean(
                                 "https://www.newegg.com/black-acer-nitro-5-an515-57-59f7-gaming/p/N82E1" +
-                                    "6834360174?Item=N82E16834360174"
+                                    "6834360174?Item=N82E16834360174",
                             )
 
                         result shouldBe "https://www.newegg.com/p/N82E16834360174"

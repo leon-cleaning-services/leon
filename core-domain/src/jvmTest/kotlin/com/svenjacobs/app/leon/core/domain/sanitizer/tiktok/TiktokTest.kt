@@ -31,7 +31,7 @@ class TiktokTest :
                         var result =
                             clean(
                                 "https://www.tiktok.com/@lihayk/video/7271645505522879751?" +
-                                    "is_from_webapp=1&sender_device=pc&web_id=7098566637619288452"
+                                    "is_from_webapp=1&sender_device=pc&web_id=7098566637619288452",
                             )
 
                         result shouldBe "https://www.tiktok.com/@lihayk/video/7271645505522879751"
@@ -39,7 +39,7 @@ class TiktokTest :
                         result =
                             clean(
                                 "https://www.tiktok.com/@conqressesquotes/video/7284563007244389664" +
-                                    "?_t=3tmYqC7L494&_r=1"
+                                    "?_t=3tmYqC7L494&_r=1",
                             )
 
                         result shouldBe

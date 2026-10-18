@@ -47,7 +47,7 @@ val GoogleAds =
         name = "Google Ads",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("adurl"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("adurl"), persistentListOf(Decode.PercentDecode)),
             ),
         match = persistentListOf(Match(HostMatch.Domain("googleadservices.com"))),
     )
@@ -58,7 +58,7 @@ val GoogleSearch =
         name = "Google Search",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("url|q"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("url|q"), persistentListOf(Decode.PercentDecode)),
             ),
         match =
             persistentListOf(Match(HostMatch.Pattern("google\\.[^/?#:]+"), pathPrefix = "/url")),

@@ -31,7 +31,7 @@ class JdoqocyTest :
                         val result =
                             clean(
                                 "https://www.jdoqocy.com/click-7988170-15232592?SID=11003b6m4t07&" +
-                                    "url=https%3A%2F%2Fwww.gog.com%2Fde%2Fgame%2Falwas_awakening"
+                                    "url=https%3A%2F%2Fwww.gog.com%2Fde%2Fgame%2Falwas_awakening",
                             )
 
                         result shouldBe "https://www.gog.com/de/game/alwas_awakening"

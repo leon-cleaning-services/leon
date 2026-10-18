@@ -200,8 +200,8 @@ fun MainRouter(
                         metadata =
                             topLevelMetadata(Destination.Settings) +
                                 ListDetailSceneStrategy.listPane(
-                                    detailPlaceholder = { SettingsDetailPlaceholder() }
-                                )
+                                    detailPlaceholder = { SettingsDetailPlaceholder() },
+                                ),
                     ) {
                         SettingsScreen(
                             onNavigateToSettingsSanitizers =
@@ -212,7 +212,7 @@ fun MainRouter(
                     }
 
                     entry<Destination.SettingsSanitizers>(
-                        metadata = ListDetailSceneStrategy.detailPane()
+                        metadata = ListDetailSceneStrategy.detailPane(),
                     ) {
                         SettingsSanitizersScreen(
                             onBackClick =
@@ -220,12 +220,12 @@ fun MainRouter(
                                     null
                                 } else {
                                     dropUnlessResumed { backStack.removeLastOrNull() }
-                                }
+                                },
                         )
                     }
 
                     entry<Destination.SettingsLicenses>(
-                        metadata = ListDetailSceneStrategy.detailPane()
+                        metadata = ListDetailSceneStrategy.detailPane(),
                     ) {
                         SettingsLicensesScreen(
                             onBackClick =
@@ -233,7 +233,7 @@ fun MainRouter(
                                     null
                                 } else {
                                     dropUnlessResumed { backStack.removeLastOrNull() }
-                                }
+                                },
                         )
                     }
                 },

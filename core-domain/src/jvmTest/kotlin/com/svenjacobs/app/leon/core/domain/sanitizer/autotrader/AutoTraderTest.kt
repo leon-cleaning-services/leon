@@ -42,7 +42,7 @@ class AutoTraderTest :
                                     "%26minimum-badge-engine-size%3D1.4%26postcode%3Dw148nw" +
                                     "%26price-from%3D5000%26price-to%3D10000%26sort%3Drelevance" +
                                     "%26transmission%3DAutomatic%26year-from%3D2014%26refresh%3Dtrue" +
-                                    "%26flrfc%3D1&calc-deposit=700&calc-term=48&calc-mileage=10000"
+                                    "%26flrfc%3D1&calc-deposit=700&calc-term=48&calc-mileage=10000",
                             )
 
                         result shouldBe "https://www.autotrader.co.uk/car-details/202602280303309"

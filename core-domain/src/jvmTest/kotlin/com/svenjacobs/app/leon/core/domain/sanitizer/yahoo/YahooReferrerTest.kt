@@ -34,19 +34,19 @@ class YahooReferrerTest :
 
                     "remove guce_referrer parameter" {
                         clean(
-                            "https://www.example.com/article?id=123&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8"
+                            "https://www.example.com/article?id=123&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8",
                         ) shouldBe "https://www.example.com/article?id=123"
                     }
 
                     "remove guce_referrer_sig parameter" {
                         clean(
-                            "https://www.example.com/article?id=123&guce_referrer_sig=AQAAABs"
+                            "https://www.example.com/article?id=123&guce_referrer_sig=AQAAABs",
                         ) shouldBe "https://www.example.com/article?id=123"
                     }
 
                     "remove all Yahoo referrer parameters" {
                         clean(
-                            "https://www.example.com/article?id=123&guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAABs"
+                            "https://www.example.com/article?id=123&guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAABs",
                         ) shouldBe "https://www.example.com/article?id=123"
                     }
                 }

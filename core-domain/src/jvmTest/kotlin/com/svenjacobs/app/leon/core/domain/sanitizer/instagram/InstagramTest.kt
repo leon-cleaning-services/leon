@@ -44,7 +44,7 @@ class InstagramTest :
                     "remove \"rpxt\" parameter" {
                         val result =
                             clean(
-                                "https://www.instagram.com/reel/Ceeg-VgI4yF/?rpxt=MXJjOFJsamxsdnQ3dg=="
+                                "https://www.instagram.com/reel/Ceeg-VgI4yF/?rpxt=MXJjOFJsamxsdnQ3dg==",
                             )
 
                         result shouldBe "https://www.instagram.com/reel/Ceeg-VgI4yF/"

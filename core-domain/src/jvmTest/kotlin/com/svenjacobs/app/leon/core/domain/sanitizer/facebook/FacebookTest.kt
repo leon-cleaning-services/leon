@@ -29,7 +29,7 @@ class FacebookTest :
                 {
                     "clean facebook.com reel URLs" {
                         clean(
-                            "https://www.facebook.com/reel/1242384407160280?sfnsn=scwspmo"
+                            "https://www.facebook.com/reel/1242384407160280?sfnsn=scwspmo",
                         ) shouldBe "https://www.facebook.com/reel/1242384407160280"
                     }
 
@@ -37,7 +37,7 @@ class FacebookTest :
                         clean(
                             "https://m.facebook.com/story.php?story_fbid=pfbid0HqS6zLZvNrQt6ACvjv3h" +
                                 "Kq6khpVse437nWSq2jBifKRD5sVH2XRLC3zz8aA7TKkWl&id=4&sfnsn=wiwspmo&mibext" +
-                                "id=XzsMCV"
+                                "id=XzsMCV",
                         ) shouldBe
                             "https://m.facebook.com/story.php?story_fbid=pfbid0HqS6zLZvNrQt6ACvjv" +
                                 "3hKq6khpVse437nWSq2jBifKRD5sVH2XRLC3zz8aA7TKkWl&id=4"

@@ -33,7 +33,7 @@ class GoogleStoreTest :
                                 "https://store.google.com/gb/product/chromecast_google_tv?hl=en-GB" +
                                     "&selections=eyJwcm9kdWN0RmFtaWx5IjoiWTJoeWIyMWxZMkZ6ZEY5bmIyOW5iR1" +
                                     "ZmZEhZPSIsImhlcm9Qcm9kdWN0cyI6W1siY0hKa1h6YzRNekpmTXprMU1nPT0iLDEs" +
-                                    "bnVsbF1dfQ%3D%3D"
+                                    "bnVsbF1dfQ%3D%3D",
                             )
 
                         result shouldBe "https://store.google.com/gb/product/chromecast_google_tv"

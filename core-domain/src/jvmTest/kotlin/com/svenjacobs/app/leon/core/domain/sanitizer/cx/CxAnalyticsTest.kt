@@ -31,7 +31,7 @@ class CxAnalyticsTest :
                         val result =
                             clean(
                                 "https://www.redacted.com/redacted/2023/06/01/page-of-article.html?" +
-                                    "cx_testId=40&cx_testVariant=cx_8&cx_artPos=4&mibextid=Zxz2cZ&cxrecs_s=5"
+                                    "cx_testId=40&cx_testVariant=cx_8&cx_artPos=4&mibextid=Zxz2cZ&cxrecs_s=5",
                             )
 
                         result shouldBe

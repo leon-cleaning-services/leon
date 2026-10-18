@@ -31,7 +31,7 @@ class AvantLinkTest :
                         clean(
                             "https://www.avantlink.com/click.php?tt=cl&merchant_id=68286571-393d-411e-9" +
                                 "a0f-d1c2fa0648d6&website_id=37e930a6-52be-4816-9903-81d2e873459d&url=http" +
-                                "s%3A%2F%2Fgreymantactical.com%2Fcollections%2Fshoprmpseries"
+                                "s%3A%2F%2Fgreymantactical.com%2Fcollections%2Fshoprmpseries",
                         ) shouldBe "https://greymantactical.com/collections/shoprmpseries"
                     }
                 }
@@ -40,13 +40,13 @@ class AvantLinkTest :
                 {
                     "match avantlink.com click.php link" {
                         matches(
-                            "https://www.avantlink.com/click.php?url=https%3A%2F%2Fexample.com"
+                            "https://www.avantlink.com/click.php?url=https%3A%2F%2Fexample.com",
                         ) shouldBe true
                     }
 
                     "not match a lookalike host" {
                         matches(
-                            "https://avantlink.com.evil.com/click.php?url=https%3A%2F%2Fexample.com"
+                            "https://avantlink.com.evil.com/click.php?url=https%3A%2F%2Fexample.com",
                         ) shouldBe false
                     }
 

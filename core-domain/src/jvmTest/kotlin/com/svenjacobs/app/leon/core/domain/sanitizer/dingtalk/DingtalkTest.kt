@@ -30,7 +30,7 @@ class DingtalkTest :
                     "remove tracking parameters from DingTalk URL" {
                         val result =
                             clean(
-                                "https://www.dingtalk.com/page?from=share&scene=2&channel=app&source=qr&refer=user"
+                                "https://www.dingtalk.com/page?from=share&scene=2&channel=app&source=qr&refer=user",
                             )
                         result shouldBe "https://www.dingtalk.com/page"
                     }

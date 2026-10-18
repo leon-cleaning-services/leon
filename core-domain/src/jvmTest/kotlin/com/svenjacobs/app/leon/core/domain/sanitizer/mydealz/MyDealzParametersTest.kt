@@ -31,7 +31,7 @@ class MyDealzParametersTest :
                         val result =
                             clean(
                                 "https://www.mydealz.de/diskussion/gratis-adidas-fussball-trikot-" +
-                                    "2383743?pprmrkntfctnsrd=123456789&UATypeId=18"
+                                    "2383743?pprmrkntfctnsrd=123456789&UATypeId=18",
                             )
                         result shouldBe
                             "https://www.mydealz.de/diskussion/gratis-adidas-fussball-" +

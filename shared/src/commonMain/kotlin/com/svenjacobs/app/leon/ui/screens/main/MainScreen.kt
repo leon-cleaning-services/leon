@@ -344,7 +344,7 @@ private fun UrlDisplaySection(
             modifier = Modifier.fillMaxWidth().clickable { onUrlTap(result.originalText) },
             colors =
                 CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 ),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -368,7 +368,7 @@ private fun UrlDisplaySection(
             modifier = Modifier.fillMaxWidth().clickable { onUrlTap(result.cleanedText) },
             colors =
                 CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {

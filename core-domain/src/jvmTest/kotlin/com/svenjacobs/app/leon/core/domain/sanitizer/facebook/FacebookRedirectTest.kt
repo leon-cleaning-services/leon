@@ -35,7 +35,7 @@ class FacebookRedirectTest :
                                 "QABHhokO35LR-vCEC4f00kC0H2Z6WLrY5Kises22Eacg9fpbfxXW7RJOrbTL_iG_aem_6d8C6jDZJ" +
                                 "aGqRXbV19zsvA&h=AT0j5ZjKdut-FmFM-Cfrt57PKS76sok0qtsnLizEx5A2r6ABMyPTS9BXJixYy" +
                                 "CdjHIC8V9aJOj6JlD79CtQ38sTQcm4QExXUFY1jCQgeYgzu8023sT8EqlPKS2xJwabIFrnuRWC02f" +
-                                "aBikjd"
+                                "aBikjd",
                         ) shouldBe
                             "https://www.latinapress.it/latina/panico-al-liceo-dante-alighieri-di-latina-sa" +
                                 "sso-lanciato-da-un-palazzo-colpisce-studentessa-durante-la-lezione/?fbclid=I" +
@@ -51,7 +51,7 @@ class FacebookRedirectTest :
                                 "jg1NTMxNzI4AAEeJJ4U1iY04LKeknOI58w3czBdQECMoGyKXS6rGaT8urwE53c73uUMH6zYdKc_ae" +
                                 "m_rHr5SbyaWkdVG0cHPQYr4g&h=AT3cDUVol511LB_DioYWzyRaZ7XpHvTfhDxNiKTfUH5GKkFYsJ" +
                                 "iWaLhWIsERxwPuoyLqG-e6fyHnYBoMgtU0Z-u5ePXLykEkA9gjN5klYbAqaN14w23Ll_MQU7aXmZL" +
-                                "QTIfdiLsfmlVcLPxqV4Rt1r2msm4MLK3h&_rdr"
+                                "QTIfdiLsfmlVcLPxqV4Rt1r2msm4MLK3h&_rdr",
                         ) shouldBe
                             "https://www.focus.de/gesundheit/ratgeber/apotheker-warnt-vor-natuerlichem-anti" +
                                 "biotikum-wer-es-nimmt-wird-zum-schlumpf-91fca548.html?fbclid=IwZXh0bgNhZW0CM" +
@@ -64,22 +64,22 @@ class FacebookRedirectTest :
                 {
                     "match l.php on any facebook.com subdomain" {
                         matches(
-                            "https://lm.facebook.com/l.php?u=https%3A%2F%2Fexample.com"
+                            "https://lm.facebook.com/l.php?u=https%3A%2F%2Fexample.com",
                         ) shouldBe true
                         matches(
-                            "https://www.facebook.com/l.php?u=https%3A%2F%2Fexample.com"
+                            "https://www.facebook.com/l.php?u=https%3A%2F%2Fexample.com",
                         ) shouldBe true
                     }
 
                     "match flx/warn on any facebook.com subdomain" {
                         matches(
-                            "https://m.facebook.com/flx/warn/?u=https%3A%2F%2Fexample.com"
+                            "https://m.facebook.com/flx/warn/?u=https%3A%2F%2Fexample.com",
                         ) shouldBe true
                     }
 
                     "not match a lookalike host" {
                         matches(
-                            "https://facebook.com.evil.com/l.php?u=https%3A%2F%2Fexample.com"
+                            "https://facebook.com.evil.com/l.php?u=https%3A%2F%2Fexample.com",
                         ) shouldBe false
                     }
 

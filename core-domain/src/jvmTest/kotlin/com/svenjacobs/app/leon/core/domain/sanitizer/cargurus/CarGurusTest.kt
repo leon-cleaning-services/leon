@@ -41,7 +41,7 @@ class CarGurusTest :
                                     "&minPrice=5000&maxMileage=100000&startYear=2014" +
                                     "&ulezCompliantOnly=true&minEngineDisplacement=1.4" +
                                     "&entitySelectingHelper.selectedEntity=AUTO" +
-                                    "#listing=156943295/NONE/DEFAULT"
+                                    "#listing=156943295/NONE/DEFAULT",
                             )
 
                         result shouldBe
@@ -56,7 +56,7 @@ class CarGurusTest :
                 {
                     "match CarGurus VDP URL" {
                         matches(
-                            "https://www.cargurus.co.uk/Cars/inventorylisting/vdp.action?listingId=156943295"
+                            "https://www.cargurus.co.uk/Cars/inventorylisting/vdp.action?listingId=156943295",
                         ) shouldBe true
                     }
                 }

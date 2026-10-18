@@ -30,7 +30,7 @@ class IlSole24OreTest :
                     "remove all parameters" {
                         clean(
                             "https://www.ilsole24ore.com/art/la-rivoluzione-farmaci-dimagranti-che-potreb" +
-                                "bero-prevenire-anche-cancro-AImYSJBC?cmpid=waw"
+                                "bero-prevenire-anche-cancro-AImYSJBC?cmpid=waw",
                         ) shouldBe
                             "https://www.ilsole24ore.com/art/la-rivoluzione-farmaci-dimagranti-che-potreb" +
                                 "bero-prevenire-anche-cancro-AImYSJBC"

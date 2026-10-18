@@ -31,7 +31,7 @@ class EmptyParametersTest :
                         val result =
                             clean(
                                 "https://www.buch24.de/shopdirekt.cgi?sessionid=1650808921-319962258&id" +
-                                    "=13241297&p=3&sid=&static=0&nav="
+                                    "=13241297&p=3&sid=&static=0&nav=",
                             )
 
                         result shouldBe

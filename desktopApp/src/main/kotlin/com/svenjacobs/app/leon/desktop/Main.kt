@@ -46,7 +46,7 @@ fun main(args: Array<String>) {
                 .takeIf { it.isNotBlank() }
                 ?.let {
                     SourceText(id = Uuid.random().toString(), text = it)
-                }
+                },
         )
 
     application {

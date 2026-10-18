@@ -31,7 +31,7 @@ class RedditTest :
                         clean(
                             "https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is_" +
                                 "still_maintained/?share_id=Toc_TMpn88yOUd7Z-y0xv&utm_content=1&utm_mediu" +
-                                "m=android_app&utm_name=androidcss&utm_source=share&utm_term=1"
+                                "m=android_app&utm_name=androidcss&utm_source=share&utm_term=1",
                         ) shouldBe
                             "https://www.reddit.com/r/fossdroid/comments/1659ic4/material_files_is" +
                                 "_still_maintained/"

@@ -50,7 +50,7 @@ val FacebookRedirect =
         // extracted, FacebookAnalytics strips the fbclid it carries.
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("u"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("u"), persistentListOf(Decode.PercentDecode)),
             ),
         match =
             persistentListOf(

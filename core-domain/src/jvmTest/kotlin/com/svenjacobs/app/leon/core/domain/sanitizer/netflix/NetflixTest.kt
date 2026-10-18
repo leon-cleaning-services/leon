@@ -31,7 +31,7 @@ class NetflixTest :
                         val result =
                             clean(
                                 "https://www.netflix.com/de/title/81040344?s=a&trkid=13747225&t=more&vl" +
-                                    "ang=de&clip=81499054&trg=trg"
+                                    "ang=de&clip=81499054&trg=trg",
                             )
 
                         result shouldBe "https://www.netflix.com/de/title/81040344"
@@ -40,7 +40,7 @@ class NetflixTest :
                     "remove parameters from help.netflix.com URL" {
                         val result =
                             clean(
-                                "https://help.netflix.com/en/titlerequest?netflixsource=android&fromApp=true"
+                                "https://help.netflix.com/en/titlerequest?netflixsource=android&fromApp=true",
                             )
 
                         result shouldBe "https://help.netflix.com/en/titlerequest"
@@ -51,7 +51,7 @@ class NetflixTest :
                             clean(
                                 "https://www.netflix.com/us/title/81461530?s=a&trkid=13747225&shareType=Title" +
                                     "&shareUuid=8266283d-94f3-42b5-83ac-ad2be3c826c9&trg=cp" +
-                                    "&unifiedEntityIdEncoded=Video%3A81461530&vlang=en&clip=82633134"
+                                    "&unifiedEntityIdEncoded=Video%3A81461530&vlang=en&clip=82633134",
                             )
 
                         result shouldBe "https://www.netflix.com/us/title/81461530"
