@@ -191,6 +191,11 @@ Publishing the release at the end of `github-release` is what creates the `vXX` 
 can also be started by hand (`workflow_dispatch`) with a `tag` input, for re-running a release from
 its release commit.
 
+Every release also gets a lightweight `vXX.0.0` tag on the same commit. That is release-please's
+bookmark: it finds the previous release only by a release or tag carrying the exact manifest version,
+and without it the next release PR would list every change since the last bookmark again. Never
+delete these tags.
+
 The release PR only runs CI if it is created with a token other than `GITHUB_TOKEN`, so the
 workflow mints a short-lived token from a GitHub App owned by the organization, installed on this
 repository only, with Contents, Pull requests and Issues read/write permissions and no webhook. The
@@ -223,11 +228,13 @@ F-Droid's build recipe, `metadata/com.svenjacobs.app.leon.yml` in the separate
 lives in `version.properties` and no longer in `androidApp/build.gradle.kts`, the recipe needs
 
 ```yaml
+UpdateCheckMode: Tags ^v\d+$
 UpdateCheckData: version.properties|versionCode=(\d+)|.|versionName=(\d+)
 ```
 
-Without it, `checkupdates` looks for `versionCode` in `build.gradle.kts` and silently ignores new
-tags.
+Without `UpdateCheckData`, `checkupdates` looks for `versionCode` in `build.gradle.kts` and silently
+ignores new tags. The `^v\d+$` pattern keeps it on the `vXX` tags and away from release-please's
+`vXX.0.0` bookmarks.
 
 The recipe's `prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts` line needs no change: it
 still strips the Foojay resolver plugin before F-Droid's offline build, and `gradle assembleRelease`

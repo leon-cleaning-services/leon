@@ -23,7 +23,7 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag: v${{ steps.release.outputs.major }}
-      pr: ${{ steps.release.outputs.pr }}
+      pr: ${{ steps.release-pr.outputs.pr }}
     steps:
       # A GitHub App token instead of GITHUB_TOKEN, so that the release PR triggers CI. It is
       # minted per run and expires after an hour, unlike a personal access token.
@@ -33,15 +33,20 @@ jobs:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
 
+      # Releases and the release PR are two separate runs of the action, so that the bookmark tag
+      # below exists before the next release PR is built. Otherwise the PR opened right after a
+      # release would list every change since the previous release again.
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
+          skip-github-pull-request: true
 
-      # release-please only knows semver and would tag the release v69.0.0. It therefore creates
-      # a draft, which has no tag yet, and this step renames it to the plain v69 that F-Droid
-      # polls for and points it at the release commit. Publishing the draft in deploy.yml
-      # is what creates the tag. The notes heading is rewritten to match.
+      # release-please only knows semver: it creates the release as v69.0.0, and it finds the
+      # previous release only by a release or tag of exactly that name. The draft (which has no
+      # tag yet) is therefore renamed to the plain v69 that F-Droid polls for, and a lightweight
+      # v69.0.0 tag on the same commit is kept as release-please's bookmark. Publishing the draft
+      # in deploy.yml is what creates the v69 tag. The notes heading is rewritten to match.
       - name: Rename draft release to vMAJOR
         if: ${{ steps.release.outputs.release_created == 'true' }}
         env:
@@ -50,12 +55,21 @@ jobs:
           MAJOR: ${{ steps.release.outputs.major }}
           SHA: ${{ steps.release.outputs.sha }}
         run: |
+          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG_NAME" --silent 2>/dev/null; then
+            gh api "repos/$GITHUB_REPOSITORY/git/refs" --silent \
+              -f ref="refs/tags/$TAG_NAME" -f sha="$SHA"
+          fi
           gh release edit "$TAG_NAME" --repo "$GITHUB_REPOSITORY" \
             --tag "v$MAJOR" --title "v$MAJOR" --target "$SHA"
           gh release view "v$MAJOR" --repo "$GITHUB_REPOSITORY" --json body --jq .body \
-            | sed "1s/^## .*/## v$MAJOR/" > "$RUNNER_TEMP/notes.md"
+            | sed "0,/^## /s/^## .*/## v$MAJOR/" > "$RUNNER_TEMP/notes.md"
           gh release edit "v$MAJOR" --repo "$GITHUB_REPOSITORY" --notes-file "$RUNNER_TEMP/notes.md"
 
+      - uses: googleapis/release-please-action@v4
+        id: release-pr
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          skip-github-release: true
   # release-please cannot do arithmetic on versionCode, so it is incremented here, on the
   # release PR branch. This is idempotent: release-please rebuilds the branch from main on
   # every run, and this job then applies the bump again.
