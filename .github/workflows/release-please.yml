@@ -22,7 +22,7 @@ jobs:
       contents: read
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
-      tag: v${{ steps.release.outputs.major }}
+      tag: ${{ steps.release.outputs.tag_name }}
       pr: ${{ steps.release.outputs.pr }}
     steps:
       # A GitHub App token instead of GITHUB_TOKEN, so that the release PR triggers CI. It is
@@ -33,28 +33,13 @@ jobs:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
 
+      # release-please tags each release vXX.0.0 when it creates it, which is also how it finds
+      # the previous release when it builds the next release PR - so the release is created
+      # straight away, not as a draft. deploy.yml attaches the build artifacts to it afterwards.
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
-
-      # release-please only knows semver and would tag the release v69.0.0. It therefore creates
-      # a draft, which has no tag yet, and this step renames it to the plain v69 that F-Droid
-      # polls for and points it at the release commit. Publishing the draft in deploy.yml
-      # is what creates the tag. The notes heading is rewritten to match.
-      - name: Rename draft release to vMAJOR
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          TAG_NAME: ${{ steps.release.outputs.tag_name }}
-          MAJOR: ${{ steps.release.outputs.major }}
-          SHA: ${{ steps.release.outputs.sha }}
-        run: |
-          gh release edit "$TAG_NAME" --repo "$GITHUB_REPOSITORY" \
-            --tag "v$MAJOR" --title "v$MAJOR" --target "$SHA"
-          gh release view "v$MAJOR" --repo "$GITHUB_REPOSITORY" --json body --jq .body \
-            | sed "1s/^## .*/## v$MAJOR/" > "$RUNNER_TEMP/notes.md"
-          gh release edit "v$MAJOR" --repo "$GITHUB_REPOSITORY" --notes-file "$RUNNER_TEMP/notes.md"
 
   # release-please cannot do arithmetic on versionCode, so it is incremented here, on the
   # release PR branch. This is idempotent: release-please rebuilds the branch from main on
@@ -95,9 +80,8 @@ jobs:
           git commit -am "chore: increment versionCode to $new"
           git push
 
-  # Called directly: the tag is created by GITHUB_TOKEN when deploy.yml publishes the draft,
-  # and events caused by GITHUB_TOKEN do not trigger other workflows, so a tag trigger
-  # would never fire.
+  # Called directly rather than through a tag trigger, so that the release, the Play Store upload
+  # and the artifacts all come from this one run and its outputs.
   deploy:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}

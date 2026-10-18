@@ -173,12 +173,12 @@ commit type (`feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `chore`/`ci`/`bu
 updates that PR.
 
 The release PR bumps `versionName` in [`version.properties`](version.properties); the workflow's
-`bump-version-code` job then increments `versionCode` on the PR branch. Versions are plain integers
-(`69`, `70`, …) and only the major number counts. The `.0.0` in the manifest and in the PR title
-exists only because release-please insists on semver. Never edit `version.properties` by hand.
+`bump-version-code` job then increments `versionCode` on the PR branch. Only the major number
+counts: the app shows a plain `versionName` (`69`, `70`, …), while releases and tags carry the semver
+form release-please insists on (`v70.0.0`). Never edit `version.properties` by hand.
 
-To release, **squash-merge** the release PR. That creates a draft GitHub release, which the workflow
-renames to `vXX` and hands to [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), a
+To release, **squash-merge** the release PR. release-please then creates the GitHub release and its
+`vXX.0.0` tag, and hands it to [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), a
 reusable workflow whose jobs run like this:
 
 ```
@@ -187,9 +187,13 @@ build-android ─┬─┴─> github-release
                └───> play-store
 ```
 
-Publishing the release at the end of `github-release` is what creates the `vXX` tag. `deploy.yml`
+`github-release` attaches the APKs, the AAB and the desktop packages to it. `deploy.yml`
 can also be started by hand (`workflow_dispatch`) with a `tag` input, for re-running a release from
 its release commit.
+
+release-please finds the previous release by that tag, so never delete or rename a `vXX.0.0` tag:
+the next release PR would list every change since the one before it again. (`v68` and older, and
+`v69`, predate this scheme; `v69.0.0` was added afterwards as the starting point.)
 
 The release PR only runs CI if it is created with a token other than `GITHUB_TOKEN`, so the
 workflow mints a short-lived token from a GitHub App owned by the organization, installed on this
@@ -219,15 +223,15 @@ the Play Console.
 
 F-Droid's build recipe, `metadata/com.svenjacobs.app.leon.yml` in the separate
 [fdroiddata](https://gitlab.com/fdroid/fdroiddata) repository, uses `UpdateCheckMode: Tags` and
-`AutoUpdateMode: Version`, so every new `vXX` tag becomes a new F-Droid build. Because the version
+`AutoUpdateMode: Version`, so every new `vXX.0.0` tag becomes a new F-Droid build. Because the version
 lives in `version.properties` and no longer in `androidApp/build.gradle.kts`, the recipe needs
 
 ```yaml
 UpdateCheckData: version.properties|versionCode=(\d+)|.|versionName=(\d+)
 ```
 
-Without it, `checkupdates` looks for `versionCode` in `build.gradle.kts` and silently ignores new
-tags.
+Without `UpdateCheckData`, `checkupdates` looks for `versionCode` in `build.gradle.kts` and silently
+ignores new tags. Tags from before `version.properties` existed are simply skipped.
 
 The recipe's `prebuild: sed -i -e '/foojay/d' ../settings.gradle.kts` line needs no change: it
 still strips the Foojay resolver plugin before F-Droid's offline build, and `gradle assembleRelease`
