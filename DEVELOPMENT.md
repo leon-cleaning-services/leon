@@ -192,8 +192,10 @@ can also be started by hand (`workflow_dispatch`) with a `tag` input, for re-run
 its release commit.
 
 The release PR only runs CI if it is created with a token other than `GITHUB_TOKEN`, so the
-repository needs a `RELEASE_PLEASE_TOKEN` secret: a fine-grained personal access token or GitHub App
-token with Contents, Pull requests and Issues read/write permissions.
+workflow mints a short-lived token from a GitHub App owned by the organization, installed on this
+repository only, with Contents, Pull requests and Issues read/write permissions and no webhook. The
+repository needs its Client ID as the variable `RELEASE_APP_CLIENT_ID` and a private key of it as
+the secret `RELEASE_APP_PRIVATE_KEY`.
 
 `build-android` decrypts the signing secrets and runs `assembleRelease bundleRelease`, in parallel
 with the desktop matrix. `play-store` picks up the resulting AAB and runs

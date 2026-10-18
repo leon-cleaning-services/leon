@@ -25,11 +25,18 @@ jobs:
       tag: v${{ steps.release.outputs.major }}
       pr: ${{ steps.release.outputs.pr }}
     steps:
-      # A token instead of GITHUB_TOKEN, so that the release PR triggers CI.
+      # A GitHub App token instead of GITHUB_TOKEN, so that the release PR triggers CI. It is
+      # minted per run and expires after an hour, unlike a personal access token.
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
 
       # release-please only knows semver and would tag the release v69.0.0. It therefore creates
       # a draft, which has no tag yet, and this step renames it to the plain v69 that F-Droid
@@ -38,7 +45,7 @@ jobs:
       - name: Rename draft release to vMAJOR
         if: ${{ steps.release.outputs.release_created == 'true' }}
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           TAG_NAME: ${{ steps.release.outputs.tag_name }}
           MAJOR: ${{ steps.release.outputs.major }}
           SHA: ${{ steps.release.outputs.sha }}
@@ -60,11 +67,18 @@ jobs:
     permissions:
       contents: read
     steps:
-      # The push is made with the token so that CI runs on the final state of the PR.
+      # Its own App token, since the release-please job's token is not passed between jobs. The
+      # push is made with it so that CI runs on the final state of the PR.
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v7
         with:
           ref: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           show-progress: false
 
       - name: Increment version code
