@@ -29,6 +29,9 @@ plugins {
     alias(libs.plugins.metro)
 }
 
+val versionProperties =
+    Properties().apply { rootProject.file("version.properties").inputStream().use { load(it) } }
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -43,8 +46,8 @@ android {
         applicationId = "com.svenjacobs.app.leon"
         minSdk = Android.minSdk
         targetSdk = Android.targetSdk
-        versionCode = 290
-        versionName = "69"
+        versionCode = versionProperties.getProperty("versionCode").toInt()
+        versionName = versionProperties.getProperty("versionName")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,13 +1,21 @@
 name: Deploy
 
 on:
-  push:
-    tags:
-      - v*
+  workflow_call:
+    inputs:
+      tag:
+        description: The release tag to deploy, e.g. v69.
+        required: true
+        type: string
   workflow_dispatch:
+    inputs:
+      tag:
+        description: The release tag to deploy, e.g. v69. Run this workflow from the release commit.
+        required: true
+        type: string
 
-# Every job gets read-only unless it says otherwise below. Only the two jobs that write to
-# this repository - the release and the version bump - get contents: write; the jobs holding
+# Every job gets read-only unless it says otherwise below. Only the job that writes to
+# this repository - the release - gets contents: write; the jobs holding
 # the signing keystore and the Play Store service account do not.
 permissions:
   contents: read
@@ -96,56 +104,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-android, package-desktop]
     permissions:
-      contents: write # Creates the GitHub release.
-      pull-requests: read # The changelog builder reads the merged pull requests and their labels.
+      contents: write # Uploads the assets and publishes the draft release.
+    # No checkout: gh addresses the release through --repo.
     steps:
-      # The only job that needs full history: the changelog builder resolves the previous tag.
-      # The build itself does not - versionCode/versionName are literals in build.gradle.kts
-      # since 10797c9 replaced latestTagName() with a hardcoded value.
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          show-progress: false
-
-      - name: Build changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v6
-        with:
-          configurationJson: |
-            {
-              "categories": [
-                {
-                  "title": "## 🚀 Features",
-                  "labels": ["feature"]
-                },
-                {
-                  "title": "## 🐛 Fixes",
-                  "labels": ["bug", "fix"]
-                },
-                {
-                  "title": "## 🔧 Maintenance",
-                  "labels": ["chore", "maintenance"]
-                },
-                {
-                  "title": "## ⬆️ Dependencies",
-                  "labels": ["dependencies"]
-                },
-                {
-                  "title": "## 📚 Documentation",
-                  "labels": ["documentation"]
-                },
-                {
-                  "title": "## 🧪 Tests",
-                  "labels": ["test"]
-                }
-              ],
-              "tag_resolver": {
-                "method": "sort"
-              }
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: actions/download-artifact@v8
         with:
           pattern: desktop-*
@@ -157,34 +118,14 @@ jobs:
           name: Android artifacts
           path: android-artifacts
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v3
-        with:
-          body: ${{steps.github_release.outputs.changelog}}
-          files: |
-            android-artifacts/**/*.apk
-            android-artifacts/**/*.aab
-            desktop-artifacts/**
-
-  increment-version:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    needs: [play-store, github-release]
-    permissions:
-      contents: write # Commits the incremented version to main.
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: main
-
-      - name: Increment version code
-        run: sed -i 's/versionCode = [0-9]*/versionCode = '$(awk '/versionCode =/{print $3=$3+1}' androidApp/build.gradle.kts)'/g' androidApp/build.gradle.kts
-
-      - name: Increment version name
-        run: sed -i 's/versionName = .*/versionName = "'$(awk '/versionName =/{print substr($3,2,length($3)-2)+1}' androidApp/build.gradle.kts)'"/g' androidApp/build.gradle.kts
-
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: '[skip ci] Increment version code & name for next release'
-          branch: main
+      # release-please created the release as a draft. gh finds a draft by its tag, which
+      # softprops/action-gh-release does not (it would create a duplicate). Publishing the draft
+      # is what creates the tag.
+      - name: Upload assets and publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          mapfile -t files < <(find android-artifacts -name '*.apk' -o -name '*.aab'; find desktop-artifacts -type f)
+          gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest
