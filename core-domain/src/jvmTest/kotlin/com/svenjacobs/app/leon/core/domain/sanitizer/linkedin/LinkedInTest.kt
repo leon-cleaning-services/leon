@@ -30,7 +30,7 @@ class LinkedInTest :
                     "remove rcm parameter" {
                         clean(
                             "https://www.linkedin.com/feed/update/urn:li:activity:7358242171365335040" +
-                                "?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUR3RBZwN2Ag"
+                                "?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAUR3RBZwN2Ag",
                         ) shouldBe
                             "https://www.linkedin.com/feed/update/urn:li:activity:7358242171365335040" +
                                 "?utm_source=share&utm_medium=member_desktop"
@@ -39,7 +39,7 @@ class LinkedInTest :
                     "remove rcm parameter when it is the only parameter" {
                         clean(
                             "https://www.linkedin.com/posts/example-7394057060608462849-3jHb" +
-                                "?rcm=ACoAAAUR3RBZwN2Ag"
+                                "?rcm=ACoAAAUR3RBZwN2Ag",
                         ) shouldBe "https://www.linkedin.com/posts/example-7394057060608462849-3jHb"
                     }
                 }

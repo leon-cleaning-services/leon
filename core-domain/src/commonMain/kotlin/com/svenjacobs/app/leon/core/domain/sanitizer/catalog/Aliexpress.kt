@@ -31,6 +31,6 @@ val Aliexpress =
         rules = persistentListOf(Rule.RemoveParameters(".*")),
         match =
             persistentListOf(
-                Match(HostMatch.Pattern("(?:[^.]+\\.)*aliexpress\\.[^.]+"), pathPrefix = "/item/")
+                Match(HostMatch.Pattern("(?:[^.]+\\.)*aliexpress\\.[^.]+"), pathPrefix = "/item/"),
             ),
     )

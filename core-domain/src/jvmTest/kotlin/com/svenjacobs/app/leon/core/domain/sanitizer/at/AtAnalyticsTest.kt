@@ -30,7 +30,7 @@ class AtAnalyticsTest :
                     "remove at_* parameters" {
                         clean(
                             "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html" +
-                                "?at_medium=mastodon&at_campaign=tagesschau.de"
+                                "?at_medium=mastodon&at_campaign=tagesschau.de",
                         ) shouldBe
                             "https://www.tagesschau.de/ausland/europa/toto-cutugno-tot-100.html"
                     }

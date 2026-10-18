@@ -37,7 +37,7 @@ class FlipkartTest :
                                     "_15&otracker=AS_QueryStore_OrganicAutoSuggest_1_9_na_na_na&otracker1=AS_" +
                                     "QueryStore_OrganicAutoSuggest_1_9_na_na_na&fm=SEARCH&iid=22ff2dee-d44e-4" +
                                     "0e3-9811-5d229fa974fc.COMG5AWT9CKRMEFU.SEARCH&ppt=hp&ppn=homepage&ssid=z" +
-                                    "v1f42w4bs3azitc1635436210945&qH=da5ee6f53d84b3c2"
+                                    "v1f42w4bs3azitc1635436210945&qH=da5ee6f53d84b3c2",
                             )
 
                         result shouldBe

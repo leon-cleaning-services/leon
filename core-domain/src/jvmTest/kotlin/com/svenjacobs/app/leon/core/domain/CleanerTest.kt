@@ -31,154 +31,159 @@ import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
 
 class CleanerTest :
-    WordSpec({
-        val repository = mockk<SanitizerRepository>()
+    WordSpec(
+        {
+            val repository = mockk<SanitizerRepository>()
 
-        /** A sanitizer which removes exactly one parameter, from every URL. */
-        fun fake(name: String, parameter: String) =
-            Sanitizer(
-                id = SanitizerId(name),
-                name = name,
-                rules = persistentListOf(Rule.RemoveParameters(parameter)),
-            )
+            /** A sanitizer which removes exactly one parameter, from every URL. */
+            fun fake(name: String, parameter: String) =
+                Sanitizer(
+                    id = SanitizerId(name),
+                    name = name,
+                    rules = persistentListOf(Rule.RemoveParameters(parameter)),
+                )
 
-        val service =
-            Cleaner(
-                sanitizers =
-                    persistentListOf(
-                        fake("fake1", "paramA"),
-                        fake("fake2", "paramB"),
-                        fake("fake3", "paramC"),
-                    ),
-                repository = repository,
-            )
+            val service =
+                Cleaner(
+                    sanitizers =
+                        persistentListOf(
+                            fake("fake1", "paramA"),
+                            fake("fake2", "paramB"),
+                            fake("fake3", "paramC"),
+                        ),
+                    repository = repository,
+                )
 
-        beforeEach {
-            clearMocks(repository)
+            beforeEach {
+                clearMocks(repository)
 
-            coEvery { repository.isEnabled(SanitizerId(any())) } returns true
-        }
-
-        "clean" should
-            {
-                "remove tracking parameters" {
-                    val result = service.clean("https://www.some.site/?paramA=A&paramB=B")
-
-                    result.cleanedText shouldBe "https://www.some.site/"
-                    result.urls shouldHaveSize 1
-                    result.urls.first().cleaned.toString() shouldBe "https://www.some.site/"
-                }
-
-                "keep non-tracking parameters" {
-                    val result =
-                        service.clean("https://www.some.site/?paramA=A&paramB=B&page=1&q=query")
-
-                    result.cleanedText shouldBe "https://www.some.site/?page=1&q=query"
-                    result.urls shouldHaveSize 1
-                    result.urls.first().cleaned.toString() shouldBe
-                        "https://www.some.site/?page=1&q=query"
-                }
-
-                "keep anchor tags after cleaned parameters" {
-                    val result = service.clean("https://www.some.site/?paramA=A&paramB=B#anchor")
-
-                    result.cleanedText shouldBe "https://www.some.site/#anchor"
-                    result.urls.first().cleaned.toString() shouldBe "https://www.some.site/#anchor"
-                }
-
-                "clean multiple URLs in text" {
-                    val result =
-                        service.clean(
-                            "Hey, I would like to share this " +
-                                "https://www.some.site/?paramA=A&paramB=B link as well as this " +
-                                "https://www.some2.site?paramC=C link :)"
-                        )
-
-                    result.cleanedText shouldBe
-                        "Hey, I would like to share this " +
-                            "https://www.some.site/ link as well as this https://www.some2.site link :)"
-                    result.urls shouldHaveSize 2
-                    result.urls[0].cleaned.toString() shouldBe "https://www.some.site/"
-                    result.urls[1].cleaned.toString() shouldBe "https://www.some2.site"
-                }
-
-                "URL decode when enabled" {
-                    val result =
-                        service.clean(
-                            text = "https://www.some.site/Hello%2FWorld?paramA=A&paramB=B",
-                            decodeUrl = true,
-                        )
-
-                    result.cleanedText shouldBe "https://www.some.site/Hello%2FWorld"
-                }
-
-                "URL decode keeps %20 intact but decodes UTF-8 text" {
-                    val result =
-                        service.clean(
-                            text = "https://www.some.site/?q=Hello%20M%C3%BCnchen&paramA=A",
-                            decodeUrl = true,
-                        )
-
-                    result.cleanedText shouldBe "https://www.some.site/?q=Hello%20München"
-                }
-
-                "URL decode reveals an encoded URL inside a parameter value" {
-                    val result =
-                        service.clean(
-                            text =
-                                "https://www.some.site/gp/r.html?" +
-                                    "U=https%3A%2F%2Fwww.other.site%2Fdp%2FB01%3Fref%3Dx",
-                            decodeUrl = true,
-                        )
-
-                    result.cleanedText shouldBe
-                        "https://www.some.site/gp/r.html?U=https://www.other.site/dp/B01?ref=x"
-                }
-
-                "URL decode keeps an encoded parameter separator inside a value" {
-                    val result =
-                        service.clean(
-                            text = "https://www.some.site/?q=a%26b%3Dc&paramA=A",
-                            decodeUrl = true,
-                        )
-
-                    result.cleanedText shouldBe "https://www.some.site/?q=a%26b=c"
-                }
-
-                "repeat cleaning until iteration doesn't yield new value" {
-                    val googleService =
-                        Cleaner(
-                            sanitizers = persistentListOf(GoogleSearch),
-                            repository = repository,
-                        )
-
-                    googleService
-                        .clean(
-                            text =
-                                "https://www.google.com/url?q=https://www.google.com/url?rct%3Dj%26sa%" +
-                                    "3Dt%26url%3Dhttps://www.inferse.com/268929/prime-day-2022-phone-deals-al" +
-                                    "l-the-best-amazon-prime-early-access-phone-deals-bgr/%26ct%3Dga%26cd%3DC" +
-                                    "AEYACoUMTA3NzY4NTE0MDEwNTAyODc4MzMyHDMxNGQyNzdmOTRjOGU5MDE6Y29tOmVuOlVTO" +
-                                    "lI%26usg%3DAOvVaw0ib2-8ukc8GkNkCxTAEkb6&source=gmail&ust=166582840354400" +
-                                    "0&usg=AOvVaw0R6tQNh7vvWCHGibWcIz_k"
-                        )
-                        .cleanedText shouldBe
-                        "https://www.inferse.com/268929/prime-day-2022-phone-deals" +
-                            "-all-the-best-amazon-prime-early-access-phone-deals-bgr/"
-                }
-
-                "return result after max iterations" {
-                    // Appends a path segment on every pass, so cleaning never settles by itself.
-                    val endless =
-                        Sanitizer(
-                            id = SanitizerId("endless"),
-                            name = "endless",
-                            rules = persistentListOf(Rule.RewritePath("(.*)", "$1/x")),
-                        )
-
-                    Cleaner(sanitizers = persistentListOf(endless), repository = repository)
-                        .clean("http://www.example.com")
-                        .cleanedText shouldBe "http://www.example.com/x/x/x/x/x"
-                }
+                coEvery { repository.isEnabled(SanitizerId(any())) } returns true
             }
-    })
+
+            "clean" should
+                {
+                    "remove tracking parameters" {
+                        val result = service.clean("https://www.some.site/?paramA=A&paramB=B")
+
+                        result.cleanedText shouldBe "https://www.some.site/"
+                        result.urls shouldHaveSize 1
+                        result.urls.first().cleaned.toString() shouldBe "https://www.some.site/"
+                    }
+
+                    "keep non-tracking parameters" {
+                        val result =
+                            service.clean("https://www.some.site/?paramA=A&paramB=B&page=1&q=query")
+
+                        result.cleanedText shouldBe "https://www.some.site/?page=1&q=query"
+                        result.urls shouldHaveSize 1
+                        result.urls.first().cleaned.toString() shouldBe
+                            "https://www.some.site/?page=1&q=query"
+                    }
+
+                    "keep anchor tags after cleaned parameters" {
+                        val result =
+                            service.clean("https://www.some.site/?paramA=A&paramB=B#anchor")
+
+                        result.cleanedText shouldBe "https://www.some.site/#anchor"
+                        result.urls.first().cleaned.toString() shouldBe
+                            "https://www.some.site/#anchor"
+                    }
+
+                    "clean multiple URLs in text" {
+                        val result =
+                            service.clean(
+                                "Hey, I would like to share this " +
+                                    "https://www.some.site/?paramA=A&paramB=B link as well as this " +
+                                    "https://www.some2.site?paramC=C link :)",
+                            )
+
+                        result.cleanedText shouldBe
+                            "Hey, I would like to share this " +
+                                "https://www.some.site/ link as well as this https://www.some2.site link :)"
+                        result.urls shouldHaveSize 2
+                        result.urls[0].cleaned.toString() shouldBe "https://www.some.site/"
+                        result.urls[1].cleaned.toString() shouldBe "https://www.some2.site"
+                    }
+
+                    "URL decode when enabled" {
+                        val result =
+                            service.clean(
+                                text = "https://www.some.site/Hello%2FWorld?paramA=A&paramB=B",
+                                decodeUrl = true,
+                            )
+
+                        result.cleanedText shouldBe "https://www.some.site/Hello%2FWorld"
+                    }
+
+                    "URL decode keeps %20 intact but decodes UTF-8 text" {
+                        val result =
+                            service.clean(
+                                text = "https://www.some.site/?q=Hello%20M%C3%BCnchen&paramA=A",
+                                decodeUrl = true,
+                            )
+
+                        result.cleanedText shouldBe "https://www.some.site/?q=Hello%20München"
+                    }
+
+                    "URL decode reveals an encoded URL inside a parameter value" {
+                        val result =
+                            service.clean(
+                                text =
+                                    "https://www.some.site/gp/r.html?" +
+                                        "U=https%3A%2F%2Fwww.other.site%2Fdp%2FB01%3Fref%3Dx",
+                                decodeUrl = true,
+                            )
+
+                        result.cleanedText shouldBe
+                            "https://www.some.site/gp/r.html?U=https://www.other.site/dp/B01?ref=x"
+                    }
+
+                    "URL decode keeps an encoded parameter separator inside a value" {
+                        val result =
+                            service.clean(
+                                text = "https://www.some.site/?q=a%26b%3Dc&paramA=A",
+                                decodeUrl = true,
+                            )
+
+                        result.cleanedText shouldBe "https://www.some.site/?q=a%26b=c"
+                    }
+
+                    "repeat cleaning until iteration doesn't yield new value" {
+                        val googleService =
+                            Cleaner(
+                                sanitizers = persistentListOf(GoogleSearch),
+                                repository = repository,
+                            )
+
+                        googleService
+                            .clean(
+                                text =
+                                    "https://www.google.com/url?q=https://www.google.com/url?rct%3Dj%26sa%" +
+                                        "3Dt%26url%3Dhttps://www.inferse.com/268929/prime-day-2022-phone-deals-al" +
+                                        "l-the-best-amazon-prime-early-access-phone-deals-bgr/%26ct%3Dga%26cd%3DC" +
+                                        "AEYACoUMTA3NzY4NTE0MDEwNTAyODc4MzMyHDMxNGQyNzdmOTRjOGU5MDE6Y29tOmVuOlVTO" +
+                                        "lI%26usg%3DAOvVaw0ib2-8ukc8GkNkCxTAEkb6&source=gmail&ust=166582840354400" +
+                                        "0&usg=AOvVaw0R6tQNh7vvWCHGibWcIz_k",
+                            )
+                            .cleanedText shouldBe
+                            "https://www.inferse.com/268929/prime-day-2022-phone-deals" +
+                                "-all-the-best-amazon-prime-early-access-phone-deals-bgr/"
+                    }
+
+                    "return result after max iterations" {
+                        // Appends a path segment on every pass, so cleaning never settles by
+                        // itself.
+                        val endless =
+                            Sanitizer(
+                                id = SanitizerId("endless"),
+                                name = "endless",
+                                rules = persistentListOf(Rule.RewritePath("(.*)", "$1/x")),
+                            )
+
+                        Cleaner(sanitizers = persistentListOf(endless), repository = repository)
+                            .clean("http://www.example.com")
+                            .cleanedText shouldBe "http://www.example.com/x/x/x/x/x"
+                    }
+                }
+        },
+    )

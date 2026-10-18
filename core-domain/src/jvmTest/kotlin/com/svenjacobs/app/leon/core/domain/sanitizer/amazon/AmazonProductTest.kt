@@ -34,7 +34,7 @@ class AmazonProductTest :
                                     "BCberwachung-Akkulaufzeit/dp/B091G3FLL7/?_encoding=UTF8&pd_rd_w=xDcJP&pf" +
                                     "_rd_p=bf172aca-3277-41f6-babb-6ce7fc34cf7f&pf_rd_r=ZC6FZ5G6W9K8DEZTPBYW&" +
                                     "pd_rd_r=11b3ec4e-047c-4f37-8302-62dedb8f502b&pd_rd_wg=Ozi90&ref_=pd_gw_c" +
-                                    "i_mcx_mr_hp_atf_m"
+                                    "i_mcx_mr_hp_atf_m",
                             )
 
                         result shouldBe "https://www.amazon.de/dp/B091G3FLL7/"
@@ -45,7 +45,7 @@ class AmazonProductTest :
                                     "BCberwachung-Akkulaufzeit/dp/B091G3FLL7/?_encoding=UTF8&pd_rd_w=xDcJP&pf" +
                                     "_rd_p=bf172aca-3277-41f6-babb-6ce7fc34cf7f&pf_rd_r=ZC6FZ5G6W9K8DEZTPBYW&" +
                                     "pd_rd_r=11b3ec4e-047c-4f37-8302-62dedb8f502b&pd_rd_wg=Ozi90&ref_=pd_gw_c" +
-                                    "i_mcx_mr_hp_atf_m"
+                                    "i_mcx_mr_hp_atf_m",
                             )
 
                         result shouldBe "https://www.amazon.co.uk/dp/B091G3FLL7/"
@@ -54,7 +54,7 @@ class AmazonProductTest :
                     "clean Amazon product link (gp/product)" {
                         val result =
                             clean(
-                                "https://www.amazon.fr/gp/product/B0C9JKKL7N?tag=egcdealabs08-21&ascsubtag=1498016995"
+                                "https://www.amazon.fr/gp/product/B0C9JKKL7N?tag=egcdealabs08-21&ascsubtag=1498016995",
                             )
 
                         result shouldBe "https://www.amazon.fr/dp/B0C9JKKL7N/"
@@ -62,7 +62,7 @@ class AmazonProductTest :
 
                     "clean Amazon cart product link" {
                         clean(
-                            "https://www.amazon.com/gp/aw/d/B009EEZYE0/ref=ox_sc_act_image_1?smid=ATVPDKIKX0DER&psc=1"
+                            "https://www.amazon.com/gp/aw/d/B009EEZYE0/ref=ox_sc_act_image_1?smid=ATVPDKIKX0DER&psc=1",
                         ) shouldBe "https://www.amazon.com/dp/B009EEZYE0/"
                     }
 
@@ -77,19 +77,19 @@ class AmazonProductTest :
                     "match for Amazon product link" {
                         matches(
                             "https://www.amazon.de/Xiaomi-Aktivit%C3%A4tstracke" +
-                                "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/"
+                                "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/",
                         ) shouldBe true
 
                         matches(
                             "https://www.amazon.co.uk/Xiaomi-Aktivit%C3%A4tstracke" +
-                                "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/"
+                                "r-Trainings-Puls%C3%BCberwachung-Akkulaufzeit/dp/B091G3FLL7/",
                         ) shouldBe true
                     }
 
                     "match for Amazon cart product link" {
                         matches(
                             "www.amazon.com/gp/aw/d/B009EEZYE0/ref=ox_sc_act_image_1?smid=ATVPDKIKX" +
-                                "0DER&psc=1"
+                                "0DER&psc=1",
                         ) shouldBe true
                     }
 

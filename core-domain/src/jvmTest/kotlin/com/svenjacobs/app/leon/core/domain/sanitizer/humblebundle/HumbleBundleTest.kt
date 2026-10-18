@@ -32,7 +32,7 @@ class HumbleBundleTest :
                             "https://www.humblebundle.com/books/no-kings-library-berrettkoehler-books?mcI" +
                                 "D=102:69f1456f540ada90b00cd16c:ot:668703f5cbbc2d1867d8cdcc:1&linkID=69f14" +
                                 "7a276fa2560470c48b4&utm_source=Humble+Bundle+Newsletter&utm_content=cta_b" +
-                                "utton&utm_medium=email&utm_campaign=nokingslibraryberrettkoehler_bookbundle"
+                                "utton&utm_medium=email&utm_campaign=nokingslibraryberrettkoehler_bookbundle",
                         ) shouldBe
                             "https://www.humblebundle.com/books/no-kings-library-berrettkoehler-books"
                     }

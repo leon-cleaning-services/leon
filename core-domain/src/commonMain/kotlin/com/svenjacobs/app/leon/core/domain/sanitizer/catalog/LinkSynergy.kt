@@ -32,13 +32,13 @@ val LinkSynergy =
         name = "LinkSynergy",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("murl"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("murl"), persistentListOf(Decode.PercentDecode)),
             ),
         match =
             persistentListOf(
                 Match(
                     HostMatch.Pattern("(?:[^.]+\\.)*linksynergy\\.[^/?#:]+"),
                     pathPrefix = "/link",
-                )
+                ),
             ),
     )

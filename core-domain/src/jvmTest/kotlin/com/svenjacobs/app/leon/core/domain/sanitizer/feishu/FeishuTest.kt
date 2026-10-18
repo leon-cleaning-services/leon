@@ -30,7 +30,7 @@ class FeishuTest :
                     "remove tracking parameters from Feishu URL" {
                         val result =
                             clean(
-                                "https://www.feishu.cn/docx/abc?from=share&scene=2&channel=app&source=qr&refer=user"
+                                "https://www.feishu.cn/docx/abc?from=share&scene=2&channel=app&source=qr&refer=user",
                             )
                         result shouldBe "https://www.feishu.cn/docx/abc"
                     }

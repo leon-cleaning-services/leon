@@ -30,7 +30,7 @@ class ZhihuTest :
                     "remove tracking parameters from Zhihu URL" {
                         val result =
                             clean(
-                                "https://www.zhihu.com/question/123?share_redirect=1&share_code=abc"
+                                "https://www.zhihu.com/question/123?share_redirect=1&share_code=abc",
                             )
                         result shouldBe "https://www.zhihu.com/question/123"
                     }

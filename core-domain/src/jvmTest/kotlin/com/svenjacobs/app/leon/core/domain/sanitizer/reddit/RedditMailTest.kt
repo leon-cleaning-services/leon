@@ -35,7 +35,7 @@ class RedditMailTest :
                                     "deep_link=true%26correlation_id=5329d6c9-34a4-4a44-9cea-76317f68123f%26r" +
                                     "ef=email_comment_reply%26ref_campaign=email_comment_reply%26ref_source=e" +
                                     "mail/3/010001884768a910-4b97a265-36d8-461f-9d79-fc2b535e5217-000000/sa_u" +
-                                    "FF6uMCdJu1cTLCaOI8Ng6wQBjfPtc5hMCnOrx4Q=301"
+                                    "FF6uMCdJu1cTLCaOI8Ng6wQBjfPtc5hMCnOrx4Q=301",
                             )
 
                         result shouldBe

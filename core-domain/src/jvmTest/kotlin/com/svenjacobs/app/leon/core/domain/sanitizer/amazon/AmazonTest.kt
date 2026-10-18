@@ -30,7 +30,7 @@ class AmazonTest :
                     "remove ref_ parameter" {
                         val result =
                             clean(
-                                "https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya"
+                                "https://www.amazon.de/gp/css/homepage.html?ref_=nav_AccountFlyout_ya",
                             )
 
                         result shouldBe "https://www.amazon.de/gp/css/homepage.html"

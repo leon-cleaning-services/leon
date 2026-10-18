@@ -30,7 +30,7 @@ val Taobao =
         name = "Taobao",
         rules =
             persistentListOf(
-                Rule.RemoveParameters("smid|ut_ma|track_id|spm|share_crt_v|tbkt|isg|tk")
+                Rule.RemoveParameters("smid|ut_ma|track_id|spm|share_crt_v|tbkt|isg|tk"),
             ),
         match =
             persistentListOf(

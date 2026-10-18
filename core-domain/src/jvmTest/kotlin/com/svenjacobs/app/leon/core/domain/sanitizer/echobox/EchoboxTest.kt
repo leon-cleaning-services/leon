@@ -29,13 +29,13 @@ class EchoboxTest :
                 {
                     "remove #Echobox= fragment from URL" {
                         clean(
-                            "https://www.example.com/article/some-title#Echobox=1234567890"
+                            "https://www.example.com/article/some-title#Echobox=1234567890",
                         ) shouldBe "https://www.example.com/article/some-title"
                     }
 
                     "remove #Echobox= fragment when query parameters are present" {
                         clean(
-                            "https://www.example.com/article?utm_source=social#Echobox=1234567890"
+                            "https://www.example.com/article?utm_source=social#Echobox=1234567890",
                         ) shouldBe "https://www.example.com/article?utm_source=social"
                     }
 

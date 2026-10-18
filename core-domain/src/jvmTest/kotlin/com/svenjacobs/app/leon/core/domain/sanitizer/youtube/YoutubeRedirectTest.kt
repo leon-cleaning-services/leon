@@ -34,7 +34,7 @@ class YoutubeRedirectTest :
                                     "=QUFFLUhqa1JoZzZUczlhMWJCaTBoc1lqa3ZtX2Rpd0ZPUXxBQ3Jtc0tsYVhpenF1czV5Vjl" +
                                     "wZm5pemZGdm4zNHVXSldEUlR6dHNhZzI0UkFvLXo0cEVyUk0yaHR5LVhGWEFCLVdzdmlZWGU" +
                                     "3eUY5ZWdUZTBUbEw3MVg4UDZCRzdkXzdaaGczT25Ka3Q5bjUzTmxWVHF3Tll6MA&q=http%3" +
-                                    "A%2F%2Fwww.google.com%2Fabout%2F&html_redirect=1"
+                                    "A%2F%2Fwww.google.com%2Fabout%2F&html_redirect=1",
                             )
 
                         result shouldBe "http://www.google.com/about/"

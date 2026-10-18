@@ -33,7 +33,7 @@ class FastCompanyTest :
                                 "tm_source=newsletters&utm_medium=email&utm_campaign=FC%20%20Top%2010%" +
                                 "20Newsletter%20-%20FC%20-%20Top%2010%205-7-23&leadld=77345" +
                                 "0&mkt_tok=NjEWLUXFRS04NZIAAAGLIUIVk0W4gRAxyR6Nmx3ZSH_IJS1KWrpFwGORBYZXQ" +
-                                "3cnEc99TZ-1QVnrwnx87XLC_QdRSecUnOk0QLPnfUXF2vr9yAQuN7g|OjfbvtY"
+                                "3cnEc99TZ-1QVnrwnx87XLC_QdRSecUnOk0QLPnfUXF2vr9yAQuN7g|OjfbvtY",
                         ) shouldBe
                             "https://www.fastcompany.com/90890683/bronx-dream-school-david-adjaye"
                     }

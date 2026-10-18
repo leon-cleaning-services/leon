@@ -36,7 +36,7 @@ class LazadaTest :
                                     "=d994010eeff70e9df2d3f465d5b0e727&exlaz=e_RtJqWofx9nLGip8qo24MCTJQcHdSbi" +
                                     "l0861t6ae%2Fu4vCXvTKdNAtBWNri5zqcNlYb9yEAKGsy7Oyw%2BVOW%2F%2FthI73bSZ6Yk" +
                                     "VRD3WnASIas1Y%3D&sub_aff_id=social_share&sub_id2=9532664&sub_id3=5449387" +
-                                    "&sub_id6=CPI_EXLAZ"
+                                    "&sub_id6=CPI_EXLAZ",
                             )
 
                         result shouldBe

@@ -66,7 +66,12 @@ subprojects {
 spotless {
     kotlin {
         target("**/*.kt")
-        targetExclude("**/build/**/*.*", "**/buildSrc/**/Android.kt", ".claude/**")
+        targetExclude(
+            "**/build/**/*.*",
+            "**/buildSrc/**/Android.kt",
+            ".claude/**",
+            ".direnv/**",
+        )
         licenseHeaderFile(rootProject.file("spotless/license_header.txt"))
         ktfmt().kotlinlangStyle()
     }

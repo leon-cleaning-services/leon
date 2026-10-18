@@ -56,7 +56,7 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
                 SpanStyle(
                     color = MaterialTheme.colorScheme.primary,
                     textDecoration = TextDecoration.Underline,
-                )
+                ),
         )
 
     val developerTemplate = stringResource(Res.string.about_developer)
@@ -118,7 +118,10 @@ fun AboutDialog(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
 
                 Text(
                     text =
-                        stringResource(Res.string.about_version, LocalBuildInfo.current.versionName)
+                        stringResource(
+                            Res.string.about_version,
+                            LocalBuildInfo.current.versionName,
+                        ),
                 )
             }
         },

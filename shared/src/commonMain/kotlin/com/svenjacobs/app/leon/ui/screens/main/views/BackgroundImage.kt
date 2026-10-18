@@ -38,7 +38,7 @@ internal fun BackgroundImage(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         painter =
             painterResource(
-                if (isDebug) Res.drawable.background_bug else Res.drawable.background_broom
+                if (isDebug) Res.drawable.background_bug else Res.drawable.background_broom,
             ),
         contentDescription = null,
         contentScale = ContentScale.Crop,

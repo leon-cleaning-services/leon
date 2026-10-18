@@ -29,13 +29,13 @@ class YandexTest :
                 {
                     "clean yandex.com URLs" {
                         clean(
-                            "https://yandex.com/search/?text=test&lr=103769&search_source=yacom_desktop_common"
+                            "https://yandex.com/search/?text=test&lr=103769&search_source=yacom_desktop_common",
                         ) shouldBe "https://yandex.com/search/?text=test"
                     }
 
                     "clean ya.ru URLs" {
                         clean(
-                            "https://ya.ru/search/?text=test&lr=103769&search_source=yacom_desktop_common"
+                            "https://ya.ru/search/?text=test&lr=103769&search_source=yacom_desktop_common",
                         ) shouldBe "https://ya.ru/search/?text=test"
                     }
                 }

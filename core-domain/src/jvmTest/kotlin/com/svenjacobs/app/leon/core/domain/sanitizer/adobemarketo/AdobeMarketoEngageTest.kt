@@ -34,7 +34,7 @@ class AdobeMarketoEngageTest :
 
                     "remove multiple mkt_* parameters" {
                         clean(
-                            "https://www.example.com/page?mkt_tok=abc&mkt_unsubscribe=1&keep=123"
+                            "https://www.example.com/page?mkt_tok=abc&mkt_unsubscribe=1&keep=123",
                         ) shouldBe "https://www.example.com/page?keep=123"
                     }
                 }

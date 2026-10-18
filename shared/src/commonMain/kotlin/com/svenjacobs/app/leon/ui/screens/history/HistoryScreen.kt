@@ -133,7 +133,7 @@ fun Content(
                     onClick = {
                         showClearAllDialog = false
                         onClearAllClick()
-                    }
+                    },
                 ) {
                     Text(stringResource(Res.string.history_clear_all))
                 }

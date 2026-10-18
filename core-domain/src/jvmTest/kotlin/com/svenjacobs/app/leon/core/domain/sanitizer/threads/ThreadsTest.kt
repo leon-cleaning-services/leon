@@ -29,13 +29,13 @@ class ThreadsTest :
                 {
                     "remove all parameters from threads.net" {
                         clean(
-                            "https://www.threads.net/t/CufR4M8yNdJ/?igshid=NTc4MTIwNjQ2YQ=="
+                            "https://www.threads.net/t/CufR4M8yNdJ/?igshid=NTc4MTIwNjQ2YQ==",
                         ) shouldBe "https://www.threads.net/t/CufR4M8yNdJ/"
                     }
 
                     "remove all parameters from threads.com" {
                         clean(
-                            "https://www.threads.com/@chpapa/post/DSzhvqtkuyg?xmt=AQF0J2-TPDkD-qhbXb7usPu3mcJy6Tz8R0LhCkenCCvSOg"
+                            "https://www.threads.com/@chpapa/post/DSzhvqtkuyg?xmt=AQF0J2-TPDkD-qhbXb7usPu3mcJy6Tz8R0LhCkenCCvSOg",
                         ) shouldBe "https://www.threads.com/@chpapa/post/DSzhvqtkuyg"
                     }
                 }

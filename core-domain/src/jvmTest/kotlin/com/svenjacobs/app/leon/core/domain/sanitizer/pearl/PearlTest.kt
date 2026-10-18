@@ -32,7 +32,7 @@ class PearlTest :
                             clean(
                                 "https://www.pearl.de/m/10884/?vid=985&curr=DEM&wa_id=995&wa_num=10884&" +
                                     "mt=bWsqHZ2EOdIMxzpUi7oRsjVMLsC2%2Fyc65JwkwDStD1WiEu3REqi2%2Fw%3D%3D&utm_" +
-                                    "source=10884&utm_medium=onlineversion_D"
+                                    "source=10884&utm_medium=onlineversion_D",
                             )
 
                         result shouldBe "https://www.pearl.de/m/10884/"

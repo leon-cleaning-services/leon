@@ -30,7 +30,7 @@ class PddTest :
                     "remove tracking parameters from Pinduoduo URL" {
                         val result =
                             clean(
-                                "https://mobile.yangkeduo.com/goods.html?pid=123&share_uin=456&track_id=789&goods_sign=abc"
+                                "https://mobile.yangkeduo.com/goods.html?pid=123&share_uin=456&track_id=789&goods_sign=abc",
                             )
                         result shouldBe "https://mobile.yangkeduo.com/goods.html"
                     }

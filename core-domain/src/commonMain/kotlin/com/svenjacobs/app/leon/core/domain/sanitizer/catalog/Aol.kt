@@ -36,7 +36,7 @@ val AolSearch =
                 Rule.Follow(
                     Source.Path,
                     persistentListOf(Decode.Capture("RU=([^/]+)"), Decode.PercentDecode),
-                )
+                ),
             ),
         match = persistentListOf(Match(HostMatch.Domain("search.aol.com"))),
     )

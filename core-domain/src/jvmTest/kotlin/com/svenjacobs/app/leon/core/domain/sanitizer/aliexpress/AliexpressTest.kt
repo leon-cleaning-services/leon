@@ -36,7 +36,7 @@ class AliexpressTest :
                                     "%21edm&edm_click_module=item_detail&tracelog=rowan&rowan_id1=aeug_edm_" +
                                     "24677_1_de_DE_2022-11-05&rowan_msg_id=8681biz_pay_after_purchase%3A0%3" +
                                     "A0_572584174%248a93ce02da764ff48f65112ca837f7df&ck=in_edm_other&gatewa" +
-                                    "yAdapt=gloPc2deuMsite"
+                                    "yAdapt=gloPc2deuMsite",
                             )
 
                         result shouldBe "https://m.de.aliexpress.com/item/32948511896.html"

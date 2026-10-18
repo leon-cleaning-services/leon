@@ -32,10 +32,10 @@ val GeoRiot =
         name = "GeoRiot",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("GR_URL"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("GR_URL"), persistentListOf(Decode.PercentDecode)),
             ),
         match =
             persistentListOf(
-                Match(HostMatch.Pattern("target\\.georiot\\.[^/?#:]+"), pathPrefix = "/Proxy.ashx")
+                Match(HostMatch.Pattern("target\\.georiot\\.[^/?#:]+"), pathPrefix = "/Proxy.ashx"),
             ),
     )

@@ -26,94 +26,100 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 
 class ChangeTest :
-    WordSpec({
-        fun url(value: String) = requireNotNull(Url.parse(value))
+    WordSpec(
+        {
+            fun url(value: String) = requireNotNull(Url.parse(value))
 
-        "apply" should
-            {
-                "return the same instance for no actions" {
-                    val url = url("https://example.com/path?a=1")
+            "apply" should
+                {
+                    "return the same instance for no actions" {
+                        val url = url("https://example.com/path?a=1")
 
-                    url.apply(emptyList()) shouldBe url
-                }
+                        url.apply(emptyList()) shouldBe url
+                    }
 
-                "remove a parameter" {
-                    url("https://example.com/?a=1&b=2")
-                        .apply(listOf(RemoveParameter(Url.Parameter("a", "1"))))
-                        .toString() shouldBe "https://example.com/?b=2"
-                }
+                    "remove a parameter" {
+                        url("https://example.com/?a=1&b=2")
+                            .apply(listOf(RemoveParameter(Url.Parameter("a", "1"))))
+                            .toString() shouldBe "https://example.com/?b=2"
+                    }
 
-                "remove only the first of two equal parameters" {
-                    url("https://example.com/?a=1&a=1")
-                        .apply(listOf(RemoveParameter(Url.Parameter("a", "1"))))
-                        .toString() shouldBe "https://example.com/?a=1"
-                }
+                    "remove only the first of two equal parameters" {
+                        url("https://example.com/?a=1&a=1")
+                            .apply(listOf(RemoveParameter(Url.Parameter("a", "1"))))
+                            .toString() shouldBe "https://example.com/?a=1"
+                    }
 
-                "ignore removal of a parameter which is not present" {
-                    url("https://example.com/?a=1")
-                        .apply(listOf(RemoveParameter(Url.Parameter("b", "2"))))
-                        .toString() shouldBe "https://example.com/?a=1"
-                }
+                    "ignore removal of a parameter which is not present" {
+                        url("https://example.com/?a=1")
+                            .apply(listOf(RemoveParameter(Url.Parameter("b", "2"))))
+                            .toString() shouldBe "https://example.com/?a=1"
+                    }
 
-                "drop the query section once the last parameter is removed" {
-                    url("https://example.com/path?a=1#anchor")
-                        .apply(listOf(RemoveParameter(Url.Parameter("a", "1"))))
-                        .toString() shouldBe "https://example.com/path#anchor"
-                }
+                    "drop the query section once the last parameter is removed" {
+                        url("https://example.com/path?a=1#anchor")
+                            .apply(listOf(RemoveParameter(Url.Parameter("a", "1"))))
+                            .toString() shouldBe "https://example.com/path#anchor"
+                    }
 
-                "set the host" {
-                    url("https://music.youtube.com/watch?v=1")
-                        .apply(
-                            listOf(
-                                SetComponent(
-                                    Component.HOST,
-                                    from = "music.youtube.com",
-                                    to = "youtube.com",
-                                )
+                    "set the host" {
+                        url("https://music.youtube.com/watch?v=1")
+                            .apply(
+                                listOf(
+                                    SetComponent(
+                                        Component.HOST,
+                                        from = "music.youtube.com",
+                                        to = "youtube.com",
+                                    ),
+                                ),
                             )
-                        )
-                        .toString() shouldBe "https://youtube.com/watch?v=1"
-                }
+                            .toString() shouldBe "https://youtube.com/watch?v=1"
+                    }
 
-                "set the path" {
-                    url("https://example.com/a/b/c")
-                        .apply(listOf(SetComponent(Component.PATH, from = "/a/b/c", to = "/c")))
-                        .toString() shouldBe "https://example.com/c"
-                }
+                    "set the path" {
+                        url("https://example.com/a/b/c")
+                            .apply(listOf(SetComponent(Component.PATH, from = "/a/b/c", to = "/c")))
+                            .toString() shouldBe "https://example.com/c"
+                    }
 
-                "remove the fragment" {
-                    url("https://example.com/article#Echobox=123")
-                        .apply(
-                            listOf(
-                                SetComponent(Component.FRAGMENT, from = "Echobox=123", to = null)
+                    "remove the fragment" {
+                        url("https://example.com/article#Echobox=123")
+                            .apply(
+                                listOf(
+                                    SetComponent(
+                                        Component.FRAGMENT,
+                                        from = "Echobox=123",
+                                        to = null,
+                                    ),
+                                ),
                             )
-                        )
-                        .toString() shouldBe "https://example.com/article"
-                }
+                            .toString() shouldBe "https://example.com/article"
+                    }
 
-                "replace the whole URL" {
-                    url("https://www.google.com/url?q=x")
-                        .apply(
-                            listOf(
-                                Replace(
-                                    from = url("https://www.google.com/url?q=x"),
-                                    to = url("https://example.com/article"),
-                                )
+                    "replace the whole URL" {
+                        url("https://www.google.com/url?q=x")
+                            .apply(
+                                listOf(
+                                    Replace(
+                                        from = url("https://www.google.com/url?q=x"),
+                                        to = url("https://example.com/article"),
+                                    ),
+                                ),
                             )
-                        )
-                        .toString() shouldBe "https://example.com/article"
-                }
+                            .toString() shouldBe "https://example.com/article"
+                    }
 
-                "apply actions in order" {
-                    url("https://example.com/a/b?x=1&y=2")
-                        .apply(
-                            listOf(
-                                RemoveParameter(Url.Parameter("x", "1")),
-                                SetComponent(Component.PATH, from = "/a/b", to = "/b"),
-                                RemoveParameter(Url.Parameter("y", "2")),
+                    "apply actions in order" {
+                        url("https://example.com/a/b?x=1&y=2")
+                            .apply(
+                                listOf(
+                                    RemoveParameter(Url.Parameter("x", "1")),
+                                    SetComponent(Component.PATH, from = "/a/b", to = "/b"),
+                                    RemoveParameter(Url.Parameter("y", "2")),
+                                ),
                             )
-                        )
-                        .toString() shouldBe "https://example.com/b"
+                            .toString() shouldBe "https://example.com/b"
+                    }
                 }
-            }
-    })
+        },
+    )

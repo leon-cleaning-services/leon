@@ -31,7 +31,7 @@ class ShopeeTest :
                         val result =
                             clean(
                                 "https://shopee.com.my/product/300862466/12251369135?smtt=O.123661111-1" +
-                                    "672730601.9"
+                                    "672730601.9",
                             )
 
                         result shouldBe "https://shopee.com.my/product/300862466/12251369135"

@@ -32,7 +32,7 @@ class RedditOutTest :
                             clean(
                                 "https://out.reddit.com/t3_11zcpau?url=https%3A%2F%2Fcompress-or-die.co" +
                                     "m%2FThe-nasty-red-JPG-compression-artifacts&token=AQAA-odsZCyQ04Ae10crjv" +
-                                    "g8DGlsTPckMpu3vvIjNwmWPgLdQMbC&app_name=web2x&web_redirect=true/"
+                                    "g8DGlsTPckMpu3vvIjNwmWPgLdQMbC&app_name=web2x&web_redirect=true/",
                             )
 
                         result shouldBe

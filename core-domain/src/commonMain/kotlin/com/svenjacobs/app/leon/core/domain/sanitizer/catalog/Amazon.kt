@@ -62,6 +62,6 @@ val AmazonSponsoredProduct =
             ),
         match =
             persistentListOf(
-                Match(HostMatch.Pattern("amazon\\.[^/?#:]+"), pathPrefix = "/sspa/click")
+                Match(HostMatch.Pattern("amazon\\.[^/?#:]+"), pathPrefix = "/sspa/click"),
             ),
     )

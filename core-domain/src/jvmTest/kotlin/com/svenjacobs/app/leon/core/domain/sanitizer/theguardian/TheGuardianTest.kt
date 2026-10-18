@@ -31,7 +31,7 @@ class TheGuardianTest :
                         val result =
                             clean(
                                 "https://www.theguardian.com/world/2023/jan/15/nepal-plane-crash-with-7" +
-                                    "2-onboard-leaves-at-least-16-dead?CMP=Share_AndroidApp_Other"
+                                    "2-onboard-leaves-at-least-16-dead?CMP=Share_AndroidApp_Other",
                             )
 
                         result shouldBe

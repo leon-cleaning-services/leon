@@ -30,7 +30,7 @@ class HeiseTest :
                     "clean heise.de URLs" {
                         clean(
                             "https://www.heise.de/news/Boom-bei-Balkonkraftwerken-Bereits-mehr-als-" +
-                                "300-000-in-Betrieb-9324094.html?wt_mc=rss.red.ho.ho.rdf.beitrag.beitrag"
+                                "300-000-in-Betrieb-9324094.html?wt_mc=rss.red.ho.ho.rdf.beitrag.beitrag",
                         ) shouldBe
                             "https://www.heise.de/news/Boom-bei-Balkonkraftwerken-Bereits-mehr-als" +
                                 "-300-000-in-Betrieb-9324094.html"

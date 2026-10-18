@@ -58,7 +58,7 @@ internal class TopLevelSceneDecoratorStrategy(private val snackbarHostState: Sna
     SceneDecoratorStrategy<NavKey> {
 
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(
-        scene: Scene<NavKey>
+        scene: Scene<NavKey>,
     ): Scene<NavKey> {
         // In a two-pane list-detail scene the LAST entry is the detail pane, which carries no
         // top-level metadata — scan all entries to know whether this scene belongs to a top-level

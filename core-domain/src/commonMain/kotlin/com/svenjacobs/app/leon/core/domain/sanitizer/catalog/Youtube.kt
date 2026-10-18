@@ -32,7 +32,7 @@ val Youtube =
         name = "YouTube",
         rules =
             persistentListOf(
-                Rule.RemoveParameters("(v|search_query|list|t|channel_id)", negate = true)
+                Rule.RemoveParameters("(v|search_query|list|t|channel_id)", negate = true),
             ),
         match =
             persistentListOf(
@@ -47,7 +47,7 @@ val YoutubeRedirect =
         name = "YouTube Redirect",
         rules =
             persistentListOf(
-                Rule.Follow(Source.Parameter("q"), persistentListOf(Decode.PercentDecode))
+                Rule.Follow(Source.Parameter("q"), persistentListOf(Decode.PercentDecode)),
             ),
         match = persistentListOf(Match(HostMatch.Domain("youtube.com"), pathPrefix = "/redirect")),
     )
@@ -71,9 +71,9 @@ val YoutubeShortUrl =
                     from = Source.Path,
                     steps =
                         persistentListOf(
-                            Decode.Capture("/(.+)", "https://www.youtube.com/watch?v=$1")
+                            Decode.Capture("/(.+)", "https://www.youtube.com/watch?v=$1"),
                         ),
-                )
+                ),
             ),
         match = persistentListOf(Match(HostMatch.Domain("youtu.be"))),
     )

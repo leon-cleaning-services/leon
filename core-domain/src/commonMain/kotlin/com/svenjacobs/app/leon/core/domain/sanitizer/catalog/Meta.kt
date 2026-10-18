@@ -28,6 +28,6 @@ val MetaAd =
         name = "Meta Ads",
         rules =
             persistentListOf(
-                Rule.RemoveParameters("ad_id|adset_id|campaign_id|gc_id|h_ad_id|placement")
+                Rule.RemoveParameters("ad_id|adset_id|campaign_id|gc_id|h_ad_id|placement"),
             ),
     )

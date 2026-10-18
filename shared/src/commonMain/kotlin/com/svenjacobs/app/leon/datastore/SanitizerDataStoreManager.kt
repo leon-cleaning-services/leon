@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.map
 @Inject
 @SingleIn(AppScope::class)
 class SanitizerDataStoreManager(
-    @Named("sanitizers") private val dataStore: DataStore<Preferences>
+    @Named("sanitizers") private val dataStore: DataStore<Preferences>,
 ) {
 
     internal fun preferencesKey(id: String) = booleanPreferencesKey(name = "sanitizer_$id")

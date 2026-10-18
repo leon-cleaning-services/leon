@@ -29,7 +29,7 @@ class SnapchatTest :
                 {
                     "remove all query parameters from Snapchat URLs" {
                         clean(
-                            "https://www.snapchat.com/add/thesmileybunch?share_id=tUPMpk8AeX0&locale=fi-Fl-u-fw-mon-mu-celsius"
+                            "https://www.snapchat.com/add/thesmileybunch?share_id=tUPMpk8AeX0&locale=fi-Fl-u-fw-mon-mu-celsius",
                         ) shouldBe "https://www.snapchat.com/add/thesmileybunch"
                     }
                 }

@@ -30,7 +30,7 @@ class XiaohongshuTest :
                     "remove all parameters from Xiaohongshu URL" {
                         val result =
                             clean(
-                                "https://www.xiaohongshu.com/discovery/item?id=123&from=share&utm_source=google&extra=keep"
+                                "https://www.xiaohongshu.com/discovery/item?id=123&from=share&utm_source=google&extra=keep",
                             )
                         result shouldBe "https://www.xiaohongshu.com/discovery/item"
                     }

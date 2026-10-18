@@ -29,13 +29,13 @@ class IlMessaggeroTest :
                 {
                     "remove all parameters except topic" {
                         clean(
-                            "https://archivio.ilmessaggero.it/articolo?topic=politica&utm_source=facebook&utm_medium=social"
+                            "https://archivio.ilmessaggero.it/articolo?topic=politica&utm_source=facebook&utm_medium=social",
                         ) shouldBe "https://archivio.ilmessaggero.it/articolo?topic=politica"
                     }
 
                     "remove all parameters when topic is absent" {
                         clean(
-                            "https://archivio.ilmessaggero.it/articolo?utm_source=facebook&utm_medium=social"
+                            "https://archivio.ilmessaggero.it/articolo?utm_source=facebook&utm_medium=social",
                         ) shouldBe "https://archivio.ilmessaggero.it/articolo"
                     }
                 }

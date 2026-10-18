@@ -252,7 +252,7 @@ class MainScreenViewModel(
                     val change = Change(null, row.action)
                     current.copy(
                         additional =
-                            if (apply) current.additional + change else current.additional - change
+                            if (apply) current.additional + change else current.additional - change,
                     )
                 }
                 else -> {
@@ -263,7 +263,7 @@ class MainScreenViewModel(
                                 current.declined - changes.toSet()
                             } else {
                                 current.declined + changes
-                            }
+                            },
                     )
                 }
             }

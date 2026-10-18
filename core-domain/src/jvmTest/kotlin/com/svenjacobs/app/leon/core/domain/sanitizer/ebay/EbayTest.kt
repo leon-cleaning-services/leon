@@ -32,7 +32,7 @@ class EbayTest :
                             clean(
                                 "https://www.ebay.de/itm/271784973135?mkcid=16&mkevt=1&mkrid=707-127654" +
                                     "-2357-0&ssspo=rMbbkKXARCW&sssrc=2348624&ssuid=Bw-3_LUXSsm&widget_ver=art" +
-                                    "emis&media=MORE"
+                                    "emis&media=MORE",
                             )
 
                         result shouldBe "https://www.ebay.de/itm/271784973135"

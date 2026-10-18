@@ -29,7 +29,7 @@ class SalesforceParametersTest :
                 {
                     "remove sfmc_activityid parameter as per #302" {
                         clean(
-                            "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2"
+                            "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/?sfmc_activityid=a5542c58-11be-4f33-8dd5-5e0ebeae30f2",
                         ) shouldBe "https://www.geox.com/it-IT/uomo/scarpe/stivaletti/"
                     }
 

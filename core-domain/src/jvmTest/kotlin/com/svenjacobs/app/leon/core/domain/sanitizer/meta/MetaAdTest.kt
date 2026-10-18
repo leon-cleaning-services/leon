@@ -29,7 +29,7 @@ class MetaAdTest :
                 {
                     "remove ad_id, adset_id, campaign_id, gc_id, h_ad_id and placement parameters" {
                         clean(
-                            "https://www.example.com/path?ad_id=1&adset_id=2&campaign_id=3&gc_id=4&h_ad_id=5&placement=6&keep=123"
+                            "https://www.example.com/path?ad_id=1&adset_id=2&campaign_id=3&gc_id=4&h_ad_id=5&placement=6&keep=123",
                         ) shouldBe "https://www.example.com/path?keep=123"
                     }
                 }

@@ -32,7 +32,7 @@ class GeoRiotTest :
                             clean(
                                 "https://target.georiot.com/Proxy.ashx?tsid=8429&GR_URL=https%3A%2F%2Fw" +
                                     "ww.amazon.com%2Fdp%2FB0B3Q23BT4%3Ftag%3Dhawk-future-20%26linkCode%3Dogi%" +
-                                    "26th%3D1%26psc%3D1%26ascsubtag%3Dcbq-us-custom-tracking-20"
+                                    "26th%3D1%26psc%3D1%26ascsubtag%3Dcbq-us-custom-tracking-20",
                             )
 
                         result shouldBe

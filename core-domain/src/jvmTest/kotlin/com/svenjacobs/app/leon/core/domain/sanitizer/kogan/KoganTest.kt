@@ -30,7 +30,7 @@ class KoganTest :
                     "remove all parameters from kogan.com URL" {
                         val result =
                             clean(
-                                "https://www.kogan.com/au/buy/heybattery-samsung-galaxy-watch-7-44mm-bluetooth-l310-silver-ss-l310-sv/?ssid=201.bae7632c-5c90-46cf-a071-416f0879ecb5&click_id=VWDA74xN4CIffN9Rb_8l-46p"
+                                "https://www.kogan.com/au/buy/heybattery-samsung-galaxy-watch-7-44mm-bluetooth-l310-silver-ss-l310-sv/?ssid=201.bae7632c-5c90-46cf-a071-416f0879ecb5&click_id=VWDA74xN4CIffN9Rb_8l-46p",
                             )
                         result shouldBe
                             "https://www.kogan.com/au/buy/heybattery-samsung-galaxy-watch-7-44mm-bluetooth-l310-silver-ss-l310-sv/"

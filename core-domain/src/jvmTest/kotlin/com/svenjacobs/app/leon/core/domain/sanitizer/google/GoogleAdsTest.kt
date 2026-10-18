@@ -48,7 +48,7 @@ class GoogleAdsTest :
                                     "tdunYB7MP8RcmJyHNKBHG1QNnEZpcSCdxaH4Mf8rPELdcNFeSsgR0tKY2Yfhc-fM90aG22GT" +
                                     "ggyGMKgNXzziGFzmPmtPSDSiVbadhPHXoQTUB1U5NUQaR-CIV8816yqV2b_VOH4h0QZDWyab" +
                                     "XhcrrfCpIQNLmEy8g39-YGcMlyiQBovndagTPNMGzoHbO6Yotf7AQeCUBgvIq9SGg-uBXmrg" +
-                                    "bo1UWe1t2v32dxSRIQ7MyqdMdGbezFYod08gtmhg&nb=8&nx=334&ny=15&dim=360x36"
+                                    "bo1UWe1t2v32dxSRIQ7MyqdMdGbezFYod08gtmhg&nb=8&nx=334&ny=15&dim=360x36",
                             )
 
                         result shouldBe "https://www.evedyth.shop/"

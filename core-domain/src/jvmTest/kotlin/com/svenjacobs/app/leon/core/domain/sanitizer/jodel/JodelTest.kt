@@ -40,7 +40,7 @@ class JodelTest :
                                     "mNkZWYwMTIzNDU2Nzg5ZGVhZGMwZGUiLCIkYW5kcm9pZF91cmwiOiJodHRwczpcL1wvc2" +
                                     "hhcmUuam9kZWwuY29tXC9wb3N0P3Bvc3RJZD1iYWRjMGZmZWViYWRjMGZmZWUwMTIzNDU" +
                                     "iLCIkaW9zX3VybCI6Imh0dHBzOlwvXC9zaGFyZS5qb2RlbC5jb21cL3Bvc3Q%2FcG9zdE" +
-                                    "lkPWJhZGMwZmZlZWJhZGMwZmZlZTAxMjM0NSJ9?channel=copy"
+                                    "lkPWJhZGMwZmZlZWJhZGMwZmZlZTAxMjM0NSJ9?channel=copy",
                             )
 
                         result shouldBe

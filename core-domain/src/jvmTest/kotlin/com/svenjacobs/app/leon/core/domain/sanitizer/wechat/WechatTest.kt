@@ -30,7 +30,7 @@ class WechatTest :
                     "remove tracking parameters from WeChat URL" {
                         val result =
                             clean(
-                                "https://weixin.qq.com/s?__biz=abc&mid=123&idx=1&sn=def&scene=2&wx_header=3"
+                                "https://weixin.qq.com/s?__biz=abc&mid=123&idx=1&sn=def&scene=2&wx_header=3",
                             )
                         result shouldBe "https://weixin.qq.com/s"
                     }

@@ -30,7 +30,7 @@ class MeituanTest :
                     "remove tracking parameters from Meituan URL" {
                         val result =
                             clean(
-                                "https://www.meituan.com/deal/123?from=share&source=app&wx_openid=abc"
+                                "https://www.meituan.com/deal/123?from=share&source=app&wx_openid=abc",
                             )
                         result shouldBe "https://www.meituan.com/deal/123"
                     }

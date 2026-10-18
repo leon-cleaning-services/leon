@@ -31,7 +31,7 @@ class ElFinancieroTest :
                         val result =
                             clean(
                                 "https://www.elfinanciero.com.mx/food-and-drink/2023/01/04/" +
-                                    "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/?outputType=amp"
+                                    "dia-de-reyes-2023-donde-comprar-rosca-de-tacos-en-la-cdmx/?outputType=amp",
                             )
 
                         result shouldBe

@@ -63,7 +63,7 @@ class ProcessTextActivity : ComponentActivity() {
                         action = Intent.ACTION_SEND
                         type = "text/plain"
                         putExtra(Intent.EXTRA_TEXT, text)
-                    }
+                    },
                 )
 
             else -> result(text, Intent.EXTRA_PROCESS_TEXT)
