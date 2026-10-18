@@ -39,7 +39,7 @@ APP="desktopApp/build/compose/binaries/main/app/leon"
 
 # Same source as desktopApp/build.gradle.kts, and the same ".0.0" suffix, so the AppImage carries
 # the identical version to the deb, rpm, msi and dmg.
-VERSION="$(grep -oP 'versionName = "\K\d+' androidApp/build.gradle.kts).0.0"
+VERSION="$(grep -oP '^versionName=\K\d+' version.properties).0.0"
 
 [ -d "$APP" ] || {
     echo "$APP not found - run ./gradlew :desktopApp:createDistributable first" >&2
