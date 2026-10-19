@@ -17,6 +17,7 @@
  */
 package com.svenjacobs.app.leon.core.domain.sanitizer
 
+import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.change.apply
 import com.svenjacobs.app.leon.core.domain.sanitize
 import com.svenjacobs.app.leon.core.domain.url.Url
@@ -300,6 +301,48 @@ class RuleTest :
                                 from = Source.Path,
                             )
                             .sanitize(url("https://fosspost.substack.com/pub/fosspost/p/a"))
+                            .shouldBeEmpty()
+                    }
+                }
+
+            "Resolve" should
+                {
+                    val shortLink = url("https://short.example.com/t/abc?_t=tracking")
+                    val target = url("https://example.com/video/1?is_from_webapp=1")
+
+                    "replace a resolved short link with its target" {
+                        Rule.Resolve("/t/[a-z]+")
+                            .sanitize(shortLink, resolved = mapOf(shortLink to target)) shouldBe
+                            listOf(Change.Action.Replace(from = shortLink, to = target))
+                    }
+
+                    "apply to every path by default" {
+                        Rule.Resolve()
+                            .sanitize(shortLink, resolved = mapOf(shortLink to target)) shouldBe
+                            listOf(Change.Action.Replace(from = shortLink, to = target))
+                    }
+
+                    "do nothing without a resolved target" {
+                        Rule.Resolve().sanitize(shortLink).shouldBeEmpty()
+                    }
+
+                    "do nothing when only another URL was resolved" {
+                        val other = url("https://short.example.com/t/xyz")
+
+                        Rule.Resolve()
+                            .sanitize(shortLink, resolved = mapOf(other to target))
+                            .shouldBeEmpty()
+                    }
+
+                    "do nothing when the pattern does not cover the complete path" {
+                        Rule.Resolve("/t/")
+                            .sanitize(shortLink, resolved = mapOf(shortLink to target))
+                            .shouldBeEmpty()
+                    }
+
+                    "do nothing when the short link resolves to itself" {
+                        Rule.Resolve()
+                            .sanitize(shortLink, resolved = mapOf(shortLink to shortLink))
                             .shouldBeEmpty()
                     }
                 }

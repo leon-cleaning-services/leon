@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2024 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,7 +30,6 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -59,8 +57,11 @@ import com.svenjacobs.app.leon.shared.resources.open_share_menu
 import com.svenjacobs.app.leon.shared.resources.open_url
 import com.svenjacobs.app.leon.shared.resources.protect_screen
 import com.svenjacobs.app.leon.shared.resources.register_as_browser
+import com.svenjacobs.app.leon.shared.resources.resolve_short_links
+import com.svenjacobs.app.leon.shared.resources.resolve_short_links_summary
 import com.svenjacobs.app.leon.shared.resources.sanitizers
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
+import com.svenjacobs.app.leon.ui.common.views.SwitchRow
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsScreenViewModel
 import dev.zacsweers.metrox.viewmodel.metroViewModel
@@ -82,6 +83,7 @@ fun SettingsScreen(
         customTabsEnabled = uiState.customTabsEnabled,
         protectScreenEnabled = uiState.protectScreenEnabled,
         historyEnabled = uiState.historyEnabled,
+        resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
         actionAfterClean = uiState.actionAfterClean,
         autoReset = uiState.autoReset,
         supportsBrowserRegistration = uiState.supportsBrowserRegistration,
@@ -93,6 +95,7 @@ fun SettingsScreen(
         onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
         onProtectScreenSwitchCheckedChange = viewModel::onProtectScreenSwitchCheckedChange,
         onHistorySwitchCheckedChange = viewModel::onHistorySwitchCheckedChange,
+        onResolveShortLinksSwitchCheckedChange = viewModel::onResolveShortLinksSwitchCheckedChange,
         onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
         onAutoResetClick = viewModel::onAutoResetClick,
     )
@@ -105,6 +108,7 @@ fun Content(
     customTabsEnabled: Boolean,
     protectScreenEnabled: Boolean,
     historyEnabled: Boolean,
+    resolveShortLinksEnabled: Boolean,
     actionAfterClean: ActionAfterClean,
     autoReset: AutoReset,
     onSanitizersClick: () -> Unit,
@@ -113,6 +117,7 @@ fun Content(
     onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
     onProtectScreenSwitchCheckedChange: (Boolean) -> Unit,
     onHistorySwitchCheckedChange: (Boolean) -> Unit,
+    onResolveShortLinksSwitchCheckedChange: (Boolean) -> Unit,
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
     onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
@@ -164,6 +169,14 @@ fun Content(
                     text = stringResource(Res.string.history_enabled),
                     checked = historyEnabled,
                     onCheckedChange = onHistorySwitchCheckedChange,
+                )
+
+                SwitchRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(Res.string.resolve_short_links),
+                    supportingText = stringResource(Res.string.resolve_short_links_summary),
+                    checked = resolveShortLinksEnabled,
+                    onCheckedChange = onResolveShortLinksSwitchCheckedChange,
                 )
 
                 Column(modifier = Modifier.padding(top = 8.dp)) {
@@ -332,21 +345,6 @@ fun Content(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun SwitchRow(
-    text: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-) {
-    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(modifier = Modifier.padding(end = 8.dp).weight(1f), text = text)
-
-        Switch(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled)
     }
 }
 

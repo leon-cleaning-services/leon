@@ -84,3 +84,11 @@ val GoogleMaps =
                 Match(HostMatch.Domain("maps.google.com")),
             ),
     )
+
+val GoogleMapsShortLink =
+    Sanitizer(
+        id = SanitizerId("google_maps_short_link"),
+        name = "Google Maps Short Link",
+        rules = persistentListOf(Rule.Resolve("/[A-Za-z0-9_-]+/?")),
+        match = persistentListOf(Match(HostMatch.Domain("maps.app.goo.gl"))),
+    )

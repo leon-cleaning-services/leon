@@ -83,4 +83,25 @@
     <string name="sanitizer_youtube_redirect_name">Chuyển hướng YouTube</string>
     <string name="a11y_howto">Mô tả ứng dụng giải thích trên điện thoại thông minh</string>
     <string name="a11y_back_navigation">Biểu tượng điều hướng trở lại</string>
+    <string name="ok">OK</string>
+    <string name="retry">Thử lại</string>
+    <string name="resolve_short_links">Mở rộng liên kết rút gọn</string>
+    <string name="resolve_short_links_summary">Chỉ hỏi dịch vụ đã tạo liên kết rút gọn về địa chỉ đích của nó</string>
+    <string name="short_link_dialog_title">Mở rộng liên kết rút gọn?</string>
+    <string name="short_link_dialog_text">Theo mặc định, Léon không gửi bất kỳ yêu cầu mạng nào. Một số dịch vụ chia sẻ liên kết rút gọn mà chỉ chính dịch vụ đó biết địa chỉ đích. Khi bật tùy chọn này, Léon sẽ hỏi dịch vụ đó, và chỉ dịch vụ đó, xem liên kết dẫn tới đâu, rồi làm sạch kết quả như bình thường.\n\nBạn có thể thay đổi điều này bất cứ lúc nào trong phần thiết đặt.</string>
+    <string name="sanitizer_short_link_name">Liên kết rút gọn %1$s</string>
+    <string name="sanitizer_short_link_hint">Mở rộng liên kết rút gọn qua internet</string>
+    <string name="sanitizer_short_link_hint_disabled">Mở rộng liên kết rút gọn qua internet. Hãy bật “Mở rộng liên kết rút gọn” trong phần thiết đặt trước.</string>
+    <string name="short_link_resolving_title">Đang mở rộng liên kết rút gọn…</string>
+    <string name="short_link_resolving_text">Đang kết nối tới %1$s</string>
+    <string name="short_link_error_title">Chưa mở rộng được liên kết rút gọn</string>
+    <string name="short_link_error_offline">Không có kết nối internet.</string>
+    <string name="short_link_error_timeout">Máy chủ không phản hồi kịp thời.</string>
+    <string name="short_link_error_http">Máy chủ trả về lỗi (HTTP %1$d).</string>
+    <string name="short_link_error_unknown">Không thể mở rộng liên kết rút gọn này.</string>
+    <string name="short_link_error_expired">Liên kết rút gọn này đã hết hạn.</string>
+    <string name="short_link_continue_without_resolving">Tiếp tục mà không mở rộng</string>
+    <string name="short_link_hint">Đây là liên kết rút gọn. Léon chỉ có thể làm sạch nó sau khi mở rộng qua dịch vụ đã tạo ra nó. Hãy bật “Mở rộng liên kết rút gọn” để làm sạch.</string>
+    <string name="short_link_hint_enable">Bật</string>
+    <string name="short_link_hint_toast">Đây là liên kết rút gọn nên chưa được làm sạch. Hãy bật “Mở rộng liên kết rút gọn” trong phần thiết đặt của Léon để làm sạch.</string>
 </resources>

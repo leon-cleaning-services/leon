@@ -39,3 +39,14 @@ data class Sanitizer(
     val rules: ImmutableList<Rule>,
     val match: ImmutableList<Match> = persistentListOf(Match()),
 )
+
+/**
+ * Whether this sanitizer declares short links which only their server can resolve, which makes it
+ * the only kind of sanitizer that can lead to a network request.
+ */
+val Sanitizer.resolvesShortLinks: Boolean
+    get() = resolveRules.isNotEmpty()
+
+/** The [Rule.Resolve] rules of this sanitizer, which declare its short links. */
+internal val Sanitizer.resolveRules: List<Rule.Resolve>
+    get() = rules.filterIsInstance<Rule.Resolve>()

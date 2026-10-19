@@ -83,4 +83,25 @@
     <string name="sanitizer_youtube_redirect_name">Перенаправление YouTube</string>
     <string name="a11y_howto">Изображение приложения, объясняющего работу на смартфоне</string>
     <string name="a11y_back_navigation">Значок, который перемещает назад</string>
+    <string name="ok">ОК</string>
+    <string name="retry">Повторить</string>
+    <string name="resolve_short_links">Раскрывать короткие ссылки</string>
+    <string name="resolve_short_links_summary">Запрашивает адрес только у сервиса, создавшего короткую ссылку</string>
+    <string name="short_link_dialog_title">Раскрывать короткие ссылки?</string>
+    <string name="short_link_dialog_text">По умолчанию Léon не выполняет никаких сетевых запросов. Некоторые сервисы делятся короткими ссылками, адрес назначения которых известен только им самим. Если включить эту функцию, Léon спросит этот сервис — и только его, — куда ведёт ссылка, а затем, как обычно, очистит результат.\n\nЭто можно в любой момент изменить в настройках.</string>
+    <string name="sanitizer_short_link_name">Короткая ссылка %1$s</string>
+    <string name="sanitizer_short_link_hint">Раскрывает короткие ссылки через интернет</string>
+    <string name="sanitizer_short_link_hint_disabled">Раскрывает короткие ссылки через интернет. Сначала включите «Раскрывать короткие ссылки» в настройках.</string>
+    <string name="short_link_resolving_title">Раскрытие короткой ссылки…</string>
+    <string name="short_link_resolving_text">Подключение к %1$s</string>
+    <string name="short_link_error_title">Короткая ссылка не раскрыта</string>
+    <string name="short_link_error_offline">Нет подключения к интернету.</string>
+    <string name="short_link_error_timeout">Сервер не ответил вовремя.</string>
+    <string name="short_link_error_http">Сервер вернул ошибку (HTTP %1$d).</string>
+    <string name="short_link_error_unknown">Не удалось раскрыть эту короткую ссылку.</string>
+    <string name="short_link_error_expired">Срок действия этой короткой ссылки истёк.</string>
+    <string name="short_link_continue_without_resolving">Продолжить без раскрытия</string>
+    <string name="short_link_hint">Это короткая ссылка. Léon может очистить её только после того, как её раскроет сервис, который её создал. Включите «Раскрывать короткие ссылки», чтобы очистить её.</string>
+    <string name="short_link_hint_enable">Включить</string>
+    <string name="short_link_hint_toast">Это короткая ссылка, поэтому она не была очищена. Включите «Раскрывать короткие ссылки» в настройках Léon, чтобы очистить её.</string>
 </resources>

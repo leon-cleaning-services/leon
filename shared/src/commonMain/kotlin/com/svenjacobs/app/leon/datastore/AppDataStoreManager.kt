@@ -116,6 +116,22 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
     val historyEnabled: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[KEY_HISTORY_ENABLED] ?: true }
 
+    suspend fun setResolveShortLinksEnabled(enabled: Boolean) {
+        dataStore.edit { it[KEY_RESOLVE_SHORT_LINKS] = enabled }
+    }
+
+    /** Whether Léon may contact a short link's service to find out where the link leads. */
+    val resolveShortLinksEnabled: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[KEY_RESOLVE_SHORT_LINKS] ?: false }
+
+    suspend fun setShortLinkDialogShown(shown: Boolean) {
+        dataStore.edit { it[KEY_SHORT_LINK_DIALOG_SHOWN] = shown }
+    }
+
+    /** Whether the one-time dialog introducing short link resolving has been seen. */
+    val shortLinkDialogShown: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[KEY_SHORT_LINK_DIALOG_SHOWN] ?: false }
+
     private companion object {
         private val KEY_VERSION_CODE = intPreferencesKey("version_code")
         private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
@@ -127,5 +143,7 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
         private val KEY_LAST_INPUT_ID = stringPreferencesKey("last_input_id")
         private val KEY_LAST_INPUT_AT = longPreferencesKey("last_input_at")
         private val KEY_HISTORY_ENABLED = booleanPreferencesKey("history_enabled")
+        private val KEY_RESOLVE_SHORT_LINKS = booleanPreferencesKey("resolve_short_links")
+        private val KEY_SHORT_LINK_DIALOG_SHOWN = booleanPreferencesKey("short_link_dialog_shown")
     }
 }

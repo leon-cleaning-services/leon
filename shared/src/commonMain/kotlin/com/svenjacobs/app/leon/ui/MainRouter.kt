@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2024 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ import com.svenjacobs.app.leon.ui.screens.main.MainScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsLicensesScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsSanitizersScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsScreen
+import com.svenjacobs.app.leon.ui.shortlink.ShortLinkDialogHost
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -148,6 +149,9 @@ fun MainRouter(
             goToTopLevel(Destination.Main)
         }
     }
+
+    // Introduces short link resolving once, on whichever screen the app happens to start on.
+    ShortLinkDialogHost()
 
     NavigationSuiteScaffold(
         navigationItems = {

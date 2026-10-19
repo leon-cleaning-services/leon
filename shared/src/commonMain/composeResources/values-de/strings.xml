@@ -85,4 +85,25 @@
     <string name="sanitizer_youtube_redirect_name">YouTube Weiterleitung</string>
     <string name="a11y_howto">Darstellung eines Smartphones, welche die Anwendung erläutert</string>
     <string name="a11y_back_navigation">Icon um zurück zu navigieren</string>
+    <string name="ok">OK</string>
+    <string name="retry">Erneut versuchen</string>
+    <string name="resolve_short_links">Kurzlinks auflösen</string>
+    <string name="resolve_short_links_summary">Fragt nur den Dienst, der einen Kurzlink erstellt hat, wohin er führt</string>
+    <string name="short_link_dialog_title">Kurzlinks auflösen?</string>
+    <string name="short_link_dialog_text">Léon stellt standardmäßig keine Netzwerkanfragen. Manche Dienste teilen Kurzlinks, deren Ziel nur sie selbst kennen. Wenn du diese Option aktivierst, fragt Léon diesen Dienst – und nur diesen –, wohin der Link führt, und bereinigt das Ergebnis anschließend wie gewohnt.\n\nDu kannst das jederzeit in den Einstellungen ändern.</string>
+    <string name="sanitizer_short_link_name">%1$s-Kurzlink</string>
+    <string name="sanitizer_short_link_hint">Löst Kurzlinks über das Internet auf</string>
+    <string name="sanitizer_short_link_hint_disabled">Löst Kurzlinks über das Internet auf. Aktiviere zuerst „Kurzlinks auflösen“ in den Einstellungen.</string>
+    <string name="short_link_resolving_title">Kurzlink wird aufgelöst…</string>
+    <string name="short_link_resolving_text">Verbindung zu %1$s</string>
+    <string name="short_link_error_title">Kurzlink nicht aufgelöst</string>
+    <string name="short_link_error_offline">Keine Internetverbindung.</string>
+    <string name="short_link_error_timeout">Der Server hat nicht rechtzeitig geantwortet.</string>
+    <string name="short_link_error_http">Der Server hat einen Fehler gemeldet (HTTP %1$d).</string>
+    <string name="short_link_error_unknown">Dieser Kurzlink konnte nicht aufgelöst werden.</string>
+    <string name="short_link_error_expired">Dieser Kurzlink ist abgelaufen.</string>
+    <string name="short_link_continue_without_resolving">Ohne Auflösen fortfahren</string>
+    <string name="short_link_hint">Dies ist ein Kurzlink. Léon kann ihn erst bereinigen, nachdem er bei dem Dienst aufgelöst wurde, der ihn erstellt hat. Aktiviere „Kurzlinks auflösen“, um ihn zu bereinigen.</string>
+    <string name="short_link_hint_enable">Aktivieren</string>
+    <string name="short_link_hint_toast">Dies ist ein Kurzlink und wurde nicht bereinigt. Aktiviere „Kurzlinks auflösen“ in den Einstellungen von Léon, um ihn zu bereinigen.</string>
 </resources>

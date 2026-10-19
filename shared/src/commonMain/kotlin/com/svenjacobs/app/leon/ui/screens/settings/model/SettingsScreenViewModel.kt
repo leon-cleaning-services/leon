@@ -50,6 +50,7 @@ class SettingsScreenViewModel(
         val customTabsEnabled: Boolean = false,
         val protectScreenEnabled: Boolean = false,
         val historyEnabled: Boolean = true,
+        val resolveShortLinksEnabled: Boolean = false,
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
         val autoReset: AutoReset = AutoReset.Off,
         val supportsBrowserRegistration: Boolean = false,
@@ -60,18 +61,23 @@ class SettingsScreenViewModel(
     private val browserEnabled = MutableStateFlow(false)
 
     /**
-     * The browser and history switches, combined ahead of the outer [combine] so that it stays
-     * within its five-flow limit.
+     * The browser, history and short link switches, combined ahead of the outer [combine] so that
+     * it stays within its five-flow limit.
      */
-    private data class Toggles(val browserEnabled: Boolean, val historyEnabled: Boolean)
+    private data class Toggles(
+        val browserEnabled: Boolean,
+        val historyEnabled: Boolean,
+        val resolveShortLinksEnabled: Boolean,
+    )
 
     val uiState: StateFlow<UiState> =
         combine(
-                combine(browserEnabled, appDataStoreManager.historyEnabled) {
+                combine(
                     browserEnabled,
-                    historyEnabled ->
-                    Toggles(browserEnabled, historyEnabled)
-                },
+                    appDataStoreManager.historyEnabled,
+                    appDataStoreManager.resolveShortLinksEnabled,
+                    ::Toggles,
+                ),
                 appDataStoreManager.customTabsEnabled,
                 appDataStoreManager.protectScreenEnabled,
                 appDataStoreManager.actionAfterClean,
@@ -83,6 +89,7 @@ class SettingsScreenViewModel(
                     customTabsEnabled = customTabsEnabled,
                     protectScreenEnabled = protectScreenEnabled,
                     historyEnabled = toggles.historyEnabled,
+                    resolveShortLinksEnabled = toggles.resolveShortLinksEnabled,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
                     autoReset = autoReset ?: AutoReset.Off,
                     supportsBrowserRegistration = platform.supportsBrowserRegistration,
@@ -124,6 +131,10 @@ class SettingsScreenViewModel(
             // Turning the history off must leave nothing behind.
             if (!checked) historyDao.clear()
         }
+    }
+
+    fun onResolveShortLinksSwitchCheckedChange(checked: Boolean) {
+        viewModelScope.launch { appDataStoreManager.setResolveShortLinksEnabled(checked) }
     }
 
     fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {

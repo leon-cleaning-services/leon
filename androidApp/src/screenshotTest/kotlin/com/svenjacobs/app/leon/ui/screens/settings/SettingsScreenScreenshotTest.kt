@@ -35,6 +35,7 @@ private fun ContentScreenshot() {
             customTabsEnabled = false,
             protectScreenEnabled = false,
             historyEnabled = true,
+            resolveShortLinksEnabled = false,
             actionAfterClean = ActionAfterClean.OpenShareMenu,
             autoReset = AutoReset.Off,
             onSanitizersClick = {},
@@ -43,6 +44,7 @@ private fun ContentScreenshot() {
             onCustomTabsSwitchCheckedChange = {},
             onProtectScreenSwitchCheckedChange = {},
             onHistorySwitchCheckedChange = {},
+            onResolveShortLinksSwitchCheckedChange = {},
             onActionAfterCleanClick = {},
             onAutoResetClick = {},
         )

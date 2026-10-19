@@ -52,8 +52,25 @@ abstract class SanitizerSpec(private val sanitizer: Sanitizer, body: SanitizerSp
     private val cleaner =
         Cleaner(sanitizers = persistentListOf(sanitizer), repository = AlwaysEnabled)
 
-    /** Cleans [url] with this sanitizer alone and returns the result. */
-    suspend fun clean(url: String): String = cleaner.clean(url).cleanedText
+    /**
+     * Cleans [url] with this sanitizer alone and returns the result.
+     *
+     * @param resolved The targets of short links, as a resolver would have found them. Both sides
+     *   are parsed the way [Cleaner] parses the URLs of the text, so a key has to be the short link
+     *   exactly as it appears in [url].
+     */
+    suspend fun clean(url: String, resolved: Map<String, String> = emptyMap()): String =
+        cleaner
+            .clean(
+                url,
+                resolved = resolved.entries.associate { (from, to) -> parse(from) to parse(to) },
+            )
+            .cleanedText
+
+    /** Whether this sanitizer, when enabled, declares [url] a short link which can be resolved. */
+    suspend fun isShortLink(url: String): Boolean = cleaner.isShortLink(parse(url))
+
+    private fun parse(url: String): Url = requireNotNull(Url.parse(url)) { "Not a URL: $url" }
 
     /**
      * Whether this sanitizer applies to [url] at all, regardless of whether it would find anything

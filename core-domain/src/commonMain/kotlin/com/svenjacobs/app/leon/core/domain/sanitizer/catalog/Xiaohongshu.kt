@@ -35,3 +35,13 @@ val Xiaohongshu =
                 Match(HostMatch.Domain("xhslink.com")),
             ),
     )
+
+val XiaohongshuShortLink =
+    Sanitizer(
+        id = SanitizerId("xiaohongshu_short_link"),
+        name = "Xiaohongshu Short Link",
+        // Codes come either bare or below a single letter, such as /o/<code> or /a/<code>. A code
+        // is never a single character, which keeps a bare /o/ from passing as the code "o".
+        rules = persistentListOf(Rule.Resolve("(?:/[A-Za-z])?/[A-Za-z0-9_-]{2,}/?")),
+        match = persistentListOf(Match(HostMatch.Pattern("xhslink\\.(?:com|cn)"))),
+    )

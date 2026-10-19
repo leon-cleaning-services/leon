@@ -130,4 +130,22 @@ sealed interface Rule {
         val steps: ImmutableList<Decode> = persistentListOf(),
         val dropParameters: Boolean = false,
     ) : Rule
+
+    /**
+     * Declares the URL a short link when [pattern] matches its path completely: a link such as
+     * `tiktok.com/t/<code>`, whose target is not hidden anywhere in the URL but only known to the
+     * server which created it.
+     *
+     * Unlike every other rule this one cannot be interpreted offline, and `Cleaner` does not try:
+     * it never performs a request. It replaces the URL with its target only when the caller
+     * resolved the short link beforehand and passed the result to `Cleaner.clean`, which the app
+     * only does when the user opted in to resolving short links. Without a target the rule changes
+     * nothing.
+     *
+     * The target is then cleaned on the next pass by the sanitizers of the site it belongs to, so a
+     * sanitizer holding this rule should hold nothing else — and should be a sanitizer of its own,
+     * so that the user can stop Léon from contacting one vendor without losing that vendor's
+     * regular cleaning.
+     */
+    data class Resolve(val pattern: String = ".*") : Rule
 }

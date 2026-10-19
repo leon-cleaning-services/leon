@@ -17,12 +17,22 @@
  */
 package com.svenjacobs.app.leon.core.domain
 
+import com.svenjacobs.app.leon.core.domain.change.Change
+import com.svenjacobs.app.leon.core.domain.sanitizer.HostMatch
+import com.svenjacobs.app.leon.core.domain.sanitizer.Match
 import com.svenjacobs.app.leon.core.domain.sanitizer.Rule
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokShortLink
+import com.svenjacobs.app.leon.core.domain.url.Url
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
@@ -185,5 +195,150 @@ class CleanerTest :
                             .cleanedText shouldBe "http://www.example.com/x/x/x/x/x"
                     }
                 }
+
+            "short links" should
+                {
+                    val catalog = Cleaner(sanitizers = AllSanitizers, repository = repository)
+
+                    val shortLink = "https://www.tiktok.com/t/ZT8abc123/?_t=8xyz&_r=1"
+                    val target =
+                        "https://www.tiktok.com/@user/video/7300000000000000000" +
+                            "?is_from_webapp=1&sender_device=pc"
+                    val resolved = mapOf(url(shortLink) to url(target))
+                    val replace =
+                        Change(
+                            TiktokShortLink.id,
+                            Change.Action.Replace(from = url(shortLink), to = url(target)),
+                        )
+
+                    "list the short links of a text" {
+                        catalog.shortLinks(
+                            "Look at https://www.tiktok.com/t/ZT8abc123/ and https://a.co/d/4X8EKfk",
+                        ) shouldBe
+                            listOf(
+                                url("https://www.tiktok.com/t/ZT8abc123/"),
+                                url("https://a.co/d/4X8EKfk"),
+                            )
+                    }
+
+                    "list a short link which appears twice once" {
+                        catalog.shortLinks("$shortLink $shortLink") shouldBe listOf(url(shortLink))
+                    }
+
+                    "not list URLs whose path is not a short link" {
+                        catalog
+                            .shortLinks(
+                                "https://www.tiktok.com/@user/video/7300000000000000000 " +
+                                    "https://www.reddit.com/r/fossdroid/comments/1abcdef/title/ " +
+                                    "https://example.com/t/ZT8abc123",
+                            )
+                            .shouldBeEmpty()
+                    }
+
+                    "not list short links whose sanitizer is disabled" {
+                        coEvery { repository.isEnabled(TiktokShortLink.id) } returns false
+
+                        catalog
+                            .shortLinks("$shortLink https://a.co/d/4X8EKfk")
+                            .shouldContainExactly(url("https://a.co/d/4X8EKfk"))
+                        catalog.isShortLink(url(shortLink)) shouldBe false
+                    }
+
+                    "list nothing for a text without URLs" {
+                        catalog.shortLinks("no links here").shouldBeEmpty()
+                        catalog.shortLinks(null).shouldBeEmpty()
+                    }
+
+                    "recognize a single short link" {
+                        catalog.isShortLink(url(shortLink)) shouldBe true
+                        catalog.isShortLink(url(target)) shouldBe false
+                    }
+
+                    "replace a resolved short link and clean its target" {
+                        catalog.clean(shortLink, resolved = resolved).cleanedText shouldBe
+                            "https://www.tiktok.com/@user/video/7300000000000000000"
+                    }
+
+                    "hand the target to the regular TikTok sanitizer on the next pass" {
+                        // The shape a live vm.tiktok.com link redirected to, with an empty user
+                        // name; u_code and _d are placeholders.
+                        val shortLink = "https://vm.tiktok.com/ZS923LxwaARJm-5DUYW/"
+                        val target =
+                            "https://www.tiktok.com/@/video/7649011711130766612?_r=1&_d=placeholder" +
+                                "&u_code=placeholder&share_item_id=7649011711130766612&timestamp=" +
+                                "&utm_campaign=client_share&utm_source=short_fallback" +
+                                "&share_app_id=1233"
+
+                        Cleaner(
+                                sanitizers = persistentListOf(Tiktok, TiktokShortLink),
+                                repository = repository,
+                            )
+                            .clean(shortLink, resolved = mapOf(url(shortLink) to url(target)))
+                            .cleanedText shouldBe
+                            "https://www.tiktok.com/@/video/7649011711130766612"
+                    }
+
+                    "attribute the replacement to the short link's sanitizer" {
+                        val result = catalog.clean(shortLink, resolved = resolved).urls.single()
+
+                        result.available shouldContain replace
+                        result.applied shouldContain replace
+                    }
+
+                    "keep the short link when the replacement is declined" {
+                        val result =
+                            catalog.clean(shortLink, declined = setOf(replace), resolved = resolved)
+
+                        result.cleanedText shouldBe "https://www.tiktok.com/t/ZT8abc123/"
+                        result.urls.single().available shouldContain replace
+                    }
+
+                    "clean a short link which was not resolved as before" {
+                        catalog.clean(shortLink).cleanedText shouldBe
+                            "https://www.tiktok.com/t/ZT8abc123/"
+                    }
+
+                    "replace only the short link a target was resolved for" {
+                        catalog
+                            .clean("$shortLink https://a.co/d/4X8EKfk", resolved = resolved)
+                            .cleanedText shouldBe
+                            "https://www.tiktok.com/@user/video/7300000000000000000 " +
+                                "https://a.co/d/4X8EKfk"
+                    }
+
+                    "apply the other changes of a pass before the replacement" {
+                        // The rewrite is proposed for the short link in the same pass as the
+                        // replacement, and must not end up applied to the target.
+                        val resolve =
+                            Sanitizer(
+                                id = SanitizerId("resolve"),
+                                name = "resolve",
+                                rules = persistentListOf(Rule.Resolve()),
+                                match = persistentListOf(Match(HostMatch.Domain("s.example.com"))),
+                            )
+                        val rewrite =
+                            Sanitizer(
+                                id = SanitizerId("rewrite"),
+                                name = "rewrite",
+                                rules = persistentListOf(Rule.RewritePath("/abc", "/xyz")),
+                            )
+
+                        Cleaner(
+                                sanitizers = persistentListOf(resolve, rewrite),
+                                repository = repository,
+                            )
+                            .clean(
+                                "https://s.example.com/abc",
+                                resolved =
+                                    mapOf(
+                                        url("https://s.example.com/abc") to
+                                            url("https://example.com/page"),
+                                    ),
+                            )
+                            .cleanedText shouldBe "https://example.com/page"
+                    }
+                }
         },
     )
+
+private fun url(value: String) = requireNotNull(Url.parse(value))

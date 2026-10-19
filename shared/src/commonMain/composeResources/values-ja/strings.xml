@@ -83,4 +83,25 @@
     <string name="sanitizer_youtube_redirect_name">YouTube リダイレクト</string>
     <string name="a11y_howto">アプリの使い方を説明するスマートフォンのイラスト</string>
     <string name="a11y_back_navigation">前の画面に戻るアイコン</string>
+    <string name="ok">OK</string>
+    <string name="retry">再試行</string>
+    <string name="resolve_short_links">短縮リンクを展開する</string>
+    <string name="resolve_short_links_summary">短縮リンクを作成したサービスにのみリンク先を問い合わせます</string>
+    <string name="short_link_dialog_title">短縮リンクを展開しますか？</string>
+    <string name="short_link_dialog_text">Léon は標準ではネットワーク通信を一切行いません。一部のサービスが共有する短縮リンクは、リンク先をそのサービスしか知りません。この機能をオンにすると、Léon はそのサービス（そのサービスのみ）にリンク先を問い合わせ、その結果をいつもどおりクリーンにします。\n\nこの設定はいつでも設定画面で変更できます。</string>
+    <string name="sanitizer_short_link_name">%1$s 短縮リンク</string>
+    <string name="sanitizer_short_link_hint">インターネット経由で短縮リンクを展開します</string>
+    <string name="sanitizer_short_link_hint_disabled">インターネット経由で短縮リンクを展開します。先に設定で「短縮リンクを展開する」をオンにしてください。</string>
+    <string name="short_link_resolving_title">短縮リンクを展開中…</string>
+    <string name="short_link_resolving_text">%1$s に接続中</string>
+    <string name="short_link_error_title">短縮リンクを展開できませんでした</string>
+    <string name="short_link_error_offline">インターネットに接続されていません。</string>
+    <string name="short_link_error_timeout">サーバーが時間内に応答しませんでした。</string>
+    <string name="short_link_error_http">サーバーがエラーを返しました（HTTP %1$d）。</string>
+    <string name="short_link_error_unknown">この短縮リンクは展開できませんでした。</string>
+    <string name="short_link_error_expired">この短縮リンクは有効期限が切れています。</string>
+    <string name="short_link_continue_without_resolving">展開せずに続行</string>
+    <string name="short_link_hint">これは短縮リンクです。Léon は、作成元のサービスで展開した後でなければクリーンにできません。クリーンにするには「短縮リンクを展開する」をオンにしてください。</string>
+    <string name="short_link_hint_enable">オンにする</string>
+    <string name="short_link_hint_toast">これは短縮リンクのため、クリーンにされませんでした。クリーンにするには Léon の設定で「短縮リンクを展開する」をオンにしてください。</string>
 </resources>

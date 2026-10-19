@@ -23,11 +23,17 @@ import com.svenjacobs.app.leon.core.domain.Cleaner
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
+import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
+import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkCommand
+import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkProgress
+import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkState
+import com.svenjacobs.app.leon.ui.shortlink.model.isSettled
+import com.svenjacobs.app.leon.ui.shortlink.model.resolveInteractively
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -37,11 +43,16 @@ import kotlin.uuid.Uuid
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -52,6 +63,7 @@ class MainScreenViewModel(
     private val appDataStoreManager: AppDataStoreManager,
     private val cleaner: Cleaner,
     private val historyDao: HistoryDao,
+    private val shortLinkResolver: ShortLinkResolver,
 ) : ViewModel() {
 
     data class UiState(
@@ -67,6 +79,13 @@ class MainScreenViewModel(
          * is off or the deadline is not known yet.
          */
         val autoResetAt: Long? = null,
+        /**
+         * Where resolving the short links of the input stands. [result] is always the input cleaned
+         * with the targets known so far — none at all while the first attempt is still running, has
+         * failed, or resolving is turned off — so that the offline result shows underneath a dialog
+         * or hint.
+         */
+        val shortLink: ShortLinkState = ShortLinkState.Idle,
     ) {
         sealed interface Result {
 
@@ -147,19 +166,81 @@ class MainScreenViewModel(
     }
 
     /**
-     * The input, the user's selection and the auto-reset deadline for that same input, combined
-     * ahead of the outer [combine] so that it stays within its five-flow limit.
+     * What the user can do about the short links being resolved, or which failed to resolve.
+     * Conflated, because only the latest tap counts; [resolveInteractively] discards one which
+     * arrives before the dialog it belongs to.
      */
-    private data class Session(val input: Input?, val selection: Selection, val autoResetAt: Long?)
+    private val shortLinkCommands = Channel<ShortLinkCommand>(Channel.CONFLATED)
+
+    /** An [input] with its short link progress, so a new input never gets the previous state. */
+    private data class Staged(
+        val input: Input?,
+        val shortLinks: ShortLinkProgress = ShortLinkProgress(),
+    )
+
+    /**
+     * The last [Staged] reported, from which resolving resumes when [staged] restarts for the same
+     * input. Resolved targets are kept, but requests still in flight were aborted and are sent
+     * again.
+     */
+    private var lastStaged: Staged? = null
+
+    /**
+     * Resolves the short links of each input once, ahead of cleaning: cleaning runs again on every
+     * change the user toggles, and that must never lead to another request. Only a new input, or
+     * the setting being switched, starts over — and switching it on is exactly what the hint's
+     * "Enable" button does, so the short link at hand is resolved straight away.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val staged: Flow<Staged> =
+        combine(
+                input,
+                // A data store emits on every write to any of its keys; only a change of this one
+                // may restart resolving.
+                appDataStoreManager.resolveShortLinksEnabled.distinctUntilChanged(),
+                ::Pair,
+            )
+            .transformLatest { (input, enabled) ->
+                suspend fun report(progress: ShortLinkProgress) {
+                    val staged = Staged(input, progress)
+                    lastStaged = staged
+                    emit(staged)
+                }
+
+                val urls = input?.let { cleaner.shortLinks(it.text) }.orEmpty()
+                when {
+                    input == null || urls.isEmpty() -> report(ShortLinkProgress())
+                    !enabled -> report(ShortLinkProgress(ShortLinkState.Disabled))
+                    else ->
+                        shortLinkResolver.resolveInteractively(
+                            urls = urls,
+                            commands = shortLinkCommands,
+                            resume = lastStaged?.takeIf { it.input == input }?.shortLinks,
+                            onProgress = ::report,
+                        )
+                }
+            }
+
+    /**
+     * The input with its short links, the user's selection and the auto-reset deadline for that
+     * same input, combined ahead of the outer [combine] so that it stays within its five-flow
+     * limit.
+     */
+    private data class Session(
+        val input: Input?,
+        val shortLinks: ShortLinkProgress,
+        val selection: Selection,
+        val autoResetAt: Long?,
+    )
 
     val uiState =
         combine(
                 combine(
-                    input,
+                    staged,
                     selection,
                     appDataStoreManager.autoReset,
                     appDataStoreManager.lastInput,
-                ) { input, selection, autoReset, last ->
+                ) { (input, shortLinks), selection, autoReset, last ->
                     // The deadline is a wall-clock timestamp, not a countdown, so it survives the
                     // app being backgrounded, the device sleeping, or the process being killed and
                     // the share intent redelivered. It only applies to `last` when `last` really
@@ -172,7 +253,7 @@ class MainScreenViewModel(
                             ?.minutes
                             ?.takeIf { last != null && last.id == input?.id }
                             ?.let { last!!.at + it * 60_000L }
-                    Session(input, selection, autoResetAt)
+                    Session(input, shortLinks, selection, autoResetAt)
                 },
                 appDataStoreManager.urlDecodeEnabled,
                 appDataStoreManager.extractUrlEnabled,
@@ -187,6 +268,7 @@ class MainScreenViewModel(
                     session.autoResetAt != null &&
                         Clock.System.now().toEpochMilliseconds() >= session.autoResetAt
                 val input = if (expired) null else session.input
+                val shortLink = if (input == null) ShortLinkState.Idle else session.shortLinks.state
 
                 val result =
                     input?.let {
@@ -195,10 +277,19 @@ class MainScreenViewModel(
                             decodeUrl = urlDecodeEnabled,
                             extractUrl = extractUrlEnabled,
                             selection = session.selection,
+                            resolved = session.shortLinks.resolved,
                         )
                     } ?: Result.Empty
 
-                if (input != null && result is Result.Success && result.urls.isNotEmpty()) {
+                // While a short link is being resolved, or its failure awaits a decision, the
+                // result is not final yet; recording it would put the short link into the history
+                // only to replace it a moment later.
+                if (
+                    input != null &&
+                        shortLink.isSettled &&
+                        result is Result.Success &&
+                        result.urls.isNotEmpty()
+                ) {
                     record(input.id, result.urls.first())
                 }
 
@@ -211,6 +302,7 @@ class MainScreenViewModel(
                     result = result,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
                     autoResetAt = if (expired) null else session.autoResetAt,
+                    shortLink = shortLink,
                 )
             }
             .stateIn(
@@ -275,11 +367,37 @@ class MainScreenViewModel(
      * for [inputId] and marks it as handled. Returns `false` if it was already performed for this
      * exact input, which happens when the UI recomposes or the activity is recreated (e.g. on a
      * configuration change) without a genuinely new input being submitted.
+     *
+     * The caller only asks once [UiState.shortLink] [is settled][isSettled], so that the action is
+     * never performed with a short link that is still being resolved or whose failure awaits a
+     * decision. [ShortLinkState.Disabled] is settled: the user turned resolving off, so the short
+     * link cleaned as it is *is* the result. Enabling resolving from the hint afterwards does not
+     * perform the action a second time.
      */
     fun consumeActionAfterClean(inputId: String): Boolean {
         if (inputId == handledActionInputId) return false
         handledActionInputId = inputId
         return true
+    }
+
+    /** Stops resolving, and cleans the short links which are not resolved yet as they are. */
+    fun cancelShortLinkResolving() {
+        shortLinkCommands.trySend(ShortLinkCommand.Cancel)
+    }
+
+    /** Resolves the short links which failed once more, keeping those which succeeded. */
+    fun retryShortLinkResolving() {
+        shortLinkCommands.trySend(ShortLinkCommand.Retry)
+    }
+
+    /** Gives up on the short links which failed, and cleans them as they are. */
+    fun continueWithoutResolving() {
+        shortLinkCommands.trySend(ShortLinkCommand.Continue)
+    }
+
+    /** Turns resolving short links on, which resolves those of the current input straight away. */
+    fun enableShortLinkResolving() {
+        viewModelScope.launch { appDataStoreManager.setResolveShortLinksEnabled(true) }
     }
 
     fun onUrlDecodeCheckedChange(enabled: Boolean) {
@@ -295,6 +413,7 @@ class MainScreenViewModel(
         decodeUrl: Boolean,
         extractUrl: Boolean,
         selection: Selection,
+        resolved: Map<Url, Url>,
     ): Result =
         try {
             cleaner
@@ -303,6 +422,7 @@ class MainScreenViewModel(
                     decodeUrl = decodeUrl,
                     declined = selection.declined,
                     additional = selection.additional,
+                    resolved = resolved,
                 )
                 .let { result ->
                     Result.Success(

@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
@@ -92,6 +93,8 @@ import com.svenjacobs.app.leon.shared.resources.options
 import com.svenjacobs.app.leon.shared.resources.original_url
 import com.svenjacobs.app.leon.shared.resources.reset
 import com.svenjacobs.app.leon.shared.resources.share
+import com.svenjacobs.app.leon.shared.resources.short_link_hint
+import com.svenjacobs.app.leon.shared.resources.short_link_hint_enable
 import com.svenjacobs.app.leon.shared.resources.submit
 import com.svenjacobs.app.leon.shared.resources.text_field_placeholder
 import com.svenjacobs.app.leon.ui.common.copyToClipboard
@@ -102,6 +105,9 @@ import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.screens.main.views.ChangesCard
+import com.svenjacobs.app.leon.ui.shortlink.ShortLinkResolvingDialogs
+import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkState
+import com.svenjacobs.app.leon.ui.shortlink.model.isSettled
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlin.time.Clock
 import kotlinx.coroutines.delay
@@ -174,8 +180,12 @@ fun MainScreen(
         onResetClick()
     }
 
-    LaunchedEffect(uiState.inputId, uiState.actionAfterClean) {
+    // Waits for the short links to be settled, so that the unresolved short link is never shared,
+    // opened or copied while it is being resolved or its failure awaits a decision.
+    val isShortLinkSettled = uiState.shortLink.isSettled
+    LaunchedEffect(uiState.inputId, uiState.actionAfterClean, isShortLinkSettled) {
         val inputId = uiState.inputId ?: return@LaunchedEffect
+        if (!isShortLinkSettled) return@LaunchedEffect
         val result = uiState.result as? Result.Success ?: return@LaunchedEffect
         if (!viewModel.consumeActionAfterClean(inputId)) return@LaunchedEffect
 
@@ -214,6 +224,15 @@ fun MainScreen(
         onUrlDecodeCheckedChange = viewModel::onUrlDecodeCheckedChange,
         onExtractUrlCheckedChange = viewModel::onExtractUrlCheckedChange,
         onChangeToggled = viewModel::onChangeToggled,
+        showShortLinkHint = uiState.shortLink is ShortLinkState.Disabled,
+        onEnableShortLinkResolvingClick = viewModel::enableShortLinkResolving,
+    )
+
+    ShortLinkResolvingDialogs(
+        state = uiState.shortLink,
+        onCancel = viewModel::cancelShortLinkResolving,
+        onRetry = viewModel::retryShortLinkResolving,
+        onContinue = viewModel::continueWithoutResolving,
     )
 }
 
@@ -231,6 +250,8 @@ private fun Content(
     onUrlDecodeCheckedChange: (Boolean) -> Unit,
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     onChangeToggled: (ChangeRow, Boolean) -> Unit,
+    showShortLinkHint: Boolean,
+    onEnableShortLinkResolvingClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
@@ -252,6 +273,8 @@ private fun Content(
                             onUrlDecodeCheckedChange = onUrlDecodeCheckedChange,
                             onExtractUrlCheckedChange = onExtractUrlCheckedChange,
                             onChangeToggled = onChangeToggled,
+                            showShortLinkHint = showShortLinkHint,
+                            onEnableShortLinkResolvingClick = onEnableShortLinkResolvingClick,
                         )
 
                     else ->
@@ -277,6 +300,8 @@ fun SuccessBody(
     onUrlDecodeCheckedChange: (Boolean) -> Unit,
     onExtractUrlCheckedChange: (Boolean) -> Unit,
     onChangeToggled: (ChangeRow, Boolean) -> Unit,
+    showShortLinkHint: Boolean,
+    onEnableShortLinkResolvingClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
@@ -291,6 +316,8 @@ fun SuccessBody(
                 result = result,
                 onUrlTap = onCopyToClipboardClick,
                 onChangeToggled = onChangeToggled,
+                showShortLinkHint = showShortLinkHint,
+                onEnableShortLinkResolvingClick = onEnableShortLinkResolvingClick,
                 modifier = Modifier.weight(1f),
             )
             ActionsSection(
@@ -314,6 +341,8 @@ fun SuccessBody(
                 result = result,
                 onUrlTap = onCopyToClipboardClick,
                 onChangeToggled = onChangeToggled,
+                showShortLinkHint = showShortLinkHint,
+                onEnableShortLinkResolvingClick = onEnableShortLinkResolvingClick,
             )
             ActionsSection(
                 result = result,
@@ -337,9 +366,15 @@ private fun UrlDisplaySection(
     result: Result.Success,
     onUrlTap: (String) -> Unit,
     onChangeToggled: (ChangeRow, Boolean) -> Unit,
+    showShortLinkHint: Boolean,
+    onEnableShortLinkResolvingClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (showShortLinkHint) {
+            ShortLinkHintCard(onEnableClick = onEnableShortLinkResolvingClick)
+        }
+
         ElevatedCard(
             modifier = Modifier.fillMaxWidth().clickable { onUrlTap(result.originalText) },
             colors =
@@ -389,6 +424,48 @@ private fun UrlDisplaySection(
         }
 
         ChangesCard(changes = result.changes, onChangeToggled = onChangeToggled)
+    }
+}
+
+/**
+ * Explains that the input is a short link which Léon could clean only after resolving it, which is
+ * turned off, and offers to turn it on right here. The short link cleaned as it is stays below.
+ */
+@Composable
+internal fun ShortLinkHintCard(onEnableClick: () -> Unit, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Icon(imageVector = Icons.Default.Info, contentDescription = null)
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(Res.string.short_link_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            Button(
+                modifier = Modifier.align(Alignment.End).padding(top = 8.dp),
+                onClick = onEnableClick,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary,
+                    ),
+            ) {
+                Text(
+                    text = stringResource(Res.string.short_link_hint_enable),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
     }
 }
 

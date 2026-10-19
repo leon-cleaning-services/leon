@@ -25,6 +25,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.svenjacobs.app.leon.core.domain.Cleaner
+import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.AppDatabase
 import dev.zacsweers.metro.AppScope
@@ -39,6 +40,7 @@ interface AppGraph : ViewModelGraph {
 
     val appDataStoreManager: AppDataStoreManager
     val cleaner: Cleaner
+    val shortLinkResolver: ShortLinkResolver
 
     @Provides
     @SingleIn(AppScope::class)

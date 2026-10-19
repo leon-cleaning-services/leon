@@ -85,4 +85,25 @@
     <string name="sanitizer_youtube_redirect_name">YouTube Redirect</string>
     <string name="a11y_howto">Depiction of a smartphone explaining application</string>
     <string name="a11y_back_navigation">Icon which navigates back</string>
+    <string name="ok">OK</string>
+    <string name="retry">Retry</string>
+    <string name="resolve_short_links">Resolve short links</string>
+    <string name="resolve_short_links_summary">Asks only the service that created a short link where it leads</string>
+    <string name="short_link_dialog_title">Resolve short links?</string>
+    <string name="short_link_dialog_text">Léon makes no network requests by default. Some services share short links whose target only they know. If you turn this on, Léon asks that service, and only that service, where the link leads, then cleans the result as usual.\n\nYou can change this anytime in Settings.</string>
+    <string name="sanitizer_short_link_name">%1$s Short Link</string>
+    <string name="sanitizer_short_link_hint">Resolves short links over the internet</string>
+    <string name="sanitizer_short_link_hint_disabled">Resolves short links over the internet. Turn on “Resolve short links” in Settings first.</string>
+    <string name="short_link_resolving_title">Resolving short link…</string>
+    <string name="short_link_resolving_text">Contacting %1$s</string>
+    <string name="short_link_error_title">Short link not resolved</string>
+    <string name="short_link_error_offline">No internet connection.</string>
+    <string name="short_link_error_timeout">The server did not respond in time.</string>
+    <string name="short_link_error_http">The server returned an error (HTTP %1$d).</string>
+    <string name="short_link_error_unknown">This short link could not be resolved.</string>
+    <string name="short_link_error_expired">This short link has expired.</string>
+    <string name="short_link_continue_without_resolving">Continue without resolving</string>
+    <string name="short_link_hint">This is a short link. Léon can only clean it after resolving it with the service that created it. Enable “Resolve short links” to clean it.</string>
+    <string name="short_link_hint_enable">Enable</string>
+    <string name="short_link_hint_toast">This is a short link and was not cleaned. Enable “Resolve short links” in Léon’s settings to clean it.</string>
 </resources>

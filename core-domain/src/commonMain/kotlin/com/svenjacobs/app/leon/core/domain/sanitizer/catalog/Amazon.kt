@@ -65,3 +65,17 @@ val AmazonSponsoredProduct =
                 Match(HostMatch.Pattern("amazon\\.[^/?#:]+"), pathPrefix = "/sspa/click"),
             ),
     )
+
+val AmazonShortLink =
+    Sanitizer(
+        id = SanitizerId("amazon_short_link"),
+        name = "Amazon Short Link",
+        // A code is never a single character, which keeps a bare /d/ from passing as the code "d".
+        rules = persistentListOf(Rule.Resolve("(?:/d)?/[A-Za-z0-9_-]{2,}/?")),
+        match =
+            persistentListOf(
+                Match(HostMatch.Domain("a.co"), pathPrefix = "/d/"),
+                Match(HostMatch.Domain("amzn.to")),
+                Match(HostMatch.Domain("amzn.eu")),
+            ),
+    )

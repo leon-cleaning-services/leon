@@ -1,6 +1,6 @@
 /*
  * Léon - The URL Cleaner
- * Copyright (C) 2023 Sven Jacobs
+ * Copyright (C) 2026 Sven Jacobs
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,21 +35,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.svenjacobs.app.leon.shared.resources.Res
+import com.svenjacobs.app.leon.shared.resources.sanitizer_short_link_hint
+import com.svenjacobs.app.leon.shared.resources.sanitizer_short_link_hint_disabled
 import com.svenjacobs.app.leon.shared.resources.sanitizers_description
 import com.svenjacobs.app.leon.shared.resources.sanitizers_no_results
 import com.svenjacobs.app.leon.shared.resources.sanitizers_search_clear
 import com.svenjacobs.app.leon.shared.resources.sanitizers_search_placeholder
+import com.svenjacobs.app.leon.ui.common.views.SwitchRow
 import com.svenjacobs.app.leon.ui.common.views.TopAppBar
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel
 import dev.zacsweers.metrox.viewmodel.metroViewModel
@@ -128,9 +128,11 @@ fun SettingsSanitizersScreen(
                         contentPadding = WindowInsets.navigationBars.asPaddingValues(),
                     ) {
                         items(uiState.sanitizers, key = { it.id.value }) { sanitizer ->
-                            Item(
+                            SanitizerItem(
                                 name = sanitizer.name,
                                 isEnabled = sanitizer.enabled,
+                                resolvesShortLinks = sanitizer.resolvesShortLinks,
+                                resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
                                 onCheckedChange = { enabled ->
                                     viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
                                 },
@@ -144,15 +146,28 @@ fun SettingsSanitizersScreen(
 }
 
 @Composable
-private fun Item(
+internal fun SanitizerItem(
     name: String,
     isEnabled: Boolean,
+    resolvesShortLinks: Boolean,
+    resolveShortLinksEnabled: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(modifier = Modifier.weight(2f), text = name)
-
-        Switch(checked = isEnabled, onCheckedChange = onCheckedChange)
-    }
+    SwitchRow(
+        modifier = modifier.padding(16.dp),
+        text = name,
+        // A short link sanitizer is the only kind that contacts a server, so it says so. Its own
+        // switch only means something while resolving is turned on in the settings, hence it is
+        // shown disabled until then; the stored state is left as it is.
+        supportingText =
+            when {
+                !resolvesShortLinks -> null
+                resolveShortLinksEnabled -> stringResource(Res.string.sanitizer_short_link_hint)
+                else -> stringResource(Res.string.sanitizer_short_link_hint_disabled)
+            },
+        checked = isEnabled,
+        onCheckedChange = onCheckedChange,
+        enabled = !resolvesShortLinks || resolveShortLinksEnabled,
+    )
 }
