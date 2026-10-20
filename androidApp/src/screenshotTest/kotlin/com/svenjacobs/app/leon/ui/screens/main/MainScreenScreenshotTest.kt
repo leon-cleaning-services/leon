@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import com.android.tools.screenshot.PreviewTest
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.theme.AppTheme
+import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
 import com.svenjacobs.app.leon.ui.tooling.FormFactorPreviews
 import kotlinx.collections.immutable.persistentListOf
 
@@ -45,6 +46,36 @@ private fun SuccessBodyScreenshot() {
             onUrlDecodeCheckedChange = {},
             onExtractUrlCheckedChange = {},
             onChangeToggled = { _, _ -> },
+            showShortLinkHint = false,
+            onEnableShortLinkResolvingClick = {},
+        )
+    }
+}
+
+@PreviewTest
+@FormFactorPreviews
+@DayNightPreviews
+@Composable
+private fun SuccessBodyShortLinkHintScreenshot() {
+    AppTheme {
+        SuccessBody(
+            result =
+                Result.Success(
+                    originalText = "https://www.tiktok.com/t/ZTabc123/?_t=8abc&_r=1",
+                    cleanedText = "https://www.tiktok.com/t/ZTabc123/",
+                    urls = persistentListOf(),
+                ),
+            isUrlDecodeEnabled = false,
+            isExtractUrlEnabled = false,
+            onShareClick = {},
+            onCopyToClipboardClick = {},
+            onOpenClick = {},
+            onResetClick = {},
+            onUrlDecodeCheckedChange = {},
+            onExtractUrlCheckedChange = {},
+            onChangeToggled = { _, _ -> },
+            showShortLinkHint = true,
+            onEnableShortLinkResolvingClick = {},
         )
     }
 }

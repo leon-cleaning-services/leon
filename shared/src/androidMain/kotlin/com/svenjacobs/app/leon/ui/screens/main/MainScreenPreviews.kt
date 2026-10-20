@@ -21,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.theme.AppTheme
+import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
+import com.svenjacobs.app.leon.ui.tooling.FormFactorPreviews
 import kotlinx.collections.immutable.persistentListOf
 
 @Preview(showBackground = true)
@@ -43,6 +45,8 @@ private fun SuccessBodyPreview() {
             onUrlDecodeCheckedChange = {},
             onExtractUrlCheckedChange = {},
             onChangeToggled = { _, _ -> },
+            showShortLinkHint = false,
+            onEnableShortLinkResolvingClick = {},
         )
     }
 }
@@ -67,6 +71,8 @@ private fun SuccessBodyWidePreview() {
             onUrlDecodeCheckedChange = {},
             onExtractUrlCheckedChange = {},
             onChangeToggled = { _, _ -> },
+            showShortLinkHint = false,
+            onEnableShortLinkResolvingClick = {},
         )
     }
 }
@@ -75,4 +81,36 @@ private fun SuccessBodyWidePreview() {
 @Composable
 private fun HowToBodyPreview() {
     AppTheme { HowToBody(onImportFromClipboardClick = {}, onSubmit = {}) }
+}
+
+@FormFactorPreviews
+@Composable
+private fun SuccessBodyShortLinkHintPreview() {
+    AppTheme {
+        SuccessBody(
+            result =
+                Result.Success(
+                    originalText = "https://www.tiktok.com/t/ZTabc123/?_t=8abc&_r=1",
+                    cleanedText = "https://www.tiktok.com/t/ZTabc123/",
+                    urls = persistentListOf(),
+                ),
+            isUrlDecodeEnabled = false,
+            isExtractUrlEnabled = false,
+            onShareClick = {},
+            onCopyToClipboardClick = {},
+            onOpenClick = {},
+            onResetClick = {},
+            onUrlDecodeCheckedChange = {},
+            onExtractUrlCheckedChange = {},
+            onChangeToggled = { _, _ -> },
+            showShortLinkHint = true,
+            onEnableShortLinkResolvingClick = {},
+        )
+    }
+}
+
+@DayNightPreviews
+@Composable
+private fun ShortLinkHintCardPreview() {
+    AppTheme { ShortLinkHintCard(onEnableClick = {}) }
 }

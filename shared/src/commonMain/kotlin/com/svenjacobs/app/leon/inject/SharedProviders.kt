@@ -23,9 +23,12 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.db.AppDatabase
 import com.svenjacobs.app.leon.db.HistoryDao
+import com.svenjacobs.app.leon.network.createHttpClient
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
+import io.ktor.client.HttpClient
 
 /** Providers that are the same on every platform, contributed to each platform's graph. */
 @ContributesTo(AppScope::class)
@@ -38,4 +41,7 @@ interface SharedProviders {
         Cleaner(sanitizers, repository)
 
     @Provides fun provideHistoryDao(db: AppDatabase): HistoryDao = db.historyDao()
+
+    /** Inject it as `Lazy<HttpClient>`, so that none is created while nothing is resolved. */
+    @Provides @SingleIn(AppScope::class) fun provideHttpClient(): HttpClient = createHttpClient()
 }

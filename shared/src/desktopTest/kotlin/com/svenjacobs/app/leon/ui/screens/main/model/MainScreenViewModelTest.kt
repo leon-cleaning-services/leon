@@ -27,11 +27,18 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Echobox
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalytics
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokShortLink
+import com.svenjacobs.app.leon.core.domain.shortlink.Resolution
+import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
+import com.svenjacobs.app.leon.network.RESOLVE_ALL_BUDGET_MILLIS
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
+import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkState
+import com.svenjacobs.app.leon.ui.shortlink.model.isSettled
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -45,12 +52,17 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -70,6 +82,7 @@ class MainScreenViewModelTest :
                 lastInput: AppDataStoreManager.LastInput? = null,
                 actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
                 historyEnabled: Boolean = true,
+                resolveShortLinksEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false),
             ): AppDataStoreManager = mockk {
                 every { urlDecodeEnabled } returns flowOf(false)
                 every { extractUrlEnabled } returns flowOf(false)
@@ -78,6 +91,11 @@ class MainScreenViewModelTest :
                 every { this@mockk.autoReset } returns flowOf(autoReset)
                 every { this@mockk.lastInput } returns flowOf(lastInput)
                 every { this@mockk.historyEnabled } returns flowOf(historyEnabled)
+                every { this@mockk.resolveShortLinksEnabled } returns resolveShortLinksEnabled
+                coEvery { setResolveShortLinksEnabled(any()) } answers
+                    {
+                        resolveShortLinksEnabled.value = firstArg()
+                    }
                 coEvery { setLastInput(any(), any()) } just Runs
             }
 
@@ -93,7 +111,8 @@ class MainScreenViewModelTest :
 
                 val cleaner =
                     mockk<Cleaner> {
-                        coEvery { clean(any(), any(), any(), any()) } answers
+                        coEvery { shortLinks(any()) } returns emptyList()
+                        coEvery { clean(any(), any(), any(), any(), any()) } answers
                             {
                                 val text = firstArg<String>()
                                 val url = requireNotNull(Url.parse(text))
@@ -119,6 +138,7 @@ class MainScreenViewModelTest :
                         appDataStoreManager = appDataStoreManager,
                         cleaner = cleaner,
                         historyDao = historyDao(),
+                        shortLinkResolver = FakeShortLinkResolver(),
                     )
             }
 
@@ -141,6 +161,7 @@ class MainScreenViewModelTest :
                                     repository = repository,
                                 ),
                             historyDao = historyDao(),
+                            shortLinkResolver = FakeShortLinkResolver(),
                         )
                     }
 
@@ -233,6 +254,7 @@ class MainScreenViewModelTest :
                                                 },
                                         ),
                                     historyDao = historyDao(),
+                                    shortLinkResolver = FakeShortLinkResolver(),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -309,6 +331,7 @@ class MainScreenViewModelTest :
                                                 },
                                         ),
                                     historyDao = historyDao(),
+                                    shortLinkResolver = FakeShortLinkResolver(),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -371,6 +394,7 @@ class MainScreenViewModelTest :
                                                 },
                                         ),
                                     historyDao = historyDao(),
+                                    shortLinkResolver = FakeShortLinkResolver(),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -437,6 +461,7 @@ class MainScreenViewModelTest :
                                         },
                                 ),
                             historyDao = historyDao(),
+                            shortLinkResolver = FakeShortLinkResolver(),
                         )
 
                     "report the deadline of an input which is still fresh" {
@@ -515,6 +540,7 @@ class MainScreenViewModelTest :
                                             every { autoReset } returns flowOf(AutoReset.OneMinute)
                                             every { this@mockk.lastInput } returns lastInput
                                             every { historyEnabled } returns flowOf(true)
+                                            every { resolveShortLinksEnabled } returns flowOf(false)
                                             coEvery { setLastInput(any(), any()) } answers
                                                 {
                                                     lastInput.value =
@@ -533,6 +559,7 @@ class MainScreenViewModelTest :
                                                 },
                                         ),
                                     historyDao = historyDao(),
+                                    shortLinkResolver = FakeShortLinkResolver(),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -603,6 +630,7 @@ class MainScreenViewModelTest :
                                         },
                                 ),
                             historyDao = dao,
+                            shortLinkResolver = FakeShortLinkResolver(),
                         )
 
                     "record a new input's cleaned URL exactly once" {
@@ -706,5 +734,360 @@ class MainScreenViewModelTest :
                         }
                     }
                 }
+
+            "short links" should
+                {
+                    val shortLink = "https://www.tiktok.com/t/ZT8abc123/?_t=8abc"
+                    val shortLinkUrl = Url.parse(shortLink)!!
+                    // What the TikTok sanitizer leaves of the short link when it is not resolved.
+                    val offline = "https://www.tiktok.com/t/ZT8abc123/"
+                    val target =
+                        Url.parse(
+                            "https://www.tiktok.com/@user/video/7300000000000000000?_r=1&u_code=x",
+                        )!!
+                    val cleanedTarget = "https://www.tiktok.com/@user/video/7300000000000000000"
+
+                    val otherShortLink = "https://vm.tiktok.com/ZMabc123/"
+                    val otherShortLinkUrl = Url.parse(otherShortLink)!!
+                    val otherTarget =
+                        Url.parse("https://www.tiktok.com/@other/video/7400000000000000000")!!
+
+                    /** A view model on a real [Cleaner] which knows TikTok and its short links. */
+                    fun viewModel(
+                        resolver: ShortLinkResolver,
+                        enabled: MutableStateFlow<Boolean> = MutableStateFlow(true),
+                        dao: HistoryDao = historyDao(),
+                        shortLinkSanitizerEnabled: Boolean = true,
+                    ) =
+                        MainScreenViewModel(
+                            appDataStoreManager =
+                                appDataStoreManager(resolveShortLinksEnabled = enabled),
+                            cleaner =
+                                Cleaner(
+                                    sanitizers = persistentListOf(Tiktok, TiktokShortLink),
+                                    repository =
+                                        mockk<SanitizerRepository> {
+                                            coEvery { isEnabled(any()) } returns true
+                                            coEvery { isEnabled(TiktokShortLink.id) } returns
+                                                shortLinkSanitizerEnabled
+                                        },
+                                ),
+                            historyDao = dao,
+                            shortLinkResolver = resolver,
+                        )
+
+                    fun MainScreenViewModel.success() = uiState.value.result as Result.Success
+
+                    "not contact anything while the setting is off" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val resolver = FakeShortLinkResolver()
+                            val viewModel = viewModel(resolver, MutableStateFlow(false))
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://example.com/p")
+                            viewModel.setText(shortLink)
+
+                            resolver.calls.shouldBeEmpty()
+                        }
+                    }
+
+                    "hint at a short link while the setting is off, and count the result final" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao = historyDao()
+                            val viewModel =
+                                viewModel(FakeShortLinkResolver(), MutableStateFlow(false), dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink, id = "id-1")
+
+                            val state = viewModel.uiState.value
+                            state.shortLink shouldBe ShortLinkState.Disabled
+                            viewModel.success().cleanedText shouldBe offline
+                            // The user turned resolving off, so the action after clean may run
+                            // with the short link cleaned as it is.
+                            state.shortLink.isSettled shouldBe true
+                            viewModel.consumeActionAfterClean("id-1") shouldBe true
+                            coVerify(exactly = 1) {
+                                dao.record(id = "id-1", url = offline, at = any(), max = any())
+                            }
+                        }
+                    }
+
+                    "show the offline result while resolving, then apply the target" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val gate = CompletableDeferred<Resolution>()
+                            val resolver = FakeShortLinkResolver { gate.await() }
+                            val dao = historyDao()
+                            val viewModel = viewModel(resolver, dao = dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink, id = "id-1")
+
+                            val resolving = viewModel.uiState.value.shortLink
+                            resolving shouldBe
+                                ShortLinkState.Resolving(persistentListOf(shortLinkUrl))
+                            (resolving as ShortLinkState.Resolving).hosts shouldBe
+                                listOf("www.tiktok.com")
+                            resolving.isSettled shouldBe false
+                            viewModel.success().cleanedText shouldBe offline
+                            // Neither recorded nor shared while the result is not final.
+                            coVerify(exactly = 0) { dao.record(any(), any(), any(), any()) }
+
+                            gate.complete(Resolution.Resolved(target))
+
+                            viewModel.uiState.value.shortLink shouldBe ShortLinkState.Idle
+                            val result = viewModel.success()
+                            result.cleanedText shouldBe cleanedTarget
+                            val replace = result.changes.first()
+                            replace.action shouldBe
+                                Change.Action.Replace(from = shortLinkUrl, to = target)
+                            replace.sanitizerIds shouldBe persistentListOf(TiktokShortLink.id)
+                            replace.applied shouldBe true
+                            resolver.calls shouldBe listOf(shortLinkUrl)
+                            coVerify(exactly = 1) {
+                                dao.record(
+                                    id = "id-1",
+                                    url = cleanedTarget,
+                                    at = any(),
+                                    max = any(),
+                                )
+                            }
+                            coVerify(exactly = 0) {
+                                dao.record(id = any(), url = offline, at = any(), max = any())
+                            }
+                        }
+                    }
+
+                    "keep the short link when its resolution is declined, without resolving again" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val resolver = FakeShortLinkResolver { Resolution.Resolved(target) }
+                            val viewModel = viewModel(resolver)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink)
+                            val replace = viewModel.success().changes.first()
+
+                            viewModel.onChangeToggled(replace, apply = false)
+                            viewModel.success().cleanedText shouldBe offline
+                            viewModel.success().changes.first().applied shouldBe false
+
+                            viewModel.onChangeToggled(replace, apply = true)
+                            viewModel.success().cleanedText shouldBe cleanedTarget
+
+                            resolver.calls shouldHaveSize 1
+                        }
+                    }
+
+                    "clean offline after cancelling, without any further request" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            var cancelled = false
+                            val resolver = FakeShortLinkResolver {
+                                try {
+                                    awaitCancellation()
+                                } finally {
+                                    cancelled = true
+                                }
+                            }
+                            val viewModel = viewModel(resolver)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink, id = "id-1")
+                            viewModel.uiState.value.shortLink.shouldBeInstanceOf<
+                                ShortLinkState.Resolving,
+                            >()
+
+                            viewModel.cancelShortLinkResolving()
+
+                            cancelled shouldBe true
+                            viewModel.uiState.value.shortLink shouldBe ShortLinkState.Idle
+                            viewModel.success().cleanedText shouldBe offline
+
+                            viewModel.onChangeToggled(
+                                viewModel.success().changes.first(),
+                                apply = true,
+                            )
+                            resolver.calls shouldHaveSize 1
+                        }
+                    }
+
+                    "report a failure, and hold back the result until the user decides" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao = historyDao()
+                            val resolver = FakeShortLinkResolver {
+                                Resolution.Failed(Resolution.Reason.Offline)
+                            }
+                            val viewModel = viewModel(resolver, dao = dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink, id = "id-1")
+
+                            val failed = viewModel.uiState.value.shortLink
+                            failed shouldBe
+                                ShortLinkState.Failed(
+                                    persistentMapOf(shortLinkUrl to Resolution.Reason.Offline),
+                                )
+                            failed.isSettled shouldBe false
+                            viewModel.success().cleanedText shouldBe offline
+                            coVerify(exactly = 0) { dao.record(any(), any(), any(), any()) }
+                        }
+                    }
+
+                    "continue without resolving: keep the offline result, settled" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao = historyDao()
+                            val resolver = FakeShortLinkResolver {
+                                Resolution.Failed(Resolution.Reason.HttpError(403))
+                            }
+                            val viewModel = viewModel(resolver, dao = dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink, id = "id-1")
+                            viewModel.continueWithoutResolving()
+
+                            viewModel.uiState.value.shortLink shouldBe ShortLinkState.Idle
+                            viewModel.uiState.value.shortLink.isSettled shouldBe true
+                            viewModel.success().cleanedText shouldBe offline
+                            resolver.calls shouldHaveSize 1
+                            coVerify(exactly = 1) {
+                                dao.record(id = "id-1", url = offline, at = any(), max = any())
+                            }
+                        }
+                    }
+
+                    "apply partial successes, and retry only the short links which failed" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            var otherAttempts = 0
+                            val resolver = FakeShortLinkResolver { url ->
+                                when (url) {
+                                    shortLinkUrl -> Resolution.Resolved(target)
+                                    else ->
+                                        if (otherAttempts++ == 0) {
+                                            Resolution.Failed(Resolution.Reason.Timeout)
+                                        } else {
+                                            Resolution.Resolved(otherTarget)
+                                        }
+                                }
+                            }
+                            val viewModel = viewModel(resolver)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("$shortLink and $otherShortLink")
+
+                            viewModel.uiState.value.shortLink shouldBe
+                                ShortLinkState.Failed(
+                                    persistentMapOf(otherShortLinkUrl to Resolution.Reason.Timeout),
+                                )
+                            // The success is applied already, underneath the error.
+                            viewModel.success().cleanedText shouldBe
+                                "$cleanedTarget and $otherShortLink"
+
+                            viewModel.retryShortLinkResolving()
+
+                            viewModel.uiState.value.shortLink shouldBe ShortLinkState.Idle
+                            viewModel.success().cleanedText shouldBe
+                                "$cleanedTarget and $otherTarget"
+                            resolver.calls shouldBe
+                                listOf(shortLinkUrl, otherShortLinkUrl, otherShortLinkUrl)
+                        }
+                    }
+
+                    "resolve straight away once enabled from the hint" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val enabled = MutableStateFlow(false)
+                            val resolver = FakeShortLinkResolver { Resolution.Resolved(target) }
+                            val viewModel = viewModel(resolver, enabled)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink)
+                            viewModel.uiState.value.shortLink shouldBe ShortLinkState.Disabled
+
+                            viewModel.enableShortLinkResolving()
+
+                            enabled.value shouldBe true
+                            viewModel.uiState.value.shortLink shouldBe ShortLinkState.Idle
+                            viewModel.success().cleanedText shouldBe cleanedTarget
+                            resolver.calls shouldHaveSize 1
+                        }
+                    }
+
+                    "give up on a short link which takes longer than the budget" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val resolver = FakeShortLinkResolver {
+                                delay(RESOLVE_ALL_BUDGET_MILLIS * 2)
+                                Resolution.Resolved(target)
+                            }
+                            val viewModel = viewModel(resolver)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink)
+                            advanceTimeBy(RESOLVE_ALL_BUDGET_MILLIS - 1)
+                            viewModel.uiState.value.shortLink.shouldBeInstanceOf<
+                                ShortLinkState.Resolving,
+                            >()
+
+                            advanceTimeBy(2)
+
+                            viewModel.uiState.value.shortLink shouldBe
+                                ShortLinkState.Failed(
+                                    persistentMapOf(shortLinkUrl to Resolution.Reason.Timeout),
+                                )
+                        }
+                    }
+
+                    "neither hint nor resolve when the vendor's short link sanitizer is off" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            for (enabled in listOf(true, false)) {
+                                val resolver = FakeShortLinkResolver()
+                                val viewModel =
+                                    viewModel(
+                                        resolver,
+                                        MutableStateFlow(enabled),
+                                        shortLinkSanitizerEnabled = false,
+                                    )
+                                val collecting = launch { viewModel.uiState.collect {} }
+
+                                viewModel.setText(shortLink)
+
+                                viewModel.uiState.value.shortLink shouldBe ShortLinkState.Idle
+                                viewModel.success().cleanedText shouldBe offline
+                                resolver.calls.shouldBeEmpty()
+                                collecting.cancel()
+                            }
+                        }
+                    }
+
+                    "not resolve again when the screen resubscribes" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val resolver = FakeShortLinkResolver { Resolution.Resolved(target) }
+                            val viewModel = viewModel(resolver)
+                            val collecting = launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(shortLink)
+                            viewModel.success().cleanedText shouldBe cleanedTarget
+
+                            // Long enough for the state to stop being shared, as when the app is
+                            // in the background.
+                            collecting.cancel()
+                            advanceTimeBy(10_000)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.success().cleanedText shouldBe cleanedTarget
+                            resolver.calls shouldHaveSize 1
+                        }
+                    }
+                }
         },
     )
+
+/** A [ShortLinkResolver] which records every request and answers it through [answer]. */
+private class FakeShortLinkResolver(
+    private val answer: suspend (Url) -> Resolution = { error("Unexpected request for $it") },
+) : ShortLinkResolver {
+
+    val calls = mutableListOf<Url>()
+
+    override suspend fun resolve(url: Url): Resolution {
+        calls += url
+        return answer(url)
+    }
+}

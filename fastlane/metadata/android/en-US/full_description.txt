@@ -1,6 +1,6 @@
 Léon - The URL Cleaner removes tracking and other obsolete parameters from a URL before sharing. Its usage is simple, integrating into Android's standard sharing mechanism.
 
-Léon runs on Android 5.0 and later, is open source and does not contain any tracking or advertising frameworks. Léon does not collect any data about you.
+Léon runs on Android 5.0 and later, is open source and does not contain any tracking or advertising frameworks. Léon does not collect any data about you. Léon works offline; resolving short links is optional, off by default and only ever contacts the service that created the short link.
 
 The benefits of removing tracking parameters are:
 

@@ -76,12 +76,17 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
 
             implementation(libs.mikepenz.aboutlibraries.compose.m3)
+
+            // api, not implementation: HttpClient is a binding of SharedProviders, so the Metro graphs
+            // of androidApp and desktopApp have to see the type.
+            api(libs.ktor.client.core)
         }
 
         androidMain.dependencies {
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.androidx.browser)
+            implementation(libs.ktor.client.okhttp)
         }
 
         val desktopMain by getting {
@@ -89,6 +94,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(libs.androidx.sqlite.bundled)
+                implementation(libs.ktor.client.okhttp)
             }
         }
 
@@ -98,6 +104,7 @@ kotlin {
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.mockk)
                 implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.ktor.client.mock)
             }
         }
     }

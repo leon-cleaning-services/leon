@@ -20,11 +20,31 @@ package com.svenjacobs.app.leon
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.lifecycleScope
+import com.svenjacobs.app.leon.core.domain.url.Url
+import com.svenjacobs.app.leon.ui.shortlink.ShortLinkResolvingDialogs
+import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkCommand
+import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkState
+import com.svenjacobs.app.leon.ui.shortlink.model.resolveInteractively
+import com.svenjacobs.app.leon.ui.shortlink.shortLinkHintMessage
+import com.svenjacobs.app.leon.ui.theme.AppTheme
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
+/**
+ * Cleans the text selected in another app, or passed in by one, and hands it back.
+ *
+ * The activity is translucent: it has nothing to show unless a short link is resolved, which shows
+ * the same progress and error dialogs as the main screen on top of the calling app.
+ */
 @RequiresApi(Build.VERSION_CODES.M)
 class ProcessTextActivity : ComponentActivity() {
 
@@ -36,8 +56,6 @@ class ProcessTextActivity : ComponentActivity() {
             Intent.ACTION_PROCESS_TEXT -> actionProcessText()
             else -> cancel()
         }
-
-        finish()
     }
 
     private fun actionClean() {
@@ -57,7 +75,7 @@ class ProcessTextActivity : ComponentActivity() {
             text.isNullOrBlank() -> cancel()
 
             // If readonly, delegate to MainActivity
-            readonly ->
+            readonly -> {
                 startActivity(
                     Intent(this, MainActivity::class.java).apply {
                         action = Intent.ACTION_SEND
@@ -65,23 +83,78 @@ class ProcessTextActivity : ComponentActivity() {
                         putExtra(Intent.EXTRA_TEXT, text)
                     },
                 )
+                finish()
+            }
 
             else -> result(text, Intent.EXTRA_PROCESS_TEXT)
         }
     }
 
+    /**
+     * Cleans [text], returns it as [key] and finishes.
+     *
+     * Resolving a short link may take seconds, so this must not block the main thread. setResult()
+     * still reaches the caller as long as it comes before finish().
+     */
     private fun result(text: String, key: String) {
-        // Needs to run with runBlocking or else setResult() won't work
-        runBlocking {
-            val decodeUrl = appGraph.appDataStoreManager.urlDecodeEnabled.firstOrNull() ?: false
-            val result = appGraph.cleaner.clean(text = text, decodeUrl = decodeUrl)
+        lifecycleScope.launch {
+            val cleanedText = clean(text)
+            setResult(RESULT_OK, Intent().apply { putExtra(key, cleanedText) })
+            finish()
+        }
+    }
 
-            setResult(RESULT_OK, Intent().apply { putExtra(key, result.cleanedText) })
+    private suspend fun clean(text: String): String {
+        val appDataStoreManager = appGraph.appDataStoreManager
+        val decodeUrl = appDataStoreManager.urlDecodeEnabled.first()
+        val shortLinks = appGraph.cleaner.shortLinks(text)
+
+        val resolved =
+            when {
+                shortLinks.isEmpty() -> emptyMap()
+
+                // There is no screen to show the hint on, so a toast has to do.
+                !appDataStoreManager.resolveShortLinksEnabled.first() -> {
+                    Toast.makeText(applicationContext, shortLinkHintMessage(), Toast.LENGTH_LONG)
+                        .show()
+                    emptyMap()
+                }
+
+                else -> resolve(shortLinks)
+            }
+
+        return appGraph.cleaner
+            .clean(text = text, decodeUrl = decodeUrl, resolved = resolved)
+            .cleanedText
+    }
+
+    /**
+     * Resolves [urls] while showing the progress dialog, and the error dialog when that fails.
+     * Cancelling, or continuing without resolving, keeps the short links as they are.
+     */
+    private suspend fun resolve(urls: List<Url>): Map<Url, Url> {
+        val commands = Channel<ShortLinkCommand>(Channel.CONFLATED)
+        var state by mutableStateOf<ShortLinkState>(ShortLinkState.Idle)
+
+        setContent {
+            AppTheme {
+                ShortLinkResolvingDialogs(
+                    state = state,
+                    onCancel = { commands.trySend(ShortLinkCommand.Cancel) },
+                    onRetry = { commands.trySend(ShortLinkCommand.Retry) },
+                    onContinue = { commands.trySend(ShortLinkCommand.Continue) },
+                )
+            }
+        }
+
+        return appGraph.shortLinkResolver.resolveInteractively(urls = urls, commands = commands) {
+            state = it.state
         }
     }
 
     private fun cancel() {
         setResult(RESULT_CANCELED)
+        finish()
     }
 
     private companion object {

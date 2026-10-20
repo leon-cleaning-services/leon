@@ -45,7 +45,9 @@
     <string name="options">Options</string>
     <string name="extract_url">Extract only URL</string>
     <string name="register_as_browser">Register Léon as browser</string>
+    <string name="register_as_browser_summary">Lets you open links from other apps with Léon, which cleans them first</string>
     <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string>
+    <string name="open_in_custom_tabs_summary">Opens cleaned links in an in-app browser tab instead of the browser app</string>
     <string name="action_after_clean">Action after clean</string>
     <string name="do_nothing">Do nothing</string>
     <string name="open_share_menu">Open share menu</string>
@@ -55,6 +57,7 @@
     <string name="auto_reset_off">Off</string>
     <string name="auto_reset_minutes">%1$d min</string>
     <string name="history_enabled">Keep history of cleaned URLs</string>
+    <string name="history_enabled_summary">Saves cleaned URLs on this device only</string>
     <string name="history_empty_title">Nothing here yet</string>
     <string name="history_empty_text">URLs you clean appear here, so you can share, copy or open them again later. The last ten are kept.</string>
     <string name="history_disabled_text">The history is turned off. Turn it on in the settings to keep the last ten cleaned URLs.</string>
@@ -65,6 +68,7 @@
     <string name="undo">Undo</string>
     <string name="cancel">Cancel</string>
     <string name="protect_screen">Protect app screen</string>
+    <string name="protect_screen_summary">Hides the app’s content from screenshots, screen recordings and recent apps</string>
     <string name="about">About</string>
     <string name="about_developer">Developed by %1$s with the help of many %2$s.</string>
     <string name="about_contributors">contributors</string>
@@ -85,4 +89,25 @@
     <string name="sanitizer_youtube_redirect_name">YouTube Redirect</string>
     <string name="a11y_howto">Depiction of a smartphone explaining application</string>
     <string name="a11y_back_navigation">Icon which navigates back</string>
+    <string name="ok">OK</string>
+    <string name="retry">Retry</string>
+    <string name="resolve_short_links">Resolve short links</string>
+    <string name="resolve_short_links_summary">Asks only the service that created a short link where it leads</string>
+    <string name="short_link_dialog_title">Resolve short links?</string>
+    <string name="short_link_dialog_text">Léon makes no network requests by default. Some services share short links whose target only they know. If you turn this on, Léon asks that service, and only that service, where the link leads, then cleans the result as usual.\n\nYou can change this anytime in Settings.</string>
+    <string name="sanitizer_short_link_name">%1$s Short Link</string>
+    <string name="sanitizer_short_link_hint">Resolves short links over the internet</string>
+    <string name="sanitizer_short_link_hint_disabled">Resolves short links over the internet. Turn on “Resolve short links” in Settings first.</string>
+    <string name="short_link_resolving_title">Resolving short link…</string>
+    <string name="short_link_resolving_text">Contacting %1$s</string>
+    <string name="short_link_error_title">Short link not resolved</string>
+    <string name="short_link_error_offline">No internet connection.</string>
+    <string name="short_link_error_timeout">The server did not respond in time.</string>
+    <string name="short_link_error_http">The server returned an error (HTTP %1$d).</string>
+    <string name="short_link_error_unknown">This short link could not be resolved.</string>
+    <string name="short_link_error_expired">This short link has expired.</string>
+    <string name="short_link_continue_without_resolving">Continue without resolving</string>
+    <string name="short_link_hint">This is a short link. Léon can only clean it after resolving it with the service that created it. Enable “Resolve short links” to clean it.</string>
+    <string name="short_link_hint_enable">Enable</string>
+    <string name="short_link_hint_toast">This is a short link and was not cleaned. Enable “Resolve short links” in Léon’s settings to clean it.</string>
 </resources>

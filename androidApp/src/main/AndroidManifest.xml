@@ -19,6 +19,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Only used to resolve short links, which is optional and disabled by default. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".LeonApplication"
         android:allowBackup="true"
@@ -46,10 +49,14 @@
             </intent-filter>
         </activity>
 
+        <!-- configChanges: recreating the activity would request a short link again and repeat
+             the toast. Compose recomposes for these changes, uiMode (dark theme) included. -->
         <activity
             android:name=".ProcessTextActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density"
             android:exported="true"
-            android:label="@string/process_text_action_name">
+            android:label="@string/process_text_action_name"
+            android:theme="@style/Theme.App.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />

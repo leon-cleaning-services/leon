@@ -61,3 +61,12 @@ val RedditMail =
             ),
         match = persistentListOf(Match(HostMatch.Domain("click.redditmail.com"))),
     )
+
+val RedditShortLink =
+    Sanitizer(
+        id = SanitizerId("reddit_short_link"),
+        name = "Reddit Short Link",
+        // The share links of the Reddit app: /r/<subreddit>/s/<code>.
+        rules = persistentListOf(Rule.Resolve("/r/[^/]+/s/[A-Za-z0-9_-]+/?")),
+        match = persistentListOf(Match(HostMatch.Subdomains("reddit.com"))),
+    )

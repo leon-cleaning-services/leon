@@ -239,8 +239,10 @@ val Example =
 `name` is the English display name. Brand names are shown as they are; for a *descriptive* name that
 should be translated, add a string resource to
 `shared/src/commonMain/composeResources/values*/strings.xml` and an entry to `TRANSLATED_NAMES` in
-`shared/src/commonMain/kotlin/com/svenjacobs/app/leon/sanitizer/SanitizerNames.kt`, referenced as
-`Res.string.*`.
+`shared/src/commonMain/kotlin/com/svenjacobs/app/leon/sanitizer/SanitizerNames.kt`:
+`SanitizerId("example") to TranslatedName(Res.string.sanitizer_example_name)`. A short link
+sanitizer reuses the shared "<Brand> Short Link" string instead, as
+`SanitizerId("example_short_link") to shortLink("Example")`.
 
 **`match` — which URLs the sanitizer applies to** (a URL matching *any* entry is sanitized):
 
@@ -286,6 +288,24 @@ sanitizer's rules is duplication, not thoroughness.
     and `Decode.JsonField(key)`, applied in order.
   - `dropParameters = true` discards the query of the *target*, for wrappers which append their
     tracking to it rather than to themselves.
+- `Rule.Resolve("(?:/t)?/[A-Za-z0-9_-]{2,}/?")` – declares a URL whose path the regex matches
+  completely a **short link**, whose target only the server that created it knows
+  (`tiktok.com/t/<code>`, `vm.tiktok.com/<code>`). It is the only rule that leads to network
+  traffic, and it only *declares*: `Cleaner` never makes a request. The app resolves the link
+  beforehand, and only once the user has opted in to the "Resolve short links" setting (off by
+  default). The resolved target then replaces the short link as a change the user can decline.
+  Without a target the rule does nothing.
+  - Put it in a `<Vendor>ShortLink` sanitizer of its own (`TiktokShortLink`, id
+    `tiktok_short_link`), next to the vendor's regular sanitizer and holding no other rule. Users
+    can then stop Léon from contacting one vendor without losing that vendor's cleaning. The target
+    is cleaned by the vendor's regular sanitizer on the next pass. Give it a
+    `shortLink("<Brand>")` entry in `TRANSLATED_NAMES`, so its name is translated.
+  - Narrow the URLs down as far as possible, because they are what gets sent to a server: use
+    `pathPrefix` to keep a site's own pages out (`Match(HostMatch.Domain("tiktok.com"),
+    pathPrefix = "/t/")`) and make the pattern fit the code alone, never the bare host. Require a
+    code of at least two characters (`{2,}`), so a bare `/t/` never counts as a short link.
+  - Add only hosts which answer with an HTTP redirect. A resolver never contacts the target site,
+    so a host that redirects with JavaScript or a meta refresh cannot be resolved.
 
 Regexes are held as **strings**, never as `Regex`, so that the catalog stays plain data.
 

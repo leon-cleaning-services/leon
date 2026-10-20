@@ -43,7 +43,9 @@
     <string name="options">Opcje</string>
     <string name="extract_url">Wyodrębnij tylko URL</string>
     <string name="register_as_browser">Zarejestruj Léona jako przeglądarkę</string>
+    <string name="register_as_browser_summary">Pozwala otwierać linki z innych aplikacji w Léonie, który najpierw je czyści</string>
     <string name="open_in_custom_tabs">Otwórz adresy URL w niestandardowych kartach przeglądarki</string>
+    <string name="open_in_custom_tabs_summary">Otwiera wyczyszczone linki w karcie przeglądarki w aplikacji zamiast w aplikacji przeglądarki</string>
     <string name="action_after_clean">Akcja po wyczyszczeniu</string>
     <string name="do_nothing">Nic nie rób</string>
     <string name="open_share_menu">Otwórz menu udostępniania</string>
@@ -53,6 +55,7 @@
     <string name="auto_reset_off">Wyłączone</string>
     <string name="auto_reset_minutes">%1$d min</string>
     <string name="history_enabled">Zachowuj historię wyczyszczonych adresów URL</string>
+    <string name="history_enabled_summary">Zapisuje wyczyszczone adresy URL tylko na tym urządzeniu</string>
     <string name="history_empty_title">Nic tu jeszcze nie ma</string>
     <string name="history_empty_text">Wyczyszczone adresy URL pojawiają się tutaj, dzięki czemu możesz je później udostępnić, skopiować lub otworzyć ponownie. Zachowywanych jest ostatnich dziesięć.</string>
     <string name="history_disabled_text">Historia jest wyłączona. Włącz ją w ustawieniach, aby zachowywać ostatnie dziesięć wyczyszczonych adresów URL.</string>
@@ -63,6 +66,7 @@
     <string name="undo">Cofnij</string>
     <string name="cancel">Anuluj</string>
     <string name="protect_screen">Chroń ekran aplikacji</string>
+    <string name="protect_screen_summary">Ukrywa zawartość aplikacji na zrzutach ekranu, nagraniach ekranu i liście ostatnich aplikacji</string>
     <string name="about">O aplikacji</string>
     <string name="about_developer">Opracowane przez %1$s przy pomocy wielu %2$s.</string>
     <string name="about_contributors">współtwórców</string>
@@ -83,4 +87,25 @@
     <string name="sanitizer_youtube_redirect_name">Przekierowanie YouTube</string>
     <string name="a11y_howto">Obraz aplikacji wyjaśniającej na smartfonie</string>
     <string name="a11y_back_navigation">Ikona do nawigacji wstecz</string>
+    <string name="ok">OK</string>
+    <string name="retry">Ponów</string>
+    <string name="resolve_short_links">Rozwijaj skrócone linki</string>
+    <string name="resolve_short_links_summary">Pyta o cel wyłącznie usługę, która utworzyła skrócony link</string>
+    <string name="short_link_dialog_title">Rozwijać skrócone linki?</string>
+    <string name="short_link_dialog_text">Léon domyślnie nie wysyła żadnych zapytań sieciowych. Niektóre usługi udostępniają skrócone linki, których cel znają tylko one same. Po włączeniu tej opcji Léon zapyta tę usługę – i tylko ją – dokąd prowadzi link, a następnie jak zwykle wyczyści wynik.\n\nMożesz to w każdej chwili zmienić w ustawieniach.</string>
+    <string name="sanitizer_short_link_name">Skrócony link %1$s</string>
+    <string name="sanitizer_short_link_hint">Rozwija skrócone linki przez internet</string>
+    <string name="sanitizer_short_link_hint_disabled">Rozwija skrócone linki przez internet. Najpierw włącz „Rozwijaj skrócone linki” w ustawieniach.</string>
+    <string name="short_link_resolving_title">Rozwijanie skróconego linku…</string>
+    <string name="short_link_resolving_text">Łączenie z %1$s</string>
+    <string name="short_link_error_title">Nie rozwinięto skróconego linku</string>
+    <string name="short_link_error_offline">Brak połączenia z internetem.</string>
+    <string name="short_link_error_timeout">Serwer nie odpowiedział na czas.</string>
+    <string name="short_link_error_http">Serwer zwrócił błąd (HTTP %1$d).</string>
+    <string name="short_link_error_unknown">Nie udało się rozwinąć tego skróconego linku.</string>
+    <string name="short_link_error_expired">Ten skrócony link wygasł.</string>
+    <string name="short_link_continue_without_resolving">Kontynuuj bez rozwijania</string>
+    <string name="short_link_hint">To jest skrócony link. Léon może go wyczyścić dopiero po rozwinięciu go w usłudze, która go utworzyła. Włącz „Rozwijaj skrócone linki”, aby go wyczyścić.</string>
+    <string name="short_link_hint_enable">Włącz</string>
+    <string name="short_link_hint_toast">To jest skrócony link, więc nie został wyczyszczony. Włącz „Rozwijaj skrócone linki” w ustawieniach Léona, aby go wyczyścić.</string>
 </resources>

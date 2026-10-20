@@ -43,7 +43,9 @@
     <string name="options">オプション</string>
     <string name="extract_url">URL のみ抽出</string>
     <string name="register_as_browser">Léon をブラウザとして登録</string>
+    <string name="register_as_browser_summary">他のアプリのリンクを Léon で開き、先にクリーンできるようにします</string>
     <string name="open_in_custom_tabs">URL をブラウザのカスタムタブで開く</string>
+    <string name="open_in_custom_tabs_summary">クリーンしたリンクをブラウザアプリではなくアプリ内のブラウザタブで開きます</string>
     <string name="action_after_clean">クリーン後のアクション</string>
     <string name="do_nothing">何もしない</string>
     <string name="open_share_menu">共有メニューを開く</string>
@@ -53,6 +55,7 @@
     <string name="auto_reset_off">オフ</string>
     <string name="auto_reset_minutes">%1$d 分</string>
     <string name="history_enabled">クリーンした URL の履歴を保存する</string>
+    <string name="history_enabled_summary">クリーンした URL をこの端末にのみ保存します</string>
     <string name="history_empty_title">まだ何もありません</string>
     <string name="history_empty_text">クリーンした URL がここに表示され、後で共有、コピー、または開くことができます。最新10件が保存されます。</string>
     <string name="history_disabled_text">履歴はオフになっています。設定でオンにすると、クリーンした URL の最新10件が保存されます。</string>
@@ -63,6 +66,7 @@
     <string name="undo">元に戻す</string>
     <string name="cancel">キャンセル</string>
     <string name="protect_screen">アプリ画面を保護</string>
+    <string name="protect_screen_summary">スクリーンショット、画面録画、最近使ったアプリの一覧でアプリの内容を非表示にします</string>
     <string name="about">アプリについて</string>
     <string name="about_developer">%1$s と多くの %2$s によって開発されました。</string>
     <string name="about_contributors">コントリビューター</string>
@@ -83,4 +87,25 @@
     <string name="sanitizer_youtube_redirect_name">YouTube リダイレクト</string>
     <string name="a11y_howto">アプリの使い方を説明するスマートフォンのイラスト</string>
     <string name="a11y_back_navigation">前の画面に戻るアイコン</string>
+    <string name="ok">OK</string>
+    <string name="retry">再試行</string>
+    <string name="resolve_short_links">短縮リンクを展開する</string>
+    <string name="resolve_short_links_summary">短縮リンクを作成したサービスにのみリンク先を問い合わせます</string>
+    <string name="short_link_dialog_title">短縮リンクを展開しますか？</string>
+    <string name="short_link_dialog_text">Léon は標準ではネットワーク通信を一切行いません。一部のサービスが共有する短縮リンクは、リンク先をそのサービスしか知りません。この機能をオンにすると、Léon はそのサービス（そのサービスのみ）にリンク先を問い合わせ、その結果をいつもどおりクリーンにします。\n\nこの設定はいつでも設定画面で変更できます。</string>
+    <string name="sanitizer_short_link_name">%1$s 短縮リンク</string>
+    <string name="sanitizer_short_link_hint">インターネット経由で短縮リンクを展開します</string>
+    <string name="sanitizer_short_link_hint_disabled">インターネット経由で短縮リンクを展開します。先に設定で「短縮リンクを展開する」をオンにしてください。</string>
+    <string name="short_link_resolving_title">短縮リンクを展開中…</string>
+    <string name="short_link_resolving_text">%1$s に接続中</string>
+    <string name="short_link_error_title">短縮リンクを展開できませんでした</string>
+    <string name="short_link_error_offline">インターネットに接続されていません。</string>
+    <string name="short_link_error_timeout">サーバーが時間内に応答しませんでした。</string>
+    <string name="short_link_error_http">サーバーがエラーを返しました（HTTP %1$d）。</string>
+    <string name="short_link_error_unknown">この短縮リンクは展開できませんでした。</string>
+    <string name="short_link_error_expired">この短縮リンクは有効期限が切れています。</string>
+    <string name="short_link_continue_without_resolving">展開せずに続行</string>
+    <string name="short_link_hint">これは短縮リンクです。Léon は、作成元のサービスで展開した後でなければクリーンにできません。クリーンにするには「短縮リンクを展開する」をオンにしてください。</string>
+    <string name="short_link_hint_enable">オンにする</string>
+    <string name="short_link_hint_toast">これは短縮リンクのため、クリーンにされませんでした。クリーンにするには Léon の設定で「短縮リンクを展開する」をオンにしてください。</string>
 </resources>

@@ -7,7 +7,8 @@ parameters from a URL before sharing. Its usage is simple, integrating into Andr
 sharing mechanism.
 
 Léon runs on Android 7.0 and later, is open source and does not contain any tracking or advertising
-frameworks. Léon does not collect any data about you.
+frameworks. Léon does not collect any data about you. Léon works offline; resolving short links is
+optional, off by default and only ever contacts the service that created the short link.
 
 Léon also runs on the desktop, built with Kotlin Multiplatform and Compose Desktop, and is packaged
 as `.deb`, `.rpm` and `.AppImage` for Linux, `.msi` for Windows and `.dmg` for macOS (arm64 only).

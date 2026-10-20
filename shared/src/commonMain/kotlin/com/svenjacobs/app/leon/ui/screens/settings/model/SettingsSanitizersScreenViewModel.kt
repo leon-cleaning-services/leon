@@ -22,6 +22,8 @@ import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
+import com.svenjacobs.app.leon.core.domain.sanitizer.resolvesShortLinks
+import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.sanitizer.resolveDisplayName
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsSanitizersScreenViewModel.UiState.Sanitizer
 import dev.zacsweers.metro.AppScope
@@ -44,13 +46,24 @@ import kotlinx.coroutines.launch
 class SettingsSanitizersScreenViewModel(
     private val sanitizers: SanitizersCollection,
     private val repository: SanitizerRepository,
+    private val appDataStoreManager: AppDataStoreManager,
 ) : ViewModel() {
 
     data class UiState(
         val sanitizers: ImmutableList<Sanitizer> = persistentListOf(),
         val searchQuery: String = "",
+        val resolveShortLinksEnabled: Boolean = false,
     ) {
-        data class Sanitizer(val id: SanitizerId, val name: String, val enabled: Boolean)
+        /**
+         * @property resolvesShortLinks whether this sanitizer contacts a short link's service,
+         *   which only happens while short link resolving is turned on in the settings
+         */
+        data class Sanitizer(
+            val id: SanitizerId,
+            val name: String,
+            val enabled: Boolean,
+            val resolvesShortLinks: Boolean = false,
+        )
     }
 
     private val sanitizersById = sanitizers.associateBy { it.id }
@@ -58,7 +71,11 @@ class SettingsSanitizersScreenViewModel(
     private val _searchQuery = MutableStateFlow("")
 
     val uiState: StateFlow<UiState> =
-        combine(repository.state, _searchQuery) { states, query ->
+        combine(
+                repository.state,
+                _searchQuery,
+                appDataStoreManager.resolveShortLinksEnabled,
+            ) { states, query, resolveShortLinksEnabled ->
                 val allSanitizers =
                     states
                         .map { state ->
@@ -68,6 +85,8 @@ class SettingsSanitizersScreenViewModel(
                                     sanitizersById[state.id]?.resolveDisplayName()
                                         ?: state.id.value,
                                 enabled = state.enabled,
+                                resolvesShortLinks =
+                                    sanitizersById[state.id]?.resolvesShortLinks == true,
                             )
                         }
                         .sortedBy { it.name.lowercase() }
@@ -81,7 +100,11 @@ class SettingsSanitizersScreenViewModel(
                         allSanitizers.filter { it.name.contains(trimmedQuery, ignoreCase = true) }
                     }
 
-                UiState(sanitizers = filteredSanitizers.toImmutableList(), searchQuery = query)
+                UiState(
+                    sanitizers = filteredSanitizers.toImmutableList(),
+                    searchQuery = query,
+                    resolveShortLinksEnabled = resolveShortLinksEnabled,
+                )
             }
             .stateIn(
                 scope = viewModelScope,

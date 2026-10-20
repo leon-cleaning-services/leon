@@ -29,6 +29,8 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
+import com.svenjacobs.app.leon.core.domain.sanitizer.resolveRules
+import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.core.domain.url.decodeUrl
 import com.svenjacobs.app.leon.core.domain.url.decoded
@@ -78,12 +80,17 @@ class Cleaner(
      * @param declined Changes the user does not want applied. A change is recognized across calls
      *   because cleaning the same URL again proposes equal changes.
      * @param additional Changes the user asked for themselves, applied after the sanitizers.
+     * @param resolved The targets of the [short links][shortLinks] in [text] which the caller
+     *   resolved beforehand, keyed by the short link as it was parsed out of [text]. A short link
+     *   with a target is replaced by it — a change the user can decline like any other — and one
+     *   without is cleaned as if it was an ordinary URL. Cleaning itself never performs a request.
      */
     suspend fun clean(
         text: String?,
         decodeUrl: Boolean = false,
         declined: Set<Change> = emptySet(),
         additional: Set<Change> = emptySet(),
+        resolved: Map<Url, Url> = emptyMap(),
     ): Result {
         val input = requireNotNull(text?.takeIf(String::isNotEmpty))
 
@@ -93,7 +100,7 @@ class Cleaner(
         for (match in URL_REGEX.findAll(input)) {
             // A URL which cannot be parsed is left alone rather than mangled.
             val original = Url.parse(match.value) ?: continue
-            val url = cleanUrl(original, decodeUrl, declined, additional)
+            val url = cleanUrl(original, decodeUrl, declined, additional, resolved)
             urls += url
 
             // Serializing an unchanged URL could normalize it, so only touch the text when
@@ -111,6 +118,33 @@ class Cleaner(
     }
 
     /**
+     * The URLs in [text] which are short links: an enabled sanitizer applies to them and declares
+     * them short links with a [Rule.Resolve]. Each one is listed once, in the order it first
+     * appears.
+     *
+     * These are the only URLs a caller should ask a [ShortLinkResolver] about, and their targets
+     * are what [clean] expects as `resolved`. An empty [text] has none.
+     */
+    suspend fun shortLinks(text: String?): List<Url> =
+        URL_REGEX.findAll(text.orEmpty())
+            .mapNotNull { Url.parse(it.value) }
+            .distinct()
+            .toList()
+            .filter { isShortLink(it) }
+
+    /**
+     * Whether an enabled sanitizer declares [url] a short link.
+     *
+     * A resolver uses this to decide whether a redirect leads to yet another short link, which it
+     * may follow, or to the site the short link stands for, which it must not contact.
+     */
+    suspend fun isShortLink(url: Url): Boolean = sanitizers.any { sanitizer ->
+        repository.isEnabled(sanitizer.id) &&
+            sanitizer.matches(url) &&
+            sanitizer.resolveRules.any { it.appliesTo(url) }
+    }
+
+    /**
      * Repeatedly asks every enabled sanitizer what it would change until nothing is left to apply.
      *
      * Cleaning is iterative because a change can reveal further work: following a redirect yields a
@@ -123,6 +157,7 @@ class Cleaner(
         decodeUrl: Boolean,
         declined: Set<Change>,
         additional: Set<Change>,
+        resolved: Map<Url, Url>,
     ): CleanedUrl {
         // A set, so a change proposed again on a later pass is listed once, where it first
         // appeared.
@@ -133,13 +168,17 @@ class Cleaner(
         // `repeat` is deliberately not used here: its `return@repeat` would continue rather than
         // stop, and settling early is the whole point of the check below.
         for (pass in 1..MAX_ITERATION) {
-            val proposed = propose(current)
+            val proposed = propose(current, resolved)
             available += proposed
 
             val apply = proposed.filterNot { it in declined }
             if (apply.isEmpty()) break
 
-            current = current.apply(apply.map { it.action })
+            // Every change of a pass was proposed for the same URL, so a replacement goes last:
+            // its target is a different URL, which the other changes were never meant for. It is
+            // cleaned on the next pass instead.
+            current =
+                current.apply(apply.map { it.action }.sortedBy { it is Change.Action.Replace })
             applied += apply
         }
 
@@ -158,11 +197,13 @@ class Cleaner(
     }
 
     /** What every enabled sanitizer which applies to [url] would change about it. */
-    private suspend fun propose(url: Url): List<Change> =
+    private suspend fun propose(url: Url, resolved: Map<Url, Url>): List<Change> =
         sanitizers
             .filter { repository.isEnabled(it.id) }
             .filter { it.matches(url) }
-            .flatMap { sanitizer -> sanitizer.sanitize(url).map { Change(sanitizer.id, it) } }
+            .flatMap { sanitizer ->
+                sanitizer.sanitize(url, resolved).map { Change(sanitizer.id, it) }
+            }
 
     private companion object {
         private val URL_REGEX = Regex("https?://.\\S*")
@@ -178,8 +219,15 @@ class Cleaner(
  */
 internal fun Sanitizer.matches(url: Url): Boolean = match.any { it.matches(url) }
 
-/** The changes [sanitizer] proposes for [url], the rules taken in order. */
-internal fun Sanitizer.sanitize(url: Url): List<Change.Action> = rules.flatMap { it.sanitize(url) }
+/**
+ * The changes [sanitizer] proposes for [url], the rules taken in order.
+ *
+ * @param resolved The known targets of short links, see [Cleaner.clean].
+ */
+internal fun Sanitizer.sanitize(
+    url: Url,
+    resolved: Map<Url, Url> = emptyMap(),
+): List<Change.Action> = rules.flatMap { it.sanitize(url, resolved) }
 
 internal fun Match.matches(url: Url): Boolean =
     host.matches(url.host) && (pathPrefix == null || url.path.startsWith(pathPrefix))
@@ -202,8 +250,11 @@ internal fun HostMatch.matches(host: String): Boolean =
  * The regular expressions are compiled here on every call. Cleaning happens once per shared URL and
  * touches a handful of patterns, so caching them would buy microseconds and cost the catalog its
  * plainness.
+ *
+ * @param resolved The known targets of short links, keyed by the short link. Only [Rule.Resolve]
+ *   reads it; it is how that rule gets by without a request of its own.
  */
-internal fun Rule.sanitize(url: Url): List<Change.Action> =
+internal fun Rule.sanitize(url: Url, resolved: Map<Url, Url> = emptyMap()): List<Change.Action> =
     when (this) {
         is Rule.RemoveParameters -> {
             val regex = Regex(name)
@@ -241,7 +292,16 @@ internal fun Rule.sanitize(url: Url): List<Change.Action> =
                 ?.takeUnless { it == url }
                 ?.let { listOf(Change.Action.Replace(from = url, to = it)) }
                 .orEmpty()
+
+        is Rule.Resolve ->
+            resolved[url]
+                ?.takeIf { appliesTo(url) && it != url }
+                ?.let { listOf(Change.Action.Replace(from = url, to = it)) }
+                .orEmpty()
     }
+
+/** Whether this rule declares [url] a short link, which it does when its pattern fits the path. */
+internal fun Rule.Resolve.appliesTo(url: Url): Boolean = Regex(pattern).matches(url.path)
 
 private fun setComponent(component: Change.Component, from: String?, to: String?) =
     listOf(Change.Action.SetComponent(component, from = from, to = to))

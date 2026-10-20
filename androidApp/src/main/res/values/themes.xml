@@ -30,4 +30,11 @@
         <item name="colorPrimaryDark">#FF00210B</item>
         <item name="colorAccent">#FF39656D</item>
     </style>
+
+    <!-- For ProcessTextActivity: nothing but the dialogs shown while a short link is resolved. -->
+    <style name="Theme.App.Translucent" parent="Theme.App">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 </resources>

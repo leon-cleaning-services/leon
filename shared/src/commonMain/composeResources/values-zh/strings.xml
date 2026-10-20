@@ -43,7 +43,9 @@
     <string name="options">选项</string>
     <string name="extract_url">仅提取链接</string>
     <string name="register_as_browser">将 Léon 注册为浏览器</string>
+    <string name="register_as_browser_summary">可用 Léon 打开其他应用中的链接，并先对其进行清理</string>
     <string name="open_in_custom_tabs">在浏览器自定义标签页打开链接</string>
+    <string name="open_in_custom_tabs_summary">在应用内的浏览器标签页中打开已清理的链接，而非切换到浏览器应用</string>
     <string name="action_after_clean">清理完成后</string>
     <string name="do_nothing">无操作</string>
     <string name="open_share_menu">打开分享菜单</string>
@@ -53,6 +55,7 @@
     <string name="auto_reset_off">关闭</string>
     <string name="auto_reset_minutes">%1$d 分钟</string>
     <string name="history_enabled">保留已清理链接的历史记录</string>
+    <string name="history_enabled_summary">仅在本设备上保存已清理的链接</string>
     <string name="history_empty_title">暂无内容</string>
     <string name="history_empty_text">你清理过的链接会显示在这里，方便你之后再次分享、复制或打开。最多保留最近十条。</string>
     <string name="history_disabled_text">历史记录功能已关闭。在设置中开启后，将保留最近清理的十条链接。</string>
@@ -63,6 +66,7 @@
     <string name="undo">撤销</string>
     <string name="cancel">取消</string>
     <string name="protect_screen">应用截屏保护</string>
+    <string name="protect_screen_summary">在截屏、录屏和最近任务列表中隐藏应用内容</string>
     <string name="about">关于</string>
     <string name="about_developer">由 %1$s 开发， %2$s 共同协助</string>
     <string name="about_contributors">贡献者</string>
@@ -83,4 +87,25 @@
     <string name="sanitizer_youtube_redirect_name">YouTube 重定向</string>
     <string name="a11y_howto">手机上的应用说明图像</string>
     <string name="a11y_back_navigation">返回导航图标</string>
+    <string name="ok">确定</string>
+    <string name="retry">重试</string>
+    <string name="resolve_short_links">解析短链接</string>
+    <string name="resolve_short_links_summary">仅向创建短链接的服务查询其目标地址</string>
+    <string name="short_link_dialog_title">解析短链接？</string>
+    <string name="short_link_dialog_text">Léon 默认不会发出任何网络请求。有些服务分享的短链接，其目标地址只有该服务自己知道。开启此功能后，Léon 会向该服务（且仅向该服务）查询链接的目标地址，然后照常清理结果。\n\n你可以随时在设置中更改此选项。</string>
+    <string name="sanitizer_short_link_name">%1$s 短链接</string>
+    <string name="sanitizer_short_link_hint">通过网络解析短链接</string>
+    <string name="sanitizer_short_link_hint_disabled">通过网络解析短链接。请先在设置中开启“解析短链接”。</string>
+    <string name="short_link_resolving_title">正在解析短链接…</string>
+    <string name="short_link_resolving_text">正在连接 %1$s</string>
+    <string name="short_link_error_title">短链接未能解析</string>
+    <string name="short_link_error_offline">没有网络连接。</string>
+    <string name="short_link_error_timeout">服务器未及时响应。</string>
+    <string name="short_link_error_http">服务器返回错误（HTTP %1$d）。</string>
+    <string name="short_link_error_unknown">无法解析此短链接。</string>
+    <string name="short_link_error_expired">此短链接已过期。</string>
+    <string name="short_link_continue_without_resolving">不解析，直接继续</string>
+    <string name="short_link_hint">这是一个短链接。只有通过创建它的服务解析后，Léon 才能清理它。请开启“解析短链接”以清理它。</string>
+    <string name="short_link_hint_enable">开启</string>
+    <string name="short_link_hint_toast">这是一个短链接，因此未被清理。请在 Léon 的设置中开启“解析短链接”以清理它。</string>
 </resources>

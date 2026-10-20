@@ -33,6 +33,7 @@ private fun ContentPreview() {
             customTabsEnabled = false,
             protectScreenEnabled = false,
             historyEnabled = true,
+            resolveShortLinksEnabled = false,
             actionAfterClean = ActionAfterClean.OpenShareMenu,
             autoReset = AutoReset.Off,
             onSanitizersClick = {},
@@ -41,6 +42,7 @@ private fun ContentPreview() {
             onCustomTabsSwitchCheckedChange = {},
             onProtectScreenSwitchCheckedChange = {},
             onHistorySwitchCheckedChange = {},
+            onResolveShortLinksSwitchCheckedChange = {},
             onActionAfterCleanClick = {},
             onAutoResetClick = {},
         )
