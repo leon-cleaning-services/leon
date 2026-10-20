@@ -108,4 +108,15 @@
     <string name="short_link_hint">Это короткая ссылка. Léon может очистить её только после того, как её раскроет сервис, который её создал. Включите «Раскрывать короткие ссылки», чтобы очистить её.</string>
     <string name="short_link_hint_enable">Включить</string>
     <string name="short_link_hint_toast">Это короткая ссылка, поэтому она не была очищена. Включите «Раскрывать короткие ссылки» в настройках Léon, чтобы очистить её.</string>
+    <string name="change_remembered">Запомнено для %1$s</string>
+    <string name="remember_per_site">Запоминать выбор для каждого сайта</string>
+    <string name="remember_per_site_summary">Параметры, которые вы отмечаете или снимаете в списке изменений, будут обработаны так же, когда вы в следующий раз поделитесь URL-адресом с этого сайта</string>
+    <string name="remembered_sites">Запомненные сайты</string>
+    <string name="remembered_sites_description">Ваш выбор из списка изменений по сайтам. Забудьте запись, чтобы снова доверить этот параметр очистке.</string>
+    <string name="remembered_sites_empty">Пока ничего не запомнено. Отметьте или снимите параметр в списке изменений, чтобы запомнить его для этого сайта.</string>
+    <string name="remembered_removed">Удаляется</string>
+    <string name="remembered_kept">Сохраняется</string>
+    <string name="remembered_forget">Забыть</string>
+    <string name="remembered_forget_all">Забыть всё</string>
+    <string name="remembered_forget_all_confirm">Забыть выбор, запомненный для всех сайтов?</string>
 </resources>

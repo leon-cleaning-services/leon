@@ -69,6 +69,8 @@ sealed interface Destination : NavKey {
 
     @Serializable data object SettingsSanitizers : Destination
 
+    @Serializable data object SettingsRememberedSites : Destination
+
     @Serializable data object SettingsLicenses : Destination
 }
 

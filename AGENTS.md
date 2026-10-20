@@ -81,6 +81,13 @@ the description. That is what lets the UI list every proposed change and let the
 - `Change` – one proposed modification, carrying the id of the sanitizer that proposed it.
 - `Cleaner` – parses each URL out of the text, collects the changes, applies the ones the
   user has not declined, and serializes the result.
+- `SitePreference` – what the user ticked or unticked in the change list, remembered per site (the
+  host without `www.`) and by parameter *name*, so that it applies to the next URL from there.
+  Only deviations from the catalog are stored (`site_parameter` table): `remove` is proposed by
+  `SanitizerId.Remembered`, and `keep` withholds a sanitizer's removal. Because nothing is keyed by
+  sanitizer id, reworking the catalog never invalidates a remembered choice. Fragment, redirect and
+  host/path toggles are not remembered; they stay with the shared text. Turning the "Remember
+  choices per site" setting off clears every stored choice, as turning the history off does.
 
 ## Commit Messages & PR Titles
 

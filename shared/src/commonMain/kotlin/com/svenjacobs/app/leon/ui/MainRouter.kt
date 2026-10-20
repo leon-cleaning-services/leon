@@ -56,6 +56,7 @@ import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.screens.history.HistoryScreen
 import com.svenjacobs.app.leon.ui.screens.main.MainScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsLicensesScreen
+import com.svenjacobs.app.leon.ui.screens.settings.SettingsRememberedSitesScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsSanitizersScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsScreen
 import com.svenjacobs.app.leon.ui.shortlink.ShortLinkDialogHost
@@ -83,6 +84,7 @@ fun MainRouter(
                     subclass(Destination.History::class)
                     subclass(Destination.Settings::class)
                     subclass(Destination.SettingsSanitizers::class)
+                    subclass(Destination.SettingsRememberedSites::class)
                     subclass(Destination.SettingsLicenses::class)
                 }
             }
@@ -212,6 +214,23 @@ fun MainRouter(
                                 dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
                             onNavigateToSettingsLicenses =
                                 dropUnlessResumed { backStack.add(Destination.SettingsLicenses) },
+                            onNavigateToSettingsRememberedSites =
+                                dropUnlessResumed {
+                                    backStack.add(Destination.SettingsRememberedSites)
+                                },
+                        )
+                    }
+
+                    entry<Destination.SettingsRememberedSites>(
+                        metadata = ListDetailSceneStrategy.detailPane(),
+                    ) {
+                        SettingsRememberedSitesScreen(
+                            onBackClick =
+                                if (isTwoPane) {
+                                    null
+                                } else {
+                                    dropUnlessResumed { backStack.removeLastOrNull() }
+                                },
                         )
                     }
 

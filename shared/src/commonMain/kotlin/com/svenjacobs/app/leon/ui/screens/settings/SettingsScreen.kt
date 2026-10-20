@@ -61,6 +61,9 @@ import com.svenjacobs.app.leon.shared.resources.protect_screen
 import com.svenjacobs.app.leon.shared.resources.protect_screen_summary
 import com.svenjacobs.app.leon.shared.resources.register_as_browser
 import com.svenjacobs.app.leon.shared.resources.register_as_browser_summary
+import com.svenjacobs.app.leon.shared.resources.remember_per_site
+import com.svenjacobs.app.leon.shared.resources.remember_per_site_summary
+import com.svenjacobs.app.leon.shared.resources.remembered_sites
 import com.svenjacobs.app.leon.shared.resources.resolve_short_links
 import com.svenjacobs.app.leon.shared.resources.resolve_short_links_summary
 import com.svenjacobs.app.leon.shared.resources.sanitizers
@@ -75,6 +78,7 @@ import org.jetbrains.compose.resources.stringResource
 fun SettingsScreen(
     onNavigateToSettingsSanitizers: () -> Unit,
     onNavigateToSettingsLicenses: () -> Unit,
+    onNavigateToSettingsRememberedSites: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsScreenViewModel = metroViewModel(),
 ) {
@@ -88,6 +92,7 @@ fun SettingsScreen(
         protectScreenEnabled = uiState.protectScreenEnabled,
         historyEnabled = uiState.historyEnabled,
         resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
+        rememberPerSiteEnabled = uiState.rememberPerSiteEnabled,
         actionAfterClean = uiState.actionAfterClean,
         autoReset = uiState.autoReset,
         supportsBrowserRegistration = uiState.supportsBrowserRegistration,
@@ -95,11 +100,13 @@ fun SettingsScreen(
         supportsProtectScreen = uiState.supportsProtectScreen,
         onSanitizersClick = onNavigateToSettingsSanitizers,
         onLicensesClick = onNavigateToSettingsLicenses,
+        onRememberedSitesClick = onNavigateToSettingsRememberedSites,
         onBrowserSwitchCheckedChange = viewModel::onBrowserSwitchCheckedChange,
         onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
         onProtectScreenSwitchCheckedChange = viewModel::onProtectScreenSwitchCheckedChange,
         onHistorySwitchCheckedChange = viewModel::onHistorySwitchCheckedChange,
         onResolveShortLinksSwitchCheckedChange = viewModel::onResolveShortLinksSwitchCheckedChange,
+        onRememberPerSiteSwitchCheckedChange = viewModel::onRememberPerSiteSwitchCheckedChange,
         onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
         onAutoResetClick = viewModel::onAutoResetClick,
     )
@@ -113,15 +120,18 @@ fun Content(
     protectScreenEnabled: Boolean,
     historyEnabled: Boolean,
     resolveShortLinksEnabled: Boolean,
+    rememberPerSiteEnabled: Boolean,
     actionAfterClean: ActionAfterClean,
     autoReset: AutoReset,
     onSanitizersClick: () -> Unit,
     onLicensesClick: () -> Unit,
+    onRememberedSitesClick: () -> Unit,
     onBrowserSwitchCheckedChange: (Boolean) -> Unit,
     onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
     onProtectScreenSwitchCheckedChange: (Boolean) -> Unit,
     onHistorySwitchCheckedChange: (Boolean) -> Unit,
     onResolveShortLinksSwitchCheckedChange: (Boolean) -> Unit,
+    onRememberPerSiteSwitchCheckedChange: (Boolean) -> Unit,
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
     onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
@@ -185,6 +195,14 @@ fun Content(
                     supportingText = stringResource(Res.string.resolve_short_links_summary),
                     checked = resolveShortLinksEnabled,
                     onCheckedChange = onResolveShortLinksSwitchCheckedChange,
+                )
+
+                SwitchRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(Res.string.remember_per_site),
+                    supportingText = stringResource(Res.string.remember_per_site_summary),
+                    checked = rememberPerSiteEnabled,
+                    onCheckedChange = onRememberPerSiteSwitchCheckedChange,
                 )
 
                 Column(modifier = Modifier.padding(top = 8.dp)) {
@@ -336,6 +354,13 @@ fun Content(
                     onClick = onSanitizersClick,
                 ) {
                     Text(stringResource(Res.string.sanitizers))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = onRememberedSitesClick,
+                ) {
+                    Text(stringResource(Res.string.remembered_sites))
                 }
 
                 OutlinedButton(

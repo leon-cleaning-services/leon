@@ -18,12 +18,15 @@
 package com.svenjacobs.app.leon.core.domain
 
 import com.svenjacobs.app.leon.core.domain.change.Change
+import com.svenjacobs.app.leon.core.domain.preference.SitePreference
+import com.svenjacobs.app.leon.core.domain.sanitizer.Decode
 import com.svenjacobs.app.leon.core.domain.sanitizer.HostMatch
 import com.svenjacobs.app.leon.core.domain.sanitizer.Match
 import com.svenjacobs.app.leon.core.domain.sanitizer.Rule
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
+import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
@@ -34,11 +37,14 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.persistentSetOf
 
 class CleanerTest :
     WordSpec(
@@ -336,6 +342,118 @@ class CleanerTest :
                                     ),
                             )
                             .cleanedText shouldBe "https://example.com/page"
+                    }
+                }
+
+            "remembered" should
+                {
+                    fun remove(vararg names: String) =
+                        SitePreference(remove = persistentSetOf(*names))
+
+                    fun keep(vararg names: String) = SitePreference(keep = persistentSetOf(*names))
+
+                    "remove a remembered parameter on its site" {
+                        val result =
+                            service.clean(
+                                "https://example.com/?foo=1&bar=2",
+                                remembered = persistentMapOf("example.com" to remove("foo")),
+                            )
+
+                        result.cleanedText shouldBe "https://example.com/?bar=2"
+                        result.urls.single().applied shouldContainExactly
+                            listOf(
+                                Change(
+                                    SanitizerId.Remembered,
+                                    Change.Action.RemoveParameter(Url.Parameter("foo", "1")),
+                                ),
+                            )
+                    }
+
+                    "remove every occurrence of a remembered parameter, whatever its value" {
+                        service
+                            .clean(
+                                "https://example.com/?foo=1&foo=2&bar=3",
+                                remembered = persistentMapOf("example.com" to remove("foo")),
+                            )
+                            .cleanedText shouldBe "https://example.com/?bar=3"
+                    }
+
+                    "apply to the www variant and regardless of case" {
+                        service
+                            .clean(
+                                "https://WWW.Example.com/?foo=1",
+                                remembered = persistentMapOf("example.com" to remove("foo")),
+                            )
+                            .cleanedText shouldBe "https://WWW.Example.com/"
+                    }
+
+                    "not apply to a subdomain or a lookalike host" {
+                        val remembered = persistentMapOf("example.com" to remove("foo"))
+
+                        service
+                            .clean("https://shop.example.com/?foo=1", remembered = remembered)
+                            .cleanedText shouldBe "https://shop.example.com/?foo=1"
+                        service
+                            .clean("https://example.com.evil.com/?foo=1", remembered = remembered)
+                            .cleanedText shouldBe "https://example.com.evil.com/?foo=1"
+                    }
+
+                    "keep a parameter a sanitizer proposes removing" {
+                        val result =
+                            service.clean(
+                                "https://example.com/?paramA=A&paramB=B",
+                                remembered = persistentMapOf("example.com" to keep("paramA")),
+                            )
+
+                        val paramA =
+                            Change(
+                                SanitizerId("fake1"),
+                                Change.Action.RemoveParameter(Url.Parameter("paramA", "A")),
+                            )
+                        result.cleanedText shouldBe "https://example.com/?paramA=A"
+                        result.urls.single().available shouldContain paramA
+                        result.urls.single().kept shouldContainExactly listOf(paramA)
+                    }
+
+                    "apply the choices of the site a redirect leads to" {
+                        val redirect =
+                            Sanitizer(
+                                id = SanitizerId("redirect"),
+                                name = "redirect",
+                                rules =
+                                    persistentListOf(
+                                        Rule.Follow(
+                                            from = Source.Parameter("u"),
+                                            steps = persistentListOf(Decode.PercentDecode),
+                                        ),
+                                    ),
+                                match =
+                                    persistentListOf(Match(HostMatch.Domain("redirect.example"))),
+                            )
+
+                        val result =
+                            Cleaner(
+                                    sanitizers = persistentListOf(redirect),
+                                    repository = repository,
+                                )
+                                .clean(
+                                    "https://redirect.example/?u=https%3A%2F%2Fexample.com%2F" +
+                                        "%3Ffoo%3D1&foo=2",
+                                    remembered = persistentMapOf("example.com" to remove("foo")),
+                                )
+                                .urls
+                                .single()
+
+                        result.cleaned.toString() shouldBe "https://example.com/"
+                        result.sites.values.toSet() shouldBe
+                            setOf("redirect.example", "example.com")
+                        result.applied
+                            .filter { it.sanitizerId == SanitizerId.Remembered }
+                            .map { result.sites[it] } shouldContainExactly listOf("example.com")
+                    }
+
+                    "not be a sanitizer of the catalog" {
+                        AllSanitizers.map { it.id } shouldNotContain SanitizerId.Remembered
                     }
                 }
         },

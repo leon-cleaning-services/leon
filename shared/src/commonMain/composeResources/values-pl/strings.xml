@@ -108,4 +108,15 @@
     <string name="short_link_hint">To jest skrócony link. Léon może go wyczyścić dopiero po rozwinięciu go w usłudze, która go utworzyła. Włącz „Rozwijaj skrócone linki”, aby go wyczyścić.</string>
     <string name="short_link_hint_enable">Włącz</string>
     <string name="short_link_hint_toast">To jest skrócony link, więc nie został wyczyszczony. Włącz „Rozwijaj skrócone linki” w ustawieniach Léona, aby go wyczyścić.</string>
+    <string name="change_remembered">Zapamiętano dla %1$s</string>
+    <string name="remember_per_site">Zapamiętuj wybory dla każdej witryny</string>
+    <string name="remember_per_site_summary">Parametry zaznaczone lub odznaczone na liście zmian zostaną potraktowane tak samo przy następnym udostępnieniu adresu URL z tej witryny</string>
+    <string name="remembered_sites">Zapamiętane witryny</string>
+    <string name="remembered_sites_description">Wybory dokonane na liście zmian, według witryny. Zapomnij wpis, aby ponownie pozostawić ten parametr sanityzatorom.</string>
+    <string name="remembered_sites_empty">Nic jeszcze nie zapamiętano. Zaznacz lub odznacz parametr na liście zmian, aby zapamiętać go dla jego witryny.</string>
+    <string name="remembered_removed">Usuwany</string>
+    <string name="remembered_kept">Zachowywany</string>
+    <string name="remembered_forget">Zapomnij</string>
+    <string name="remembered_forget_all">Zapomnij wszystko</string>
+    <string name="remembered_forget_all_confirm">Zapomnieć wybory zapamiętane dla wszystkich witryn?</string>
 </resources>

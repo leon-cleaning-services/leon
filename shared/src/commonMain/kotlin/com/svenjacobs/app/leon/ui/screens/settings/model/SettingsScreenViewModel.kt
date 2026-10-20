@@ -23,6 +23,7 @@ import com.svenjacobs.app.leon.Platform
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
+import com.svenjacobs.app.leon.db.SiteParameterDao
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
@@ -42,6 +43,7 @@ class SettingsScreenViewModel(
     private val platform: Platform,
     private val appDataStoreManager: AppDataStoreManager,
     private val historyDao: HistoryDao,
+    private val siteParameterDao: SiteParameterDao,
 ) : ViewModel() {
 
     data class UiState(
@@ -51,6 +53,7 @@ class SettingsScreenViewModel(
         val protectScreenEnabled: Boolean = false,
         val historyEnabled: Boolean = true,
         val resolveShortLinksEnabled: Boolean = false,
+        val rememberPerSiteEnabled: Boolean = true,
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
         val autoReset: AutoReset = AutoReset.Off,
         val supportsBrowserRegistration: Boolean = false,
@@ -61,13 +64,14 @@ class SettingsScreenViewModel(
     private val browserEnabled = MutableStateFlow(false)
 
     /**
-     * The browser, history and short link switches, combined ahead of the outer [combine] so that
-     * it stays within its five-flow limit.
+     * The browser, history, short link and remember per site switches, combined ahead of the outer
+     * [combine] so that it stays within its five-flow limit.
      */
     private data class Toggles(
         val browserEnabled: Boolean,
         val historyEnabled: Boolean,
         val resolveShortLinksEnabled: Boolean,
+        val rememberPerSiteEnabled: Boolean,
     )
 
     val uiState: StateFlow<UiState> =
@@ -76,6 +80,7 @@ class SettingsScreenViewModel(
                     browserEnabled,
                     appDataStoreManager.historyEnabled,
                     appDataStoreManager.resolveShortLinksEnabled,
+                    appDataStoreManager.rememberPerSiteEnabled,
                     ::Toggles,
                 ),
                 appDataStoreManager.customTabsEnabled,
@@ -90,6 +95,7 @@ class SettingsScreenViewModel(
                     protectScreenEnabled = protectScreenEnabled,
                     historyEnabled = toggles.historyEnabled,
                     resolveShortLinksEnabled = toggles.resolveShortLinksEnabled,
+                    rememberPerSiteEnabled = toggles.rememberPerSiteEnabled,
                     actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
                     autoReset = autoReset ?: AutoReset.Off,
                     supportsBrowserRegistration = platform.supportsBrowserRegistration,
@@ -135,6 +141,14 @@ class SettingsScreenViewModel(
 
     fun onResolveShortLinksSwitchCheckedChange(checked: Boolean) {
         viewModelScope.launch { appDataStoreManager.setResolveShortLinksEnabled(checked) }
+    }
+
+    fun onRememberPerSiteSwitchCheckedChange(checked: Boolean) {
+        viewModelScope.launch {
+            appDataStoreManager.setRememberPerSiteEnabled(checked)
+            // Like the history, turning remembering off must leave nothing behind.
+            if (!checked) siteParameterDao.clear()
+        }
     }
 
     fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {

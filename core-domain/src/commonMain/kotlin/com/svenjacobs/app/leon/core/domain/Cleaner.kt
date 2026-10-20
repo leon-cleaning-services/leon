@@ -19,12 +19,16 @@ package com.svenjacobs.app.leon.core.domain
 
 import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.change.apply
+import com.svenjacobs.app.leon.core.domain.preference.SitePreference
+import com.svenjacobs.app.leon.core.domain.preference.SitePreferences
+import com.svenjacobs.app.leon.core.domain.preference.site
 import com.svenjacobs.app.leon.core.domain.sanitizer.AlwaysEnabled
 import com.svenjacobs.app.leon.core.domain.sanitizer.Decode
 import com.svenjacobs.app.leon.core.domain.sanitizer.HostMatch
 import com.svenjacobs.app.leon.core.domain.sanitizer.Match
 import com.svenjacobs.app.leon.core.domain.sanitizer.Rule
 import com.svenjacobs.app.leon.core.domain.sanitizer.Sanitizer
+import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
@@ -37,8 +41,11 @@ import com.svenjacobs.app.leon.core.domain.url.decoded
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -65,6 +72,11 @@ class Cleaner(
      * @param display [cleaned] as it is shown and shared — decoded when the caller asked for that,
      *   and the same object otherwise. [cleaned] stays encoded, because it is what the change list
      *   is built from and what a change is applied to on the next pass.
+     * @param kept The proposals which were not applied because the user keeps that parameter on
+     *   that site, see [SitePreference.keep].
+     * @param sites The [site][Url.site] of the URL each change of [available] and [applied] was
+     *   proposed for, which is not necessarily the site of [original] or [cleaned] once a redirect
+     *   was followed.
      */
     data class CleanedUrl(
         val original: Url,
@@ -72,6 +84,8 @@ class Cleaner(
         val display: Url,
         val available: ImmutableList<Change>,
         val applied: ImmutableList<Change>,
+        val kept: ImmutableList<Change> = persistentListOf(),
+        val sites: ImmutableMap<Change, String> = persistentMapOf(),
     )
 
     /**
@@ -84,6 +98,10 @@ class Cleaner(
      *   resolved beforehand, keyed by the short link as it was parsed out of [text]. A short link
      *   with a target is replaced by it — a change the user can decline like any other — and one
      *   without is cleaned as if it was an ordinary URL. Cleaning itself never performs a request.
+     * @param remembered What the user decided about the parameters of a site on earlier shares. Its
+     *   removals are proposed by [SanitizerId.Remembered], and the proposals of parameters it keeps
+     *   are not applied. Both refer to the site of the URL at the pass they are proposed on, so a
+     *   redirect and its target each get their own site's choices.
      */
     suspend fun clean(
         text: String?,
@@ -91,6 +109,7 @@ class Cleaner(
         declined: Set<Change> = emptySet(),
         additional: Set<Change> = emptySet(),
         resolved: Map<Url, Url> = emptyMap(),
+        remembered: SitePreferences = persistentMapOf(),
     ): Result {
         val input = requireNotNull(text?.takeIf(String::isNotEmpty))
 
@@ -100,7 +119,7 @@ class Cleaner(
         for (match in URL_REGEX.findAll(input)) {
             // A URL which cannot be parsed is left alone rather than mangled.
             val original = Url.parse(match.value) ?: continue
-            val url = cleanUrl(original, decodeUrl, declined, additional, resolved)
+            val url = cleanUrl(original, decodeUrl, declined, additional, resolved, remembered)
             urls += url
 
             // Serializing an unchanged URL could normalize it, so only touch the text when
@@ -158,20 +177,29 @@ class Cleaner(
         declined: Set<Change>,
         additional: Set<Change>,
         resolved: Map<Url, Url>,
+        remembered: SitePreferences,
     ): CleanedUrl {
         // A set, so a change proposed again on a later pass is listed once, where it first
         // appeared.
         val available = mutableSetOf<Change>()
         val applied = mutableListOf<Change>()
+        val kept = mutableSetOf<Change>()
+        val sites = mutableMapOf<Change, String>()
         var current = original
 
         // `repeat` is deliberately not used here: its `return@repeat` would continue rather than
         // stop, and settling early is the whole point of the check below.
         for (pass in 1..MAX_ITERATION) {
-            val proposed = propose(current, resolved)
+            val site = current.site
+            val preference = remembered[site]
+            val proposed = propose(current, resolved, preference)
             available += proposed
+            proposed.forEach { sites.getOrPut(it) { site } }
 
-            val apply = proposed.filterNot { it in declined }
+            val keep = proposed.filter { preference.keeps(it) }
+            kept += keep
+
+            val apply = proposed.filterNot { it in declined || it in keep }
             if (apply.isEmpty()) break
 
             // Every change of a pass was proposed for the same URL, so a replacement goes last:
@@ -183,6 +211,8 @@ class Cleaner(
         }
 
         val extra = additional.filterNot { it in applied }
+        val site = current.site
+        extra.forEach { sites.getOrPut(it) { site } }
         current = current.apply(extra.map { it.action })
         applied += extra
 
@@ -193,17 +223,42 @@ class Cleaner(
                 if (decodeUrl) withContext(Dispatchers.Default) { current.decoded() } else current,
             available = available.toImmutableList(),
             applied = applied.toImmutableList(),
+            kept = kept.toImmutableList(),
+            sites = sites.toImmutableMap(),
         )
     }
 
-    /** What every enabled sanitizer which applies to [url] would change about it. */
-    private suspend fun propose(url: Url, resolved: Map<Url, Url>): List<Change> =
-        sanitizers
-            .filter { repository.isEnabled(it.id) }
-            .filter { it.matches(url) }
-            .flatMap { sanitizer ->
-                sanitizer.sanitize(url, resolved).map { Change(sanitizer.id, it) }
-            }
+    /**
+     * What every enabled sanitizer which applies to [url] would change about it, followed by the
+     * removals [preference] remembers for its site.
+     */
+    private suspend fun propose(
+        url: Url,
+        resolved: Map<Url, Url>,
+        preference: SitePreference?,
+    ): List<Change> {
+        val sanitized =
+            sanitizers
+                .filter { repository.isEnabled(it.id) }
+                .filter { it.matches(url) }
+                .flatMap { sanitizer ->
+                    sanitizer.sanitize(url, resolved).map { Change(sanitizer.id, it) }
+                }
+
+        val remembered =
+            url.parameters
+                .filter { preference != null && it.name in preference.remove }
+                .map { Change(SanitizerId.Remembered, Change.Action.RemoveParameter(it)) }
+
+        return sanitized + remembered
+    }
+
+    /** Whether the user keeps the parameter [change] would remove. */
+    private fun SitePreference?.keeps(change: Change): Boolean {
+        if (this == null) return false
+        val action = change.action as? Change.Action.RemoveParameter ?: return false
+        return action.parameter.name in keep
+    }
 
     private companion object {
         private val URL_REGEX = Regex("https?://.\\S*")
@@ -360,5 +415,5 @@ private fun rewrite(
     return regex.replaceFirst(input, replacement).takeUnless { it == current }
 }
 
-private fun String.withoutWww(): String =
+internal fun String.withoutWww(): String =
     if (startsWith("www.", ignoreCase = true)) substring(4) else this

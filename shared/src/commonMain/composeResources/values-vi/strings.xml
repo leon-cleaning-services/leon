@@ -108,4 +108,15 @@
     <string name="short_link_hint">Đây là liên kết rút gọn. Léon chỉ có thể làm sạch nó sau khi mở rộng qua dịch vụ đã tạo ra nó. Hãy bật “Mở rộng liên kết rút gọn” để làm sạch.</string>
     <string name="short_link_hint_enable">Bật</string>
     <string name="short_link_hint_toast">Đây là liên kết rút gọn nên chưa được làm sạch. Hãy bật “Mở rộng liên kết rút gọn” trong phần thiết đặt của Léon để làm sạch.</string>
+    <string name="change_remembered">Đã ghi nhớ cho %1$s</string>
+    <string name="remember_per_site">Ghi nhớ lựa chọn theo trang web</string>
+    <string name="remember_per_site_summary">Các tham số bạn chọn hoặc bỏ chọn trong danh sách thay đổi sẽ được xử lý tương tự vào lần tới bạn chia sẻ URL từ trang web đó</string>
+    <string name="remembered_sites">Trang web đã ghi nhớ</string>
+    <string name="remembered_sites_description">Các lựa chọn bạn đã thực hiện trong danh sách thay đổi, theo từng trang web. Quên một mục để giao lại tham số đó cho chất khử trùng.</string>
+    <string name="remembered_sites_empty">Chưa ghi nhớ gì. Chọn hoặc bỏ chọn một tham số trong danh sách thay đổi để ghi nhớ nó cho trang web đó.</string>
+    <string name="remembered_removed">Xóa</string>
+    <string name="remembered_kept">Giữ lại</string>
+    <string name="remembered_forget">Quên</string>
+    <string name="remembered_forget_all">Quên tất cả</string>
+    <string name="remembered_forget_all_confirm">Quên các lựa chọn đã ghi nhớ cho mọi trang web?</string>
 </resources>
