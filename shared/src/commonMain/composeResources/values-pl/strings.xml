@@ -43,7 +43,9 @@
     <string name="options">Opcje</string>
     <string name="extract_url">Wyodrębnij tylko URL</string>
     <string name="register_as_browser">Zarejestruj Léona jako przeglądarkę</string>
+    <string name="register_as_browser_summary">Pozwala otwierać linki z innych aplikacji w Léonie, który najpierw je czyści</string>
     <string name="open_in_custom_tabs">Otwórz adresy URL w niestandardowych kartach przeglądarki</string>
+    <string name="open_in_custom_tabs_summary">Otwiera wyczyszczone linki w karcie przeglądarki w aplikacji zamiast w aplikacji przeglądarki</string>
     <string name="action_after_clean">Akcja po wyczyszczeniu</string>
     <string name="do_nothing">Nic nie rób</string>
     <string name="open_share_menu">Otwórz menu udostępniania</string>
@@ -53,6 +55,7 @@
     <string name="auto_reset_off">Wyłączone</string>
     <string name="auto_reset_minutes">%1$d min</string>
     <string name="history_enabled">Zachowuj historię wyczyszczonych adresów URL</string>
+    <string name="history_enabled_summary">Zapisuje wyczyszczone adresy URL tylko na tym urządzeniu</string>
     <string name="history_empty_title">Nic tu jeszcze nie ma</string>
     <string name="history_empty_text">Wyczyszczone adresy URL pojawiają się tutaj, dzięki czemu możesz je później udostępnić, skopiować lub otworzyć ponownie. Zachowywanych jest ostatnich dziesięć.</string>
     <string name="history_disabled_text">Historia jest wyłączona. Włącz ją w ustawieniach, aby zachowywać ostatnie dziesięć wyczyszczonych adresów URL.</string>
@@ -63,6 +66,7 @@
     <string name="undo">Cofnij</string>
     <string name="cancel">Anuluj</string>
     <string name="protect_screen">Chroń ekran aplikacji</string>
+    <string name="protect_screen_summary">Ukrywa zawartość aplikacji na zrzutach ekranu, nagraniach ekranu i liście ostatnich aplikacji</string>
     <string name="about">O aplikacji</string>
     <string name="about_developer">Opracowane przez %1$s przy pomocy wielu %2$s.</string>
     <string name="about_contributors">współtwórców</string>

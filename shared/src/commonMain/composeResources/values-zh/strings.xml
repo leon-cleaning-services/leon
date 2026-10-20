@@ -43,7 +43,9 @@
     <string name="options">选项</string>
     <string name="extract_url">仅提取链接</string>
     <string name="register_as_browser">将 Léon 注册为浏览器</string>
+    <string name="register_as_browser_summary">可用 Léon 打开其他应用中的链接，并先对其进行清理</string>
     <string name="open_in_custom_tabs">在浏览器自定义标签页打开链接</string>
+    <string name="open_in_custom_tabs_summary">在应用内的浏览器标签页中打开已清理的链接，而非切换到浏览器应用</string>
     <string name="action_after_clean">清理完成后</string>
     <string name="do_nothing">无操作</string>
     <string name="open_share_menu">打开分享菜单</string>
@@ -53,6 +55,7 @@
     <string name="auto_reset_off">关闭</string>
     <string name="auto_reset_minutes">%1$d 分钟</string>
     <string name="history_enabled">保留已清理链接的历史记录</string>
+    <string name="history_enabled_summary">仅在本设备上保存已清理的链接</string>
     <string name="history_empty_title">暂无内容</string>
     <string name="history_empty_text">你清理过的链接会显示在这里，方便你之后再次分享、复制或打开。最多保留最近十条。</string>
     <string name="history_disabled_text">历史记录功能已关闭。在设置中开启后，将保留最近清理的十条链接。</string>
@@ -63,6 +66,7 @@
     <string name="undo">撤销</string>
     <string name="cancel">取消</string>
     <string name="protect_screen">应用截屏保护</string>
+    <string name="protect_screen_summary">在截屏、录屏和最近任务列表中隐藏应用内容</string>
     <string name="about">关于</string>
     <string name="about_developer">由 %1$s 开发， %2$s 共同协助</string>
     <string name="about_contributors">贡献者</string>

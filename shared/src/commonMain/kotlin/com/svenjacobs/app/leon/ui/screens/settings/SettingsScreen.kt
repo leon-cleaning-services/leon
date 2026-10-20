@@ -51,12 +51,16 @@ import com.svenjacobs.app.leon.shared.resources.auto_reset_off
 import com.svenjacobs.app.leon.shared.resources.copy_to_clipboard
 import com.svenjacobs.app.leon.shared.resources.do_nothing
 import com.svenjacobs.app.leon.shared.resources.history_enabled
+import com.svenjacobs.app.leon.shared.resources.history_enabled_summary
 import com.svenjacobs.app.leon.shared.resources.licenses
 import com.svenjacobs.app.leon.shared.resources.open_in_custom_tabs
+import com.svenjacobs.app.leon.shared.resources.open_in_custom_tabs_summary
 import com.svenjacobs.app.leon.shared.resources.open_share_menu
 import com.svenjacobs.app.leon.shared.resources.open_url
 import com.svenjacobs.app.leon.shared.resources.protect_screen
+import com.svenjacobs.app.leon.shared.resources.protect_screen_summary
 import com.svenjacobs.app.leon.shared.resources.register_as_browser
+import com.svenjacobs.app.leon.shared.resources.register_as_browser_summary
 import com.svenjacobs.app.leon.shared.resources.resolve_short_links
 import com.svenjacobs.app.leon.shared.resources.resolve_short_links_summary
 import com.svenjacobs.app.leon.shared.resources.sanitizers
@@ -140,6 +144,7 @@ fun Content(
                 if (supportsBrowserRegistration) {
                     SwitchRow(
                         text = stringResource(Res.string.register_as_browser),
+                        supportingText = stringResource(Res.string.register_as_browser_summary),
                         checked = browserEnabled,
                         onCheckedChange = onBrowserSwitchCheckedChange,
                     )
@@ -149,6 +154,7 @@ fun Content(
                     SwitchRow(
                         modifier = Modifier.padding(top = 16.dp),
                         text = stringResource(Res.string.open_in_custom_tabs),
+                        supportingText = stringResource(Res.string.open_in_custom_tabs_summary),
                         checked = customTabsEnabled,
                         onCheckedChange = onCustomTabsSwitchCheckedChange,
                         enabled = !urlActions.isDefaultBrowser,
@@ -159,6 +165,7 @@ fun Content(
                     SwitchRow(
                         modifier = Modifier.padding(top = 16.dp),
                         text = stringResource(Res.string.protect_screen),
+                        supportingText = stringResource(Res.string.protect_screen_summary),
                         checked = protectScreenEnabled,
                         onCheckedChange = onProtectScreenSwitchCheckedChange,
                     )
@@ -167,6 +174,7 @@ fun Content(
                 SwitchRow(
                     modifier = Modifier.padding(top = 16.dp),
                     text = stringResource(Res.string.history_enabled),
+                    supportingText = stringResource(Res.string.history_enabled_summary),
                     checked = historyEnabled,
                     onCheckedChange = onHistorySwitchCheckedChange,
                 )

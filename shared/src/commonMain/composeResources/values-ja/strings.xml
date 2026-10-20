@@ -43,7 +43,9 @@
     <string name="options">オプション</string>
     <string name="extract_url">URL のみ抽出</string>
     <string name="register_as_browser">Léon をブラウザとして登録</string>
+    <string name="register_as_browser_summary">他のアプリのリンクを Léon で開き、先にクリーンできるようにします</string>
     <string name="open_in_custom_tabs">URL をブラウザのカスタムタブで開く</string>
+    <string name="open_in_custom_tabs_summary">クリーンしたリンクをブラウザアプリではなくアプリ内のブラウザタブで開きます</string>
     <string name="action_after_clean">クリーン後のアクション</string>
     <string name="do_nothing">何もしない</string>
     <string name="open_share_menu">共有メニューを開く</string>
@@ -53,6 +55,7 @@
     <string name="auto_reset_off">オフ</string>
     <string name="auto_reset_minutes">%1$d 分</string>
     <string name="history_enabled">クリーンした URL の履歴を保存する</string>
+    <string name="history_enabled_summary">クリーンした URL をこの端末にのみ保存します</string>
     <string name="history_empty_title">まだ何もありません</string>
     <string name="history_empty_text">クリーンした URL がここに表示され、後で共有、コピー、または開くことができます。最新10件が保存されます。</string>
     <string name="history_disabled_text">履歴はオフになっています。設定でオンにすると、クリーンした URL の最新10件が保存されます。</string>
@@ -63,6 +66,7 @@
     <string name="undo">元に戻す</string>
     <string name="cancel">キャンセル</string>
     <string name="protect_screen">アプリ画面を保護</string>
+    <string name="protect_screen_summary">スクリーンショット、画面録画、最近使ったアプリの一覧でアプリの内容を非表示にします</string>
     <string name="about">アプリについて</string>
     <string name="about_developer">%1$s と多くの %2$s によって開発されました。</string>
     <string name="about_contributors">コントリビューター</string>

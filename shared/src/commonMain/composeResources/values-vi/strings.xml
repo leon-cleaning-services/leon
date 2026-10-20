@@ -43,7 +43,9 @@
     <string name="options">Tùy chọn</string>
     <string name="extract_url">Chỉ trích xuất URL</string>
     <string name="register_as_browser">Đăng ký Léon làm trình duyệt</string>
+    <string name="register_as_browser_summary">Cho phép mở liên kết từ ứng dụng khác bằng Léon để làm sạch trước</string>
     <string name="open_in_custom_tabs">Mở URL trong tab tùy chỉnh của trình duyệt</string>
+    <string name="open_in_custom_tabs_summary">Mở liên kết đã làm sạch trong tab trình duyệt ngay trong ứng dụng thay vì ứng dụng trình duyệt</string>
     <string name="action_after_clean">Hành động sau khi làm sạch</string>
     <string name="do_nothing">Không làm gì cả</string>
     <string name="open_share_menu">Mở menu chia sẻ</string>
@@ -53,6 +55,7 @@
     <string name="auto_reset_off">Tắt</string>
     <string name="auto_reset_minutes">%1$d phút</string>
     <string name="history_enabled">Lưu lịch sử URL đã làm sạch</string>
+    <string name="history_enabled_summary">Chỉ lưu URL đã làm sạch trên thiết bị này</string>
     <string name="history_empty_title">Chưa có gì ở đây</string>
     <string name="history_empty_text">Các URL bạn làm sạch sẽ xuất hiện ở đây, để bạn có thể chia sẻ, sao chép hoặc mở lại sau này. Mười mục gần nhất được lưu giữ.</string>
     <string name="history_disabled_text">Lịch sử đang tắt. Hãy bật trong phần thiết đặt để lưu mười URL đã làm sạch gần nhất.</string>
@@ -63,6 +66,7 @@
     <string name="undo">Hoàn tác</string>
     <string name="cancel">Hủy</string>
     <string name="protect_screen">Bảo vệ màn hình ứng dụng</string>
+    <string name="protect_screen_summary">Ẩn nội dung ứng dụng khỏi ảnh chụp màn hình, bản ghi màn hình và danh sách ứng dụng gần đây</string>
     <string name="about">Thông tin</string>
     <string name="about_developer">Được phát triển bởi %1$s với sự giúp đỡ của nhiều %2$s.</string>
     <string name="about_contributors">người đóng góp</string>
