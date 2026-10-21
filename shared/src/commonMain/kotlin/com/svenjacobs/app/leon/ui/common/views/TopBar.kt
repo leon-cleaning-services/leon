@@ -17,7 +17,6 @@
  */
 package com.svenjacobs.app.leon.ui.common.views
 
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -42,7 +41,9 @@ fun TopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     CenterAlignedTopAppBar(
-        modifier = modifier.statusBarsPadding(),
+        // The bar takes care of the status bar inset itself, so that its container colour also
+        // covers the status bar instead of leaving a see-through strip above it.
+        modifier = modifier,
         title = {
             Text(
                 text = stringResource(Res.string.scaffold_title),

@@ -18,6 +18,7 @@
 package com.svenjacobs.app.leon.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -113,9 +114,12 @@ private data class TopLevelScene(
             topBar = { TopAppBar(scrollBehavior = scrollBehavior) },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { padding ->
-            Box(modifier = Modifier.padding(padding)) {
+            // The image fills the whole scaffold rather than the padded content area: the padding
+            // shrinks as the app bar scrolls away, and a cropped image laid out inside it would
+            // grow along with it. The opaque bar simply covers its top part.
+            Box(modifier = Modifier.fillMaxSize()) {
                 BackgroundImage()
-                scene.content()
+                Box(modifier = Modifier.padding(padding)) { scene.content() }
             }
         }
     }
