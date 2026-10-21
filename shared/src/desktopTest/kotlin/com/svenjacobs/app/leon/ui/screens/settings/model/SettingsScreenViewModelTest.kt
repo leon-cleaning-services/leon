@@ -21,11 +21,13 @@ import com.svenjacobs.app.leon.Platform
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
+import com.svenjacobs.app.leon.db.SiteParameterDao
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.just
@@ -54,21 +56,30 @@ class SettingsScreenViewModelTest :
 
             fun appDataStoreManager(
                 resolveShortLinksEnabled: Flow<Boolean> = flowOf(false),
+                rememberPerSiteEnabled: Flow<Boolean> = flowOf(true),
             ): AppDataStoreManager = mockk {
                 every { historyEnabled } returns flowOf(true)
                 every { this@mockk.resolveShortLinksEnabled } returns resolveShortLinksEnabled
+                every { this@mockk.rememberPerSiteEnabled } returns rememberPerSiteEnabled
                 every { customTabsEnabled } returns flowOf(false)
                 every { protectScreenEnabled } returns flowOf(false)
                 every { actionAfterClean } returns flowOf(ActionAfterClean.DoNothing)
                 every { autoReset } returns flowOf(AutoReset.Off)
                 coEvery { setResolveShortLinksEnabled(any()) } just Runs
+                coEvery { setRememberPerSiteEnabled(any()) } just Runs
             }
 
-            fun viewModel(appDataStoreManager: AppDataStoreManager) =
+            fun siteParameterDao(): SiteParameterDao = mockk { coEvery { clear() } just Runs }
+
+            fun viewModel(
+                appDataStoreManager: AppDataStoreManager,
+                siteParameterDao: SiteParameterDao = siteParameterDao(),
+            ) =
                 SettingsScreenViewModel(
                     platform = platform(),
                     appDataStoreManager = appDataStoreManager,
                     historyDao = mockk<HistoryDao>(),
+                    siteParameterDao = siteParameterDao,
                 )
 
             beforeEach { Dispatchers.setMain(UnconfinedTestDispatcher()) }
@@ -91,6 +102,48 @@ class SettingsScreenViewModelTest :
 
                             viewModel.uiState.value.resolveShortLinksEnabled shouldBe true
                         }
+                    }
+
+                    "carry the remember per site setting" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val enabled = MutableStateFlow(true)
+                            val viewModel =
+                                viewModel(appDataStoreManager(rememberPerSiteEnabled = enabled))
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.rememberPerSiteEnabled shouldBe true
+
+                            enabled.value = false
+
+                            viewModel.uiState.value.rememberPerSiteEnabled shouldBe false
+                        }
+                    }
+                }
+
+            "onRememberPerSiteSwitchCheckedChange" should
+                {
+                    "store the setting" {
+                        val appDataStoreManager = appDataStoreManager()
+                        val viewModel = viewModel(appDataStoreManager)
+
+                        viewModel.onRememberPerSiteSwitchCheckedChange(false)
+                        viewModel.onRememberPerSiteSwitchCheckedChange(true)
+
+                        coVerifyOrder {
+                            appDataStoreManager.setRememberPerSiteEnabled(false)
+                            appDataStoreManager.setRememberPerSiteEnabled(true)
+                        }
+                    }
+
+                    "clear the remembered choices when turned off, and only then" {
+                        val siteParameterDao = siteParameterDao()
+                        val viewModel = viewModel(appDataStoreManager(), siteParameterDao)
+
+                        viewModel.onRememberPerSiteSwitchCheckedChange(true)
+                        coVerify(exactly = 0) { siteParameterDao.clear() }
+
+                        viewModel.onRememberPerSiteSwitchCheckedChange(false)
+                        coVerify(exactly = 1) { siteParameterDao.clear() }
                     }
                 }
 

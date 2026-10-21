@@ -43,17 +43,29 @@ private fun ChangesCardPreview() {
                         sanitizerIds = persistentListOf(google, salesforce),
                         applied = true,
                     ),
+                    // Kept on this site, although a sanitizer proposes removing it.
                     ChangeRow(
                         action =
                             Change.Action.RemoveParameter(Url.Parameter("utm_medium", "social")),
                         sanitizerIds = persistentListOf(google),
                         applied = false,
+                        site = "example.com",
+                        remembered = true,
+                    ),
+                    // Removed on this site, although no sanitizer proposes it.
+                    ChangeRow(
+                        action = Change.Action.RemoveParameter(Url.Parameter("ref", "home")),
+                        sanitizerIds = persistentListOf(),
+                        applied = true,
+                        site = "example.com",
+                        remembered = true,
                     ),
                     // Nothing proposed this one; the user may still remove it.
                     ChangeRow(
                         action = Change.Action.RemoveParameter(Url.Parameter("page", "2")),
                         sanitizerIds = persistentListOf(),
                         applied = false,
+                        site = "example.com",
                     ),
                 ),
             onChangeToggled = { _, _ -> },

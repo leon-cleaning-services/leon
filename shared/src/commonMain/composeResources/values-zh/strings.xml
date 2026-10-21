@@ -108,4 +108,15 @@
     <string name="short_link_hint">这是一个短链接。只有通过创建它的服务解析后，Léon 才能清理它。请开启“解析短链接”以清理它。</string>
     <string name="short_link_hint_enable">开启</string>
     <string name="short_link_hint_toast">这是一个短链接，因此未被清理。请在 Léon 的设置中开启“解析短链接”以清理它。</string>
+    <string name="change_remembered">已为 %1$s 记住</string>
+    <string name="remember_per_site">按网站记住选择</string>
+    <string name="remember_per_site_summary">你在更改列表中勾选或取消勾选的参数，下次分享该网站的链接时会以相同方式处理</string>
+    <string name="remembered_sites">已记住的网站</string>
+    <string name="remembered_sites_description">你在更改列表中做出的选择，按网站列出。忘记某项后，该参数将重新交由清理规则处理。</string>
+    <string name="remembered_sites_empty">尚未记住任何内容。在更改列表中勾选或取消勾选参数，即可为其所在网站记住该选择。</string>
+    <string name="remembered_removed">移除</string>
+    <string name="remembered_kept">保留</string>
+    <string name="remembered_forget">忘记</string>
+    <string name="remembered_forget_all">全部忘记</string>
+    <string name="remembered_forget_all_confirm">要忘记为所有网站记住的选择吗？</string>
 </resources>

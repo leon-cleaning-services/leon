@@ -35,6 +35,7 @@ import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkState
 import com.svenjacobs.app.leon.ui.shortlink.model.resolveInteractively
 import com.svenjacobs.app.leon.ui.shortlink.shortLinkHintMessage
 import com.svenjacobs.app.leon.ui.theme.AppTheme
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -123,8 +124,16 @@ class ProcessTextActivity : ComponentActivity() {
                 else -> resolve(shortLinks)
             }
 
+        // There is no change list here, but what the user chose for a site there still applies.
+        val remembered =
+            when {
+                appDataStoreManager.rememberPerSiteEnabled.first() ->
+                    appGraph.sitePreferenceStore.preferences.first()
+                else -> persistentMapOf()
+            }
+
         return appGraph.cleaner
-            .clean(text = text, decodeUrl = decodeUrl, resolved = resolved)
+            .clean(text = text, decodeUrl = decodeUrl, resolved = resolved, remembered = remembered)
             .cleanedText
     }
 

@@ -110,4 +110,15 @@
     <string name="short_link_hint">This is a short link. Léon can only clean it after resolving it with the service that created it. Enable “Resolve short links” to clean it.</string>
     <string name="short_link_hint_enable">Enable</string>
     <string name="short_link_hint_toast">This is a short link and was not cleaned. Enable “Resolve short links” in Léon’s settings to clean it.</string>
+    <string name="change_remembered">Remembered for %1$s</string>
+    <string name="remember_per_site">Remember choices per site</string>
+    <string name="remember_per_site_summary">Parameters you tick or untick in the change list are handled the same way the next time a URL from that site is shared</string>
+    <string name="remembered_sites">Remembered sites</string>
+    <string name="remembered_sites_description">Choices you made in the change list, per site. Forget one to leave that parameter to the sanitizers again.</string>
+    <string name="remembered_sites_empty">Nothing remembered yet. Tick or untick a parameter in the change list to remember it for its site.</string>
+    <string name="remembered_removed">Removed</string>
+    <string name="remembered_kept">Kept</string>
+    <string name="remembered_forget">Forget</string>
+    <string name="remembered_forget_all">Forget all</string>
+    <string name="remembered_forget_all_confirm">Forget the choices remembered for every site?</string>
 </resources>

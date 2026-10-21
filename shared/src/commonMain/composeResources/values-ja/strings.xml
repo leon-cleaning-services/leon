@@ -108,4 +108,15 @@
     <string name="short_link_hint">これは短縮リンクです。Léon は、作成元のサービスで展開した後でなければクリーンにできません。クリーンにするには「短縮リンクを展開する」をオンにしてください。</string>
     <string name="short_link_hint_enable">オンにする</string>
     <string name="short_link_hint_toast">これは短縮リンクのため、クリーンにされませんでした。クリーンにするには Léon の設定で「短縮リンクを展開する」をオンにしてください。</string>
+    <string name="change_remembered">%1$s 用に記憶済み</string>
+    <string name="remember_per_site">サイトごとに選択を記憶</string>
+    <string name="remember_per_site_summary">変更リストでオンまたはオフにしたパラメーターは、次にそのサイトの URL を共有したときにも同じように扱われます</string>
+    <string name="remembered_sites">記憶したサイト</string>
+    <string name="remembered_sites_description">変更リストで選択した内容をサイトごとに表示します。項目を消去すると、そのパラメーターは再びサニタイザーに任されます。</string>
+    <string name="remembered_sites_empty">まだ何も記憶されていません。変更リストでパラメーターをオンまたはオフにすると、そのサイト用に記憶されます。</string>
+    <string name="remembered_removed">削除</string>
+    <string name="remembered_kept">保持</string>
+    <string name="remembered_forget">消去</string>
+    <string name="remembered_forget_all">すべて消去</string>
+    <string name="remembered_forget_all_confirm">すべてのサイトについて記憶した選択を消去しますか？</string>
 </resources>

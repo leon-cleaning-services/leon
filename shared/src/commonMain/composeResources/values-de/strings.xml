@@ -110,4 +110,15 @@
     <string name="short_link_hint">Dies ist ein Kurzlink. Léon kann ihn erst bereinigen, nachdem er bei dem Dienst aufgelöst wurde, der ihn erstellt hat. Aktiviere „Kurzlinks auflösen“, um ihn zu bereinigen.</string>
     <string name="short_link_hint_enable">Aktivieren</string>
     <string name="short_link_hint_toast">Dies ist ein Kurzlink und wurde nicht bereinigt. Aktiviere „Kurzlinks auflösen“ in den Einstellungen von Léon, um ihn zu bereinigen.</string>
+    <string name="change_remembered">Gemerkt für %1$s</string>
+    <string name="remember_per_site">Auswahl pro Website merken</string>
+    <string name="remember_per_site_summary">Parameter, die du in der Änderungsliste an- oder abwählst, werden beim nächsten Teilen einer URL dieser Website genauso behandelt</string>
+    <string name="remembered_sites">Gemerkte Websites</string>
+    <string name="remembered_sites_description">Deine Auswahl aus der Änderungsliste, pro Website. Vergiss einen Eintrag, um den Parameter wieder den Reinigern zu überlassen.</string>
+    <string name="remembered_sites_empty">Noch nichts gemerkt. Wähle einen Parameter in der Änderungsliste an oder ab, um ihn für seine Website zu merken.</string>
+    <string name="remembered_removed">Entfernt</string>
+    <string name="remembered_kept">Behalten</string>
+    <string name="remembered_forget">Vergessen</string>
+    <string name="remembered_forget_all">Alle vergessen</string>
+    <string name="remembered_forget_all_confirm">Die gemerkte Auswahl für alle Websites vergessen?</string>
 </resources>

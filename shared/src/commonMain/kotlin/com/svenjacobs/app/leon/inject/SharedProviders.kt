@@ -23,6 +23,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizersCollection
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.db.AppDatabase
 import com.svenjacobs.app.leon.db.HistoryDao
+import com.svenjacobs.app.leon.db.SiteParameterDao
 import com.svenjacobs.app.leon.network.createHttpClient
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
@@ -41,6 +42,8 @@ interface SharedProviders {
         Cleaner(sanitizers, repository)
 
     @Provides fun provideHistoryDao(db: AppDatabase): HistoryDao = db.historyDao()
+
+    @Provides fun provideSiteParameterDao(db: AppDatabase): SiteParameterDao = db.siteParameterDao()
 
     /** Inject it as `Lazy<HttpClient>`, so that none is created while nothing is resolved. */
     @Provides @SingleIn(AppScope::class) fun provideHttpClient(): HttpClient = createHttpClient()

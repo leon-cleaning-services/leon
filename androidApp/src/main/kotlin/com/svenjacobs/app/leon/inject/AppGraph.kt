@@ -28,6 +28,7 @@ import com.svenjacobs.app.leon.core.domain.Cleaner
 import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.AppDatabase
+import com.svenjacobs.app.leon.preference.SitePreferenceStore
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Named
@@ -41,6 +42,7 @@ interface AppGraph : ViewModelGraph {
     val appDataStoreManager: AppDataStoreManager
     val cleaner: Cleaner
     val shortLinkResolver: ShortLinkResolver
+    val sitePreferenceStore: SitePreferenceStore
 
     @Provides
     @SingleIn(AppScope::class)

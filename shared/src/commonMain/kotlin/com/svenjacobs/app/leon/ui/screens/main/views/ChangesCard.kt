@@ -35,6 +35,7 @@ import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.sanitizer.displayName
 import com.svenjacobs.app.leon.shared.resources.Res
+import com.svenjacobs.app.leon.shared.resources.change_remembered
 import com.svenjacobs.app.leon.shared.resources.changes_title
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import kotlinx.collections.immutable.ImmutableList
@@ -108,6 +109,16 @@ private fun ChangeItem(
                     text = sanitizerNames,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            // Says why the row does not follow the catalog, so that a choice made on an earlier
+            // share never changes a URL unnoticed.
+            if (row.remembered && row.site != null) {
+                Text(
+                    text = stringResource(Res.string.change_remembered, row.site),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }

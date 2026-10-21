@@ -132,6 +132,17 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
     val shortLinkDialogShown: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[KEY_SHORT_LINK_DIALOG_SHOWN] ?: false }
 
+    suspend fun setRememberPerSiteEnabled(enabled: Boolean) {
+        dataStore.edit { it[KEY_REMEMBER_PER_SITE] = enabled }
+    }
+
+    /**
+     * Whether a parameter the user ticks or unticks in the change list is remembered for its site
+     * and applied to the next URL from there.
+     */
+    val rememberPerSiteEnabled: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[KEY_REMEMBER_PER_SITE] ?: true }
+
     private companion object {
         private val KEY_VERSION_CODE = intPreferencesKey("version_code")
         private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
@@ -145,5 +156,6 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
         private val KEY_HISTORY_ENABLED = booleanPreferencesKey("history_enabled")
         private val KEY_RESOLVE_SHORT_LINKS = booleanPreferencesKey("resolve_short_links")
         private val KEY_SHORT_LINK_DIALOG_SHOWN = booleanPreferencesKey("short_link_dialog_shown")
+        private val KEY_REMEMBER_PER_SITE = booleanPreferencesKey("remember_per_site")
     }
 }

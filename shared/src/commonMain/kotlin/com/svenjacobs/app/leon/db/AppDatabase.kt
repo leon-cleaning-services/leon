@@ -17,15 +17,23 @@
  */
 package com.svenjacobs.app.leon.db
 
+import androidx.room3.AutoMigration
 import androidx.room3.ConstructedBy
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
 
-@Database(entities = [HistoryEntry::class], version = 1, exportSchema = true)
+@Database(
+    entities = [HistoryEntry::class, SiteParameter::class],
+    version = 2,
+    exportSchema = true,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
+)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun historyDao(): HistoryDao
+
+    abstract fun siteParameterDao(): SiteParameterDao
 }
 
 // Room KMP generates the `actual` implementation of this object per target at compile time via

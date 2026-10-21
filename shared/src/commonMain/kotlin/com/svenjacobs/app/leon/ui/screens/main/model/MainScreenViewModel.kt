@@ -22,11 +22,14 @@ import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.core.domain.Cleaner
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.core.domain.change.Change
+import com.svenjacobs.app.leon.core.domain.preference.SitePreferences
+import com.svenjacobs.app.leon.core.domain.preference.site
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
+import com.svenjacobs.app.leon.preference.SitePreferenceStore
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkCommand
@@ -42,6 +45,7 @@ import kotlin.time.Clock
 import kotlin.uuid.Uuid
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -51,6 +55,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
@@ -64,6 +70,7 @@ class MainScreenViewModel(
     private val cleaner: Cleaner,
     private val historyDao: HistoryDao,
     private val shortLinkResolver: ShortLinkResolver,
+    private val sitePreferenceStore: SitePreferenceStore,
 ) : ViewModel() {
 
     data class UiState(
@@ -112,14 +119,20 @@ class MainScreenViewModel(
          * The names of the sanitizers are not part of this: they are translated resources, which
          * the view resolves from [sanitizerIds].
          *
-         * @param sanitizerIds Every sanitizer which proposed [action]; empty when the user asked
-         *   for it themselves.
+         * @param sanitizerIds Every sanitizer of the catalog which proposed [action]; empty when
+         *   the user asked for it themselves, on this share or on an earlier one from [site].
          * @param applied Whether the change is currently part of the cleaned URL.
+         * @param site The site toggling this row is remembered for, or `null` when it is not
+         *   remembered — because it is not a parameter, or because remembering is turned off.
+         * @param remembered Whether [applied] follows a choice remembered for [site] rather than
+         *   the catalog.
          */
         data class ChangeRow(
             val action: Change.Action,
             val sanitizerIds: ImmutableList<SanitizerId>,
             val applied: Boolean,
+            val site: String? = null,
+            val remembered: Boolean = false,
         )
     }
 
@@ -128,7 +141,8 @@ class MainScreenViewModel(
 
     /**
      * What the user picked in the change list. Transient: it is reset whenever a new text arrives,
-     * because the changes of the previous URL say nothing about the new one.
+     * because the changes of the previous URL say nothing about the new one. A parameter toggled
+     * while remembering per site is turned on goes to the [SitePreferenceStore] instead.
      *
      * @param declined Changes a sanitizer proposed which the user unchecked.
      * @param additional Removals the user checked which no sanitizer proposed.
@@ -221,15 +235,23 @@ class MainScreenViewModel(
                 }
             }
 
+    /** The choices remembered per site, or `null` when remembering is turned off. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val remembered: Flow<SitePreferences?> =
+        appDataStoreManager.rememberPerSiteEnabled.distinctUntilChanged().flatMapLatest { enabled ->
+            if (enabled) sitePreferenceStore.preferences else flowOf(null)
+        }
+
     /**
-     * The input with its short links, the user's selection and the auto-reset deadline for that
-     * same input, combined ahead of the outer [combine] so that it stays within its five-flow
-     * limit.
+     * The input with its short links, the user's selection, the choices remembered per site and the
+     * auto-reset deadline for that same input, combined ahead of the outer [combine] so that it
+     * stays within its five-flow limit.
      */
     private data class Session(
         val input: Input?,
         val shortLinks: ShortLinkProgress,
         val selection: Selection,
+        val remembered: SitePreferences?,
         val autoResetAt: Long?,
     )
 
@@ -238,9 +260,10 @@ class MainScreenViewModel(
                 combine(
                     staged,
                     selection,
+                    remembered,
                     appDataStoreManager.autoReset,
                     appDataStoreManager.lastInput,
-                ) { (input, shortLinks), selection, autoReset, last ->
+                ) { (input, shortLinks), selection, remembered, autoReset, last ->
                     // The deadline is a wall-clock timestamp, not a countdown, so it survives the
                     // app being backgrounded, the device sleeping, or the process being killed and
                     // the share intent redelivered. It only applies to `last` when `last` really
@@ -253,7 +276,7 @@ class MainScreenViewModel(
                             ?.minutes
                             ?.takeIf { last != null && last.id == input?.id }
                             ?.let { last!!.at + it * 60_000L }
-                    Session(input, shortLinks, selection, autoResetAt)
+                    Session(input, shortLinks, selection, remembered, autoResetAt)
                 },
                 appDataStoreManager.urlDecodeEnabled,
                 appDataStoreManager.extractUrlEnabled,
@@ -278,6 +301,7 @@ class MainScreenViewModel(
                             extractUrl = extractUrlEnabled,
                             selection = session.selection,
                             resolved = session.shortLinks.resolved,
+                            remembered = session.remembered,
                         )
                     } ?: Result.Empty
 
@@ -335,8 +359,26 @@ class MainScreenViewModel(
     /**
      * Applies or reverts one row of the change list, which means every sanitizer's proposal behind
      * it — a row is only checked off the cleaned URL once nothing removes the value any more.
+     *
+     * A parameter with a [site][ChangeRow.site] is remembered for that site instead, by its name.
+     * Only a deviation from the catalog is stored: toggling a row back to what the sanitizers do on
+     * their own forgets it again.
      */
     fun onChangeToggled(row: ChangeRow, apply: Boolean) {
+        val site = row.site
+        val parameter = (row.action as? Change.Action.RemoveParameter)?.parameter?.name
+        if (site != null && parameter != null) {
+            viewModelScope.launch {
+                when {
+                    apply == row.sanitizerIds.isNotEmpty() ->
+                        sitePreferenceStore.forget(site, parameter)
+                    apply -> sitePreferenceStore.remove(site, parameter)
+                    else -> sitePreferenceStore.keep(site, parameter)
+                }
+            }
+            return
+        }
+
         selection.update { current ->
             when {
                 // A change the user added themselves only exists while it is applied.
@@ -414,6 +456,7 @@ class MainScreenViewModel(
         extractUrl: Boolean,
         selection: Selection,
         resolved: Map<Url, Url>,
+        remembered: SitePreferences?,
     ): Result =
         try {
             cleaner
@@ -423,6 +466,7 @@ class MainScreenViewModel(
                     declined = selection.declined,
                     additional = selection.additional,
                     resolved = resolved,
+                    remembered = remembered ?: persistentMapOf(),
                 )
                 .let { result ->
                     Result.Success(
@@ -435,7 +479,9 @@ class MainScreenViewModel(
                             },
                         urls = result.urls.map { it.display.toString() }.toImmutableList(),
                         changes =
-                            result.urls.flatMap { changeRows(it, selection) }.toImmutableList(),
+                            result.urls
+                                .flatMap { changeRows(it, remembering = remembered != null) }
+                                .toImmutableList(),
                     )
                 }
         } catch (e: Exception) {
@@ -446,8 +492,14 @@ class MainScreenViewModel(
      * Builds the change list of a single URL: everything the sanitizers proposed, whether applied
      * or declined, followed by the parts of the cleaned URL which nothing proposed to remove — its
      * remaining parameters and its fragment — so that the user can remove those by hand as well.
+     *
+     * @param remembering Whether toggling a parameter is remembered for its site.
      */
-    private fun changeRows(url: Cleaner.CleanedUrl, selection: Selection): List<ChangeRow> {
+    private fun changeRows(url: Cleaner.CleanedUrl, remembering: Boolean): List<ChangeRow> {
+        fun site(action: Change.Action, site: String?) = site?.takeIf {
+            remembering && action is Change.Action.RemoveParameter
+        }
+
         val proposed =
             url.available
                 .groupBy { it.action }
@@ -455,9 +507,18 @@ class MainScreenViewModel(
                     ChangeRow(
                         action = action,
                         sanitizerIds =
-                            changes.mapNotNull { it.sanitizerId }.distinct().toImmutableList(),
-                        // Still part of the URL as long as one of them was not declined.
-                        applied = changes.any { it !in selection.declined },
+                            changes
+                                .mapNotNull { it.sanitizerId }
+                                .filterNot { it == SanitizerId.Remembered }
+                                .distinct()
+                                .toImmutableList(),
+                        // Still part of the URL as long as one of them was applied.
+                        applied = changes.any { it in url.applied },
+                        site = site(action, url.sites[changes.first()]),
+                        remembered =
+                            changes.any {
+                                it.sanitizerId == SanitizerId.Remembered || it in url.kept
+                            },
                     )
                 }
 
@@ -475,10 +536,12 @@ class MainScreenViewModel(
             url.cleaned.parameters
                 .filterNot { it in listed }
                 .map {
+                    val action = Change.Action.RemoveParameter(it)
                     ChangeRow(
-                        Change.Action.RemoveParameter(it),
+                        action,
                         persistentListOf(),
                         applied = false,
+                        site = site(action, url.cleaned.site),
                     )
                 }
 

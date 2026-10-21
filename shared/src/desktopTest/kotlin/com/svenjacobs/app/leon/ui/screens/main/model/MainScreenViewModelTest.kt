@@ -34,7 +34,10 @@ import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
+import com.svenjacobs.app.leon.db.SiteParameter
+import com.svenjacobs.app.leon.db.SiteParameterDao
 import com.svenjacobs.app.leon.network.RESOLVE_ALL_BUDGET_MILLIS
+import com.svenjacobs.app.leon.preference.SitePreferenceStore
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkState
@@ -60,6 +63,7 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
@@ -83,6 +87,7 @@ class MainScreenViewModelTest :
                 actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
                 historyEnabled: Boolean = true,
                 resolveShortLinksEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false),
+                rememberPerSiteEnabled: Boolean = false,
             ): AppDataStoreManager = mockk {
                 every { urlDecodeEnabled } returns flowOf(false)
                 every { extractUrlEnabled } returns flowOf(false)
@@ -92,6 +97,7 @@ class MainScreenViewModelTest :
                 every { this@mockk.lastInput } returns flowOf(lastInput)
                 every { this@mockk.historyEnabled } returns flowOf(historyEnabled)
                 every { this@mockk.resolveShortLinksEnabled } returns resolveShortLinksEnabled
+                every { this@mockk.rememberPerSiteEnabled } returns flowOf(rememberPerSiteEnabled)
                 coEvery { setResolveShortLinksEnabled(any()) } answers
                     {
                         resolveShortLinksEnabled.value = firstArg()
@@ -112,7 +118,7 @@ class MainScreenViewModelTest :
                 val cleaner =
                     mockk<Cleaner> {
                         coEvery { shortLinks(any()) } returns emptyList()
-                        coEvery { clean(any(), any(), any(), any(), any()) } answers
+                        coEvery { clean(any(), any(), any(), any(), any(), any()) } answers
                             {
                                 val text = firstArg<String>()
                                 val url = requireNotNull(Url.parse(text))
@@ -139,6 +145,7 @@ class MainScreenViewModelTest :
                         cleaner = cleaner,
                         historyDao = historyDao(),
                         shortLinkResolver = FakeShortLinkResolver(),
+                        sitePreferenceStore = SitePreferenceStore(FakeSiteParameterDao()),
                     )
             }
 
@@ -162,6 +169,7 @@ class MainScreenViewModelTest :
                                 ),
                             historyDao = historyDao(),
                             shortLinkResolver = FakeShortLinkResolver(),
+                            sitePreferenceStore = SitePreferenceStore(FakeSiteParameterDao()),
                         )
                     }
 
@@ -255,6 +263,8 @@ class MainScreenViewModelTest :
                                         ),
                                     historyDao = historyDao(),
                                     shortLinkResolver = FakeShortLinkResolver(),
+                                    sitePreferenceStore =
+                                        SitePreferenceStore(FakeSiteParameterDao()),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -332,6 +342,8 @@ class MainScreenViewModelTest :
                                         ),
                                     historyDao = historyDao(),
                                     shortLinkResolver = FakeShortLinkResolver(),
+                                    sitePreferenceStore =
+                                        SitePreferenceStore(FakeSiteParameterDao()),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -395,6 +407,8 @@ class MainScreenViewModelTest :
                                         ),
                                     historyDao = historyDao(),
                                     shortLinkResolver = FakeShortLinkResolver(),
+                                    sitePreferenceStore =
+                                        SitePreferenceStore(FakeSiteParameterDao()),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -423,6 +437,180 @@ class MainScreenViewModelTest :
 
                             (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
                                 "https://other.com/q"
+                        }
+                    }
+                }
+
+            "remember per site" should
+                {
+                    fun viewModel(dao: FakeSiteParameterDao, enabled: Boolean = true) =
+                        MainScreenViewModel(
+                            appDataStoreManager =
+                                appDataStoreManager(rememberPerSiteEnabled = enabled),
+                            cleaner =
+                                Cleaner(
+                                    sanitizers = persistentListOf(GoogleAnalytics),
+                                    repository =
+                                        mockk<SanitizerRepository> {
+                                            coEvery { isEnabled(any()) } returns true
+                                        },
+                                ),
+                            historyDao = historyDao(),
+                            shortLinkResolver = FakeShortLinkResolver(),
+                            sitePreferenceStore = SitePreferenceStore(dao),
+                        )
+
+                    fun MainScreenViewModel.result() = uiState.value.result as Result.Success
+
+                    fun MainScreenViewModel.row(parameter: String) =
+                        result().changes.first {
+                            (it.action as? Change.Action.RemoveParameter)?.parameter?.name ==
+                                parameter
+                        }
+
+                    "remember a parameter ticked by hand and remove it on the next share" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao = FakeSiteParameterDao()
+                            val viewModel = viewModel(dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://www.example.com/p?utm_source=x&page=2")
+                            viewModel.row("page").site shouldBe "example.com"
+                            viewModel.onChangeToggled(viewModel.row("page"), apply = true)
+
+                            dao.entries.value shouldBe
+                                listOf(
+                                    SiteParameter(
+                                        "example.com",
+                                        "page",
+                                        SiteParameter.Decision.REMOVE,
+                                    ),
+                                )
+                            viewModel.result().cleanedText shouldBe "https://www.example.com/p"
+
+                            viewModel.setText("https://example.com/q?page=3")
+
+                            viewModel.result().cleanedText shouldBe "https://example.com/q"
+                            viewModel.row("page").applied shouldBe true
+                            viewModel.row("page").remembered shouldBe true
+                            viewModel.row("page").sanitizerIds.shouldBeEmpty()
+                        }
+                    }
+
+                    "forget a remembered removal when it is unticked" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao =
+                                FakeSiteParameterDao(
+                                    SiteParameter(
+                                        "example.com",
+                                        "page",
+                                        SiteParameter.Decision.REMOVE,
+                                    ),
+                                )
+                            val viewModel = viewModel(dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://example.com/p?page=2")
+                            viewModel.onChangeToggled(viewModel.row("page"), apply = false)
+
+                            dao.entries.value.shouldBeEmpty()
+                            viewModel.result().cleanedText shouldBe "https://example.com/p?page=2"
+                            viewModel.row("page").remembered shouldBe false
+                        }
+                    }
+
+                    "remember keeping a parameter a sanitizer removes, until it is ticked again" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao = FakeSiteParameterDao()
+                            val viewModel = viewModel(dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://example.com/p?utm_source=x")
+                            viewModel.onChangeToggled(viewModel.row("utm_source"), apply = false)
+
+                            dao.entries.value shouldBe
+                                listOf(
+                                    SiteParameter(
+                                        "example.com",
+                                        "utm_source",
+                                        SiteParameter.Decision.KEEP,
+                                    ),
+                                )
+                            viewModel.result().cleanedText shouldBe
+                                "https://example.com/p?utm_source=x"
+                            with(viewModel.row("utm_source")) {
+                                applied shouldBe false
+                                remembered shouldBe true
+                                sanitizerIds shouldBe persistentListOf(GoogleAnalytics.id)
+                            }
+
+                            viewModel.onChangeToggled(viewModel.row("utm_source"), apply = true)
+
+                            dao.entries.value.shouldBeEmpty()
+                            viewModel.result().cleanedText shouldBe "https://example.com/p"
+                        }
+                    }
+
+                    "not apply the choices of another site" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao =
+                                FakeSiteParameterDao(
+                                    SiteParameter(
+                                        "example.com",
+                                        "page",
+                                        SiteParameter.Decision.REMOVE,
+                                    ),
+                                )
+                            val viewModel = viewModel(dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://shop.example.com/p?page=2")
+
+                            viewModel.result().cleanedText shouldBe
+                                "https://shop.example.com/p?page=2"
+                            viewModel.row("page").remembered shouldBe false
+                        }
+                    }
+
+                    "neither remember nor apply anything while turned off" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao =
+                                FakeSiteParameterDao(
+                                    SiteParameter(
+                                        "example.com",
+                                        "page",
+                                        SiteParameter.Decision.REMOVE,
+                                    ),
+                                )
+                            val viewModel = viewModel(dao, enabled = false)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://example.com/p?page=2&ref=x")
+                            viewModel.result().cleanedText shouldBe
+                                "https://example.com/p?page=2&ref=x"
+                            viewModel.row("ref").site shouldBe null
+
+                            viewModel.onChangeToggled(viewModel.row("ref"), apply = true)
+
+                            dao.entries.value shouldHaveSize 1
+                            viewModel.result().cleanedText shouldBe "https://example.com/p?page=2"
+                        }
+                    }
+
+                    "never remember removing the fragment" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val dao = FakeSiteParameterDao()
+                            val viewModel = viewModel(dao)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://example.com/p#section")
+                            val fragment = viewModel.result().changes.single()
+                            fragment.site shouldBe null
+
+                            viewModel.onChangeToggled(fragment, apply = true)
+
+                            dao.entries.value.shouldBeEmpty()
+                            viewModel.result().cleanedText shouldBe "https://example.com/p"
                         }
                     }
                 }
@@ -462,6 +650,7 @@ class MainScreenViewModelTest :
                                 ),
                             historyDao = historyDao(),
                             shortLinkResolver = FakeShortLinkResolver(),
+                            sitePreferenceStore = SitePreferenceStore(FakeSiteParameterDao()),
                         )
 
                     "report the deadline of an input which is still fresh" {
@@ -541,6 +730,7 @@ class MainScreenViewModelTest :
                                             every { this@mockk.lastInput } returns lastInput
                                             every { historyEnabled } returns flowOf(true)
                                             every { resolveShortLinksEnabled } returns flowOf(false)
+                                            every { rememberPerSiteEnabled } returns flowOf(false)
                                             coEvery { setLastInput(any(), any()) } answers
                                                 {
                                                     lastInput.value =
@@ -560,6 +750,8 @@ class MainScreenViewModelTest :
                                         ),
                                     historyDao = historyDao(),
                                     shortLinkResolver = FakeShortLinkResolver(),
+                                    sitePreferenceStore =
+                                        SitePreferenceStore(FakeSiteParameterDao()),
                                 )
                             backgroundScope.launch { viewModel.uiState.collect {} }
 
@@ -631,6 +823,7 @@ class MainScreenViewModelTest :
                                 ),
                             historyDao = dao,
                             shortLinkResolver = FakeShortLinkResolver(),
+                            sitePreferenceStore = SitePreferenceStore(FakeSiteParameterDao()),
                         )
 
                     "record a new input's cleaned URL exactly once" {
@@ -774,6 +967,7 @@ class MainScreenViewModelTest :
                                 ),
                             historyDao = dao,
                             shortLinkResolver = resolver,
+                            sitePreferenceStore = SitePreferenceStore(FakeSiteParameterDao()),
                         )
 
                     fun MainScreenViewModel.success() = uiState.value.result as Result.Success
@@ -1089,5 +1283,33 @@ private class FakeShortLinkResolver(
     override suspend fun resolve(url: Url): Resolution {
         calls += url
         return answer(url)
+    }
+}
+
+/** A [SiteParameterDao] held in memory, which emits every change like Room does. */
+private class FakeSiteParameterDao(vararg entries: SiteParameter) : SiteParameterDao {
+
+    val entries = MutableStateFlow(entries.toList())
+
+    override fun entries() = entries
+
+    override suspend fun upsert(entry: SiteParameter) {
+        entries.update { current ->
+            current.filterNot { it.site == entry.site && it.parameter == entry.parameter } + entry
+        }
+    }
+
+    override suspend fun delete(site: String, parameter: String) {
+        entries.update { current ->
+            current.filterNot { it.site == site && it.parameter == parameter }
+        }
+    }
+
+    override suspend fun deleteSite(site: String) {
+        entries.update { current -> current.filterNot { it.site == site } }
+    }
+
+    override suspend fun clear() {
+        entries.value = emptyList()
     }
 }
