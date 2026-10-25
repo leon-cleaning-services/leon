@@ -18,7 +18,6 @@
 package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.runtime.Composable
-import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
@@ -35,8 +34,8 @@ private fun ContentPreview() {
             historyEnabled = true,
             resolveShortLinksEnabled = false,
             rememberPerSiteEnabled = true,
-            actionAfterClean = ActionAfterClean.OpenShareMenu,
             autoReset = AutoReset.Off,
+            onActionAfterCleanClick = {},
             onSanitizersClick = {},
             onLicensesClick = {},
             onRememberedSitesClick = {},
@@ -46,7 +45,6 @@ private fun ContentPreview() {
             onHistorySwitchCheckedChange = {},
             onResolveShortLinksSwitchCheckedChange = {},
             onRememberPerSiteSwitchCheckedChange = {},
-            onActionAfterCleanClick = {},
             onAutoResetClick = {},
         )
     }

@@ -47,6 +47,12 @@
     <string name="open_in_custom_tabs">Mở URL trong tab tùy chỉnh của trình duyệt</string>
     <string name="open_in_custom_tabs_summary">Mở liên kết đã làm sạch trong tab trình duyệt ngay trong ứng dụng thay vì ứng dụng trình duyệt</string>
     <string name="action_after_clean">Hành động sau khi làm sạch</string>
+    <string name="action_after_clean_description">Việc Léon làm với URL sau khi đã làm sạch</string>
+    <string name="action_after_clean_per_source">Chọn theo nguồn</string>
+    <string name="action_after_clean_per_source_summary">Dùng hành động khác nhau tùy theo nguồn của văn bản</string>
+    <string name="action_after_clean_other_app">Từ ứng dụng khác</string>
+    <string name="action_after_clean_browser">Mở bằng trình duyệt</string>
+    <string name="action_after_clean_in_app">Nhập trong Léon</string>
     <string name="do_nothing">Không làm gì cả</string>
     <string name="open_share_menu">Mở menu chia sẻ</string>
     <string name="open_url">Mở URL</string>

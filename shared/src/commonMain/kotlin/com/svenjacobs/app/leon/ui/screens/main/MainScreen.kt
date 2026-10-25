@@ -100,6 +100,7 @@ import com.svenjacobs.app.leon.shared.resources.text_field_placeholder
 import com.svenjacobs.app.leon.ui.common.copyToClipboard
 import com.svenjacobs.app.leon.ui.common.readText
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
+import com.svenjacobs.app.leon.ui.model.InputSource
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
@@ -160,7 +161,7 @@ fun MainScreen(
     LaunchedEffect(sourceText.value) {
         val sourceText = sourceText.value ?: return@LaunchedEffect
 
-        viewModel.setText(sourceText.text, sourceText.id)
+        viewModel.setText(sourceText.text, sourceText.id, sourceText.source)
     }
 
     // Waits out the auto-reset deadline. The loop, rather than a single delay for the whole
@@ -209,11 +210,11 @@ fun MainScreen(
                 if (text.isNullOrBlank()) {
                     snackbarHostState.showSnackbar(clipboardEmptyMessage)
                 } else {
-                    viewModel.setText(text)
+                    viewModel.setText(text, source = InputSource.InApp)
                 }
             }
         },
-        onSubmit = viewModel::setText,
+        onSubmit = { viewModel.setText(it, source = InputSource.InApp) },
         onShareClick = ::openShareMenu,
         onCopyToClipboardClick = ::copyToClipboard,
         onOpenClick = ::openUrl,

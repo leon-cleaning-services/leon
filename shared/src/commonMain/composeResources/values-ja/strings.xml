@@ -47,6 +47,12 @@
     <string name="open_in_custom_tabs">URL をブラウザのカスタムタブで開く</string>
     <string name="open_in_custom_tabs_summary">クリーンしたリンクをブラウザアプリではなくアプリ内のブラウザタブで開きます</string>
     <string name="action_after_clean">クリーン後のアクション</string>
+    <string name="action_after_clean_description">URL をクリーンした後に Léon が行うこと</string>
+    <string name="action_after_clean_per_source">ソースごとに選択</string>
+    <string name="action_after_clean_per_source_summary">テキストの入手元に応じて別のアクションを使用します</string>
+    <string name="action_after_clean_other_app">他のアプリから</string>
+    <string name="action_after_clean_browser">ブラウザとして開いた場合</string>
+    <string name="action_after_clean_in_app">Léon に入力した場合</string>
     <string name="do_nothing">何もしない</string>
     <string name="open_share_menu">共有メニューを開く</string>
     <string name="open_url">URL を開く</string>

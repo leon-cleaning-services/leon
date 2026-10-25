@@ -30,6 +30,7 @@ import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.preference.SitePreferenceStore
+import com.svenjacobs.app.leon.ui.model.InputSource
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.ChangeRow
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkCommand
@@ -80,6 +81,7 @@ class MainScreenViewModel(
         val isExtractUrlEnabled: Boolean = false,
         val isCustomTabsEnabled: Boolean = false,
         val result: Result = Result.Empty,
+        /** The action to run after cleaning, resolved for the source of the current input. */
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
         /**
          * The epoch-millis instant at which the screen must reset itself, or `null` when auto-reset
@@ -137,7 +139,7 @@ class MainScreenViewModel(
     }
 
     /** Text of a single incoming intent, identified by a stable [id]. */
-    private data class Input(val id: String, val text: String)
+    private data class Input(val id: String, val text: String, val source: InputSource)
 
     /**
      * What the user picked in the change list. Transient: it is reset whenever a new text arrives,
@@ -281,8 +283,8 @@ class MainScreenViewModel(
                 appDataStoreManager.urlDecodeEnabled,
                 appDataStoreManager.extractUrlEnabled,
                 appDataStoreManager.customTabsEnabled,
-                appDataStoreManager.actionAfterClean,
-            ) { session, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionAfterClean
+                appDataStoreManager.actionsAfterClean,
+            ) { session, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionsAfterClean
                 ->
                 // An input whose deadline already passed is the process-death case: the intent was
                 // redelivered, but auto-reset should already have fired. Treating it as absent here
@@ -324,7 +326,9 @@ class MainScreenViewModel(
                     isExtractUrlEnabled = extractUrlEnabled,
                     isCustomTabsEnabled = isCustomTabsEnabled,
                     result = result,
-                    actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
+                    actionAfterClean =
+                        input?.let { actionsAfterClean.forSource(it.source) }
+                            ?: ActionAfterClean.DoNothing,
                     autoResetAt = if (expired) null else session.autoResetAt,
                     shortLink = shortLink,
                 )
@@ -335,10 +339,14 @@ class MainScreenViewModel(
                 initialValue = UiState(),
             )
 
-    fun setText(text: String?, id: String = Uuid.random().toString()) {
+    fun setText(
+        text: String?,
+        id: String = Uuid.random().toString(),
+        source: InputSource = InputSource.InApp,
+    ) {
         if (text == null && uiState.value.result is Result.Success) return
         selection.value = Selection()
-        input.value = text?.let { Input(id = id, text = it) }
+        input.value = text?.let { Input(id = id, text = it, source = source) }
 
         if (text != null) {
             viewModelScope.launch {

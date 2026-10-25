@@ -49,6 +49,12 @@
     <string name="open_in_custom_tabs">URLs in Browser Custom Tabs öffnen</string>
     <string name="open_in_custom_tabs_summary">Öffnet bereinigte Links in einem Browser-Tab innerhalb der App statt in der Browser-App</string>
     <string name="action_after_clean">Aktion nach Reinigung</string>
+    <string name="action_after_clean_description">Was Léon mit einer URL macht, nachdem sie bereinigt wurde</string>
+    <string name="action_after_clean_per_source">Pro Quelle wählen</string>
+    <string name="action_after_clean_per_source_summary">Eine andere Aktion verwenden, je nachdem, woher der Text stammt</string>
+    <string name="action_after_clean_other_app">Aus einer anderen App</string>
+    <string name="action_after_clean_browser">Als Browser geöffnet</string>
+    <string name="action_after_clean_in_app">In Léon eingegeben</string>
     <string name="do_nothing">Nichts unternehmen</string>
     <string name="open_share_menu">Teilenmenü öffnen</string>
     <string name="open_url">URL öffnen</string>

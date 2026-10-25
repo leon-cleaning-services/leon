@@ -38,7 +38,9 @@ import com.svenjacobs.app.leon.db.SiteParameter
 import com.svenjacobs.app.leon.db.SiteParameterDao
 import com.svenjacobs.app.leon.network.RESOLVE_ALL_BUDGET_MILLIS
 import com.svenjacobs.app.leon.preference.SitePreferenceStore
+import com.svenjacobs.app.leon.ui.model.ActionsAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.InputSource
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel.UiState.Result
 import com.svenjacobs.app.leon.ui.shortlink.model.ShortLinkState
 import com.svenjacobs.app.leon.ui.shortlink.model.isSettled
@@ -84,7 +86,7 @@ class MainScreenViewModelTest :
             fun appDataStoreManager(
                 autoReset: AutoReset = AutoReset.Off,
                 lastInput: AppDataStoreManager.LastInput? = null,
-                actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
+                actionsAfterClean: ActionsAfterClean = ActionsAfterClean(),
                 historyEnabled: Boolean = true,
                 resolveShortLinksEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false),
                 rememberPerSiteEnabled: Boolean = false,
@@ -92,7 +94,7 @@ class MainScreenViewModelTest :
                 every { urlDecodeEnabled } returns flowOf(false)
                 every { extractUrlEnabled } returns flowOf(false)
                 every { customTabsEnabled } returns flowOf(false)
-                every { this@mockk.actionAfterClean } returns flowOf(actionAfterClean)
+                every { this@mockk.actionsAfterClean } returns flowOf(actionsAfterClean)
                 every { this@mockk.autoReset } returns flowOf(autoReset)
                 every { this@mockk.lastInput } returns flowOf(lastInput)
                 every { this@mockk.historyEnabled } returns flowOf(historyEnabled)
@@ -113,7 +115,14 @@ class MainScreenViewModelTest :
                 Dispatchers.setMain(UnconfinedTestDispatcher())
 
                 val appDataStoreManager =
-                    appDataStoreManager(actionAfterClean = ActionAfterClean.OpenShareMenu)
+                    appDataStoreManager(
+                        actionsAfterClean =
+                            ActionsAfterClean(
+                                otherApp = ActionAfterClean.OpenShareMenu,
+                                browser = ActionAfterClean.OpenShareMenu,
+                                inApp = ActionAfterClean.OpenShareMenu,
+                            ),
+                    )
 
                 val cleaner =
                     mockk<Cleaner> {
@@ -724,8 +733,8 @@ class MainScreenViewModelTest :
                                             every { urlDecodeEnabled } returns flowOf(false)
                                             every { extractUrlEnabled } returns flowOf(false)
                                             every { customTabsEnabled } returns flowOf(false)
-                                            every { actionAfterClean } returns
-                                                flowOf(ActionAfterClean.DoNothing)
+                                            every { actionsAfterClean } returns
+                                                flowOf(ActionsAfterClean())
                                             every { autoReset } returns flowOf(AutoReset.OneMinute)
                                             every { this@mockk.lastInput } returns lastInput
                                             every { historyEnabled } returns flowOf(true)
@@ -803,6 +812,66 @@ class MainScreenViewModelTest :
                     "return true again for a new inputId, even with identical text (#775)" {
                         viewModel.consumeActionAfterClean("id-1") shouldBe true
                         viewModel.consumeActionAfterClean("id-2") shouldBe true
+                    }
+                }
+
+            "actionAfterClean" should
+                {
+                    val actions =
+                        ActionsAfterClean(
+                            otherApp = ActionAfterClean.OpenShareMenu,
+                            browser = ActionAfterClean.CopyToClipboard,
+                            inApp = ActionAfterClean.OpenUrl,
+                            perSource = true,
+                        )
+
+                    /** A view model on a real [Cleaner], configured with [actions]. */
+                    fun viewModel(actions: ActionsAfterClean) =
+                        MainScreenViewModel(
+                            appDataStoreManager = appDataStoreManager(actionsAfterClean = actions),
+                            cleaner =
+                                Cleaner(
+                                    sanitizers = persistentListOf(GoogleAnalytics),
+                                    repository =
+                                        mockk<SanitizerRepository> {
+                                            coEvery { isEnabled(any()) } returns true
+                                        },
+                                ),
+                            historyDao = historyDao(),
+                            shortLinkResolver = FakeShortLinkResolver(),
+                            sitePreferenceStore = SitePreferenceStore(FakeSiteParameterDao()),
+                        )
+
+                    "resolve the action of the input's source when configured per source" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel = viewModel(actions)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://example.com", source = InputSource.OtherApp)
+                            viewModel.uiState.value.actionAfterClean shouldBe
+                                ActionAfterClean.OpenShareMenu
+
+                            viewModel.setText("https://example.com", source = InputSource.Browser)
+                            viewModel.uiState.value.actionAfterClean shouldBe
+                                ActionAfterClean.CopyToClipboard
+
+                            viewModel.setText("https://example.com", source = InputSource.InApp)
+                            viewModel.uiState.value.actionAfterClean shouldBe
+                                ActionAfterClean.OpenUrl
+                        }
+                    }
+
+                    "resolve the other app action for every source when not per source" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel = viewModel(actions.copy(perSource = false))
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            InputSource.entries.forEach { source ->
+                                viewModel.setText("https://example.com", source = source)
+                                viewModel.uiState.value.actionAfterClean shouldBe
+                                    ActionAfterClean.OpenShareMenu
+                            }
+                        }
                     }
                 }
 

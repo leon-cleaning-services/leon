@@ -19,7 +19,6 @@ package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.runtime.Composable
 import com.android.tools.screenshot.PreviewTest
-import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.FormFactorPreviews
@@ -37,8 +36,8 @@ private fun ContentScreenshot() {
             historyEnabled = true,
             resolveShortLinksEnabled = false,
             rememberPerSiteEnabled = true,
-            actionAfterClean = ActionAfterClean.OpenShareMenu,
             autoReset = AutoReset.Off,
+            onActionAfterCleanClick = {},
             onSanitizersClick = {},
             onLicensesClick = {},
             onRememberedSitesClick = {},
@@ -48,7 +47,6 @@ private fun ContentScreenshot() {
             onHistorySwitchCheckedChange = {},
             onResolveShortLinksSwitchCheckedChange = {},
             onRememberPerSiteSwitchCheckedChange = {},
-            onActionAfterCleanClick = {},
             onAutoResetClick = {},
         )
     }

@@ -18,7 +18,6 @@
 package com.svenjacobs.app.leon.ui.screens.settings.model
 
 import com.svenjacobs.app.leon.Platform
-import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.db.SiteParameterDao
@@ -63,7 +62,6 @@ class SettingsScreenViewModelTest :
                 every { this@mockk.rememberPerSiteEnabled } returns rememberPerSiteEnabled
                 every { customTabsEnabled } returns flowOf(false)
                 every { protectScreenEnabled } returns flowOf(false)
-                every { actionAfterClean } returns flowOf(ActionAfterClean.DoNothing)
                 every { autoReset } returns flowOf(AutoReset.Off)
                 coEvery { setResolveShortLinksEnabled(any()) } just Runs
                 coEvery { setRememberPerSiteEnabled(any()) } just Runs

@@ -41,22 +41,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.shared.resources.Res
 import com.svenjacobs.app.leon.shared.resources.about
 import com.svenjacobs.app.leon.shared.resources.action_after_clean
 import com.svenjacobs.app.leon.shared.resources.auto_reset_after
 import com.svenjacobs.app.leon.shared.resources.auto_reset_minutes
 import com.svenjacobs.app.leon.shared.resources.auto_reset_off
-import com.svenjacobs.app.leon.shared.resources.copy_to_clipboard
-import com.svenjacobs.app.leon.shared.resources.do_nothing
 import com.svenjacobs.app.leon.shared.resources.history_enabled
 import com.svenjacobs.app.leon.shared.resources.history_enabled_summary
 import com.svenjacobs.app.leon.shared.resources.licenses
 import com.svenjacobs.app.leon.shared.resources.open_in_custom_tabs
 import com.svenjacobs.app.leon.shared.resources.open_in_custom_tabs_summary
-import com.svenjacobs.app.leon.shared.resources.open_share_menu
-import com.svenjacobs.app.leon.shared.resources.open_url
 import com.svenjacobs.app.leon.shared.resources.protect_screen
 import com.svenjacobs.app.leon.shared.resources.protect_screen_summary
 import com.svenjacobs.app.leon.shared.resources.register_as_browser
@@ -76,6 +71,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SettingsScreen(
+    onNavigateToSettingsActionAfterClean: () -> Unit,
     onNavigateToSettingsSanitizers: () -> Unit,
     onNavigateToSettingsLicenses: () -> Unit,
     onNavigateToSettingsRememberedSites: () -> Unit,
@@ -93,11 +89,11 @@ fun SettingsScreen(
         historyEnabled = uiState.historyEnabled,
         resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
         rememberPerSiteEnabled = uiState.rememberPerSiteEnabled,
-        actionAfterClean = uiState.actionAfterClean,
         autoReset = uiState.autoReset,
         supportsBrowserRegistration = uiState.supportsBrowserRegistration,
         supportsCustomTabs = uiState.supportsCustomTabs,
         supportsProtectScreen = uiState.supportsProtectScreen,
+        onActionAfterCleanClick = onNavigateToSettingsActionAfterClean,
         onSanitizersClick = onNavigateToSettingsSanitizers,
         onLicensesClick = onNavigateToSettingsLicenses,
         onRememberedSitesClick = onNavigateToSettingsRememberedSites,
@@ -107,7 +103,6 @@ fun SettingsScreen(
         onHistorySwitchCheckedChange = viewModel::onHistorySwitchCheckedChange,
         onResolveShortLinksSwitchCheckedChange = viewModel::onResolveShortLinksSwitchCheckedChange,
         onRememberPerSiteSwitchCheckedChange = viewModel::onRememberPerSiteSwitchCheckedChange,
-        onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
         onAutoResetClick = viewModel::onAutoResetClick,
     )
 }
@@ -121,8 +116,8 @@ fun Content(
     historyEnabled: Boolean,
     resolveShortLinksEnabled: Boolean,
     rememberPerSiteEnabled: Boolean,
-    actionAfterClean: ActionAfterClean,
     autoReset: AutoReset,
+    onActionAfterCleanClick: () -> Unit,
     onSanitizersClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onRememberedSitesClick: () -> Unit,
@@ -132,7 +127,6 @@ fun Content(
     onHistorySwitchCheckedChange: (Boolean) -> Unit,
     onResolveShortLinksSwitchCheckedChange: (Boolean) -> Unit,
     onRememberPerSiteSwitchCheckedChange: (Boolean) -> Unit,
-    onActionAfterCleanClick: (ActionAfterClean) -> Unit,
     onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
     supportsBrowserRegistration: Boolean = true,
@@ -204,71 +198,6 @@ fun Content(
                     checked = rememberPerSiteEnabled,
                     onCheckedChange = onRememberPerSiteSwitchCheckedChange,
                 )
-
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-                    var expanded by rememberSaveable { mutableStateOf(false) }
-
-                    Text(stringResource(Res.string.action_after_clean))
-
-                    ExposedDropdownMenuBox(
-                        modifier = Modifier.padding(top = 8.dp),
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
-                    ) {
-                        TextField(
-                            modifier =
-                                Modifier.fillMaxWidth()
-                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                            value = actionAfterClean.text(),
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                            },
-                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                        )
-
-                        ExposedDropdownMenu(
-                            modifier = Modifier.exposedDropdownSize(),
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(Res.string.do_nothing)) },
-                                onClick = {
-                                    expanded = false
-                                    onActionAfterCleanClick(ActionAfterClean.DoNothing)
-                                },
-                            )
-
-                            if (urlActions.canShare) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(Res.string.open_share_menu)) },
-                                    onClick = {
-                                        expanded = false
-                                        onActionAfterCleanClick(ActionAfterClean.OpenShareMenu)
-                                    },
-                                )
-                            }
-
-                            DropdownMenuItem(
-                                text = { Text(stringResource(Res.string.open_url)) },
-                                onClick = {
-                                    expanded = false
-                                    onActionAfterCleanClick(ActionAfterClean.OpenUrl)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(stringResource(Res.string.copy_to_clipboard)) },
-                                onClick = {
-                                    expanded = false
-                                    onActionAfterCleanClick(ActionAfterClean.CopyToClipboard)
-                                },
-                            )
-                        }
-                    }
-                }
 
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -351,6 +280,13 @@ fun Content(
 
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    onClick = onActionAfterCleanClick,
+                ) {
+                    Text(stringResource(Res.string.action_after_clean))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     onClick = onSanitizersClick,
                 ) {
                     Text(stringResource(Res.string.sanitizers))
@@ -380,15 +316,6 @@ fun Content(
         }
     }
 }
-
-@Composable
-private fun ActionAfterClean.text(): String =
-    when (this) {
-        ActionAfterClean.DoNothing -> stringResource(Res.string.do_nothing)
-        ActionAfterClean.OpenShareMenu -> stringResource(Res.string.open_share_menu)
-        ActionAfterClean.OpenUrl -> stringResource(Res.string.open_url)
-        ActionAfterClean.CopyToClipboard -> stringResource(Res.string.copy_to_clipboard)
-    }
 
 @Composable
 private fun AutoReset.text(): String =

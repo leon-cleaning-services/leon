@@ -20,7 +20,6 @@ package com.svenjacobs.app.leon.ui.screens.settings.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.svenjacobs.app.leon.Platform
-import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.db.SiteParameterDao
@@ -54,7 +53,6 @@ class SettingsScreenViewModel(
         val historyEnabled: Boolean = true,
         val resolveShortLinksEnabled: Boolean = false,
         val rememberPerSiteEnabled: Boolean = true,
-        val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
         val autoReset: AutoReset = AutoReset.Off,
         val supportsBrowserRegistration: Boolean = false,
         val supportsCustomTabs: Boolean = false,
@@ -85,9 +83,8 @@ class SettingsScreenViewModel(
                 ),
                 appDataStoreManager.customTabsEnabled,
                 appDataStoreManager.protectScreenEnabled,
-                appDataStoreManager.actionAfterClean,
                 appDataStoreManager.autoReset,
-            ) { toggles, customTabsEnabled, protectScreenEnabled, actionAfterClean, autoReset ->
+            ) { toggles, customTabsEnabled, protectScreenEnabled, autoReset ->
                 UiState(
                     isLoading = false,
                     browserEnabled = toggles.browserEnabled,
@@ -96,7 +93,6 @@ class SettingsScreenViewModel(
                     historyEnabled = toggles.historyEnabled,
                     resolveShortLinksEnabled = toggles.resolveShortLinksEnabled,
                     rememberPerSiteEnabled = toggles.rememberPerSiteEnabled,
-                    actionAfterClean = actionAfterClean ?: ActionAfterClean.DoNothing,
                     autoReset = autoReset ?: AutoReset.Off,
                     supportsBrowserRegistration = platform.supportsBrowserRegistration,
                     supportsCustomTabs = platform.supportsCustomTabs,
@@ -149,10 +145,6 @@ class SettingsScreenViewModel(
             // Like the history, turning remembering off must leave nothing behind.
             if (!checked) siteParameterDao.clear()
         }
-    }
-
-    fun onActionAfterCleanClick(actionAfterClean: ActionAfterClean) {
-        viewModelScope.launch { appDataStoreManager.setActionAfterClean(actionAfterClean) }
     }
 
     fun onAutoResetClick(autoReset: AutoReset) {
