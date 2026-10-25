@@ -45,6 +45,11 @@ import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.shared.resources.Res
 import com.svenjacobs.app.leon.shared.resources.about
 import com.svenjacobs.app.leon.shared.resources.action_after_clean
+import com.svenjacobs.app.leon.shared.resources.action_after_clean_browser
+import com.svenjacobs.app.leon.shared.resources.action_after_clean_in_app
+import com.svenjacobs.app.leon.shared.resources.action_after_clean_other_app
+import com.svenjacobs.app.leon.shared.resources.action_after_clean_per_source
+import com.svenjacobs.app.leon.shared.resources.action_after_clean_per_source_summary
 import com.svenjacobs.app.leon.shared.resources.auto_reset_after
 import com.svenjacobs.app.leon.shared.resources.auto_reset_minutes
 import com.svenjacobs.app.leon.shared.resources.auto_reset_off
@@ -69,7 +74,9 @@ import com.svenjacobs.app.leon.shared.resources.resolve_short_links_summary
 import com.svenjacobs.app.leon.shared.resources.sanitizers
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
 import com.svenjacobs.app.leon.ui.common.views.SwitchRow
+import com.svenjacobs.app.leon.ui.model.ActionsAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.InputSource
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsScreenViewModel
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
@@ -93,7 +100,7 @@ fun SettingsScreen(
         historyEnabled = uiState.historyEnabled,
         resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
         rememberPerSiteEnabled = uiState.rememberPerSiteEnabled,
-        actionAfterClean = uiState.actionAfterClean,
+        actionsAfterClean = uiState.actionsAfterClean,
         autoReset = uiState.autoReset,
         supportsBrowserRegistration = uiState.supportsBrowserRegistration,
         supportsCustomTabs = uiState.supportsCustomTabs,
@@ -108,6 +115,9 @@ fun SettingsScreen(
         onResolveShortLinksSwitchCheckedChange = viewModel::onResolveShortLinksSwitchCheckedChange,
         onRememberPerSiteSwitchCheckedChange = viewModel::onRememberPerSiteSwitchCheckedChange,
         onActionAfterCleanClick = viewModel::onActionAfterCleanClick,
+        onSourceActionAfterCleanClick = viewModel::onActionAfterCleanClick,
+        onActionAfterCleanPerSourceCheckedChange =
+            viewModel::onActionAfterCleanPerSourceCheckedChange,
         onAutoResetClick = viewModel::onAutoResetClick,
     )
 }
@@ -121,7 +131,7 @@ fun Content(
     historyEnabled: Boolean,
     resolveShortLinksEnabled: Boolean,
     rememberPerSiteEnabled: Boolean,
-    actionAfterClean: ActionAfterClean,
+    actionsAfterClean: ActionsAfterClean,
     autoReset: AutoReset,
     onSanitizersClick: () -> Unit,
     onLicensesClick: () -> Unit,
@@ -133,6 +143,8 @@ fun Content(
     onResolveShortLinksSwitchCheckedChange: (Boolean) -> Unit,
     onRememberPerSiteSwitchCheckedChange: (Boolean) -> Unit,
     onActionAfterCleanClick: (ActionAfterClean) -> Unit,
+    onSourceActionAfterCleanClick: (InputSource, ActionAfterClean) -> Unit,
+    onActionAfterCleanPerSourceCheckedChange: (Boolean) -> Unit,
     onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
     supportsBrowserRegistration: Boolean = true,
@@ -206,67 +218,50 @@ fun Content(
                 )
 
                 Column(modifier = Modifier.padding(top = 8.dp)) {
-                    var expanded by rememberSaveable { mutableStateOf(false) }
-
                     Text(stringResource(Res.string.action_after_clean))
 
-                    ExposedDropdownMenuBox(
-                        modifier = Modifier.padding(top = 8.dp),
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
-                    ) {
-                        TextField(
-                            modifier =
-                                Modifier.fillMaxWidth()
-                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                            value = actionAfterClean.text(),
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                            },
-                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    if (!actionsAfterClean.perSource) {
+                        ActionAfterCleanDropdown(
+                            modifier = Modifier.padding(top = 8.dp),
+                            value = actionsAfterClean.otherApp,
+                            onClick = onActionAfterCleanClick,
+                        )
+                    }
+
+                    SwitchRow(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = stringResource(Res.string.action_after_clean_per_source),
+                        supportingText =
+                            stringResource(Res.string.action_after_clean_per_source_summary),
+                        checked = actionsAfterClean.perSource,
+                        onCheckedChange = onActionAfterCleanPerSourceCheckedChange,
+                    )
+
+                    if (actionsAfterClean.perSource) {
+                        ActionAfterCleanDropdown(
+                            modifier = Modifier.padding(top = 16.dp),
+                            label = stringResource(Res.string.action_after_clean_other_app),
+                            value = actionsAfterClean.otherApp,
+                            onClick = { onSourceActionAfterCleanClick(InputSource.OtherApp, it) },
                         )
 
-                        ExposedDropdownMenu(
-                            modifier = Modifier.exposedDropdownSize(),
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(Res.string.do_nothing)) },
+                        if (supportsBrowserRegistration && browserEnabled) {
+                            ActionAfterCleanDropdown(
+                                modifier = Modifier.padding(top = 16.dp),
+                                label = stringResource(Res.string.action_after_clean_browser),
+                                value = actionsAfterClean.browser,
                                 onClick = {
-                                    expanded = false
-                                    onActionAfterCleanClick(ActionAfterClean.DoNothing)
-                                },
-                            )
-
-                            if (urlActions.canShare) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(Res.string.open_share_menu)) },
-                                    onClick = {
-                                        expanded = false
-                                        onActionAfterCleanClick(ActionAfterClean.OpenShareMenu)
-                                    },
-                                )
-                            }
-
-                            DropdownMenuItem(
-                                text = { Text(stringResource(Res.string.open_url)) },
-                                onClick = {
-                                    expanded = false
-                                    onActionAfterCleanClick(ActionAfterClean.OpenUrl)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(stringResource(Res.string.copy_to_clipboard)) },
-                                onClick = {
-                                    expanded = false
-                                    onActionAfterCleanClick(ActionAfterClean.CopyToClipboard)
+                                    onSourceActionAfterCleanClick(InputSource.Browser, it)
                                 },
                             )
                         }
+
+                        ActionAfterCleanDropdown(
+                            modifier = Modifier.padding(top = 16.dp),
+                            label = stringResource(Res.string.action_after_clean_in_app),
+                            value = actionsAfterClean.inApp,
+                            onClick = { onSourceActionAfterCleanClick(InputSource.InApp, it) },
+                        )
                     }
                 }
 
@@ -376,6 +371,79 @@ fun Content(
                 ) {
                     Text(stringResource(Res.string.about))
                 }
+            }
+        }
+    }
+}
+
+/** A dropdown for choosing an [ActionAfterClean], with [label] above it when given. */
+@Composable
+private fun ActionAfterCleanDropdown(
+    value: ActionAfterClean,
+    onClick: (ActionAfterClean) -> Unit,
+    modifier: Modifier = Modifier,
+    label: String? = null,
+) {
+    val urlActions = rememberUrlActions()
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Column(modifier = modifier) {
+        if (label != null) Text(label)
+
+        ExposedDropdownMenuBox(
+            modifier = if (label != null) Modifier.padding(top = 8.dp) else Modifier,
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+        ) {
+            TextField(
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                value = value.text(),
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            )
+
+            ExposedDropdownMenu(
+                modifier = Modifier.exposedDropdownSize(),
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.do_nothing)) },
+                    onClick = {
+                        expanded = false
+                        onClick(ActionAfterClean.DoNothing)
+                    },
+                )
+
+                if (urlActions.canShare) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(Res.string.open_share_menu)) },
+                        onClick = {
+                            expanded = false
+                            onClick(ActionAfterClean.OpenShareMenu)
+                        },
+                    )
+                }
+
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.open_url)) },
+                    onClick = {
+                        expanded = false
+                        onClick(ActionAfterClean.OpenUrl)
+                    },
+                )
+
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.copy_to_clipboard)) },
+                    onClick = {
+                        expanded = false
+                        onClick(ActionAfterClean.CopyToClipboard)
+                    },
+                )
             }
         }
     }

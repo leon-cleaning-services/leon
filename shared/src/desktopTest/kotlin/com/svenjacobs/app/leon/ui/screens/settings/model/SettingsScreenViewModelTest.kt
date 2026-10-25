@@ -22,7 +22,9 @@ import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.db.SiteParameterDao
+import com.svenjacobs.app.leon.ui.model.ActionsAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.InputSource
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.Runs
@@ -57,16 +59,20 @@ class SettingsScreenViewModelTest :
             fun appDataStoreManager(
                 resolveShortLinksEnabled: Flow<Boolean> = flowOf(false),
                 rememberPerSiteEnabled: Flow<Boolean> = flowOf(true),
+                actionsAfterClean: Flow<ActionsAfterClean> = flowOf(ActionsAfterClean()),
             ): AppDataStoreManager = mockk {
                 every { historyEnabled } returns flowOf(true)
                 every { this@mockk.resolveShortLinksEnabled } returns resolveShortLinksEnabled
                 every { this@mockk.rememberPerSiteEnabled } returns rememberPerSiteEnabled
                 every { customTabsEnabled } returns flowOf(false)
                 every { protectScreenEnabled } returns flowOf(false)
-                every { actionAfterClean } returns flowOf(ActionAfterClean.DoNothing)
+                every { this@mockk.actionsAfterClean } returns actionsAfterClean
                 every { autoReset } returns flowOf(AutoReset.Off)
                 coEvery { setResolveShortLinksEnabled(any()) } just Runs
                 coEvery { setRememberPerSiteEnabled(any()) } just Runs
+                coEvery { setActionAfterClean(any<ActionAfterClean>()) } just Runs
+                coEvery { setActionAfterClean(any<InputSource>(), any()) } just Runs
+                coEvery { setActionAfterCleanPerSource(any()) } just Runs
             }
 
             fun siteParameterDao(): SiteParameterDao = mockk { coEvery { clear() } just Runs }
@@ -118,6 +124,25 @@ class SettingsScreenViewModelTest :
                             viewModel.uiState.value.rememberPerSiteEnabled shouldBe false
                         }
                     }
+
+                    "carry the actions after clean" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val actions =
+                                ActionsAfterClean(
+                                    otherApp = ActionAfterClean.OpenShareMenu,
+                                    browser = ActionAfterClean.OpenUrl,
+                                    inApp = ActionAfterClean.CopyToClipboard,
+                                    perSource = true,
+                                )
+                            val viewModel =
+                                viewModel(
+                                    appDataStoreManager(actionsAfterClean = flowOf(actions)),
+                                )
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.actionsAfterClean shouldBe actions
+                        }
+                    }
                 }
 
             "onRememberPerSiteSwitchCheckedChange" should
@@ -144,6 +169,55 @@ class SettingsScreenViewModelTest :
 
                         viewModel.onRememberPerSiteSwitchCheckedChange(false)
                         coVerify(exactly = 1) { siteParameterDao.clear() }
+                    }
+                }
+
+            "onActionAfterCleanClick" should
+                {
+                    "store the action for all sources" {
+                        val appDataStoreManager = appDataStoreManager()
+                        val viewModel = viewModel(appDataStoreManager)
+
+                        viewModel.onActionAfterCleanClick(ActionAfterClean.CopyToClipboard)
+
+                        coVerify(exactly = 1) {
+                            appDataStoreManager.setActionAfterClean(
+                                ActionAfterClean.CopyToClipboard,
+                            )
+                        }
+                    }
+
+                    "store the action for a single source" {
+                        val appDataStoreManager = appDataStoreManager()
+                        val viewModel = viewModel(appDataStoreManager)
+
+                        viewModel.onActionAfterCleanClick(
+                            InputSource.Browser,
+                            ActionAfterClean.OpenUrl,
+                        )
+
+                        coVerify(exactly = 1) {
+                            appDataStoreManager.setActionAfterClean(
+                                InputSource.Browser,
+                                ActionAfterClean.OpenUrl,
+                            )
+                        }
+                    }
+                }
+
+            "onActionAfterCleanPerSourceCheckedChange" should
+                {
+                    "store the setting" {
+                        val appDataStoreManager = appDataStoreManager()
+                        val viewModel = viewModel(appDataStoreManager)
+
+                        viewModel.onActionAfterCleanPerSourceCheckedChange(true)
+                        viewModel.onActionAfterCleanPerSourceCheckedChange(false)
+
+                        coVerifyOrder {
+                            appDataStoreManager.setActionAfterCleanPerSource(true)
+                            appDataStoreManager.setActionAfterCleanPerSource(false)
+                        }
                     }
                 }
 

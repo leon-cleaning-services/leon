@@ -47,6 +47,11 @@
     <string name="open_in_custom_tabs">在浏览器自定义标签页打开链接</string>
     <string name="open_in_custom_tabs_summary">在应用内的浏览器标签页中打开已清理的链接，而非切换到浏览器应用</string>
     <string name="action_after_clean">清理完成后</string>
+    <string name="action_after_clean_per_source">按来源选择</string>
+    <string name="action_after_clean_per_source_summary">根据文本的来源使用不同的操作</string>
+    <string name="action_after_clean_other_app">来自其他应用</string>
+    <string name="action_after_clean_browser">作为浏览器打开</string>
+    <string name="action_after_clean_in_app">在 Léon 中输入</string>
     <string name="do_nothing">无操作</string>
     <string name="open_share_menu">打开分享菜单</string>
     <string name="open_url">打开链接</string>

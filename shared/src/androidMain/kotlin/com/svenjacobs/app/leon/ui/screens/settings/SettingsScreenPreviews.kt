@@ -19,6 +19,7 @@ package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.runtime.Composable
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
+import com.svenjacobs.app.leon.ui.model.ActionsAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
@@ -35,7 +36,7 @@ private fun ContentPreview() {
             historyEnabled = true,
             resolveShortLinksEnabled = false,
             rememberPerSiteEnabled = true,
-            actionAfterClean = ActionAfterClean.OpenShareMenu,
+            actionsAfterClean = ActionsAfterClean(otherApp = ActionAfterClean.OpenShareMenu),
             autoReset = AutoReset.Off,
             onSanitizersClick = {},
             onLicensesClick = {},
@@ -47,6 +48,45 @@ private fun ContentPreview() {
             onResolveShortLinksSwitchCheckedChange = {},
             onRememberPerSiteSwitchCheckedChange = {},
             onActionAfterCleanClick = {},
+            onSourceActionAfterCleanClick = { _, _ -> },
+            onActionAfterCleanPerSourceCheckedChange = {},
+            onAutoResetClick = {},
+        )
+    }
+}
+
+@Composable
+@DayNightPreviews
+private fun ContentPreviewPerSource() {
+    AppTheme {
+        Content(
+            isLoading = false,
+            browserEnabled = true,
+            customTabsEnabled = false,
+            protectScreenEnabled = false,
+            historyEnabled = true,
+            resolveShortLinksEnabled = false,
+            rememberPerSiteEnabled = true,
+            actionsAfterClean =
+                ActionsAfterClean(
+                    otherApp = ActionAfterClean.OpenShareMenu,
+                    browser = ActionAfterClean.OpenUrl,
+                    inApp = ActionAfterClean.CopyToClipboard,
+                    perSource = true,
+                ),
+            autoReset = AutoReset.Off,
+            onSanitizersClick = {},
+            onLicensesClick = {},
+            onRememberedSitesClick = {},
+            onBrowserSwitchCheckedChange = {},
+            onCustomTabsSwitchCheckedChange = {},
+            onProtectScreenSwitchCheckedChange = {},
+            onHistorySwitchCheckedChange = {},
+            onResolveShortLinksSwitchCheckedChange = {},
+            onRememberPerSiteSwitchCheckedChange = {},
+            onActionAfterCleanClick = {},
+            onSourceActionAfterCleanClick = { _, _ -> },
+            onActionAfterCleanPerSourceCheckedChange = {},
             onAutoResetClick = {},
         )
     }

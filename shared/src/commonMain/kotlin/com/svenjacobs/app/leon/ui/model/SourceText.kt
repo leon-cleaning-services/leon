@@ -25,5 +25,7 @@ import androidx.compose.runtime.Immutable
  * The [id] stays the same across activity recreation (e.g. configuration changes) but changes for
  * every new incoming intent, even if [text] is identical to the previous one. This allows
  * distinguishing "the same intent redelivered" from "the same text shared again".
+ *
+ * The [source] says where the text came from, which decides the action after clean.
  */
-@Immutable data class SourceText(val id: String, val text: String?)
+@Immutable data class SourceText(val id: String, val text: String?, val source: InputSource)

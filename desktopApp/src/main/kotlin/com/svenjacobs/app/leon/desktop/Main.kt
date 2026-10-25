@@ -26,6 +26,7 @@ import androidx.compose.ui.window.rememberWindowState
 import com.svenjacobs.app.leon.ui.BuildInfo
 import com.svenjacobs.app.leon.ui.LocalBuildInfo
 import com.svenjacobs.app.leon.ui.MainRouter
+import com.svenjacobs.app.leon.ui.model.InputSource
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import dev.zacsweers.metro.createGraphFactory
@@ -45,7 +46,11 @@ fun main(args: Array<String>) {
                 .joinToString(" ")
                 .takeIf { it.isNotBlank() }
                 ?.let {
-                    SourceText(id = Uuid.random().toString(), text = it)
+                    SourceText(
+                        id = Uuid.random().toString(),
+                        text = it,
+                        source = InputSource.OtherApp,
+                    )
                 },
         )
 

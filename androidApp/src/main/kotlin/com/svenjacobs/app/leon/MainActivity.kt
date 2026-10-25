@@ -36,6 +36,7 @@ import com.svenjacobs.app.leon.ui.BuildInfo
 import com.svenjacobs.app.leon.ui.LocalBuildInfo
 import com.svenjacobs.app.leon.ui.MainRouter
 import com.svenjacobs.app.leon.ui.SystemBarsAppearance
+import com.svenjacobs.app.leon.ui.model.InputSource
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
@@ -112,6 +113,9 @@ class MainActivity : ComponentActivity() {
             intent.getStringExtra(EXTRA_SOURCE_TEXT_ID)
                 ?: UUID.randomUUID().toString().also { intent.putExtra(EXTRA_SOURCE_TEXT_ID, it) }
 
+        val source =
+            if (intent.action == Intent.ACTION_VIEW) InputSource.Browser else InputSource.OtherApp
+
         val text =
             when (intent.action) {
                 Intent.ACTION_SEND ->
@@ -131,7 +135,7 @@ class MainActivity : ComponentActivity() {
                 else -> null
             }
 
-        sourceText.value = SourceText(id = id, text = text)
+        sourceText.value = SourceText(id = id, text = text, source = source)
     }
 
     private fun setupCustomTabsService() {

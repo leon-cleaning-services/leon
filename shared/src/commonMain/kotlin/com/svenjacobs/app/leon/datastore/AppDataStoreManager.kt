@@ -25,7 +25,9 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
+import com.svenjacobs.app.leon.ui.model.ActionsAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.InputSource
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Named
@@ -42,15 +44,64 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
         dataStore.edit { it[KEY_VERSION_CODE] = versionCode }
     }
 
+    /** Sets the action after clean for every input source at once. */
     suspend fun setActionAfterClean(actionAfterClean: ActionAfterClean) {
-        dataStore.edit { it[KEY_ACTION_AFTER_CLEAN] = actionAfterClean.name }
+        dataStore.edit {
+            it[KEY_ACTION_AFTER_CLEAN] = actionAfterClean.name
+            it[KEY_ACTION_AFTER_CLEAN_BROWSER] = actionAfterClean.name
+            it[KEY_ACTION_AFTER_CLEAN_IN_APP] = actionAfterClean.name
+        }
     }
 
-    val actionAfterClean: Flow<ActionAfterClean?> =
-        dataStore.data.map { preferences ->
-            runCatching { preferences[KEY_ACTION_AFTER_CLEAN]?.let(ActionAfterClean::valueOf) }
-                .getOrNull()
+    /** Sets the action after clean for a single input [source]. */
+    suspend fun setActionAfterClean(source: InputSource, actionAfterClean: ActionAfterClean) {
+        val key =
+            when (source) {
+                InputSource.OtherApp -> KEY_ACTION_AFTER_CLEAN
+                InputSource.Browser -> KEY_ACTION_AFTER_CLEAN_BROWSER
+                InputSource.InApp -> KEY_ACTION_AFTER_CLEAN_IN_APP
+            }
+        dataStore.edit { it[key] = actionAfterClean.name }
+    }
+
+    /**
+     * Sets whether the action after clean is chosen per input source. Turning it off copies the
+     * action of [InputSource.OtherApp] to the other sources, so that all of them agree again.
+     */
+    suspend fun setActionAfterCleanPerSource(enabled: Boolean) {
+        dataStore.edit {
+            it[KEY_ACTION_AFTER_CLEAN_PER_SOURCE] = enabled
+            if (!enabled) {
+                val otherApp = it.readAction(KEY_ACTION_AFTER_CLEAN, null).name
+                it[KEY_ACTION_AFTER_CLEAN_BROWSER] = otherApp
+                it[KEY_ACTION_AFTER_CLEAN_IN_APP] = otherApp
+            }
         }
+    }
+
+    /**
+     * The action after clean per input source. The key of [InputSource.OtherApp] is the original
+     * one, so that a value stored before per-source actions existed keeps applying; the other
+     * sources fall back to it while they have no value of their own.
+     */
+    val actionsAfterClean: Flow<ActionsAfterClean> =
+        dataStore.data.map { preferences ->
+            val otherApp = preferences.readAction(KEY_ACTION_AFTER_CLEAN, null)
+            ActionsAfterClean(
+                otherApp = otherApp,
+                browser = preferences.readAction(KEY_ACTION_AFTER_CLEAN_BROWSER, otherApp),
+                inApp = preferences.readAction(KEY_ACTION_AFTER_CLEAN_IN_APP, otherApp),
+                perSource = preferences[KEY_ACTION_AFTER_CLEAN_PER_SOURCE] ?: false,
+            )
+        }
+
+    private fun Preferences.readAction(
+        key: Preferences.Key<String>,
+        fallback: ActionAfterClean?,
+    ): ActionAfterClean =
+        runCatching { this[key]?.let(ActionAfterClean::valueOf) }.getOrNull()
+            ?: fallback
+            ?: ActionAfterClean.DoNothing
 
     suspend fun setUrlDecodeEnabled(enabled: Boolean) {
         dataStore.edit { it[KEY_URL_DECODE] = enabled }
@@ -146,6 +197,12 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
     private companion object {
         private val KEY_VERSION_CODE = intPreferencesKey("version_code")
         private val KEY_ACTION_AFTER_CLEAN = stringPreferencesKey("action_after_clean")
+        private val KEY_ACTION_AFTER_CLEAN_BROWSER =
+            stringPreferencesKey("action_after_clean_browser")
+        private val KEY_ACTION_AFTER_CLEAN_IN_APP =
+            stringPreferencesKey("action_after_clean_in_app")
+        private val KEY_ACTION_AFTER_CLEAN_PER_SOURCE =
+            booleanPreferencesKey("action_after_clean_per_source")
         private val KEY_URL_DECODE = booleanPreferencesKey("url_decode")
         private val KEY_EXTRACT_URL = booleanPreferencesKey("extract_url")
         private val KEY_CUSTOM_TABS = booleanPreferencesKey("custom_tabs")
