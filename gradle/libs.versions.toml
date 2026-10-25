@@ -19,7 +19,7 @@ kotlinx-coroutines = "1.11.0"
 ktor = "3.6.0"
 ksp = "2.3.12"
 metro = "1.4.5"
-mikepenz-aboutlibraries = "15.2.0"
+mikepenz-aboutlibraries = "15.3.0"
 
 [libraries]
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
