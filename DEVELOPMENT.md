@@ -163,6 +163,22 @@ Commit the resulting `Gemfile.lock`. Watch two blocks in the diff:
 - `PLATFORMS` — bundler may add your machine's platform (for example `arm64-darwin-25`). CI runs
   on `x86_64-linux`, which must stay in the list.
 
+Renovate's weekly lock file maintenance does the same (see [Dependency Updates](#dependency-updates)),
+so the same two blocks are worth a look in its pull requests.
+
+## Dependency Updates
+
+[Renovate](https://docs.renovatebot.com/) keeps the dependencies up to date, configured in
+[`renovate.json5`](renovate.json5). Every Monday before 4 AM (UTC) it opens
+pull requests for the Gradle version catalog and plugins, the Gradle wrapper, GitHub Actions, the
+`Gemfile.lock` and the `flake.lock`. Every entry in `libs.versions.toml` sharing a `version.ref`
+moves in one pull request. Its Dependency Dashboard issue lists every pending and ignored update,
+and lets you trigger one ahead of schedule.
+
+Renovate does not regenerate `aboutlibraries.json`. When one of its pull requests changes a
+dependency the app ships, check out the branch and regenerate it (see
+[AGENTS.md](AGENTS.md#gotchas-from-the-kmp-migration)) before merging.
+
 ## Releasing
 
 Releases are driven by [release-please](https://github.com/googleapis/release-please)

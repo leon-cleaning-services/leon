@@ -1,0 +1,24 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    ':semanticCommits',
+    // config:recommended commits runtime dependencies as `fix(deps)`, which would make
+    // release-please cut a release for every update.
+    ':semanticCommitTypeAll(chore)',
+    // Mondays, before 4 AM (UTC).
+    'schedule:weekly',
+  ],
+  labels: ['chore'],
+  assignees: ['svenjacobs'],
+  // The schedule window is only four hours long; with the default limit of two pull requests per
+  // hour, a busy week would spill over into the next.
+  prHourlyLimit: 0,
+  // Refreshes Gemfile.lock and flake.lock, on the same weekly schedule.
+  lockFileMaintenance: {
+    enabled: true,
+  },
+  nix: {
+    enabled: true,
+  },
+}
