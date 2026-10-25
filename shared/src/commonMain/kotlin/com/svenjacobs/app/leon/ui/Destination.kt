@@ -67,6 +67,8 @@ sealed interface Destination : NavKey {
         override val iconContentDescription = Res.string.screen_settings
     }
 
+    @Serializable data object SettingsActionAfterClean : Destination
+
     @Serializable data object SettingsSanitizers : Destination
 
     @Serializable data object SettingsRememberedSites : Destination

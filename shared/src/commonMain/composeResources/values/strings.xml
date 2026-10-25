@@ -49,6 +49,7 @@
     <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string>
     <string name="open_in_custom_tabs_summary">Opens cleaned links in an in-app browser tab instead of the browser app</string>
     <string name="action_after_clean">Action after clean</string>
+    <string name="action_after_clean_description">What Léon does with a URL once it has been cleaned</string>
     <string name="action_after_clean_per_source">Choose per source</string>
     <string name="action_after_clean_per_source_summary">Use a different action depending on where the text comes from</string>
     <string name="action_after_clean_other_app">From another app</string>

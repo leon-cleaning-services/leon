@@ -47,6 +47,7 @@
     <string name="open_in_custom_tabs">Открывать URL во встроенных вкладках браузера</string>
     <string name="open_in_custom_tabs_summary">Открывает очищенные ссылки во вкладке браузера внутри приложения, а не в приложении браузера</string>
     <string name="action_after_clean">Действие после очистки</string>
+    <string name="action_after_clean_description">Что Léon делает с URL после его очистки</string>
     <string name="action_after_clean_per_source">Выбирать для каждого источника</string>
     <string name="action_after_clean_per_source_summary">Использовать разное действие в зависимости от источника текста</string>
     <string name="action_after_clean_other_app">Из другого приложения</string>

@@ -47,6 +47,7 @@
     <string name="open_in_custom_tabs">Otwórz adresy URL w niestandardowych kartach przeglądarki</string>
     <string name="open_in_custom_tabs_summary">Otwiera wyczyszczone linki w karcie przeglądarki w aplikacji zamiast w aplikacji przeglądarki</string>
     <string name="action_after_clean">Akcja po wyczyszczeniu</string>
+    <string name="action_after_clean_description">Co Léon robi z adresem URL po jego wyczyszczeniu</string>
     <string name="action_after_clean_per_source">Wybierz dla każdego źródła</string>
     <string name="action_after_clean_per_source_summary">Używaj innej akcji w zależności od tego, skąd pochodzi tekst</string>
     <string name="action_after_clean_other_app">Z innej aplikacji</string>

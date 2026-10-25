@@ -19,8 +19,6 @@ package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.runtime.Composable
 import com.android.tools.screenshot.PreviewTest
-import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
-import com.svenjacobs.app.leon.ui.model.ActionsAfterClean
 import com.svenjacobs.app.leon.ui.model.AutoReset
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.FormFactorPreviews
@@ -38,8 +36,8 @@ private fun ContentScreenshot() {
             historyEnabled = true,
             resolveShortLinksEnabled = false,
             rememberPerSiteEnabled = true,
-            actionsAfterClean = ActionsAfterClean(otherApp = ActionAfterClean.OpenShareMenu),
             autoReset = AutoReset.Off,
+            onActionAfterCleanClick = {},
             onSanitizersClick = {},
             onLicensesClick = {},
             onRememberedSitesClick = {},
@@ -49,47 +47,6 @@ private fun ContentScreenshot() {
             onHistorySwitchCheckedChange = {},
             onResolveShortLinksSwitchCheckedChange = {},
             onRememberPerSiteSwitchCheckedChange = {},
-            onActionAfterCleanClick = {},
-            onSourceActionAfterCleanClick = { _, _ -> },
-            onActionAfterCleanPerSourceCheckedChange = {},
-            onAutoResetClick = {},
-        )
-    }
-}
-
-@PreviewTest
-@FormFactorPreviews
-@Composable
-private fun ContentScreenshotPerSource() {
-    AppTheme {
-        Content(
-            isLoading = false,
-            browserEnabled = true,
-            customTabsEnabled = false,
-            protectScreenEnabled = false,
-            historyEnabled = true,
-            resolveShortLinksEnabled = false,
-            rememberPerSiteEnabled = true,
-            actionsAfterClean =
-                ActionsAfterClean(
-                    otherApp = ActionAfterClean.OpenShareMenu,
-                    browser = ActionAfterClean.OpenUrl,
-                    inApp = ActionAfterClean.CopyToClipboard,
-                    perSource = true,
-                ),
-            autoReset = AutoReset.Off,
-            onSanitizersClick = {},
-            onLicensesClick = {},
-            onRememberedSitesClick = {},
-            onBrowserSwitchCheckedChange = {},
-            onCustomTabsSwitchCheckedChange = {},
-            onProtectScreenSwitchCheckedChange = {},
-            onHistorySwitchCheckedChange = {},
-            onResolveShortLinksSwitchCheckedChange = {},
-            onRememberPerSiteSwitchCheckedChange = {},
-            onActionAfterCleanClick = {},
-            onSourceActionAfterCleanClick = { _, _ -> },
-            onActionAfterCleanPerSourceCheckedChange = {},
             onAutoResetClick = {},
         )
     }

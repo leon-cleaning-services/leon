@@ -55,6 +55,7 @@ import com.svenjacobs.app.leon.shared.resources.settings_detail_placeholder
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.screens.history.HistoryScreen
 import com.svenjacobs.app.leon.ui.screens.main.MainScreen
+import com.svenjacobs.app.leon.ui.screens.settings.SettingsActionAfterCleanScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsLicensesScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsRememberedSitesScreen
 import com.svenjacobs.app.leon.ui.screens.settings.SettingsSanitizersScreen
@@ -83,6 +84,7 @@ fun MainRouter(
                     subclass(Destination.Main::class)
                     subclass(Destination.History::class)
                     subclass(Destination.Settings::class)
+                    subclass(Destination.SettingsActionAfterClean::class)
                     subclass(Destination.SettingsSanitizers::class)
                     subclass(Destination.SettingsRememberedSites::class)
                     subclass(Destination.SettingsLicenses::class)
@@ -210,6 +212,10 @@ fun MainRouter(
                                 ),
                     ) {
                         SettingsScreen(
+                            onNavigateToSettingsActionAfterClean =
+                                dropUnlessResumed {
+                                    backStack.add(Destination.SettingsActionAfterClean)
+                                },
                             onNavigateToSettingsSanitizers =
                                 dropUnlessResumed { backStack.add(Destination.SettingsSanitizers) },
                             onNavigateToSettingsLicenses =
@@ -217,6 +223,19 @@ fun MainRouter(
                             onNavigateToSettingsRememberedSites =
                                 dropUnlessResumed {
                                     backStack.add(Destination.SettingsRememberedSites)
+                                },
+                        )
+                    }
+
+                    entry<Destination.SettingsActionAfterClean>(
+                        metadata = ListDetailSceneStrategy.detailPane(),
+                    ) {
+                        SettingsActionAfterCleanScreen(
+                            onBackClick =
+                                if (isTwoPane) {
+                                    null
+                                } else {
+                                    dropUnlessResumed { backStack.removeLastOrNull() }
                                 },
                         )
                     }
