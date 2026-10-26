@@ -36,7 +36,7 @@ jobs:
       # release-please tags each release vXX.0.0 when it creates it, which is also how it finds
       # the previous release when it builds the next release PR - so the release is created
       # straight away, not as a draft. deploy.yml attaches the build artifacts to it afterwards.
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v5
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
