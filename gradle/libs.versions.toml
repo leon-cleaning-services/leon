@@ -1,6 +1,6 @@
 [versions]
 android-compose-screenshot = "0.0.1-alpha16"
-android-gradle-plugin = "9.4.0"
+android-gradle-plugin = "9.4.1"
 androidx-activity = "1.13.0"
 androidx-compose-bom = "2026.08.00" # https://developer.android.com/jetpack/compose/bom/bom-mapping
 androidx-lifecycle = "2.11.0"
