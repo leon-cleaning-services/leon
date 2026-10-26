@@ -47,7 +47,7 @@ GEM
     erb (6.0.7)
     excon (1.8.0)
       logger
-    faraday (2.15.0)
+    faraday (2.15.1)
       faraday-net_http (>= 2.0, < 3.6)
       json
       logger
@@ -196,8 +196,9 @@ GEM
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.1)
-    prism (1.9.0)
-    pstore (0.2.1)
+    prism (2.0.0)
+    prism (2.0.0-x86_64-linux-gnu)
+    pstore (0.3.0)
     public_suffix (7.0.5)
     rake (13.4.2)
     rbs (4.2.0)
