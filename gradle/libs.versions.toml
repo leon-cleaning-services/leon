@@ -91,7 +91,7 @@ metro-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref
 metro-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metro" }
 mikepenz-aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "mikepenz-aboutlibraries" }
 mockk = "io.mockk:mockk:1.14.11"
-slack-compose-lint-checks = "com.slack.lint.compose:compose-lint-checks:1.6.0"
+slack-compose-lint-checks = "com.slack.lint.compose:compose-lint-checks:1.6.1"
 
 [bundles]
 androidx-compose = [
