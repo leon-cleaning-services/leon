@@ -1,0 +1,9 @@
+Léon – Oczyszczacz URL usuwa z adresu URL parametry śledzące i inne zbędne parametry, zanim go udostępnisz. Obsługa jest prosta – aplikacja integruje się ze standardowym mechanizmem udostępniania Androida.
+
+Léon działa na Androidzie 7.0 i nowszym, jest open source i nie zawiera żadnych bibliotek śledzących ani reklamowych. Léon nie zbiera o Tobie żadnych danych. Léon działa offline; rozwijanie skróconych linków jest opcjonalne, domyślnie wyłączone i kontaktuje się wyłącznie z usługą, która utworzyła skrócony link.
+
+Usuwanie parametrów śledzących ma następujące zalety:
+
+* Chroni Twoją prywatność i prywatność odbiorcy
+* Poprawia czytelność linków
+* Oszczędza znaki (na przykład w tweetach)

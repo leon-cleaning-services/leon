@@ -1,0 +1,9 @@
+Léon – Trình dọn dẹp URL xóa các tham số theo dõi và các tham số thừa khác khỏi URL trước khi bạn chia sẻ. Cách sử dụng rất đơn giản, vì ứng dụng tích hợp vào cơ chế chia sẻ tiêu chuẩn của Android.
+
+Léon chạy trên Android 7.0 trở lên, là phần mềm mã nguồn mở và không chứa bất kỳ framework theo dõi hay quảng cáo nào. Léon không thu thập bất kỳ dữ liệu nào về bạn. Léon hoạt động ngoại tuyến; việc mở rộng liên kết rút gọn là tùy chọn, bị tắt theo mặc định và chỉ liên hệ với dịch vụ đã tạo ra liên kết rút gọn đó.
+
+Lợi ích của việc xóa tham số theo dõi:
+
+* Bảo vệ quyền riêng tư của bạn và người nhận
+* Giúp liên kết dễ đọc hơn
+* Tiết kiệm ký tự (ví dụ trong các bài đăng trên Twitter)

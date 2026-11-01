@@ -231,9 +231,10 @@ produced.
 
 The GitHub release does not wait for the Play Store upload — it needs only the two artifact jobs.
 
-The lane deliberately skips metadata, changelogs and the icon/feature graphic
-(`skip_upload_metadata`, `skip_upload_changelogs`, `skip_upload_images`); those are maintained in
-the Play Console.
+The lane deliberately skips the store listing texts, changelogs and the icon/feature graphic
+(`skip_upload_metadata`, `skip_upload_changelogs`, `skip_upload_images`). The texts are uploaded by
+the `store_listing` lane instead (see [Play Store Listing](#play-store-listing)); changelogs and
+the icon/feature graphic are maintained in the Play Console.
 
 ### F-Droid
 
@@ -254,9 +255,59 @@ still strips the Foojay resolver plugin before F-Droid's offline build, and `gra
 still only matches the `:androidApp` task — `shared` and `desktopApp` are never built there, so no
 Skiko (Compose Desktop's rendering backend) binaries are ever downloaded on the F-Droid builder.
 
-## Play Store Screenshots
+## Play Store Listing
 
-### Where they live
+Everything the `store_listing` lane uploads lives in `fastlane/metadata/android/`. Upload it without
+publishing a release:
+
+```bash
+bundle exec fastlane store_listing
+```
+
+Do a dry run first — it validates the whole edit against Google Play and never commits it:
+
+```bash
+SUPPLY_VALIDATE_ONLY=true bundle exec fastlane store_listing
+```
+
+The lane uploads the texts of every language and the screenshots, but never the icon, the feature
+graphic or changelogs.
+
+### Texts
+
+Every language the app is translated into has a folder named by its **Google Play** language code,
+which is not always the Android one:
+
+| Folder  | App resources | Language             |
+|---------|---------------|----------------------|
+| `en-US` | `values`      | English (default)    |
+| `de-DE` | `values-de`   | German               |
+| `ja-JP` | `values-ja`   | Japanese             |
+| `pl-PL` | `values-pl`   | Polish               |
+| `ru-RU` | `values-ru`   | Russian              |
+| `vi`    | `values-vi`   | Vietnamese           |
+| `zh-CN` | `values-zh`   | Chinese (Simplified) |
+
+Each folder holds the following files, within Google Play's limits:
+
+| File                    | Limit           |
+|-------------------------|-----------------|
+| `title.txt`             | 30 characters   |
+| `short_description.txt` | 80 characters   |
+| `full_description.txt`  | 4000 characters |
+
+The title is the app's own `scaffold_title` string in that language. When the app gains a
+language, give it a folder here too, and when the English text changes, update every other
+language with it. F-Droid reads the same folders for its listing.
+
+supply replaces the texts of every language that has a folder. A missing file leaves that field
+as it is on Google Play, and a language without a folder is not touched at all — deleting a folder
+does **not** remove the translation from the store listing; that has to be done in the Play
+Console.
+
+### Screenshots
+
+#### Where they live
 
 Screenshots are **copied** into the folder layout supply expects, not referenced from
 `docs/screenshots`:
@@ -287,32 +338,24 @@ contiguous when adding or removing a screen.
 The settings-detail screenshots in `docs/screenshots` are intentionally **not** part of the
 listing.
 
-### Updating them
+#### Updating them
 
 1. Take the new screenshots and put them in `docs/screenshots`, keeping the
    `<mode>-<device>-<n>-<screen>.png` naming used there. That folder is the source of truth for
    the README.
 2. Copy them into the three `images/` folders above under their `NN_<screen>_<mode>.png` names.
-3. Upload them without publishing a release:
+3. Upload them with the `store_listing` lane (see [Play Store Listing](#play-store-listing)).
 
-   ```bash
-   bundle exec fastlane screenshots
-   ```
+For each device type that has local images, supply makes Google Play hold **exactly the local
+screenshots, in their order**. Both lanes set `sync_image_upload: true`, so supply compares SHA-256
+checksums: it keeps the remote screenshots that match the local ones in sequence, and deletes and
+re-uploads everything from the first difference on. Changing `03_history_light.png` therefore
+re-uploads screenshots 3 to 6, and unchanged screenshots are not uploaded at all — which also means
+the `deploy` lane only touches them when they actually changed. Google Play stores the uploaded
+files byte for byte, so the checksums do match. Device types with no local folder are left
+untouched.
 
-For each device type that has local images, supply **deletes every screenshot Google Play currently
-holds for that type** and then uploads the local ones. Device types with no local folder are left
-untouched, as is everything else in the listing.
-
-Do a dry run first — it validates the whole edit against Google Play and never commits it:
-
-```bash
-SUPPLY_VALIDATE_ONLY=true bundle exec fastlane screenshots
-```
-
-Once the screenshots are live and only one of them changes, `SUPPLY_SYNC_IMAGE_UPLOAD=true`
-compares SHA-256 checksums and re-uploads only what actually differs.
-
-### Requirements and gotchas
+#### Requirements and gotchas
 
 Google Play's
 [asset requirements](https://support.google.com/googleplay/android-developer/answer/9866151)
@@ -325,8 +368,10 @@ upload is ever rejected for it, pad the phone images to 1428 × 2856.
 
 Two more things to keep in mind:
 
-- **`More than one release found in this track`** — the `screenshots` lane looks up the production
-  track's current release even though it does not touch it. If production holds more than one
-  release (a staged rollout next to the live one, say), pass the live `version_code` explicitly.
-- **The `de-DE` listing has no `images/` folder**, so supply never touches its screenshots. The
-  screenshots show an English UI, which is why they are only maintained under `en-US`.
+- **`More than one release found in this track`** — the `store_listing` lane looks up the
+  production track's current release even though it does not touch it. If production holds more
+  than one release (a staged rollout next to the live one, say), pass the live `version_code`
+  explicitly.
+- **Only `en-US` has an `images/` folder**, so supply never touches the screenshots of any other
+  language, and Google Play shows the English ones there. The screenshots show an English UI,
+  which is why they are only maintained under `en-US`.

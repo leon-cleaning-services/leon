@@ -1,0 +1,1 @@
+Usuwa parametry śledzące i inne zbędne parametry z linków przed udostępnieniem
