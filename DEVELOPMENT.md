@@ -296,9 +296,9 @@ Each folder holds the following files, within Google Play's limits:
 | `short_description.txt` | 80 characters   |
 | `full_description.txt`  | 4000 characters |
 
-The title is the app's own `scaffold_title` string in that language. When the app gains a
-language, give it a folder here too, and when the English text changes, update every other
-language with it. F-Droid reads the same folders for its listing.
+The title is the app's own `scaffold_title` string in that language. Only `en-US` is edited here;
+the other languages are translated on Weblate, which also creates the folder of a new language
+(see [Translations](#translations)). F-Droid reads the same folders for its listing.
 
 supply replaces the texts of every language that has a folder. A missing file leaves that field
 as it is on Google Play, and a language without a folder is not touched at all — deleting a folder
@@ -375,3 +375,48 @@ Two more things to keep in mind:
 - **Only `en-US` has an `images/` folder**, so supply never touches the screenshots of any other
   language, and Google Play shows the English ones there. The screenshots show an English UI,
   which is why they are only maintained under `en-US`.
+
+## Translations
+
+Every language but English is translated on
+[Hosted Weblate](https://hosted.weblate.org/projects/leon-url-cleaner/) (project
+`leon-url-cleaner`, gratis under its Libre plan). English is the source and is only ever edited in
+this repository; Weblate picks the change up and offers the new strings to translators.
+
+### Components
+
+| Component    | Files                                                         | Weblate file format             |
+|--------------|---------------------------------------------------------------|---------------------------------|
+| `app`        | `shared/src/commonMain/composeResources/values-*/strings.xml` | Compose Multiplatform Resource  |
+| `android`    | `androidApp/src/main/res/values-*/strings.xml`                | Android String Resource         |
+| `play-store` | `fastlane/metadata/android/*`                                 | App store metadata files        |
+
+`app` owns the clone of this repository; the other two are linked to it (`weblate://leon-url-cleaner/app`)
+and take its branch and push settings. All three are licensed GPL-3.0-or-later.
+
+Things that are easy to get wrong when changing the setup:
+
+- **`app` must stay "Compose Multiplatform Resource"**, never "Android String Resource". The
+  Android format escapes `'` and `"` with a backslash, which Compose resources print literally
+  (see the KMP gotchas in [AGENTS.md](AGENTS.md#gotchas-from-the-kmp-migration)).
+- **Language aliases** on the project (`en_US:en,de_DE:de,ja_JP:ja,pl_PL:pl,ru_RU:ru,zh:zh_Hans,zh_CN:zh_Hans`)
+  merge the Play Store's `de-DE` with the app's `de`, so each language is one language on Weblate
+  rather than two.
+- **Language code styles** decide how Weblate names the files of a new language: `android` for
+  `app` and `android` (`values-pt-rBR`), `googleplay` for `play-store` (`pt-BR`). A new language
+  needs its `androidApp` folder as well — `generateLocaleConfig` builds the in-app language list
+  from it.
+- The Play Store source strings carry `max-length:30`, `max-length:80` and `max-length:4000`
+  flags, Google Play's limits for the title, short and full description.
+
+### Pull requests from Weblate
+
+Weblate commits translations to its own fork and opens a pull request against `main`. Every
+message template starts with `chore(i18n):`, and the "Squash Git commits" add-on squashes all
+pending changes into one commit named `chore(i18n): update translations from Weblate` — the same
+as the pull request title. Weblate cannot label pull requests, so
+[`label-weblate.yml`](.github/workflows/label-weblate.yml) adds `chore` to every pull request the
+`weblate` account opens.
+
+Squash-merge them like every other pull request. Translations changed in this repository directly
+are picked up by Weblate on its next update, but editing them on Weblate avoids merge conflicts.
