@@ -1,0 +1,1 @@
+Xóa tham số theo dõi và tham số thừa khác khỏi liên kết web trước khi chia sẻ

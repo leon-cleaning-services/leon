@@ -484,11 +484,11 @@ Two lanes are available:
 # Build and publish a release to the production track, screenshots included
 bundle exec fastlane deploy
 
-# Upload only the store listing screenshots, without publishing a release
-bundle exec fastlane screenshots
+# Upload the store listing texts and screenshots, without publishing a release
+bundle exec fastlane store_listing
 ```
 
 Both need the decrypted `google-play-service-account.json` (`git secret reveal -f`).
 
 See [DEVELOPMENT.md](DEVELOPMENT.md) for the full setup, the store listing layout and how to
-update the Play Store screenshots.
+update the Play Store texts and screenshots.
