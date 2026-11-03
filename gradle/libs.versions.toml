@@ -18,7 +18,7 @@ kotlin = "2.4.21"
 kotlinx-coroutines = "1.11.0"
 ktor = "3.6.0"
 ksp = "2.3.13"
-metro = "1.5.0"
+metro = "1.5.2"
 mikepenz-aboutlibraries = "15.3.0"
 
 [libraries]
