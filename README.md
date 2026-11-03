@@ -57,6 +57,14 @@ Did you find a bug or have an idea of how the app could be improved? Please repo
 [bugs](https://github.com/svenjacobs/leon/issues) or give
 [feedback](https://github.com/svenjacobs/leon/discussions).
 
+## Translations
+
+[![Translation status](https://hosted.weblate.org/widget/leon-url-cleaner/svg-badge.svg)](https://hosted.weblate.org/engage/leon-url-cleaner/)
+
+Léon is translated on [Hosted Weblate](https://hosted.weblate.org/projects/leon-url-cleaner/) —
+the app itself as well as its Play Store listing. Improving a translation or adding a new language
+needs nothing but a Weblate account.
+
 ## API
 
 It is possible to call Léon programmatically from other applications. See [API.md](./API.md) for
