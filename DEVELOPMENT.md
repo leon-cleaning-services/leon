@@ -296,9 +296,9 @@ Each folder holds the following files, within Google Play's limits:
 | `short_description.txt` | 80 characters   |
 | `full_description.txt`  | 4000 characters |
 
-The title is the app's own `scaffold_title` string in that language. Only `en-US` is edited here;
-the other languages are translated on Weblate, which also creates the folder of a new language
-(see [Translations](#translations)). F-Droid reads the same folders for its listing.
+The title is the app's own `scaffold_title` string in that language. When the English text
+changes, update the other languages with it — here, or on Weblate, which also creates the folder of
+a new language (see [Translations](#translations)). F-Droid reads the same folders for its listing.
 
 supply replaces the texts of every language that has a folder. A missing file leaves that field
 as it is on Google Play, and a language without a folder is not touched at all — deleting a folder
@@ -378,10 +378,17 @@ Two more things to keep in mind:
 
 ## Translations
 
-Every language but English is translated on
-[Hosted Weblate](https://hosted.weblate.org/projects/leon-url-cleaner/) (project
-`leon-url-cleaner`, gratis under its Libre plan). English is the source and is only ever edited in
-this repository; Weblate picks the change up and offers the new strings to translators.
+Translations have two sources, and Weblate is not the only one:
+
+- **This repository.** A change that adds or rewrites a string still translates it into the
+  existing languages, as it always has (see [AGENTS.md](AGENTS.md)).
+- **[Hosted Weblate](https://hosted.weblate.org/projects/leon-url-cleaner/)** (project
+  `leon-url-cleaner`, gratis under its Libre plan), where translators improve the existing
+  languages and add new ones.
+
+English is the source language and is only ever edited in this repository; Weblate does not let
+translators change it. A GitHub webhook tells Weblate about every push to `main`, so a string added
+here shows up there straight away.
 
 ### Components
 
@@ -418,5 +425,9 @@ as the pull request title. Weblate cannot label pull requests, so
 [`label-weblate.yml`](.github/workflows/label-weblate.yml) adds `chore` to every pull request the
 `weblate` account opens.
 
-Squash-merge them like every other pull request. Translations changed in this repository directly
-are picked up by Weblate on its next update, but editing them on Weblate avoids merge conflicts.
+Squash-merge them like every other pull request.
+
+Because both sources edit the same files, Weblate rebases its pending translations onto every push
+to `main`. That only fails when both changed the *same* string; Weblate then stops pushing and shows
+a merge-conflict alert on the project. To avoid it, merge an open Weblate pull request before
+changing that language's existing translations here; adding new strings rarely conflicts.
