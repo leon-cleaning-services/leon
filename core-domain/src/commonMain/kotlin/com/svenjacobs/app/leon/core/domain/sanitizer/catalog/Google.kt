@@ -92,3 +92,35 @@ val GoogleMapsShortLink =
         rules = persistentListOf(Rule.Resolve("/[A-Za-z0-9_-]+/?")),
         match = persistentListOf(Match(HostMatch.Domain("maps.app.goo.gl"))),
     )
+
+/**
+ * `shem`, which Google appends to the target of a link shared from Search or Discover, such as
+ * `?shem=dsdf,sharefoc,agadiscoversdl,,sh/x/discover/m1/4`. It ends up on every site, so this
+ * applies to every URL.
+ */
+val GoogleShare =
+    Sanitizer(
+        id = SanitizerId("google_share"),
+        name = "Google Share",
+        rules = persistentListOf(Rule.RemoveParameters("shem")),
+    )
+
+/**
+ * `share.google/<code>`, which redirects to `google.com/share.google?q=<code>` first and only from
+ * there to the target. That second short link carries its code in the query.
+ */
+val GoogleShortLink =
+    Sanitizer(
+        id = SanitizerId("google_short_link"),
+        name = "Google Short Link",
+        rules =
+            persistentListOf(
+                Rule.Resolve("/[A-Za-z0-9_-]{2,}/?"),
+                Rule.Resolve("/share\\.google", parameters = "q"),
+            ),
+        match =
+            persistentListOf(
+                Match(HostMatch.Domain("share.google")),
+                Match(HostMatch.Domain("google.com"), pathPrefix = "/share.google"),
+            ),
+    )

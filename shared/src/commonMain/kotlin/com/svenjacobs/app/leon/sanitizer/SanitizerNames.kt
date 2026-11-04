@@ -58,6 +58,7 @@ private val TRANSLATED_NAMES: Map<SanitizerId, TranslatedName> =
             TranslatedName(Res.string.sanitizer_empty_parameters_name),
         SanitizerId("google_maps_short_link") to shortLink("Google Maps"),
         SanitizerId("google_search") to TranslatedName(Res.string.sanitizer_google_search_name),
+        SanitizerId("google_short_link") to shortLink("Google"),
         SanitizerId("lazada_short_link") to shortLink("Lazada"),
         SanitizerId("mydealz_parameters") to
             TranslatedName(Res.string.sanitizer_mydealz_parameters_name),

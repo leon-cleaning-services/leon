@@ -19,6 +19,7 @@ package com.svenjacobs.app.leon.core.domain.sanitizer
 
 import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.change.apply
+import com.svenjacobs.app.leon.core.domain.request
 import com.svenjacobs.app.leon.core.domain.sanitize
 import com.svenjacobs.app.leon.core.domain.url.Url
 import io.kotest.core.spec.style.WordSpec
@@ -344,6 +345,36 @@ class RuleTest :
                         Rule.Resolve()
                             .sanitize(shortLink, resolved = mapOf(shortLink to shortLink))
                             .shouldBeEmpty()
+                    }
+
+                    "replace a short link whose code is in the query" {
+                        val queryLink = url("https://example.com/s?utm_source=x&code=abc")
+
+                        Rule.Resolve("/s", parameters = "code")
+                            .sanitize(queryLink, resolved = mapOf(queryLink to target)) shouldBe
+                            listOf(Change.Action.Replace(from = queryLink, to = target))
+                    }
+
+                    "do nothing when the parameter carrying the code is missing or empty" {
+                        listOf("https://example.com/s", "https://example.com/s?code=").forEach {
+                            val queryLink = url(it)
+
+                            Rule.Resolve("/s", parameters = "code")
+                                .sanitize(queryLink, resolved = mapOf(queryLink to target))
+                                .shouldBeEmpty()
+                        }
+                    }
+
+                    "request a short link without its query and fragment" {
+                        Rule.Resolve()
+                            .request(url("https://short.example.com/t/abc?_t=x#f")) shouldBe
+                            url("https://short.example.com/t/abc")
+                    }
+
+                    "request a short link with only the parameters carrying the code" {
+                        Rule.Resolve("/s", parameters = "code")
+                            .request(url("https://example.com/s?utm_source=x&code=abc#f")) shouldBe
+                            url("https://example.com/s?code=abc")
                     }
                 }
         },

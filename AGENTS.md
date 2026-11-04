@@ -313,6 +313,11 @@ sanitizer's rules is duplication, not thoroughness.
     code of at least two characters (`{2,}`), so a bare `/t/` never counts as a short link.
   - Add only hosts which answer with an HTTP redirect. A resolver never contacts the target site,
     so a host that redirects with JavaScript or a meta refresh cannot be resolved.
+  - A short link is requested without its query. When the code is in the query instead, as in
+    `google.com/share.google?q=<code>`, name those parameters with `parameters = "q"`: only they
+    are sent, and the URL counts as a short link only when one of them has a value. A redirect to
+    another short link is followed, so declare every hop the service passes through
+    (`share.google/<code>` → `google.com/share.google?q=<code>` → target) in the same sanitizer.
 
 Regexes are held as **strings**, never as `Regex`, so that the catalog stays plain data.
 
