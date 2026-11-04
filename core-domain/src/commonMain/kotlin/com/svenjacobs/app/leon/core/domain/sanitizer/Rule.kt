@@ -146,6 +146,15 @@ sealed interface Rule {
      * sanitizer holding this rule should hold nothing else — and should be a sanitizer of its own,
      * so that the user can stop Léon from contacting one vendor without losing that vendor's
      * regular cleaning.
+     *
+     * A short link is requested without its query and fragment, since the query is where the
+     * tracking parameters are that Léon is about to remove.
+     *
+     * @param parameters For a short link whose code is in the query rather than in the path, such
+     *   as `google.com/share.google?q=<code>`: a regex matching the complete names of the
+     *   parameters which carry the code. Those parameters, and only those, are kept when the short
+     *   link is requested, and the URL is a short link only when it has at least one of them with a
+     *   value.
      */
-    data class Resolve(val pattern: String = ".*") : Rule
+    data class Resolve(val pattern: String = ".*", val parameters: String? = null) : Rule
 }

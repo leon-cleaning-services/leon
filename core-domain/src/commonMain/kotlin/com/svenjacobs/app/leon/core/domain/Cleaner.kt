@@ -157,10 +157,20 @@ class Cleaner(
      * A resolver uses this to decide whether a redirect leads to yet another short link, which it
      * may follow, or to the site the short link stands for, which it must not contact.
      */
-    suspend fun isShortLink(url: Url): Boolean = sanitizers.any { sanitizer ->
-        repository.isEnabled(sanitizer.id) &&
-            sanitizer.matches(url) &&
-            sanitizer.resolveRules.any { it.appliesTo(url) }
+    suspend fun isShortLink(url: Url): Boolean = shortLinkRequest(url) != null
+
+    /**
+     * What a resolver may request to resolve [url], or `null` when [url] is no short link.
+     *
+     * That is [url] without its fragment and without every parameter but those its [Rule.Resolve]
+     * declares to carry the code — usually none at all.
+     */
+    suspend fun shortLinkRequest(url: Url): Url? = sanitizers.firstNotNullOfOrNull { sanitizer ->
+        if (repository.isEnabled(sanitizer.id) && sanitizer.matches(url)) {
+            sanitizer.resolveRules.firstNotNullOfOrNull { it.request(url) }
+        } else {
+            null
+        }
     }
 
     /**
@@ -356,7 +366,24 @@ internal fun Rule.sanitize(url: Url, resolved: Map<Url, Url> = emptyMap()): List
     }
 
 /** Whether this rule declares [url] a short link, which it does when its pattern fits the path. */
-internal fun Rule.Resolve.appliesTo(url: Url): Boolean = Regex(pattern).matches(url.path)
+internal fun Rule.Resolve.appliesTo(url: Url): Boolean = request(url) != null
+
+/**
+ * The URL to request to resolve [url], or `null` when this rule does not declare it a short link:
+ * [url] without its fragment and without every parameter but those which [Rule.Resolve.parameters]
+ * names.
+ */
+internal fun Rule.Resolve.request(url: Url): Url? {
+    if (!Regex(pattern).matches(url.path)) return null
+
+    val kept = parameters?.let { names ->
+        val regex = Regex(names)
+        url.parameters.filter { regex.matches(it.name) && !it.value.isNullOrEmpty() }
+    }
+    if (kept?.isEmpty() == true) return null
+
+    return url.copy(parameters = kept.orEmpty().toImmutableList(), fragment = null)
+}
 
 private fun setComponent(component: Change.Component, from: String?, to: String?) =
     listOf(Change.Action.SetComponent(component, from = from, to = to))

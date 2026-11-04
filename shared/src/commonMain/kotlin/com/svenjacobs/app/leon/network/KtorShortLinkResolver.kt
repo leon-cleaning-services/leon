@@ -45,8 +45,9 @@ import kotlinx.collections.immutable.persistentListOf
  * not consider a short link — the target. Some services redirect to another short link first, such
  * as `tt.site/t/<code>` to `tiktok.com/t/<code>`; those are followed, up to [MAX_HOPS] requests.
  *
- * A short link is requested without its query and fragment. Its code is in the path, and the query
- * is where the tracking parameters are which Léon is about to remove.
+ * A short link is requested as [Cleaner.shortLinkRequest] gives it: without its fragment, and
+ * without its query unless the code is in there. The query is where the tracking parameters are
+ * which Léon is about to remove.
  *
  * The [HttpClient] is injected lazily so that none is created unless a short link is resolved.
  */
@@ -74,7 +75,8 @@ class KtorShortLinkResolver(
         }
 
     private suspend fun follow(url: Url): Resolution {
-        var current = url.withoutQuery()
+        // Only short links are passed in, so the fallback is merely a safe default.
+        var current = cleaner.shortLinkRequest(url) ?: url.withoutQuery()
 
         repeat(MAX_HOPS) {
             val step =
@@ -98,7 +100,8 @@ class KtorShortLinkResolver(
                     is Step.Next -> step.url
                 }
 
-            if (!cleaner.isShortLink(next)) {
+            val request = cleaner.shortLinkRequest(next)
+            if (request == null) {
                 return if (next.path.isEmpty() || next.path == "/") {
                     // An unknown or expired short link redirects to the service's start page.
                     Resolution.Failed(Reason.Expired)
@@ -107,7 +110,7 @@ class KtorShortLinkResolver(
                 }
             }
 
-            current = next.withoutQuery()
+            current = request
         }
 
         // Still a short link after MAX_HOPS redirects: most likely a loop.

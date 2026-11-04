@@ -70,6 +70,10 @@ abstract class SanitizerSpec(private val sanitizer: Sanitizer, body: SanitizerSp
     /** Whether this sanitizer, when enabled, declares [url] a short link which can be resolved. */
     suspend fun isShortLink(url: String): Boolean = cleaner.isShortLink(parse(url))
 
+    /** What a resolver would request to resolve [url], or `null` when it is no short link. */
+    suspend fun shortLinkRequest(url: String): String? =
+        cleaner.shortLinkRequest(parse(url))?.toString()
+
     private fun parse(url: String): Url = requireNotNull(Url.parse(url)) { "Not a URL: $url" }
 
     /**

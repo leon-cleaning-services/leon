@@ -62,6 +62,8 @@ val AllSanitizers: SanitizersCollection =
         GoogleMaps,
         GoogleMapsShortLink,
         GoogleSearch,
+        GoogleShare,
+        GoogleShortLink,
         GoogleStore,
         Heise,
         HumbleBundle,

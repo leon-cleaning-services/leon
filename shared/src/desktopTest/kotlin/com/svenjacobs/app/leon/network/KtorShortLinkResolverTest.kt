@@ -91,6 +91,31 @@ class KtorShortLinkResolverTest :
                             )
                     }
 
+                    "keep the code of a short link which carries it in the query" {
+                        val target =
+                            "https://www.sciencedaily.com/releases/2026/11/261102075806.htm"
+                        val engine = engine { request ->
+                            when (request.url.host) {
+                                "share.google" ->
+                                    redirect(
+                                        "https://www.google.com/share.google" +
+                                            "?q=LjiVlhSkGoc8UoeIQ&utm_source=x",
+                                    )
+                                "www.google.com" -> redirect(target)
+                                else -> error("Unexpected request to ${request.url}")
+                            }
+                        }
+
+                        engine.resolve("https://share.google/LjiVlhSkGoc8UoeIQ") shouldBe
+                            resolved(target)
+                        engine.requestedUrls() shouldBe
+                            listOf(
+                                "https://share.google/LjiVlhSkGoc8UoeIQ",
+                                // Only the parameter carrying the code is sent.
+                                "https://www.google.com/share.google?q=LjiVlhSkGoc8UoeIQ",
+                            )
+                    }
+
                     "request the short link without its query and fragment" {
                         val engine = engine { redirect(VIDEO) }
 
