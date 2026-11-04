@@ -387,8 +387,10 @@ Translations have two sources, and Weblate is not the only one:
   languages and add new ones.
 
 English is the source language and is only ever edited in this repository; Weblate does not let
-translators change it. A GitHub webhook tells Weblate about every push to `main`, so a string added
-here shows up there straight away.
+translators change it. Weblate is connected through the Hosted Weblate GitHub App, installed on
+the `leon-cleaning-services` organization with access to this repository only. It tells Weblate
+about every push to `main`, so a string added here shows up there straight away; no repository
+webhook is needed.
 
 ### Components
 
@@ -398,8 +400,9 @@ here shows up there straight away.
 | `android`    | `androidApp/src/main/res/values-*/strings.xml`                | Android String Resource         |
 | `play-store` | `fastlane/metadata/android/*`                                 | App store metadata files        |
 
-`app` owns the clone of this repository; the other two are linked to it (`weblate://leon-url-cleaner/app`)
-and take its branch and push settings. All three are licensed GPL-3.0-or-later.
+`app` owns the clone of this repository and uses the "GitHub (via Weblate GitHub app)" backend; the
+other two are linked to it (`weblate://leon-url-cleaner/app`) and take its repository, branch and
+push settings. All three are licensed GPL-3.0-or-later.
 
 Things that are easy to get wrong when changing the setup:
 
@@ -418,12 +421,11 @@ Things that are easy to get wrong when changing the setup:
 
 ### Pull requests from Weblate
 
-Weblate commits translations to its own fork and opens a pull request against `main`. Every
+Weblate pushes translations through the GitHub App and opens a pull request against `main`. Every
 message template starts with `chore(i18n):`, and the "Squash Git commits" add-on squashes all
 pending changes into one commit named `chore(i18n): update translations from Weblate` — the same
-as the pull request title. Weblate cannot label pull requests, so
-[`label-weblate.yml`](.github/workflows/label-weblate.yml) adds `chore` to every pull request the
-`weblate` account opens.
+as the pull request title. The `app` component's "Pull request labels" setting
+(`merge_request_labels`) gives every pull request the `chore` label.
 
 Squash-merge them like every other pull request.
 
