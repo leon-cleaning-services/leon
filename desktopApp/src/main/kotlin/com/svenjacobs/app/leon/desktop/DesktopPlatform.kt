@@ -18,6 +18,7 @@
 package com.svenjacobs.app.leon.desktop
 
 import com.svenjacobs.app.leon.Platform
+import com.svenjacobs.app.leon.ui.model.Browser
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -31,10 +32,15 @@ class DesktopPlatform : Platform {
     override val supportsBrowserRegistration = false
     override val supportsCustomTabs = false
     override val supportsProtectScreen = false
+    override val supportsBrowserSelection = false
 
     override fun isRegisteredAsBrowser(): Boolean = false
 
     override fun setRegisteredAsBrowser(enabled: Boolean) {
         // No-op: the desktop platform has no browser registration mechanism.
     }
+
+    override fun isDefaultBrowser(): Boolean = false
+
+    override suspend fun browsers(): List<Browser> = emptyList()
 }

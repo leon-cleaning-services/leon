@@ -20,10 +20,15 @@ package com.svenjacobs.app.leon
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
+import com.svenjacobs.app.leon.ui.common.installedBrowsers
+import com.svenjacobs.app.leon.ui.common.isDefaultBrowser as isLeonDefaultBrowser
+import com.svenjacobs.app.leon.ui.model.Browser
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Inject
 @SingleIn(AppScope::class)
@@ -33,6 +38,7 @@ class AndroidPlatform(private val context: Context) : Platform {
     override val supportsBrowserRegistration = true
     override val supportsCustomTabs = true
     override val supportsProtectScreen = true
+    override val supportsBrowserSelection = true
 
     override fun isRegisteredAsBrowser(): Boolean =
         packageManager.getComponentEnabledSetting(componentName) ==
@@ -49,6 +55,11 @@ class AndroidPlatform(private val context: Context) : Platform {
             PackageManager.DONT_KILL_APP,
         )
     }
+
+    override fun isDefaultBrowser(): Boolean = context.isLeonDefaultBrowser()
+
+    override suspend fun browsers(): List<Browser> =
+        withContext(Dispatchers.IO) { context.installedBrowsers() }
 
     private val packageManager: PackageManager
         get() = context.packageManager

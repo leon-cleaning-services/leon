@@ -20,28 +20,56 @@ package com.svenjacobs.app.leon.ui.screens.settings
 import androidx.compose.runtime.Composable
 import com.android.tools.screenshot.PreviewTest
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.Browser
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.FormFactorPreviews
+import kotlinx.collections.immutable.persistentListOf
 
-@PreviewTest
-@FormFactorPreviews
+/** A browser without Custom Tabs support, made up so as to claim nothing about a real one. */
+private val BrowserWithoutCustomTabs =
+    Browser(
+        packageName = "com.example.browser",
+        label = "Example Browser",
+        supportsCustomTabs = false,
+    )
+
 @Composable
-private fun ContentScreenshot() {
+private fun ScreenshotContent(selectedBrowser: Browser?, customTabsEnabled: Boolean) {
     AppTheme {
         Content(
             isLoading = false,
             browserEnabled = false,
-            customTabsEnabled = false,
+            customTabsEnabled = customTabsEnabled,
             protectScreenEnabled = false,
             historyEnabled = true,
             resolveShortLinksEnabled = false,
             rememberPerSiteEnabled = true,
             autoReset = AutoReset.Off,
+            browsers =
+                persistentListOf(
+                    Browser(
+                        packageName = "com.android.chrome",
+                        label = "Chrome",
+                        supportsCustomTabs = true,
+                    ),
+                    BrowserWithoutCustomTabs,
+                    Browser(
+                        packageName = "org.mozilla.firefox",
+                        label = "Firefox",
+                        supportsCustomTabs = true,
+                    ),
+                ),
+            selectedBrowser = selectedBrowser,
+            isDefaultBrowser = false,
+            isBrowserDialogShown = false,
             onActionAfterCleanClick = {},
             onSanitizersClick = {},
             onLicensesClick = {},
             onRememberedSitesClick = {},
             onBrowserSwitchCheckedChange = {},
+            onBrowserClick = {},
+            onBrowserSelect = {},
+            onBrowserDialogDismiss = {},
             onCustomTabsSwitchCheckedChange = {},
             onProtectScreenSwitchCheckedChange = {},
             onHistorySwitchCheckedChange = {},
@@ -50,4 +78,18 @@ private fun ContentScreenshot() {
             onAutoResetClick = {},
         )
     }
+}
+
+@PreviewTest
+@FormFactorPreviews
+@Composable
+private fun ContentScreenshot() {
+    ScreenshotContent(selectedBrowser = null, customTabsEnabled = false)
+}
+
+@PreviewTest
+@FormFactorPreviews
+@Composable
+private fun ContentCustomTabsUnsupportedScreenshot() {
+    ScreenshotContent(selectedBrowser = BrowserWithoutCustomTabs, customTabsEnabled = true)
 }

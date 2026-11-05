@@ -46,6 +46,13 @@
     <string name="register_as_browser_summary">Позволяет открывать ссылки из других приложений в Léon, который сначала их очищает</string>
     <string name="open_in_custom_tabs">Открывать URL во встроенных вкладках браузера</string>
     <string name="open_in_custom_tabs_summary">Открывает очищенные ссылки во вкладке браузера внутри приложения, а не в приложении браузера</string>
+    <string name="custom_tabs_unsupported">%1$s не поддерживает встроенные вкладки, поэтому ссылки открываются в приложении браузера</string>
+    <string name="open_links_with">Открывать ссылки в</string>
+    <string name="default_browser">Браузер по умолчанию</string>
+    <string name="default_browser_unavailable">Недоступно, пока Léon является браузером по умолчанию</string>
+    <string name="reopen_leon_title">Léon откроется снова</string>
+    <string name="reopen_leon_text">Léon — ваш браузер по умолчанию, поэтому эта ссылка просто снова откроет Léon. Вместо этого выберите браузер для открытия ссылок.</string>
+    <string name="choose_browser">Выбрать браузер</string>
     <string name="action_after_clean">Действие после очистки</string>
     <string name="action_after_clean_description">Что Léon делает с URL после его очистки</string>
     <string name="action_after_clean_per_source">Выбирать для каждого источника</string>

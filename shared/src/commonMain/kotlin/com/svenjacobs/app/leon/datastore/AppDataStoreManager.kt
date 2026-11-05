@@ -124,6 +124,18 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
     val customTabsEnabled: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[KEY_CUSTOM_TABS] ?: false }
 
+    /** Sets the browser links are opened with, or `null` for the default browser. */
+    suspend fun setBrowserPackage(packageName: String?) {
+        dataStore.edit {
+            if (packageName == null) it.remove(KEY_BROWSER_PACKAGE)
+            else it[KEY_BROWSER_PACKAGE] = packageName
+        }
+    }
+
+    /** The package name of the browser links are opened with, or `null` for the default browser. */
+    val browserPackage: Flow<String?> =
+        dataStore.data.map { preferences -> preferences[KEY_BROWSER_PACKAGE] }
+
     suspend fun setProtectScreenEnabled(enabled: Boolean) {
         dataStore.edit { it[KEY_PROTECT_SCREEN] = enabled }
     }
@@ -206,6 +218,7 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
         private val KEY_URL_DECODE = booleanPreferencesKey("url_decode")
         private val KEY_EXTRACT_URL = booleanPreferencesKey("extract_url")
         private val KEY_CUSTOM_TABS = booleanPreferencesKey("custom_tabs")
+        private val KEY_BROWSER_PACKAGE = stringPreferencesKey("browser_package")
         private val KEY_PROTECT_SCREEN = booleanPreferencesKey("protect_screen")
         private val KEY_AUTO_RESET = stringPreferencesKey("auto_reset")
         private val KEY_LAST_INPUT_ID = stringPreferencesKey("last_input_id")

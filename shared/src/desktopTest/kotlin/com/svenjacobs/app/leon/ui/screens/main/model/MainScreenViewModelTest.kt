@@ -90,10 +90,12 @@ class MainScreenViewModelTest :
                 historyEnabled: Boolean = true,
                 resolveShortLinksEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false),
                 rememberPerSiteEnabled: Boolean = false,
+                browserPackage: String? = null,
             ): AppDataStoreManager = mockk {
                 every { urlDecodeEnabled } returns flowOf(false)
                 every { extractUrlEnabled } returns flowOf(false)
                 every { customTabsEnabled } returns flowOf(false)
+                every { this@mockk.browserPackage } returns flowOf(browserPackage)
                 every { this@mockk.actionsAfterClean } returns flowOf(actionsAfterClean)
                 every { this@mockk.autoReset } returns flowOf(autoReset)
                 every { this@mockk.lastInput } returns flowOf(lastInput)
@@ -159,6 +161,28 @@ class MainScreenViewModelTest :
             }
 
             afterEach { Dispatchers.resetMain() }
+
+            "uiState" should
+                {
+                    "carry the browser links are opened with" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel =
+                                MainScreenViewModel(
+                                    appDataStoreManager =
+                                        appDataStoreManager(browserPackage = "org.mozilla.firefox"),
+                                    cleaner =
+                                        mockk { coEvery { shortLinks(any()) } returns emptyList() },
+                                    historyDao = historyDao(),
+                                    shortLinkResolver = FakeShortLinkResolver(),
+                                    sitePreferenceStore =
+                                        SitePreferenceStore(FakeSiteParameterDao()),
+                                )
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.browserPackage shouldBe "org.mozilla.firefox"
+                        }
+                    }
+                }
 
             "onChangeToggled" should
                 {
@@ -733,6 +757,7 @@ class MainScreenViewModelTest :
                                             every { urlDecodeEnabled } returns flowOf(false)
                                             every { extractUrlEnabled } returns flowOf(false)
                                             every { customTabsEnabled } returns flowOf(false)
+                                            every { browserPackage } returns flowOf(null)
                                             every { actionsAfterClean } returns
                                                 flowOf(ActionsAfterClean())
                                             every { autoReset } returns flowOf(AutoReset.OneMinute)

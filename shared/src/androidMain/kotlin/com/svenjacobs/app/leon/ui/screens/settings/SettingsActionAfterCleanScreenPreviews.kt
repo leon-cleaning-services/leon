@@ -41,6 +41,19 @@ private fun ActionAfterCleanContentPreview() {
 
 @Composable
 @DayNightPreviews
+private fun ActionAfterCleanDialogPreview() {
+    AppTheme {
+        ActionAfterCleanDialog(
+            title = "Action after clean",
+            selected = ActionAfterClean.OpenUrl,
+            onSelect = {},
+            onDismissRequest = {},
+        )
+    }
+}
+
+@Composable
+@DayNightPreviews
 private fun ActionAfterCleanContentPerSourcePreview() {
     AppTheme {
         ActionAfterCleanContent(

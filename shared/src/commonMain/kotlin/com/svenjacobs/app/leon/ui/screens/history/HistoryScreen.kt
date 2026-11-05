@@ -79,9 +79,11 @@ import com.svenjacobs.app.leon.shared.resources.history_empty_title
 import com.svenjacobs.app.leon.shared.resources.open
 import com.svenjacobs.app.leon.shared.resources.share
 import com.svenjacobs.app.leon.shared.resources.undo
+import com.svenjacobs.app.leon.ui.common.OpenResult
 import com.svenjacobs.app.leon.ui.common.copyToClipboard
 import com.svenjacobs.app.leon.ui.common.formatDateTime
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
+import com.svenjacobs.app.leon.ui.common.views.ReopenLeonDialog
 import com.svenjacobs.app.leon.ui.screens.history.model.HistoryScreenViewModel
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -91,6 +93,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun HistoryScreen(
     snackbarHostState: SnackbarHostState,
+    onChooseBrowserClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HistoryScreenViewModel = metroViewModel(),
 ) {
@@ -100,14 +103,20 @@ fun HistoryScreen(
         modifier = modifier,
         isEnabled = uiState.isEnabled,
         isCustomTabsEnabled = uiState.isCustomTabsEnabled,
+        browserPackage = uiState.browserPackage,
         entries = uiState.entries,
         snackbarHostState = snackbarHostState,
         onDeleteClick = viewModel::onDeleteClick,
         onUndoDeleteClick = viewModel::onUndoDeleteClick,
         onClearAllClick = viewModel::onClearAllClick,
+        onChooseBrowserClick = onChooseBrowserClick,
     )
 }
 
+/**
+ * @param formatAt Formats when an entry was cleaned. Replaceable so that a screenshot test can
+ *   render the time independently of the time zone of the machine it runs on.
+ */
 @Composable
 fun Content(
     isEnabled: Boolean,
@@ -118,11 +127,27 @@ fun Content(
     onUndoDeleteClick: (HistoryEntry) -> Unit,
     onClearAllClick: () -> Unit,
     modifier: Modifier = Modifier,
+    browserPackage: String? = null,
+    onChooseBrowserClick: () -> Unit = {},
+    formatAt: @Composable (epochMillis: Long) -> String = { formatDateTime(it) },
 ) {
     val coroutineScope = rememberCoroutineScope()
     val deletedMessage = stringResource(Res.string.history_deleted)
     val undoLabel = stringResource(Res.string.undo)
     var showClearAllDialog by rememberSaveable { mutableStateOf(false) }
+    // Held here rather than in a row: the row's menu closes as the link is opened, and a row may
+    // scroll out of composition while the dialog is still showing.
+    var showReopenLeonDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showReopenLeonDialog) {
+        ReopenLeonDialog(
+            onChooseBrowserClick = {
+                showReopenLeonDialog = false
+                onChooseBrowserClick()
+            },
+            onDismissRequest = { showReopenLeonDialog = false },
+        )
+    }
 
     if (showClearAllDialog) {
         AlertDialog(
@@ -184,7 +209,10 @@ fun Content(
                             HistoryRow(
                                 entry = entry,
                                 isCustomTabsEnabled = isCustomTabsEnabled,
+                                browserPackage = browserPackage,
                                 snackbarHostState = snackbarHostState,
+                                onWouldReopenLeon = { showReopenLeonDialog = true },
+                                formatAt = formatAt,
                                 onDelete = { deleted ->
                                     coroutineScope.launch {
                                         onDeleteClick(deleted.id)
@@ -229,7 +257,10 @@ private fun EmptyState(modifier: Modifier = Modifier, content: @Composable () ->
 private fun HistoryRow(
     entry: HistoryEntry,
     isCustomTabsEnabled: Boolean,
+    browserPackage: String?,
     snackbarHostState: SnackbarHostState,
+    onWouldReopenLeon: () -> Unit,
+    formatAt: @Composable (epochMillis: Long) -> String,
     onDelete: (HistoryEntry) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -296,7 +327,7 @@ private fun HistoryRow(
                         )
                         Text(
                             modifier = Modifier.padding(top = 8.dp),
-                            text = formatDateTime(entry.at),
+                            text = formatAt(entry.at),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -333,14 +364,16 @@ private fun HistoryRow(
 
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.open)) },
-                enabled = !urlActions.isDefaultBrowser,
                 onClick = {
                     menuFor = null
-                    urlActions.open(
-                        url = entry.url,
-                        customTabs = isCustomTabsEnabled,
-                        chooserTitle = openTitle,
-                    )
+                    val openResult =
+                        urlActions.open(
+                            url = entry.url,
+                            customTabs = isCustomTabsEnabled,
+                            browserPackage = browserPackage,
+                            chooserTitle = openTitle,
+                        )
+                    if (openResult == OpenResult.WouldReopenLeon) onWouldReopenLeon()
                 },
             )
 

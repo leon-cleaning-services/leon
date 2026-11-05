@@ -46,6 +46,13 @@
     <string name="register_as_browser_summary">Pozwala otwierać linki z innych aplikacji w Léonie, który najpierw je czyści</string>
     <string name="open_in_custom_tabs">Otwórz adresy URL w niestandardowych kartach przeglądarki</string>
     <string name="open_in_custom_tabs_summary">Otwiera wyczyszczone linki w karcie przeglądarki w aplikacji zamiast w aplikacji przeglądarki</string>
+    <string name="custom_tabs_unsupported">%1$s nie obsługuje niestandardowych kart, więc linki otwierają się w aplikacji przeglądarki</string>
+    <string name="open_links_with">Otwieraj linki w</string>
+    <string name="default_browser">Domyślna przeglądarka</string>
+    <string name="default_browser_unavailable">Niedostępne, gdy Léon jest domyślną przeglądarką</string>
+    <string name="reopen_leon_title">Léon otworzyłby się ponownie</string>
+    <string name="reopen_leon_text">Léon jest Twoją domyślną przeglądarką, więc otwarcie tego linku po prostu ponownie otworzyłoby Léon. Zamiast tego wybierz przeglądarkę do otwierania linków.</string>
+    <string name="choose_browser">Wybierz przeglądarkę</string>
     <string name="action_after_clean">Akcja po wyczyszczeniu</string>
     <string name="action_after_clean_description">Co Léon robi z adresem URL po jego wyczyszczeniu</string>
     <string name="action_after_clean_per_source">Wybierz dla każdego źródła</string>

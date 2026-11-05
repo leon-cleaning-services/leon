@@ -22,6 +22,7 @@ import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.db.SiteParameterDao
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.Browser
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.Runs
@@ -46,17 +47,39 @@ import kotlinx.coroutines.test.setMain
 class SettingsScreenViewModelTest :
     WordSpec(
         {
-            fun platform(): Platform = mockk {
+            val chrome =
+                Browser(
+                    packageName = "com.android.chrome",
+                    label = "Chrome",
+                    supportsCustomTabs = true,
+                )
+            val firefox =
+                Browser(
+                    packageName = "org.mozilla.firefox",
+                    label = "Firefox",
+                    supportsCustomTabs = true,
+                )
+
+            fun platform(
+                browsers: List<Browser> = listOf(chrome, firefox),
+                isDefaultBrowser: Boolean = false,
+            ): Platform = mockk {
                 every { supportsBrowserRegistration } returns true
                 every { supportsCustomTabs } returns true
                 every { supportsProtectScreen } returns true
+                every { supportsBrowserSelection } returns true
                 every { isRegisteredAsBrowser() } returns false
+                every { isDefaultBrowser() } returns isDefaultBrowser
+                coEvery { browsers() } returns browsers
             }
 
             fun appDataStoreManager(
                 resolveShortLinksEnabled: Flow<Boolean> = flowOf(false),
                 rememberPerSiteEnabled: Flow<Boolean> = flowOf(true),
+                browserPackage: Flow<String?> = flowOf(null),
             ): AppDataStoreManager = mockk {
+                every { this@mockk.browserPackage } returns browserPackage
+                coEvery { setBrowserPackage(any()) } just Runs
                 every { historyEnabled } returns flowOf(true)
                 every { this@mockk.resolveShortLinksEnabled } returns resolveShortLinksEnabled
                 every { this@mockk.rememberPerSiteEnabled } returns rememberPerSiteEnabled
@@ -72,9 +95,10 @@ class SettingsScreenViewModelTest :
             fun viewModel(
                 appDataStoreManager: AppDataStoreManager,
                 siteParameterDao: SiteParameterDao = siteParameterDao(),
+                platform: Platform = platform(),
             ) =
                 SettingsScreenViewModel(
-                    platform = platform(),
+                    platform = platform,
                     appDataStoreManager = appDataStoreManager,
                     historyDao = mockk<HistoryDao>(),
                     siteParameterDao = siteParameterDao,
@@ -114,6 +138,162 @@ class SettingsScreenViewModelTest :
                             enabled.value = false
 
                             viewModel.uiState.value.rememberPerSiteEnabled shouldBe false
+                        }
+                    }
+
+                    "carry the installed browsers and the chosen one" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val browserPackage = MutableStateFlow<String?>(null)
+                            val viewModel =
+                                viewModel(appDataStoreManager(browserPackage = browserPackage))
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.supportsBrowserSelection shouldBe true
+                            viewModel.uiState.value.browsers shouldBe listOf(chrome, firefox)
+                            viewModel.uiState.value.selectedBrowser shouldBe null
+
+                            browserPackage.value = firefox.packageName
+
+                            viewModel.uiState.value.selectedBrowser shouldBe firefox
+                        }
+                    }
+
+                    "fall back to the default browser when the chosen one is not installed" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel =
+                                viewModel(
+                                    appDataStoreManager(
+                                        browserPackage = flowOf("com.example.gone"),
+                                    ),
+                                )
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.selectedBrowser shouldBe null
+                        }
+                    }
+
+                    "carry whether Léon is the default browser" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel =
+                                viewModel(
+                                    appDataStoreManager(),
+                                    platform = platform(isDefaultBrowser = true),
+                                )
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.isDefaultBrowser shouldBe true
+                        }
+                    }
+
+                    "carry whether the chosen browser supports Custom Tabs" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val withoutCustomTabs =
+                                Browser(
+                                    packageName = "com.example.browser",
+                                    label = "Example Browser",
+                                    supportsCustomTabs = false,
+                                )
+                            val viewModel =
+                                viewModel(
+                                    appDataStoreManager(
+                                        browserPackage = flowOf(withoutCustomTabs.packageName),
+                                    ),
+                                    platform =
+                                        platform(browsers = listOf(chrome, withoutCustomTabs)),
+                                )
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.selectedBrowser?.supportsCustomTabs shouldBe
+                                false
+                        }
+                    }
+                }
+
+            "onBrowserClick" should
+                {
+                    "look the installed browsers up again" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val installed = mutableListOf(chrome)
+                            val platform = platform()
+                            coEvery { platform.browsers() } answers { installed.toList() }
+                            val viewModel = viewModel(appDataStoreManager(), platform = platform)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.browsers shouldBe listOf(chrome)
+
+                            installed += firefox
+                            viewModel.onBrowserClick()
+
+                            viewModel.uiState.value.browsers shouldBe listOf(chrome, firefox)
+                        }
+                    }
+
+                    "show the browser dialog" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel = viewModel(appDataStoreManager())
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.isBrowserDialogShown shouldBe false
+
+                            viewModel.onBrowserClick()
+
+                            viewModel.uiState.value.isBrowserDialogShown shouldBe true
+                        }
+                    }
+
+                    "look up whether Léon became the default browser meanwhile" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val platform = platform()
+                            val viewModel = viewModel(appDataStoreManager(), platform = platform)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            every { platform.isDefaultBrowser() } returns true
+                            viewModel.onBrowserClick()
+
+                            viewModel.uiState.value.isDefaultBrowser shouldBe true
+                        }
+                    }
+                }
+
+            "onBrowserDialogDismiss" should
+                {
+                    "hide the browser dialog" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel = viewModel(appDataStoreManager())
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+                            viewModel.onBrowserClick()
+
+                            viewModel.onBrowserDialogDismiss()
+
+                            viewModel.uiState.value.isBrowserDialogShown shouldBe false
+                        }
+                    }
+                }
+
+            "onBrowserSelect" should
+                {
+                    "store the chosen browser, or the default browser" {
+                        val appDataStoreManager = appDataStoreManager()
+                        val viewModel = viewModel(appDataStoreManager)
+
+                        viewModel.onBrowserSelect(firefox)
+                        viewModel.onBrowserSelect(null)
+
+                        coVerifyOrder {
+                            appDataStoreManager.setBrowserPackage(firefox.packageName)
+                            appDataStoreManager.setBrowserPackage(null)
+                        }
+                    }
+
+                    "hide the browser dialog" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel = viewModel(appDataStoreManager())
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+                            viewModel.onBrowserClick()
+
+                            viewModel.onBrowserSelect(firefox)
+
+                            viewModel.uiState.value.isBrowserDialogShown shouldBe false
                         }
                     }
                 }

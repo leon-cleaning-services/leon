@@ -38,7 +38,11 @@ import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -123,6 +127,17 @@ fun MainRouter(
         if (destination != Destination.Main) backStack.add(destination)
     }
 
+    // Set when a link could not be opened because it would have reopened Léon and the user asked
+    // to choose a browser; Settings opens its browser dialog and clears it again. A flag rather
+    // than a navigation argument, so that `Destination.Settings` stays the one Settings entry the
+    // navigation bar compares against.
+    var chooseBrowserRequested by rememberSaveable { mutableStateOf(false) }
+
+    fun chooseBrowser() {
+        chooseBrowserRequested = true
+        goToTopLevel(Destination.Settings)
+    }
+
     // The Main entry is never removed (see goToTopLevel above), so once the user has navigated to
     // History or Settings the back stack holds BOTH Main (at index 0) and the real current
     // destination — the selected item is therefore the LAST TopLevel entry, not the first.
@@ -197,11 +212,15 @@ fun MainRouter(
                             sourceText = sourceText,
                             snackbarHostState = snackbarHostState,
                             onResetClick = onResetClick,
+                            onChooseBrowserClick = ::chooseBrowser,
                         )
                     }
 
                     entry<Destination.History>(metadata = topLevelMetadata(Destination.History)) {
-                        HistoryScreen(snackbarHostState = snackbarHostState)
+                        HistoryScreen(
+                            snackbarHostState = snackbarHostState,
+                            onChooseBrowserClick = ::chooseBrowser,
+                        )
                     }
 
                     entry<Destination.Settings>(
@@ -224,6 +243,8 @@ fun MainRouter(
                                 dropUnlessResumed {
                                     backStack.add(Destination.SettingsRememberedSites)
                                 },
+                            chooseBrowserRequested = chooseBrowserRequested,
+                            onChooseBrowserRequestHandled = { chooseBrowserRequested = false },
                         )
                     }
 

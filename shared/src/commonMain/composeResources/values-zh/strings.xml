@@ -46,6 +46,13 @@
     <string name="register_as_browser_summary">可用 Léon 打开其他应用中的链接，并先对其进行清理</string>
     <string name="open_in_custom_tabs">在浏览器自定义标签页打开链接</string>
     <string name="open_in_custom_tabs_summary">在应用内的浏览器标签页中打开已清理的链接，而非切换到浏览器应用</string>
+    <string name="custom_tabs_unsupported">%1$s 不支持自定义标签页，因此链接将在浏览器应用中打开</string>
+    <string name="open_links_with">打开链接所用的浏览器</string>
+    <string name="default_browser">默认浏览器</string>
+    <string name="default_browser_unavailable">Léon 为默认浏览器时不可用</string>
+    <string name="reopen_leon_title">Léon 将再次打开</string>
+    <string name="reopen_leon_text">Léon 是你的默认浏览器，因此打开此链接只会再次打开 Léon。请改为选择一个用于打开链接的浏览器。</string>
+    <string name="choose_browser">选择浏览器</string>
     <string name="action_after_clean">清理完成后</string>
     <string name="action_after_clean_description">Léon 在清理 URL 之后执行的操作</string>
     <string name="action_after_clean_per_source">按来源选择</string>
