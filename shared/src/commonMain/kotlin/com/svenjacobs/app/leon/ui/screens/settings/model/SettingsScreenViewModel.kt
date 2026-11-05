@@ -24,14 +24,19 @@ import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import com.svenjacobs.app.leon.db.HistoryDao
 import com.svenjacobs.app.leon.db.SiteParameterDao
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.Browser
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -57,9 +62,42 @@ class SettingsScreenViewModel(
         val supportsBrowserRegistration: Boolean = false,
         val supportsCustomTabs: Boolean = false,
         val supportsProtectScreen: Boolean = false,
+        val supportsBrowserSelection: Boolean = false,
+        /** The installed browsers the user can open links with. */
+        val browsers: ImmutableList<Browser> = persistentListOf(),
+        /**
+         * The browser the user chose, or `null` for the default browser — also when the chosen one
+         * is not installed anymore, because links then open with the default browser again.
+         */
+        val selectedBrowser: Browser? = null,
+        /** Whether Léon is the default browser, which therefore cannot open links. */
+        val isDefaultBrowser: Boolean = false,
+        /** Whether the dialog choosing the browser links are opened with is showing. */
+        val isBrowserDialogShown: Boolean = false,
     )
 
     private val browserEnabled = MutableStateFlow(false)
+
+    /** The installed browsers and whether Léon is the default one. */
+    private data class Browsers(
+        val installed: ImmutableList<Browser> = persistentListOf(),
+        val isDefaultBrowser: Boolean = false,
+    )
+
+    /** `null` until first loaded, so that the screen never shows the wrong browser in between. */
+    private val browsers = MutableStateFlow<Browsers?>(null)
+
+    private val browserDialogShown = MutableStateFlow(false)
+
+    /**
+     * [Browsers] with the package of the chosen one and whether the dialog choosing it is showing,
+     * combined ahead of the outer [combine].
+     */
+    private data class BrowserSelection(
+        val browsers: Browsers,
+        val browserPackage: String?,
+        val dialogShown: Boolean,
+    )
 
     /**
      * The browser, history, short link and remember per site switches, combined ahead of the outer
@@ -84,7 +122,14 @@ class SettingsScreenViewModel(
                 appDataStoreManager.customTabsEnabled,
                 appDataStoreManager.protectScreenEnabled,
                 appDataStoreManager.autoReset,
-            ) { toggles, customTabsEnabled, protectScreenEnabled, autoReset ->
+                combine(
+                    browsers.filterNotNull(),
+                    appDataStoreManager.browserPackage,
+                    browserDialogShown,
+                    ::BrowserSelection,
+                ),
+            ) { toggles, customTabsEnabled, protectScreenEnabled, autoReset, browserSelection ->
+                val (browsers, browserPackage, browserDialogShown) = browserSelection
                 UiState(
                     isLoading = false,
                     browserEnabled = toggles.browserEnabled,
@@ -97,6 +142,11 @@ class SettingsScreenViewModel(
                     supportsBrowserRegistration = platform.supportsBrowserRegistration,
                     supportsCustomTabs = platform.supportsCustomTabs,
                     supportsProtectScreen = platform.supportsProtectScreen,
+                    supportsBrowserSelection = platform.supportsBrowserSelection,
+                    browsers = browsers.installed,
+                    selectedBrowser = browsers.installed.find { it.packageName == browserPackage },
+                    isDefaultBrowser = browsers.isDefaultBrowser,
+                    isBrowserDialogShown = browserDialogShown,
                 )
             }
             .stateIn(
@@ -107,11 +157,45 @@ class SettingsScreenViewModel(
                         supportsBrowserRegistration = platform.supportsBrowserRegistration,
                         supportsCustomTabs = platform.supportsCustomTabs,
                         supportsProtectScreen = platform.supportsProtectScreen,
+                        supportsBrowserSelection = platform.supportsBrowserSelection,
                     ),
             )
 
     init {
         browserEnabled.value = platform.isRegisteredAsBrowser()
+        viewModelScope.launch { loadBrowsers() }
+    }
+
+    /**
+     * Shows the dialog choosing the browser links are opened with — from the settings row, or from
+     * a screen that just failed to open a link because it would have reopened Léon.
+     *
+     * The installed browsers are looked up again first: a browser may have been installed or
+     * removed, or Léon made the default browser, since the screen was opened.
+     */
+    fun onBrowserClick() {
+        viewModelScope.launch {
+            loadBrowsers()
+            browserDialogShown.value = true
+        }
+    }
+
+    fun onBrowserDialogDismiss() {
+        browserDialogShown.value = false
+    }
+
+    /** Stores the browser links are opened with, `null` being the default browser. */
+    fun onBrowserSelect(browser: Browser?) {
+        browserDialogShown.value = false
+        viewModelScope.launch { appDataStoreManager.setBrowserPackage(browser?.packageName) }
+    }
+
+    private suspend fun loadBrowsers() {
+        val installed =
+            if (platform.supportsBrowserSelection) platform.browsers().toImmutableList()
+            else persistentListOf()
+        browsers.value =
+            Browsers(installed = installed, isDefaultBrowser = platform.isDefaultBrowser())
     }
 
     fun onBrowserSwitchCheckedChange(checked: Boolean) {

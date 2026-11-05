@@ -210,5 +210,29 @@ class AppDataStoreManagerTest :
                         }
                     }
                 }
+
+            "browserPackage" should
+                {
+                    "default to the default browser" {
+                        withManager { manager, _ -> manager.browserPackage.first() shouldBe null }
+                    }
+
+                    "store the chosen browser" {
+                        withManager { manager, _ ->
+                            manager.setBrowserPackage("org.mozilla.firefox")
+
+                            manager.browserPackage.first() shouldBe "org.mozilla.firefox"
+                        }
+                    }
+
+                    "go back to the default browser" {
+                        withManager { manager, _ ->
+                            manager.setBrowserPackage("org.mozilla.firefox")
+                            manager.setBrowserPackage(null)
+
+                            manager.browserPackage.first() shouldBe null
+                        }
+                    }
+                }
         },
     )

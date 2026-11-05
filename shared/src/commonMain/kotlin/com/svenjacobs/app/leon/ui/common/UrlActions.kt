@@ -26,16 +26,40 @@ interface UrlActions {
     val canShare: Boolean
 
     /**
-     * Whether Léon is currently the default browser. Opening a URL would just reopen Léon, so
-     * callers should disable their "Open" action while this is `true`.
+     * Whether Léon is currently the default browser. Opening a URL with the default browser would
+     * just reopen Léon.
      */
     val isDefaultBrowser: Boolean
 
     /** Opens the platform's share sheet for [text]. */
     fun share(text: String, chooserTitle: String)
 
-    /** Opens [url] in the browser, or in a Custom Tab when [customTabs] is `true`. */
-    fun open(url: String, customTabs: Boolean, chooserTitle: String)
+    /**
+     * Opens [url] in the browser, or in a Custom Tab when [customTabs] is `true`.
+     *
+     * @param browserPackage The browser the user chose, or `null` for the default browser. A
+     *   browser that is gone by now falls back to the default browser.
+     * @return [OpenResult.WouldReopenLeon], without opening anything, when the default browser had
+     *   to be used and that is Léon itself. The caller should explain that to the user.
+     */
+    fun open(
+        url: String,
+        customTabs: Boolean,
+        browserPackage: String?,
+        chooserTitle: String,
+    ): OpenResult
+}
+
+/** What became of a call to [UrlActions.open]. */
+enum class OpenResult {
+    /** The URL was handed to a browser, or the URL was malformed and silently dropped. */
+    Opened,
+
+    /**
+     * Nothing was opened, because the URL would have gone to the default browser, which is Léon
+     * itself — either no browser was chosen, or the chosen one is not installed anymore.
+     */
+    WouldReopenLeon,
 }
 
 @Composable expect fun rememberUrlActions(): UrlActions

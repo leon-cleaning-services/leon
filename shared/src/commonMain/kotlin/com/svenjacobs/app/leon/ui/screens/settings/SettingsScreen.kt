@@ -17,22 +17,26 @@
  */
 package com.svenjacobs.app.leon.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -45,13 +49,14 @@ import com.svenjacobs.app.leon.shared.resources.Res
 import com.svenjacobs.app.leon.shared.resources.about
 import com.svenjacobs.app.leon.shared.resources.action_after_clean
 import com.svenjacobs.app.leon.shared.resources.auto_reset_after
-import com.svenjacobs.app.leon.shared.resources.auto_reset_minutes
-import com.svenjacobs.app.leon.shared.resources.auto_reset_off
+import com.svenjacobs.app.leon.shared.resources.custom_tabs_unsupported
+import com.svenjacobs.app.leon.shared.resources.default_browser
 import com.svenjacobs.app.leon.shared.resources.history_enabled
 import com.svenjacobs.app.leon.shared.resources.history_enabled_summary
 import com.svenjacobs.app.leon.shared.resources.licenses
 import com.svenjacobs.app.leon.shared.resources.open_in_custom_tabs
 import com.svenjacobs.app.leon.shared.resources.open_in_custom_tabs_summary
+import com.svenjacobs.app.leon.shared.resources.open_links_with
 import com.svenjacobs.app.leon.shared.resources.protect_screen
 import com.svenjacobs.app.leon.shared.resources.protect_screen_summary
 import com.svenjacobs.app.leon.shared.resources.register_as_browser
@@ -65,8 +70,10 @@ import com.svenjacobs.app.leon.shared.resources.sanitizers
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
 import com.svenjacobs.app.leon.ui.common.views.SwitchRow
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.Browser
 import com.svenjacobs.app.leon.ui.screens.settings.model.SettingsScreenViewModel
 import dev.zacsweers.metrox.viewmodel.metroViewModel
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -75,10 +82,21 @@ fun SettingsScreen(
     onNavigateToSettingsSanitizers: () -> Unit,
     onNavigateToSettingsLicenses: () -> Unit,
     onNavigateToSettingsRememberedSites: () -> Unit,
+    chooseBrowserRequested: Boolean,
+    onChooseBrowserRequestHandled: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Another screen sent the user here to choose a browser, because opening a link would have
+    // reopened Léon.
+    LaunchedEffect(chooseBrowserRequested) {
+        if (chooseBrowserRequested) {
+            viewModel.onBrowserClick()
+            onChooseBrowserRequestHandled()
+        }
+    }
 
     Content(
         modifier = modifier,
@@ -90,7 +108,12 @@ fun SettingsScreen(
         resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
         rememberPerSiteEnabled = uiState.rememberPerSiteEnabled,
         autoReset = uiState.autoReset,
+        browsers = uiState.browsers,
+        selectedBrowser = uiState.selectedBrowser,
+        isDefaultBrowser = uiState.isDefaultBrowser,
+        isBrowserDialogShown = uiState.isBrowserDialogShown,
         supportsBrowserRegistration = uiState.supportsBrowserRegistration,
+        supportsBrowserSelection = uiState.supportsBrowserSelection,
         supportsCustomTabs = uiState.supportsCustomTabs,
         supportsProtectScreen = uiState.supportsProtectScreen,
         onActionAfterCleanClick = onNavigateToSettingsActionAfterClean,
@@ -98,6 +121,9 @@ fun SettingsScreen(
         onLicensesClick = onNavigateToSettingsLicenses,
         onRememberedSitesClick = onNavigateToSettingsRememberedSites,
         onBrowserSwitchCheckedChange = viewModel::onBrowserSwitchCheckedChange,
+        onBrowserClick = viewModel::onBrowserClick,
+        onBrowserSelect = viewModel::onBrowserSelect,
+        onBrowserDialogDismiss = viewModel::onBrowserDialogDismiss,
         onCustomTabsSwitchCheckedChange = viewModel::onCustomTabsSwitchCheckedChange,
         onProtectScreenSwitchCheckedChange = viewModel::onProtectScreenSwitchCheckedChange,
         onHistorySwitchCheckedChange = viewModel::onHistorySwitchCheckedChange,
@@ -117,11 +143,18 @@ fun Content(
     resolveShortLinksEnabled: Boolean,
     rememberPerSiteEnabled: Boolean,
     autoReset: AutoReset,
+    browsers: ImmutableList<Browser>,
+    selectedBrowser: Browser?,
+    isDefaultBrowser: Boolean,
+    isBrowserDialogShown: Boolean,
     onActionAfterCleanClick: () -> Unit,
     onSanitizersClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onRememberedSitesClick: () -> Unit,
     onBrowserSwitchCheckedChange: (Boolean) -> Unit,
+    onBrowserClick: () -> Unit,
+    onBrowserSelect: (Browser?) -> Unit,
+    onBrowserDialogDismiss: () -> Unit,
     onCustomTabsSwitchCheckedChange: (Boolean) -> Unit,
     onProtectScreenSwitchCheckedChange: (Boolean) -> Unit,
     onHistorySwitchCheckedChange: (Boolean) -> Unit,
@@ -130,14 +163,37 @@ fun Content(
     onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
     supportsBrowserRegistration: Boolean = true,
+    supportsBrowserSelection: Boolean = true,
     supportsCustomTabs: Boolean = true,
     supportsProtectScreen: Boolean = true,
 ) {
     val urlActions = rememberUrlActions()
     var showAboutDialog by rememberSaveable { mutableStateOf(false) }
+    var showAutoResetDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showAboutDialog) {
         AboutDialog(onDismissRequest = { showAboutDialog = false })
+    }
+
+    if (showAutoResetDialog) {
+        AutoResetDialog(
+            selected = autoReset,
+            onSelect = {
+                showAutoResetDialog = false
+                onAutoResetClick(it)
+            },
+            onDismissRequest = { showAutoResetDialog = false },
+        )
+    }
+
+    if (isBrowserDialogShown) {
+        BrowserDialog(
+            browsers = browsers,
+            selectedBrowser = selectedBrowser,
+            isDefaultBrowser = isDefaultBrowser,
+            onSelect = onBrowserSelect,
+            onDismissRequest = onBrowserDialogDismiss,
+        )
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -145,12 +201,12 @@ fun Content(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
             Column(modifier = Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
-                if (supportsBrowserRegistration) {
-                    SwitchRow(
-                        text = stringResource(Res.string.register_as_browser),
-                        supportingText = stringResource(Res.string.register_as_browser_summary),
-                        checked = browserEnabled,
-                        onCheckedChange = onBrowserSwitchCheckedChange,
+                if (supportsBrowserSelection) {
+                    ClickableRow(
+                        text = stringResource(Res.string.open_links_with),
+                        supportingText =
+                            selectedBrowser?.label ?: stringResource(Res.string.default_browser),
+                        onClick = onBrowserClick,
                     )
                 }
 
@@ -161,7 +217,26 @@ fun Content(
                         supportingText = stringResource(Res.string.open_in_custom_tabs_summary),
                         checked = customTabsEnabled,
                         onCheckedChange = onCustomTabsSwitchCheckedChange,
-                        enabled = !urlActions.isDefaultBrowser,
+                        // Custom Tabs open in the browser links are opened with; while that would
+                        // be Léon itself, the switch has nothing to apply to.
+                        enabled = selectedBrowser != null || !urlActions.isDefaultBrowser,
+                    )
+
+                    if (selectedBrowser != null && !selectedBrowser.supportsCustomTabs) {
+                        CustomTabsUnsupportedNote(
+                            modifier = Modifier.padding(top = 8.dp),
+                            browserLabel = selectedBrowser.label,
+                        )
+                    }
+                }
+
+                if (supportsBrowserRegistration) {
+                    SwitchRow(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = stringResource(Res.string.register_as_browser),
+                        supportingText = stringResource(Res.string.register_as_browser_summary),
+                        checked = browserEnabled,
+                        onCheckedChange = onBrowserSwitchCheckedChange,
                     )
                 }
 
@@ -199,84 +274,12 @@ fun Content(
                     onCheckedChange = onRememberPerSiteSwitchCheckedChange,
                 )
 
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-                    var expanded by rememberSaveable { mutableStateOf(false) }
-
-                    Text(stringResource(Res.string.auto_reset_after))
-
-                    ExposedDropdownMenuBox(
-                        modifier = Modifier.padding(top = 8.dp),
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
-                    ) {
-                        TextField(
-                            modifier =
-                                Modifier.fillMaxWidth()
-                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                            value = autoReset.text(),
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                            },
-                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                        )
-
-                        ExposedDropdownMenu(
-                            modifier = Modifier.exposedDropdownSize(),
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(AutoReset.Off.text()) },
-                                onClick = {
-                                    expanded = false
-                                    onAutoResetClick(AutoReset.Off)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(AutoReset.OneMinute.text()) },
-                                onClick = {
-                                    expanded = false
-                                    onAutoResetClick(AutoReset.OneMinute)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(AutoReset.FiveMinutes.text()) },
-                                onClick = {
-                                    expanded = false
-                                    onAutoResetClick(AutoReset.FiveMinutes)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(AutoReset.TenMinutes.text()) },
-                                onClick = {
-                                    expanded = false
-                                    onAutoResetClick(AutoReset.TenMinutes)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(AutoReset.ThirtyMinutes.text()) },
-                                onClick = {
-                                    expanded = false
-                                    onAutoResetClick(AutoReset.ThirtyMinutes)
-                                },
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text(AutoReset.SixtyMinutes.text()) },
-                                onClick = {
-                                    expanded = false
-                                    onAutoResetClick(AutoReset.SixtyMinutes)
-                                },
-                            )
-                        }
-                    }
-                }
+                ClickableRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(Res.string.auto_reset_after),
+                    supportingText = autoReset.text(),
+                    onClick = { showAutoResetDialog = true },
+                )
 
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
@@ -299,6 +302,9 @@ fun Content(
                     Text(stringResource(Res.string.remembered_sites))
                 }
 
+                // Sets the settings apart from the information about the app below.
+                HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
+
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     onClick = onLicensesClick,
@@ -317,9 +323,27 @@ fun Content(
     }
 }
 
+/**
+ * Explains that the chosen browser cannot open Custom Tabs, so that links open in the browser app
+ * whatever the switch above says.
+ */
 @Composable
-private fun AutoReset.text(): String =
-    when (val minutes = minutes) {
-        null -> stringResource(Res.string.auto_reset_off)
-        else -> stringResource(Res.string.auto_reset_minutes, minutes)
+private fun CustomTabsUnsupportedNote(browserLabel: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier.size(16.dp),
+            imageVector = Icons.Default.Info,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.tertiary,
+        )
+        Text(
+            text = stringResource(Res.string.custom_tabs_unsupported, browserLabel),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.tertiary,
+        )
     }
+}

@@ -29,7 +29,15 @@ private object DesktopUrlActions : UrlActions {
     // No share sheet on desktop; the Share affordance is hidden wherever `canShare` is `false`.
     override fun share(text: String, chooserTitle: String) {}
 
-    override fun open(url: String, customTabs: Boolean, chooserTitle: String) {
+    // Choosing a browser is not supported on desktop, so `browserPackage` is always `null`, and
+    // Léon
+    // is never a browser that could be reopened.
+    override fun open(
+        url: String,
+        customTabs: Boolean,
+        browserPackage: String?,
+        chooserTitle: String,
+    ): OpenResult {
         val browsed =
             Desktop.isDesktopSupported() &&
                 Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) &&
@@ -47,6 +55,8 @@ private object DesktopUrlActions : UrlActions {
                 }
             runCatching { ProcessBuilder(command).start() }
         }
+
+        return OpenResult.Opened
     }
 }
 

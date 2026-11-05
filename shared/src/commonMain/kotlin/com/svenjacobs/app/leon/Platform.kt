@@ -17,6 +17,8 @@
  */
 package com.svenjacobs.app.leon
 
+import com.svenjacobs.app.leon.ui.model.Browser
+
 /** Platform specific capabilities and actions that have no common implementation. */
 interface Platform {
 
@@ -29,9 +31,21 @@ interface Platform {
     /** Whether this platform can hide the app's content from the recent apps screen. */
     val supportsProtectScreen: Boolean
 
+    /** Whether this platform can open links in a browser of the user's choice. */
+    val supportsBrowserSelection: Boolean
+
     /** Whether the app is currently registered as a browser. */
     fun isRegisteredAsBrowser(): Boolean
 
     /** Registers, or unregisters, the app as a browser. */
     fun setRegisteredAsBrowser(enabled: Boolean)
+
+    /**
+     * Whether the app is currently the default browser, so that opening a link with the default
+     * browser would just reopen the app.
+     */
+    fun isDefaultBrowser(): Boolean
+
+    /** The installed browsers other than the app itself, sorted by their label. */
+    suspend fun browsers(): List<Browser>
 }

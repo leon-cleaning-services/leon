@@ -46,6 +46,13 @@
     <string name="register_as_browser_summary">Cho phép mở liên kết từ ứng dụng khác bằng Léon để làm sạch trước</string>
     <string name="open_in_custom_tabs">Mở URL trong tab tùy chỉnh của trình duyệt</string>
     <string name="open_in_custom_tabs_summary">Mở liên kết đã làm sạch trong tab trình duyệt ngay trong ứng dụng thay vì ứng dụng trình duyệt</string>
+    <string name="custom_tabs_unsupported">%1$s không hỗ trợ tab tùy chỉnh, nên liên kết sẽ mở trong ứng dụng trình duyệt</string>
+    <string name="open_links_with">Mở liên kết bằng</string>
+    <string name="default_browser">Trình duyệt mặc định</string>
+    <string name="default_browser_unavailable">Không khả dụng khi Léon là trình duyệt mặc định</string>
+    <string name="reopen_leon_title">Léon sẽ mở lại</string>
+    <string name="reopen_leon_text">Léon là trình duyệt mặc định của bạn, nên mở liên kết này sẽ chỉ mở lại Léon. Thay vào đó, hãy chọn một trình duyệt để mở liên kết.</string>
+    <string name="choose_browser">Chọn trình duyệt</string>
     <string name="action_after_clean">Hành động sau khi làm sạch</string>
     <string name="action_after_clean_description">Việc Léon làm với URL sau khi đã làm sạch</string>
     <string name="action_after_clean_per_source">Chọn theo nguồn</string>

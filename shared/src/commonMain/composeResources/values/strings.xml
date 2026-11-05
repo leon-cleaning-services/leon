@@ -48,6 +48,13 @@
     <string name="register_as_browser_summary">Lets you open links from other apps with Léon, which cleans them first</string>
     <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string>
     <string name="open_in_custom_tabs_summary">Opens cleaned links in an in-app browser tab instead of the browser app</string>
+    <string name="custom_tabs_unsupported">%1$s does not support custom tabs, so links open in the browser app instead</string>
+    <string name="open_links_with">Open links with</string>
+    <string name="default_browser">Default browser</string>
+    <string name="default_browser_unavailable">Not available while Léon is the default browser</string>
+    <string name="reopen_leon_title">Léon would open again</string>
+    <string name="reopen_leon_text">Léon is your default browser, so opening this link would just open Léon again. Choose a browser to open links with instead.</string>
+    <string name="choose_browser">Choose browser</string>
     <string name="action_after_clean">Action after clean</string>
     <string name="action_after_clean_description">What Léon does with a URL once it has been cleaned</string>
     <string name="action_after_clean_per_source">Choose per source</string>

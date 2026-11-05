@@ -97,9 +97,11 @@ import com.svenjacobs.app.leon.shared.resources.short_link_hint
 import com.svenjacobs.app.leon.shared.resources.short_link_hint_enable
 import com.svenjacobs.app.leon.shared.resources.submit
 import com.svenjacobs.app.leon.shared.resources.text_field_placeholder
+import com.svenjacobs.app.leon.ui.common.OpenResult
 import com.svenjacobs.app.leon.ui.common.copyToClipboard
 import com.svenjacobs.app.leon.ui.common.readText
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
+import com.svenjacobs.app.leon.ui.common.views.ReopenLeonDialog
 import com.svenjacobs.app.leon.ui.model.InputSource
 import com.svenjacobs.app.leon.ui.model.SourceText
 import com.svenjacobs.app.leon.ui.screens.main.model.MainScreenViewModel
@@ -121,10 +123,12 @@ fun MainScreen(
     sourceText: State<SourceText?>,
     snackbarHostState: SnackbarHostState,
     onResetClick: () -> Unit,
+    onChooseBrowserClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MainScreenViewModel = metroViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showReopenLeonDialog by rememberSaveable { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val urlActions = rememberUrlActions()
@@ -140,11 +144,14 @@ fun MainScreen(
 
     fun openUrl(result: Result.Success) {
         val url = result.urls.firstOrNull() ?: return
-        urlActions.open(
-            url = url,
-            customTabs = uiState.isCustomTabsEnabled,
-            chooserTitle = openTitle,
-        )
+        val openResult =
+            urlActions.open(
+                url = url,
+                customTabs = uiState.isCustomTabsEnabled,
+                browserPackage = uiState.browserPackage,
+                chooserTitle = openTitle,
+            )
+        if (openResult == OpenResult.WouldReopenLeon) showReopenLeonDialog = true
     }
 
     fun copyToClipboard(text: String) {
@@ -235,6 +242,16 @@ fun MainScreen(
         onRetry = viewModel::retryShortLinkResolving,
         onContinue = viewModel::continueWithoutResolving,
     )
+
+    if (showReopenLeonDialog) {
+        ReopenLeonDialog(
+            onChooseBrowserClick = {
+                showReopenLeonDialog = false
+                onChooseBrowserClick()
+            },
+            onDismissRequest = { showReopenLeonDialog = false },
+        )
+    }
 }
 
 @Composable
@@ -544,7 +561,6 @@ private fun ActionsSection(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onOpenClick(result) },
-                enabled = !urlActions.isDefaultBrowser,
             ) {
                 Icon(
                     imageVector = Icons.Default.OpenInBrowser,

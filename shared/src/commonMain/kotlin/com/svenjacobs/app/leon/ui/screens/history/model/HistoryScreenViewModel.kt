@@ -46,6 +46,8 @@ class HistoryScreenViewModel(
     data class UiState(
         val isEnabled: Boolean = true,
         val isCustomTabsEnabled: Boolean = false,
+        /** The browser the user chose to open links with, or `null` for the default browser. */
+        val browserPackage: String? = null,
         val entries: ImmutableList<HistoryEntry> = persistentListOf(),
     )
 
@@ -53,11 +55,13 @@ class HistoryScreenViewModel(
         combine(
                 appDataStoreManager.historyEnabled,
                 appDataStoreManager.customTabsEnabled,
+                appDataStoreManager.browserPackage,
                 historyDao.entries(),
-            ) { isEnabled, isCustomTabsEnabled, entries ->
+            ) { isEnabled, isCustomTabsEnabled, browserPackage, entries ->
                 UiState(
                     isEnabled = isEnabled,
                     isCustomTabsEnabled = isCustomTabsEnabled,
+                    browserPackage = browserPackage,
                     entries = entries.toImmutableList(),
                 )
             }

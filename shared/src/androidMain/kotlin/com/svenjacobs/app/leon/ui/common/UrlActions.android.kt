@@ -26,12 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 
-private fun isDefaultBrowser(context: Context): Boolean {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"))
-    val activity = intent.resolveActivity(context.packageManager)
-    return activity?.packageName?.startsWith("com.svenjacobs.app.leon") ?: false
-}
-
 private class AndroidUrlActions(private val context: Context) : UrlActions {
 
     override val canShare = true
@@ -40,7 +34,7 @@ private class AndroidUrlActions(private val context: Context) : UrlActions {
     // may flip it in Settings), and every caller reads this fresh on each recomposition, exactly
     // as the old `isDefaultBrowser(LocalContext.current)` call site did.
     override val isDefaultBrowser: Boolean
-        get() = isDefaultBrowser(context)
+        get() = context.isDefaultBrowser()
 
     override fun share(text: String, chooserTitle: String) {
         val intent =
@@ -53,25 +47,52 @@ private class AndroidUrlActions(private val context: Context) : UrlActions {
         context.startActivity(Intent.createChooser(intent, chooserTitle))
     }
 
-    // Returns without doing anything when Léon is the default browser — opening would just reopen
-    // Léon.
-    override fun open(url: String, customTabs: Boolean, chooserTitle: String) {
-        if (isDefaultBrowser(context)) return
+    override fun open(
+        url: String,
+        customTabs: Boolean,
+        browserPackage: String?,
+        chooserTitle: String,
+    ): OpenResult {
+        if (browserPackage != null && openWith(browserPackage, url, customTabs)) {
+            return OpenResult.Opened
+        }
+        if (context.isDefaultBrowser()) return OpenResult.WouldReopenLeon
 
         if (customTabs) {
-            val intent =
-                CustomTabsIntent.Builder()
-                    .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
-                    .build()
-
-            intent.launchUrl(context, url.toUri())
+            customTabsIntent().launchUrl(context, url.toUri())
         } else {
-            val uri = runCatching { Uri.parse(url) }.getOrNull() ?: return
+            val uri = runCatching { Uri.parse(url) }.getOrNull() ?: return OpenResult.Opened
             val intent = Intent(Intent.ACTION_VIEW, uri)
+            val chooser =
+                Intent.createChooser(intent, chooserTitle)
+                    // While Léon is registered as a browser without being the default one, the
+                    // chooser would offer Léon itself, which would just reopen it.
+                    .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, context.ownActivities(intent))
 
-            context.startActivity(Intent.createChooser(intent, chooserTitle))
+            context.startActivity(chooser)
         }
+
+        return OpenResult.Opened
     }
+
+    /**
+     * Opens [url] with the browser [packageName] straight away, without a chooser. A Custom Tab is
+     * a plain view intent with extras, so a browser without Custom Tabs support simply opens the
+     * link in full. Returns `false` when the browser could not be started, usually because it is
+     * not installed anymore.
+     */
+    private fun openWith(packageName: String, url: String, customTabs: Boolean): Boolean {
+        val uri = runCatching { url.toUri() }.getOrNull() ?: return false
+        val intent = if (customTabs) customTabsIntent().intent else Intent(Intent.ACTION_VIEW)
+        intent.data = uri
+        intent.setPackage(packageName)
+        intent.addCategory(Intent.CATEGORY_BROWSABLE)
+
+        return runCatching { context.startActivity(intent) }.isSuccess
+    }
+
+    private fun customTabsIntent(): CustomTabsIntent =
+        CustomTabsIntent.Builder().setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM).build()
 }
 
 @Composable

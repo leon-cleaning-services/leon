@@ -48,6 +48,13 @@
     <string name="register_as_browser_summary">Links aus anderen Apps lassen sich mit Léon öffnen und werden dabei bereinigt</string>
     <string name="open_in_custom_tabs">URLs in Browser Custom Tabs öffnen</string>
     <string name="open_in_custom_tabs_summary">Öffnet bereinigte Links in einem Browser-Tab innerhalb der App statt in der Browser-App</string>
+    <string name="custom_tabs_unsupported">%1$s unterstützt keine Custom Tabs, daher werden Links stattdessen in der Browser-App geöffnet</string>
+    <string name="open_links_with">Links öffnen mit</string>
+    <string name="default_browser">Standardbrowser</string>
+    <string name="default_browser_unavailable">Nicht verfügbar, solange Léon der Standardbrowser ist</string>
+    <string name="reopen_leon_title">Léon würde erneut geöffnet</string>
+    <string name="reopen_leon_text">Léon ist dein Standardbrowser, deshalb würde dieser Link nur Léon erneut öffnen. Wähle stattdessen einen Browser, mit dem Links geöffnet werden.</string>
+    <string name="choose_browser">Browser wählen</string>
     <string name="action_after_clean">Aktion nach Reinigung</string>
     <string name="action_after_clean_description">Was Léon mit einer URL macht, nachdem sie bereinigt wurde</string>
     <string name="action_after_clean_per_source">Pro Quelle wählen</string>

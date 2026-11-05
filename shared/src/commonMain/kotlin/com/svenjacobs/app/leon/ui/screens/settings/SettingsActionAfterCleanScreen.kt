@@ -20,20 +20,14 @@ package com.svenjacobs.app.leon.ui.screens.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.svenjacobs.app.leon.core.domain.action.ActionAfterClean
 import com.svenjacobs.app.leon.shared.resources.Res
+import com.svenjacobs.app.leon.shared.resources.action_after_clean
 import com.svenjacobs.app.leon.shared.resources.action_after_clean_browser
 import com.svenjacobs.app.leon.shared.resources.action_after_clean_description
 import com.svenjacobs.app.leon.shared.resources.action_after_clean_in_app
@@ -136,9 +131,10 @@ fun ActionAfterCleanContent(
         }
 
         if (!actionsAfterClean.perSource) {
-            ActionAfterCleanDropdown(
+            ActionAfterCleanRow(
+                label = stringResource(Res.string.action_after_clean),
                 value = actionsAfterClean.otherApp,
-                onClick = onActionAfterCleanClick,
+                onSelect = onActionAfterCleanClick,
             )
         }
 
@@ -151,102 +147,96 @@ fun ActionAfterCleanContent(
         )
 
         if (actionsAfterClean.perSource) {
-            ActionAfterCleanDropdown(
+            ActionAfterCleanRow(
                 modifier = Modifier.padding(top = 16.dp),
                 label = stringResource(Res.string.action_after_clean_other_app),
                 value = actionsAfterClean.otherApp,
-                onClick = { onSourceActionAfterCleanClick(InputSource.OtherApp, it) },
+                onSelect = { onSourceActionAfterCleanClick(InputSource.OtherApp, it) },
             )
 
             if (supportsBrowserRegistration && browserEnabled) {
-                ActionAfterCleanDropdown(
+                ActionAfterCleanRow(
                     modifier = Modifier.padding(top = 16.dp),
                     label = stringResource(Res.string.action_after_clean_browser),
                     value = actionsAfterClean.browser,
-                    onClick = { onSourceActionAfterCleanClick(InputSource.Browser, it) },
+                    onSelect = { onSourceActionAfterCleanClick(InputSource.Browser, it) },
                 )
             }
 
-            ActionAfterCleanDropdown(
+            ActionAfterCleanRow(
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                 label = stringResource(Res.string.action_after_clean_in_app),
                 value = actionsAfterClean.inApp,
-                onClick = { onSourceActionAfterCleanClick(InputSource.InApp, it) },
+                onSelect = { onSourceActionAfterCleanClick(InputSource.InApp, it) },
             )
         }
     }
 }
 
-/** A dropdown for choosing an [ActionAfterClean], with [label] above it when given. */
+/**
+ * The [ActionAfterClean] for one source, or for all of them: [label] with the current [value]
+ * below, opening a [ChoiceDialog] titled [label] to choose another.
+ */
 @Composable
-private fun ActionAfterCleanDropdown(
+private fun ActionAfterCleanRow(
+    label: String,
     value: ActionAfterClean,
-    onClick: (ActionAfterClean) -> Unit,
+    onSelect: (ActionAfterClean) -> Unit,
     modifier: Modifier = Modifier,
-    label: String? = null,
+) {
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    ClickableRow(
+        modifier = modifier,
+        text = label,
+        supportingText = value.text(),
+        onClick = { showDialog = true },
+    )
+
+    if (showDialog) {
+        ActionAfterCleanDialog(
+            title = label,
+            selected = value,
+            onSelect = {
+                showDialog = false
+                onSelect(it)
+            },
+            onDismissRequest = { showDialog = false },
+        )
+    }
+}
+
+/**
+ * Lets the user choose what Léon does with a URL once it has been cleaned. "Open share menu" is
+ * offered only where the platform can share.
+ */
+@Composable
+fun ActionAfterCleanDialog(
+    title: String,
+    selected: ActionAfterClean,
+    onSelect: (ActionAfterClean) -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val urlActions = rememberUrlActions()
-    var expanded by rememberSaveable { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
-        if (label != null) Text(label)
-
-        ExposedDropdownMenuBox(
-            modifier = if (label != null) Modifier.padding(top = 8.dp) else Modifier,
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-        ) {
-            TextField(
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                value = value.text(),
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+    ChoiceDialog(modifier = modifier, title = title, onDismissRequest = onDismissRequest) {
+        // Listed explicitly rather than as `entries`, to keep the order users know from the menu
+        // this dialog replaced.
+        listOf(
+                ActionAfterClean.DoNothing,
+                ActionAfterClean.OpenShareMenu,
+                ActionAfterClean.OpenUrl,
+                ActionAfterClean.CopyToClipboard,
             )
-
-            ExposedDropdownMenu(
-                modifier = Modifier.exposedDropdownSize(),
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-            ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(Res.string.do_nothing)) },
-                    onClick = {
-                        expanded = false
-                        onClick(ActionAfterClean.DoNothing)
-                    },
-                )
-
-                if (urlActions.canShare) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.open_share_menu)) },
-                        onClick = {
-                            expanded = false
-                            onClick(ActionAfterClean.OpenShareMenu)
-                        },
-                    )
-                }
-
-                DropdownMenuItem(
-                    text = { Text(stringResource(Res.string.open_url)) },
-                    onClick = {
-                        expanded = false
-                        onClick(ActionAfterClean.OpenUrl)
-                    },
-                )
-
-                DropdownMenuItem(
-                    text = { Text(stringResource(Res.string.copy_to_clipboard)) },
-                    onClick = {
-                        expanded = false
-                        onClick(ActionAfterClean.CopyToClipboard)
-                    },
+            .filter { it != ActionAfterClean.OpenShareMenu || urlActions.canShare }
+            .forEach { action ->
+                ChoiceRow(
+                    text = action.text(),
+                    selected = action == selected,
+                    onClick = { onSelect(action) },
                 )
             }
-        }
     }
 }
 

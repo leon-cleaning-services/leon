@@ -46,6 +46,13 @@
     <string name="register_as_browser_summary">他のアプリのリンクを Léon で開き、先にクリーンできるようにします</string>
     <string name="open_in_custom_tabs">URL をブラウザのカスタムタブで開く</string>
     <string name="open_in_custom_tabs_summary">クリーンしたリンクをブラウザアプリではなくアプリ内のブラウザタブで開きます</string>
+    <string name="custom_tabs_unsupported">%1$s はカスタムタブに対応していないため、リンクはブラウザアプリで開きます</string>
+    <string name="open_links_with">リンクを開くブラウザ</string>
+    <string name="default_browser">デフォルトのブラウザ</string>
+    <string name="default_browser_unavailable">Léon がデフォルトのブラウザの間は使用できません</string>
+    <string name="reopen_leon_title">Léon が再び開きます</string>
+    <string name="reopen_leon_text">Léon がデフォルトのブラウザのため、このリンクを開いても Léon が再び開くだけです。代わりにリンクを開くブラウザを選択してください。</string>
+    <string name="choose_browser">ブラウザを選択</string>
     <string name="action_after_clean">クリーン後のアクション</string>
     <string name="action_after_clean_description">URL をクリーンした後に Léon が行うこと</string>
     <string name="action_after_clean_per_source">ソースごとに選択</string>

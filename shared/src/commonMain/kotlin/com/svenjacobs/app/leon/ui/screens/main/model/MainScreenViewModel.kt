@@ -80,6 +80,8 @@ class MainScreenViewModel(
         val isUrlDecodeEnabled: Boolean = false,
         val isExtractUrlEnabled: Boolean = false,
         val isCustomTabsEnabled: Boolean = false,
+        /** The browser the user chose to open links with, or `null` for the default browser. */
+        val browserPackage: String? = null,
         val result: Result = Result.Empty,
         /** The action to run after cleaning, resolved for the source of the current input. */
         val actionAfterClean: ActionAfterClean = ActionAfterClean.DoNothing,
@@ -282,10 +284,18 @@ class MainScreenViewModel(
                 },
                 appDataStoreManager.urlDecodeEnabled,
                 appDataStoreManager.extractUrlEnabled,
-                appDataStoreManager.customTabsEnabled,
+                combine(
+                    appDataStoreManager.customTabsEnabled,
+                    appDataStoreManager.browserPackage,
+                    ::Pair,
+                ),
                 appDataStoreManager.actionsAfterClean,
-            ) { session, urlDecodeEnabled, extractUrlEnabled, isCustomTabsEnabled, actionsAfterClean
-                ->
+            ) {
+                session,
+                urlDecodeEnabled,
+                extractUrlEnabled,
+                (isCustomTabsEnabled, browserPackage),
+                actionsAfterClean ->
                 // An input whose deadline already passed is the process-death case: the intent was
                 // redelivered, but auto-reset should already have fired. Treating it as absent here
                 // avoids a flash of the stale URL while the screen catches up.
@@ -325,6 +335,7 @@ class MainScreenViewModel(
                     isUrlDecodeEnabled = urlDecodeEnabled,
                     isExtractUrlEnabled = extractUrlEnabled,
                     isCustomTabsEnabled = isCustomTabsEnabled,
+                    browserPackage = browserPackage,
                     result = result,
                     actionAfterClean =
                         input?.let { actionsAfterClean.forSource(it.source) }

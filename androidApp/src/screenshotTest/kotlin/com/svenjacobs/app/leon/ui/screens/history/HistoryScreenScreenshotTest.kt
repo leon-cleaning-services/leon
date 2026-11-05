@@ -24,7 +24,22 @@ import com.android.tools.screenshot.PreviewTest
 import com.svenjacobs.app.leon.db.HistoryEntry
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.FormFactorPreviews
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import kotlinx.collections.immutable.persistentListOf
+
+/**
+ * Formats a timestamp the same way on every machine. The app's own formatter follows the device's
+ * time zone, which would render the fixed timestamps below at a different hour — and fail the
+ * comparison — depending on where, and in which season, the test runs. An explicit pattern rather
+ * than a locale default also keeps the text stable across JDK versions.
+ */
+private fun formatAtInUtc(epochMillis: Long): String =
+    SimpleDateFormat("MMM d, yyyy, h:mm a", Locale.US)
+        .apply { timeZone = TimeZone.getTimeZone("UTC") }
+        .format(Date(epochMillis))
 
 @PreviewTest
 @FormFactorPreviews
@@ -55,6 +70,7 @@ private fun ContentScreenshot() {
             onDeleteClick = {},
             onUndoDeleteClick = {},
             onClearAllClick = {},
+            formatAt = { formatAtInUtc(it) },
         )
     }
 }

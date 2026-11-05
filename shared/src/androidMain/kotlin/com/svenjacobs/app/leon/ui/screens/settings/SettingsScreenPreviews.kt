@@ -19,33 +19,90 @@ package com.svenjacobs.app.leon.ui.screens.settings
 
 import androidx.compose.runtime.Composable
 import com.svenjacobs.app.leon.ui.model.AutoReset
+import com.svenjacobs.app.leon.ui.model.Browser
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
+import kotlinx.collections.immutable.persistentListOf
+
+/** A browser without Custom Tabs support, made up so as to claim nothing about a real one. */
+private val PreviewBrowserWithoutCustomTabs =
+    Browser(
+        packageName = "com.example.browser",
+        label = "Example Browser",
+        supportsCustomTabs = false,
+    )
+
+private val PreviewBrowsers =
+    persistentListOf(
+        Browser(packageName = "com.android.chrome", label = "Chrome", supportsCustomTabs = true),
+        PreviewBrowserWithoutCustomTabs,
+        Browser(packageName = "org.mozilla.firefox", label = "Firefox", supportsCustomTabs = true),
+    )
 
 @Composable
-@DayNightPreviews
-private fun ContentPreview() {
+private fun PreviewContent(selectedBrowser: Browser?, customTabsEnabled: Boolean) {
     AppTheme {
         Content(
             isLoading = false,
             browserEnabled = false,
-            customTabsEnabled = false,
+            customTabsEnabled = customTabsEnabled,
             protectScreenEnabled = false,
             historyEnabled = true,
             resolveShortLinksEnabled = false,
             rememberPerSiteEnabled = true,
             autoReset = AutoReset.Off,
+            browsers = PreviewBrowsers,
+            selectedBrowser = selectedBrowser,
+            isDefaultBrowser = false,
+            isBrowserDialogShown = false,
             onActionAfterCleanClick = {},
             onSanitizersClick = {},
             onLicensesClick = {},
             onRememberedSitesClick = {},
             onBrowserSwitchCheckedChange = {},
+            onBrowserClick = {},
+            onBrowserSelect = {},
+            onBrowserDialogDismiss = {},
             onCustomTabsSwitchCheckedChange = {},
             onProtectScreenSwitchCheckedChange = {},
             onHistorySwitchCheckedChange = {},
             onResolveShortLinksSwitchCheckedChange = {},
             onRememberPerSiteSwitchCheckedChange = {},
             onAutoResetClick = {},
+        )
+    }
+}
+
+@Composable
+@DayNightPreviews
+private fun ContentPreview() {
+    PreviewContent(selectedBrowser = null, customTabsEnabled = false)
+}
+
+@Composable
+@DayNightPreviews
+private fun ContentCustomTabsUnsupportedPreview() {
+    PreviewContent(selectedBrowser = PreviewBrowserWithoutCustomTabs, customTabsEnabled = true)
+}
+
+@Composable
+@DayNightPreviews
+private fun AutoResetDialogPreview() {
+    AppTheme {
+        AutoResetDialog(selected = AutoReset.FiveMinutes, onSelect = {}, onDismissRequest = {})
+    }
+}
+
+@Composable
+@DayNightPreviews
+private fun BrowserDialogPreview() {
+    AppTheme {
+        BrowserDialog(
+            browsers = PreviewBrowsers,
+            selectedBrowser = PreviewBrowsers.last(),
+            isDefaultBrowser = true,
+            onSelect = {},
+            onDismissRequest = {},
         )
     }
 }
