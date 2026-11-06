@@ -64,6 +64,7 @@ abstract class SanitizerSpec(private val sanitizer: Sanitizer, body: SanitizerSp
             .clean(
                 url,
                 resolved = resolved.entries.associate { (from, to) -> parse(from) to parse(to) },
+                shorten = sanitizer.shortens,
             )
             .cleanedText
 

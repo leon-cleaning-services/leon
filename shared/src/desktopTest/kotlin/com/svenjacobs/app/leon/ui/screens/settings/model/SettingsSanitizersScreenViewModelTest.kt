@@ -22,6 +22,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository.SanitizerState
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokShortLink
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YoutubeShorten
 import com.svenjacobs.app.leon.datastore.AppDataStoreManager
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
@@ -66,6 +67,7 @@ class SettingsSanitizersScreenViewModelTest :
                             val appDataStoreManager =
                                 mockk<AppDataStoreManager> {
                                     every { resolveShortLinksEnabled } returns enabled
+                                    every { shortenLinksEnabled } returns flowOf(false)
                                 }
                             val viewModel =
                                 SettingsSanitizersScreenViewModel(
@@ -94,6 +96,48 @@ class SettingsSanitizersScreenViewModelTest :
 
                             // The names load on another thread and resume on the main dispatcher;
                             // wait for that here rather than let it land in the next spec.
+                            viewModel.viewModelScope.coroutineContext.job.cancelAndJoin()
+                        }
+                    }
+
+                    "mark the sanitizers which shorten links, and the global setting" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val enabled = MutableStateFlow(false)
+                            val repository =
+                                mockk<SanitizerRepository> {
+                                    every { state } returns
+                                        flowOf(
+                                            persistentListOf(
+                                                SanitizerState(Tiktok.id, enabled = true),
+                                                SanitizerState(YoutubeShorten.id, enabled = true),
+                                            ),
+                                        )
+                                }
+                            val appDataStoreManager =
+                                mockk<AppDataStoreManager> {
+                                    every { resolveShortLinksEnabled } returns flowOf(false)
+                                    every { shortenLinksEnabled } returns enabled
+                                }
+                            val viewModel =
+                                SettingsSanitizersScreenViewModel(
+                                    sanitizers = persistentListOf(Tiktok, YoutubeShorten),
+                                    repository = repository,
+                                    appDataStoreManager = appDataStoreManager,
+                                )
+                            val state = viewModel.uiState.first { it.sanitizers.isNotEmpty() }
+
+                            state.sanitizers.associate { it.id to it.shortens } shouldBe
+                                mapOf(Tiktok.id to false, YoutubeShorten.id to true)
+                            state.sanitizers.none { it.resolvesShortLinks } shouldBe true
+                            state.shortenLinksEnabled shouldBe false
+
+                            enabled.value = true
+
+                            viewModel.uiState
+                                .first { it.shortenLinksEnabled }
+                                .sanitizers
+                                .size shouldBe 2
+
                             viewModel.viewModelScope.coroutineContext.job.cancelAndJoin()
                         }
                     }

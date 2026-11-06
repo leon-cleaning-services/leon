@@ -187,6 +187,14 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
     val resolveShortLinksEnabled: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[KEY_RESOLVE_SHORT_LINKS] ?: false }
 
+    suspend fun setShortenLinksEnabled(enabled: Boolean) {
+        dataStore.edit { it[KEY_SHORTEN_LINKS] = enabled }
+    }
+
+    /** Whether links are shared in their short form where a site offers one (`youtu.be`). */
+    val shortenLinksEnabled: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[KEY_SHORTEN_LINKS] ?: false }
+
     suspend fun setShortLinkDialogShown(shown: Boolean) {
         dataStore.edit { it[KEY_SHORT_LINK_DIALOG_SHOWN] = shown }
     }
@@ -225,6 +233,7 @@ class AppDataStoreManager(@Named("settings") private val dataStore: DataStore<Pr
         private val KEY_LAST_INPUT_AT = longPreferencesKey("last_input_at")
         private val KEY_HISTORY_ENABLED = booleanPreferencesKey("history_enabled")
         private val KEY_RESOLVE_SHORT_LINKS = booleanPreferencesKey("resolve_short_links")
+        private val KEY_SHORTEN_LINKS = booleanPreferencesKey("shorten_links")
         private val KEY_SHORT_LINK_DIALOG_SHOWN = booleanPreferencesKey("short_link_dialog_shown")
         private val KEY_REMEMBER_PER_SITE = booleanPreferencesKey("remember_per_site")
     }

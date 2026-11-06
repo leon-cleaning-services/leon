@@ -67,6 +67,8 @@ import com.svenjacobs.app.leon.shared.resources.remembered_sites
 import com.svenjacobs.app.leon.shared.resources.resolve_short_links
 import com.svenjacobs.app.leon.shared.resources.resolve_short_links_summary
 import com.svenjacobs.app.leon.shared.resources.sanitizers
+import com.svenjacobs.app.leon.shared.resources.shorten_links
+import com.svenjacobs.app.leon.shared.resources.shorten_links_summary
 import com.svenjacobs.app.leon.ui.common.rememberUrlActions
 import com.svenjacobs.app.leon.ui.common.views.SwitchRow
 import com.svenjacobs.app.leon.ui.model.AutoReset
@@ -106,6 +108,7 @@ fun SettingsScreen(
         protectScreenEnabled = uiState.protectScreenEnabled,
         historyEnabled = uiState.historyEnabled,
         resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
+        shortenLinksEnabled = uiState.shortenLinksEnabled,
         rememberPerSiteEnabled = uiState.rememberPerSiteEnabled,
         autoReset = uiState.autoReset,
         browsers = uiState.browsers,
@@ -128,6 +131,7 @@ fun SettingsScreen(
         onProtectScreenSwitchCheckedChange = viewModel::onProtectScreenSwitchCheckedChange,
         onHistorySwitchCheckedChange = viewModel::onHistorySwitchCheckedChange,
         onResolveShortLinksSwitchCheckedChange = viewModel::onResolveShortLinksSwitchCheckedChange,
+        onShortenLinksSwitchCheckedChange = viewModel::onShortenLinksSwitchCheckedChange,
         onRememberPerSiteSwitchCheckedChange = viewModel::onRememberPerSiteSwitchCheckedChange,
         onAutoResetClick = viewModel::onAutoResetClick,
     )
@@ -141,6 +145,7 @@ fun Content(
     protectScreenEnabled: Boolean,
     historyEnabled: Boolean,
     resolveShortLinksEnabled: Boolean,
+    shortenLinksEnabled: Boolean,
     rememberPerSiteEnabled: Boolean,
     autoReset: AutoReset,
     browsers: ImmutableList<Browser>,
@@ -159,6 +164,7 @@ fun Content(
     onProtectScreenSwitchCheckedChange: (Boolean) -> Unit,
     onHistorySwitchCheckedChange: (Boolean) -> Unit,
     onResolveShortLinksSwitchCheckedChange: (Boolean) -> Unit,
+    onShortenLinksSwitchCheckedChange: (Boolean) -> Unit,
     onRememberPerSiteSwitchCheckedChange: (Boolean) -> Unit,
     onAutoResetClick: (AutoReset) -> Unit,
     modifier: Modifier = Modifier,
@@ -264,6 +270,14 @@ fun Content(
                     supportingText = stringResource(Res.string.resolve_short_links_summary),
                     checked = resolveShortLinksEnabled,
                     onCheckedChange = onResolveShortLinksSwitchCheckedChange,
+                )
+
+                SwitchRow(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(Res.string.shorten_links),
+                    supportingText = stringResource(Res.string.shorten_links_summary),
+                    checked = shortenLinksEnabled,
+                    onCheckedChange = onShortenLinksSwitchCheckedChange,
                 )
 
                 SwitchRow(

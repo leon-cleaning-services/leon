@@ -75,6 +75,7 @@ class SettingsScreenViewModelTest :
 
             fun appDataStoreManager(
                 resolveShortLinksEnabled: Flow<Boolean> = flowOf(false),
+                shortenLinksEnabled: Flow<Boolean> = flowOf(false),
                 rememberPerSiteEnabled: Flow<Boolean> = flowOf(true),
                 browserPackage: Flow<String?> = flowOf(null),
             ): AppDataStoreManager = mockk {
@@ -82,11 +83,13 @@ class SettingsScreenViewModelTest :
                 coEvery { setBrowserPackage(any()) } just Runs
                 every { historyEnabled } returns flowOf(true)
                 every { this@mockk.resolveShortLinksEnabled } returns resolveShortLinksEnabled
+                every { this@mockk.shortenLinksEnabled } returns shortenLinksEnabled
                 every { this@mockk.rememberPerSiteEnabled } returns rememberPerSiteEnabled
                 every { customTabsEnabled } returns flowOf(false)
                 every { protectScreenEnabled } returns flowOf(false)
                 every { autoReset } returns flowOf(AutoReset.Off)
                 coEvery { setResolveShortLinksEnabled(any()) } just Runs
+                coEvery { setShortenLinksEnabled(any()) } just Runs
                 coEvery { setRememberPerSiteEnabled(any()) } just Runs
             }
 
@@ -123,6 +126,21 @@ class SettingsScreenViewModelTest :
                             enabled.value = true
 
                             viewModel.uiState.value.resolveShortLinksEnabled shouldBe true
+                        }
+                    }
+
+                    "carry the shorten links setting" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val enabled = MutableStateFlow(false)
+                            val viewModel =
+                                viewModel(appDataStoreManager(shortenLinksEnabled = enabled))
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.uiState.value.shortenLinksEnabled shouldBe false
+
+                            enabled.value = true
+
+                            viewModel.uiState.value.shortenLinksEnabled shouldBe true
                         }
                     }
 
@@ -337,6 +355,22 @@ class SettingsScreenViewModelTest :
                         coVerifyOrder {
                             appDataStoreManager.setResolveShortLinksEnabled(true)
                             appDataStoreManager.setResolveShortLinksEnabled(false)
+                        }
+                    }
+                }
+
+            "onShortenLinksSwitchCheckedChange" should
+                {
+                    "store the setting" {
+                        val appDataStoreManager = appDataStoreManager()
+                        val viewModel = viewModel(appDataStoreManager)
+
+                        viewModel.onShortenLinksSwitchCheckedChange(true)
+                        viewModel.onShortenLinksSwitchCheckedChange(false)
+
+                        coVerifyOrder {
+                            appDataStoreManager.setShortenLinksEnabled(true)
+                            appDataStoreManager.setShortenLinksEnabled(false)
                         }
                     }
                 }

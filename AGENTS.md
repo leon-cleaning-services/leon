@@ -295,6 +295,8 @@ sanitizer's rules is duplication, not thoroughness.
     and `Decode.JsonField(key)`, applied in order.
   - `dropParameters = true` discards the query of the *target*, for wrappers which append their
     tracking to it rather than to themselves.
+  - `keepParameters = "t|list"` appends the parameters of the *followed* URL whose names the regex
+    matches completely to the target, for a target built out of one value alone.
 - `Rule.Resolve("(?:/t)?/[A-Za-z0-9_-]{2,}/?")` – declares a URL whose path the regex matches
   completely a **short link**, whose target only the server that created it knows
   (`tiktok.com/t/<code>`, `vm.tiktok.com/<code>`). It is the only rule that leads to network
@@ -318,6 +320,13 @@ sanitizer's rules is duplication, not thoroughness.
     are sent, and the URL counts as a short link only when one of them has a value. A redirect to
     another short link is followed, so declare every hop the service passes through
     (`share.google/<code>` → `google.com/share.google?q=<code>` → target) in the same sanitizer.
+
+A **shortener** turns a URL into a shorter equivalent instead of removing tracking
+(`youtube.com/watch?v=<id>` → `youtu.be/<id>`). Mark it `shortens = true`: it only runs when the
+user turned on the "Shorten links" setting. List the expander it reverses in `supersedes`
+(`YoutubeShortUrl`), which is skipped while the shortener is enabled and shortening is on — declare
+the shortener *after* the sanitizer it supersedes in its file, since top-level `val`s initialize in
+order. Give it a translated name in `TRANSLATED_NAMES`.
 
 Regexes are held as **strings**, never as `Regex`, so that the catalog stays plain data.
 

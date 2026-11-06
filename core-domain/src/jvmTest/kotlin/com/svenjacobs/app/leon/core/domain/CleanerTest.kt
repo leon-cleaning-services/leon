@@ -19,6 +19,7 @@ package com.svenjacobs.app.leon.core.domain
 
 import com.svenjacobs.app.leon.core.domain.change.Change
 import com.svenjacobs.app.leon.core.domain.preference.SitePreference
+import com.svenjacobs.app.leon.core.domain.sanitizer.AlwaysEnabled
 import com.svenjacobs.app.leon.core.domain.sanitizer.Decode
 import com.svenjacobs.app.leon.core.domain.sanitizer.HostMatch
 import com.svenjacobs.app.leon.core.domain.sanitizer.Match
@@ -31,6 +32,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokShortLink
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YoutubeShorten
 import com.svenjacobs.app.leon.core.domain.url.Url
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -454,6 +456,71 @@ class CleanerTest :
 
                     "not be a sanitizer of the catalog" {
                         AllSanitizers.map { it.id } shouldNotContain SanitizerId.Remembered
+                    }
+                }
+
+            "shortening" should
+                {
+                    val watch =
+                        "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42&si=x&feature=share"
+                    val full = Cleaner(sanitizers = AllSanitizers, repository = AlwaysEnabled)
+
+                    "expand youtu.be and not shorten a watch URL by default" {
+                        full.clean("https://youtu.be/dQw4w9WgXcQ").cleanedText shouldBe
+                            "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                        full
+                            .clean("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                            .cleanedText shouldBe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    }
+
+                    "shorten a watch URL when asked to" {
+                        full.clean(watch, shorten = true).cleanedText shouldBe
+                            "https://youtu.be/dQw4w9WgXcQ?t=42"
+                    }
+
+                    "not expand a short URL again when asked to shorten" {
+                        full
+                            .clean("https://youtu.be/dQw4w9WgXcQ?si=x", shorten = true)
+                            .cleanedText shouldBe "https://youtu.be/dQw4w9WgXcQ"
+                    }
+
+                    "shorten a music URL" {
+                        full
+                            .clean("https://music.youtube.com/watch?v=x", shorten = true)
+                            .cleanedText shouldBe "https://youtu.be/x"
+                    }
+
+                    "bring the expander back when the shortener is disabled" {
+                        coEvery { repository.isEnabled(YoutubeShorten.id) } returns false
+                        val cleaner = Cleaner(sanitizers = AllSanitizers, repository = repository)
+
+                        cleaner
+                            .clean("https://youtu.be/dQw4w9WgXcQ", shorten = true)
+                            .cleanedText shouldBe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                        cleaner.clean(watch, shorten = true).cleanedText shouldBe
+                            "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42"
+                    }
+
+                    "append only the kept parameters of the followed URL" {
+                        val follow =
+                            Sanitizer(
+                                id = SanitizerId("follow"),
+                                name = "follow",
+                                rules =
+                                    persistentListOf(
+                                        Rule.Follow(
+                                            from = Source.Parameter("to"),
+                                            steps = persistentListOf(Decode.PercentDecode),
+                                            keepParameters = "a|b",
+                                        ),
+                                    ),
+                            )
+
+                        Cleaner(sanitizers = persistentListOf(follow))
+                            .clean(
+                                "https://x.example/?a=1&c=3&to=https%3A%2F%2Fy.example%2F%3Fb%3D2",
+                            )
+                            .cleanedText shouldBe "https://y.example/?b=2&a=1"
                     }
                 }
         },

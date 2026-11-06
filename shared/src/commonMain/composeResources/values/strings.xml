@@ -111,6 +111,11 @@
     <string name="sanitizer_short_link_name">%1$s Short Link</string>
     <string name="sanitizer_short_link_hint">Resolves short links over the internet</string>
     <string name="sanitizer_short_link_hint_disabled">Resolves short links over the internet. Turn on “Resolve short links” in Settings first.</string>
+    <string name="shorten_links">Shorten links</string>
+    <string name="shorten_links_summary">Shares links in their short form where a site offers one, such as youtu.be instead of youtube.com</string>
+    <string name="sanitizer_shortener_hint">Shortens links</string>
+    <string name="sanitizer_shortener_hint_disabled">Shortens links. Turn on “Shorten links” in Settings first.</string>
+    <string name="sanitizer_youtube_shorten_name">Shorten YouTube links</string>
     <string name="short_link_resolving_title">Resolving short link…</string>
     <string name="short_link_resolving_text">Contacting %1$s</string>
     <string name="short_link_error_title">Short link not resolved</string>

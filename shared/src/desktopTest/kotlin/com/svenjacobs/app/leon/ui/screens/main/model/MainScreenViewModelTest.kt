@@ -29,6 +29,7 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalytics
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokShortLink
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.YoutubeShorten
 import com.svenjacobs.app.leon.core.domain.shortlink.Resolution
 import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.core.domain.url.Url
@@ -63,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
@@ -89,6 +91,7 @@ class MainScreenViewModelTest :
                 actionsAfterClean: ActionsAfterClean = ActionsAfterClean(),
                 historyEnabled: Boolean = true,
                 resolveShortLinksEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false),
+                shortenLinksEnabled: Flow<Boolean> = flowOf(false),
                 rememberPerSiteEnabled: Boolean = false,
                 browserPackage: String? = null,
             ): AppDataStoreManager = mockk {
@@ -101,6 +104,7 @@ class MainScreenViewModelTest :
                 every { this@mockk.lastInput } returns flowOf(lastInput)
                 every { this@mockk.historyEnabled } returns flowOf(historyEnabled)
                 every { this@mockk.resolveShortLinksEnabled } returns resolveShortLinksEnabled
+                every { this@mockk.shortenLinksEnabled } returns shortenLinksEnabled
                 every { this@mockk.rememberPerSiteEnabled } returns flowOf(rememberPerSiteEnabled)
                 coEvery { setResolveShortLinksEnabled(any()) } answers
                     {
@@ -129,7 +133,7 @@ class MainScreenViewModelTest :
                 val cleaner =
                     mockk<Cleaner> {
                         coEvery { shortLinks(any()) } returns emptyList()
-                        coEvery { clean(any(), any(), any(), any(), any(), any()) } answers
+                        coEvery { clean(any(), any(), any(), any(), any(), any(), any()) } answers
                             {
                                 val text = firstArg<String>()
                                 val url = requireNotNull(Url.parse(text))
@@ -764,6 +768,7 @@ class MainScreenViewModelTest :
                                             every { this@mockk.lastInput } returns lastInput
                                             every { historyEnabled } returns flowOf(true)
                                             every { resolveShortLinksEnabled } returns flowOf(false)
+                                            every { shortenLinksEnabled } returns flowOf(false)
                                             every { rememberPerSiteEnabled } returns flowOf(false)
                                             coEvery { setLastInput(any(), any()) } answers
                                                 {
@@ -1018,6 +1023,58 @@ class MainScreenViewModelTest :
                             viewModel.setText("just some text, no link here", id = "id-1")
 
                             coVerify(exactly = 0) { dao.record(any(), any(), any(), any()) }
+                        }
+                    }
+                }
+
+            "shorten links" should
+                {
+                    fun viewModel(shortenLinksEnabled: Flow<Boolean>) =
+                        MainScreenViewModel(
+                            appDataStoreManager =
+                                appDataStoreManager(shortenLinksEnabled = shortenLinksEnabled),
+                            cleaner =
+                                Cleaner(
+                                    sanitizers = persistentListOf(YoutubeShorten),
+                                    repository =
+                                        mockk<SanitizerRepository> {
+                                            coEvery { isEnabled(any()) } returns true
+                                        },
+                                ),
+                            historyDao = historyDao(),
+                            shortLinkResolver = FakeShortLinkResolver(),
+                            sitePreferenceStore = SitePreferenceStore(FakeSiteParameterDao()),
+                        )
+
+                    val url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+                    "leave links alone while the setting is off" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel = viewModel(flowOf(false))
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(url)
+
+                            (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
+                                url
+                        }
+                    }
+
+                    "shorten links while the setting is on, and follow it being toggled" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val enabled = MutableStateFlow(true)
+                            val viewModel = viewModel(enabled)
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText(url)
+
+                            (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
+                                "https://youtu.be/dQw4w9WgXcQ"
+
+                            enabled.value = false
+
+                            (viewModel.uiState.value.result as Result.Success).cleanedText shouldBe
+                                url
                         }
                     }
                 }

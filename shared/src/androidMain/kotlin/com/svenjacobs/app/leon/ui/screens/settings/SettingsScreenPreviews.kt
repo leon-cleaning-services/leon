@@ -49,6 +49,7 @@ private fun PreviewContent(selectedBrowser: Browser?, customTabsEnabled: Boolean
             protectScreenEnabled = false,
             historyEnabled = true,
             resolveShortLinksEnabled = false,
+            shortenLinksEnabled = false,
             rememberPerSiteEnabled = true,
             autoReset = AutoReset.Off,
             browsers = PreviewBrowsers,
@@ -67,6 +68,7 @@ private fun PreviewContent(selectedBrowser: Browser?, customTabsEnabled: Boolean
             onProtectScreenSwitchCheckedChange = {},
             onHistorySwitchCheckedChange = {},
             onResolveShortLinksSwitchCheckedChange = {},
+            onShortenLinksSwitchCheckedChange = {},
             onRememberPerSiteSwitchCheckedChange = {},
             onAutoResetClick = {},
         )

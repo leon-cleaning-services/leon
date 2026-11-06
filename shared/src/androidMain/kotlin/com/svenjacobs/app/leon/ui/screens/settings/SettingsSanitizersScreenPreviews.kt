@@ -23,9 +23,9 @@ import androidx.compose.runtime.Composable
 import com.svenjacobs.app.leon.ui.theme.AppTheme
 import com.svenjacobs.app.leon.ui.tooling.DayNightPreviews
 
-/** An ordinary sanitizer and a short link sanitizer, as the list in Settings shows them. */
+/** An ordinary, a short link and a shortening sanitizer, as the list in Settings shows them. */
 @Composable
-private fun SanitizerItems(resolveShortLinksEnabled: Boolean) {
+private fun SanitizerItems(resolveShortLinksEnabled: Boolean, shortenLinksEnabled: Boolean) {
     AppTheme {
         Card {
             Column {
@@ -34,6 +34,8 @@ private fun SanitizerItems(resolveShortLinksEnabled: Boolean) {
                     isEnabled = true,
                     resolvesShortLinks = false,
                     resolveShortLinksEnabled = resolveShortLinksEnabled,
+                    shortens = false,
+                    shortenLinksEnabled = shortenLinksEnabled,
                     onCheckedChange = {},
                 )
                 SanitizerItem(
@@ -41,6 +43,17 @@ private fun SanitizerItems(resolveShortLinksEnabled: Boolean) {
                     isEnabled = true,
                     resolvesShortLinks = true,
                     resolveShortLinksEnabled = resolveShortLinksEnabled,
+                    shortens = false,
+                    shortenLinksEnabled = shortenLinksEnabled,
+                    onCheckedChange = {},
+                )
+                SanitizerItem(
+                    name = "Shorten YouTube links",
+                    isEnabled = true,
+                    resolvesShortLinks = false,
+                    resolveShortLinksEnabled = resolveShortLinksEnabled,
+                    shortens = true,
+                    shortenLinksEnabled = shortenLinksEnabled,
                     onCheckedChange = {},
                 )
             }
@@ -51,11 +64,11 @@ private fun SanitizerItems(resolveShortLinksEnabled: Boolean) {
 @DayNightPreviews
 @Composable
 private fun SanitizerItemShortLinksOffPreview() {
-    SanitizerItems(resolveShortLinksEnabled = false)
+    SanitizerItems(resolveShortLinksEnabled = false, shortenLinksEnabled = false)
 }
 
 @DayNightPreviews
 @Composable
 private fun SanitizerItemShortLinksOnPreview() {
-    SanitizerItems(resolveShortLinksEnabled = true)
+    SanitizerItems(resolveShortLinksEnabled = true, shortenLinksEnabled = true)
 }

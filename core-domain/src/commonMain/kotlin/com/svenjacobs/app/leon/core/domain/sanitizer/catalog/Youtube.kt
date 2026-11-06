@@ -77,3 +77,28 @@ val YoutubeShortUrl =
             ),
         match = persistentListOf(Match(HostMatch.Domain("youtu.be"))),
     )
+
+val YoutubeShorten =
+    Sanitizer(
+        id = SanitizerId("youtube_shorten"),
+        name = "Shorten YouTube links",
+        // The whole target is built out of the video id alone, so only the parameters which still
+        // mean something on youtu.be are carried over.
+        rules =
+            persistentListOf(
+                Rule.Follow(
+                    from = Source.Parameter("v"),
+                    steps =
+                        persistentListOf(
+                            Decode.Capture("^([A-Za-z0-9_-]+)$", "https://youtu.be/$1"),
+                        ),
+                    keepParameters = "t|list",
+                ),
+            ),
+        match =
+            persistentListOf(
+                Match(HostMatch.Pattern("(?:m\\.)?youtube\\.com"), pathPrefix = "/watch"),
+            ),
+        shortens = true,
+        supersedes = persistentListOf(YoutubeShortUrl.id),
+    )
