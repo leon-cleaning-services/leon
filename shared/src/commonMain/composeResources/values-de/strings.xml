@@ -111,6 +111,11 @@
     <string name="sanitizer_short_link_name">%1$s-Kurzlink</string>
     <string name="sanitizer_short_link_hint">Löst Kurzlinks über das Internet auf</string>
     <string name="sanitizer_short_link_hint_disabled">Löst Kurzlinks über das Internet auf. Aktiviere zuerst „Kurzlinks auflösen“ in den Einstellungen.</string>
+    <string name="shorten_links">Links kürzen</string>
+    <string name="shorten_links_summary">Teilt Links in ihrer Kurzform, sofern eine Website eine anbietet, etwa youtu.be statt youtube.com</string>
+    <string name="sanitizer_shortener_hint">Kürzt Links</string>
+    <string name="sanitizer_shortener_hint_disabled">Kürzt Links. Aktiviere zuerst „Links kürzen“ in den Einstellungen.</string>
+    <string name="sanitizer_youtube_shorten_name">YouTube-Links kürzen</string>
     <string name="short_link_resolving_title">Kurzlink wird aufgelöst…</string>
     <string name="short_link_resolving_text">Verbindung zu %1$s</string>
     <string name="short_link_error_title">Kurzlink nicht aufgelöst</string>
