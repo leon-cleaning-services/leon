@@ -102,6 +102,9 @@ class Cleaner(
      *   removals are proposed by [SanitizerId.Remembered], and the proposals of parameters it keeps
      *   are not applied. Both refer to the site of the URL at the pass they are proposed on, so a
      *   redirect and its target each get their own site's choices.
+     * @param shorten Whether the sanitizers which [shorten][Sanitizer.shortens] URLs run. They do
+     *   not by default. While one is enabled, the sanitizers it [supersedes][Sanitizer.supersedes]
+     *   are skipped.
      */
     suspend fun clean(
         text: String?,
@@ -110,6 +113,7 @@ class Cleaner(
         additional: Set<Change> = emptySet(),
         resolved: Map<Url, Url> = emptyMap(),
         remembered: SitePreferences = persistentMapOf(),
+        shorten: Boolean = false,
     ): Result {
         val input = requireNotNull(text?.takeIf(String::isNotEmpty))
 
@@ -119,7 +123,16 @@ class Cleaner(
         for (match in URL_REGEX.findAll(input)) {
             // A URL which cannot be parsed is left alone rather than mangled.
             val original = Url.parse(match.value) ?: continue
-            val url = cleanUrl(original, decodeUrl, declined, additional, resolved, remembered)
+            val url =
+                cleanUrl(
+                    original,
+                    decodeUrl,
+                    declined,
+                    additional,
+                    resolved,
+                    remembered,
+                    shorten,
+                )
             urls += url
 
             // Serializing an unchanged URL could normalize it, so only touch the text when
@@ -188,6 +201,7 @@ class Cleaner(
         additional: Set<Change>,
         resolved: Map<Url, Url>,
         remembered: SitePreferences,
+        shorten: Boolean,
     ): CleanedUrl {
         // A set, so a change proposed again on a later pass is listed once, where it first
         // appeared.
@@ -202,7 +216,7 @@ class Cleaner(
         for (pass in 1..MAX_ITERATION) {
             val site = current.site
             val preference = remembered[site]
-            val proposed = propose(current, resolved, preference)
+            val proposed = propose(current, resolved, preference, shorten)
             available += proposed
             proposed.forEach { sites.getOrPut(it) { site } }
 
@@ -239,17 +253,26 @@ class Cleaner(
     }
 
     /**
-     * What every enabled sanitizer which applies to [url] would change about it, followed by the
+     * What every active sanitizer which applies to [url] would change about it, followed by the
      * removals [preference] remembers for its site.
      */
     private suspend fun propose(
         url: Url,
         resolved: Map<Url, Url>,
         preference: SitePreference?,
+        shorten: Boolean,
     ): List<Change> {
+        val enabled = sanitizers.filter { repository.isEnabled(it.id) }
+        // Only the enabled shorteners supersede anything, so disabling just the shortener brings
+        // the sanitizer it reverses back.
+        val superseded =
+            if (shorten) enabled.filter { it.shortens }.flatMap { it.supersedes }.toSet()
+            else emptySet()
+
         val sanitized =
-            sanitizers
-                .filter { repository.isEnabled(it.id) }
+            enabled
+                .filter { shorten || !it.shortens }
+                .filter { it.id !in superseded }
                 .filter { it.matches(url) }
                 .flatMap { sanitizer ->
                     sanitizer.sanitize(url, resolved).map { Change(sanitizer.id, it) }
@@ -354,6 +377,19 @@ internal fun Rule.sanitize(url: Url, resolved: Map<Url, Url> = emptyMap()): List
                 .fold(url.read(from)) { value, step -> value?.let(step::apply) }
                 ?.let(Url::parse)
                 ?.let { if (dropParameters) it.copy(parameters = persistentListOf()) else it }
+                ?.let { target ->
+                    if (keepParameters == null) {
+                        target
+                    } else {
+                        val regex = Regex(keepParameters)
+                        target.copy(
+                            parameters =
+                                (target.parameters +
+                                        url.parameters.filter { regex.matches(it.name) })
+                                    .toImmutableList(),
+                        )
+                    }
+                }
                 ?.takeUnless { it == url }
                 ?.let { listOf(Change.Action.Replace(from = url, to = it)) }
                 .orEmpty()

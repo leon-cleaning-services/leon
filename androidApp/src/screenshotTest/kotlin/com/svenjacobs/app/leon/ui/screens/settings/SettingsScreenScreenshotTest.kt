@@ -43,6 +43,7 @@ private fun ScreenshotContent(selectedBrowser: Browser?, customTabsEnabled: Bool
             protectScreenEnabled = false,
             historyEnabled = true,
             resolveShortLinksEnabled = false,
+            shortenLinksEnabled = false,
             rememberPerSiteEnabled = true,
             autoReset = AutoReset.Off,
             browsers =
@@ -74,6 +75,7 @@ private fun ScreenshotContent(selectedBrowser: Browser?, customTabsEnabled: Bool
             onProtectScreenSwitchCheckedChange = {},
             onHistorySwitchCheckedChange = {},
             onResolveShortLinksSwitchCheckedChange = {},
+            onShortenLinksSwitchCheckedChange = {},
             onRememberPerSiteSwitchCheckedChange = {},
             onAutoResetClick = {},
         )

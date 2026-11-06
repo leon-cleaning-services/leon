@@ -282,7 +282,11 @@ class MainScreenViewModel(
                             ?.let { last!!.at + it * 60_000L }
                     Session(input, shortLinks, selection, remembered, autoResetAt)
                 },
-                appDataStoreManager.urlDecodeEnabled,
+                combine(
+                    appDataStoreManager.urlDecodeEnabled,
+                    appDataStoreManager.shortenLinksEnabled,
+                    ::Pair,
+                ),
                 appDataStoreManager.extractUrlEnabled,
                 combine(
                     appDataStoreManager.customTabsEnabled,
@@ -292,7 +296,7 @@ class MainScreenViewModel(
                 appDataStoreManager.actionsAfterClean,
             ) {
                 session,
-                urlDecodeEnabled,
+                (urlDecodeEnabled, shortenLinksEnabled),
                 extractUrlEnabled,
                 (isCustomTabsEnabled, browserPackage),
                 actionsAfterClean ->
@@ -310,6 +314,7 @@ class MainScreenViewModel(
                         clean(
                             text = it.text,
                             decodeUrl = urlDecodeEnabled,
+                            shorten = shortenLinksEnabled,
                             extractUrl = extractUrlEnabled,
                             selection = session.selection,
                             resolved = session.shortLinks.resolved,
@@ -472,6 +477,7 @@ class MainScreenViewModel(
     private suspend fun clean(
         text: String,
         decodeUrl: Boolean,
+        shorten: Boolean,
         extractUrl: Boolean,
         selection: Selection,
         resolved: Map<Url, Url>,
@@ -486,6 +492,7 @@ class MainScreenViewModel(
                     additional = selection.additional,
                     resolved = resolved,
                     remembered = remembered ?: persistentMapOf(),
+                    shorten = shorten,
                 )
                 .let { result ->
                     Result.Success(

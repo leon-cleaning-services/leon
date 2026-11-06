@@ -120,5 +120,6 @@ val AllSanitizers: SanitizersCollection =
         YoutubeRedirect,
         Youtube,
         YoutubeShortUrl,
+        YoutubeShorten,
         Zhihu,
     )

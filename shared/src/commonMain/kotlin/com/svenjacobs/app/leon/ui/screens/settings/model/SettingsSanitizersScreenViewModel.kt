@@ -53,16 +53,20 @@ class SettingsSanitizersScreenViewModel(
         val sanitizers: ImmutableList<Sanitizer> = persistentListOf(),
         val searchQuery: String = "",
         val resolveShortLinksEnabled: Boolean = false,
+        val shortenLinksEnabled: Boolean = false,
     ) {
         /**
          * @property resolvesShortLinks whether this sanitizer contacts a short link's service,
          *   which only happens while short link resolving is turned on in the settings
+         * @property shortens whether this sanitizer shortens URLs, which only happens while
+         *   shortening links is turned on in the settings
          */
         data class Sanitizer(
             val id: SanitizerId,
             val name: String,
             val enabled: Boolean,
             val resolvesShortLinks: Boolean = false,
+            val shortens: Boolean = false,
         )
     }
 
@@ -75,7 +79,8 @@ class SettingsSanitizersScreenViewModel(
                 repository.state,
                 _searchQuery,
                 appDataStoreManager.resolveShortLinksEnabled,
-            ) { states, query, resolveShortLinksEnabled ->
+                appDataStoreManager.shortenLinksEnabled,
+            ) { states, query, resolveShortLinksEnabled, shortenLinksEnabled ->
                 val allSanitizers =
                     states
                         .map { state ->
@@ -87,6 +92,7 @@ class SettingsSanitizersScreenViewModel(
                                 enabled = state.enabled,
                                 resolvesShortLinks =
                                     sanitizersById[state.id]?.resolvesShortLinks == true,
+                                shortens = sanitizersById[state.id]?.shortens == true,
                             )
                         }
                         .sortedBy { it.name.lowercase() }
@@ -104,6 +110,7 @@ class SettingsSanitizersScreenViewModel(
                     sanitizers = filteredSanitizers.toImmutableList(),
                     searchQuery = query,
                     resolveShortLinksEnabled = resolveShortLinksEnabled,
+                    shortenLinksEnabled = shortenLinksEnabled,
                 )
             }
             .stateIn(

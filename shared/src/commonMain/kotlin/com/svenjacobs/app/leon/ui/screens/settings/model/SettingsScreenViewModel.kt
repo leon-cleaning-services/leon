@@ -57,6 +57,7 @@ class SettingsScreenViewModel(
         val protectScreenEnabled: Boolean = false,
         val historyEnabled: Boolean = true,
         val resolveShortLinksEnabled: Boolean = false,
+        val shortenLinksEnabled: Boolean = false,
         val rememberPerSiteEnabled: Boolean = true,
         val autoReset: AutoReset = AutoReset.Off,
         val supportsBrowserRegistration: Boolean = false,
@@ -100,13 +101,14 @@ class SettingsScreenViewModel(
     )
 
     /**
-     * The browser, history, short link and remember per site switches, combined ahead of the outer
-     * [combine] so that it stays within its five-flow limit.
+     * The browser, history, short link, shorten and remember per site switches, combined ahead of
+     * the outer [combine] so that it stays within its five-flow limit.
      */
     private data class Toggles(
         val browserEnabled: Boolean,
         val historyEnabled: Boolean,
         val resolveShortLinksEnabled: Boolean,
+        val shortenLinksEnabled: Boolean,
         val rememberPerSiteEnabled: Boolean,
     )
 
@@ -116,6 +118,7 @@ class SettingsScreenViewModel(
                     browserEnabled,
                     appDataStoreManager.historyEnabled,
                     appDataStoreManager.resolveShortLinksEnabled,
+                    appDataStoreManager.shortenLinksEnabled,
                     appDataStoreManager.rememberPerSiteEnabled,
                     ::Toggles,
                 ),
@@ -137,6 +140,7 @@ class SettingsScreenViewModel(
                     protectScreenEnabled = protectScreenEnabled,
                     historyEnabled = toggles.historyEnabled,
                     resolveShortLinksEnabled = toggles.resolveShortLinksEnabled,
+                    shortenLinksEnabled = toggles.shortenLinksEnabled,
                     rememberPerSiteEnabled = toggles.rememberPerSiteEnabled,
                     autoReset = autoReset ?: AutoReset.Off,
                     supportsBrowserRegistration = platform.supportsBrowserRegistration,
@@ -221,6 +225,10 @@ class SettingsScreenViewModel(
 
     fun onResolveShortLinksSwitchCheckedChange(checked: Boolean) {
         viewModelScope.launch { appDataStoreManager.setResolveShortLinksEnabled(checked) }
+    }
+
+    fun onShortenLinksSwitchCheckedChange(checked: Boolean) {
+        viewModelScope.launch { appDataStoreManager.setShortenLinksEnabled(checked) }
     }
 
     fun onRememberPerSiteSwitchCheckedChange(checked: Boolean) {

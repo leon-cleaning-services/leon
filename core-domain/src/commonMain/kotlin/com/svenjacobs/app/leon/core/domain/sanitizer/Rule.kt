@@ -124,11 +124,16 @@ sealed interface Rule {
      *
      * @param dropParameters Discards the query of the resulting URL, for wrappers which append
      *   their own tracking to the target rather than to themselves.
+     * @param keepParameters A regex matching the complete names of the parameters of the followed
+     *   URL which are appended to the target, after the target's own parameters and after
+     *   [dropParameters] was applied. For a target built out of one value alone, such as the `v` of
+     *   a YouTube link, this keeps the parameters which still mean something there (`t`, `list`).
      */
     data class Follow(
         val from: Source,
         val steps: ImmutableList<Decode> = persistentListOf(),
         val dropParameters: Boolean = false,
+        val keepParameters: String? = null,
     ) : Rule
 
     /**

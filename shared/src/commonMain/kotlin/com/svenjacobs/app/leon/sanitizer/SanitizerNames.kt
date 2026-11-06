@@ -31,6 +31,7 @@ import com.svenjacobs.app.leon.shared.resources.sanitizer_mydealz_redirects_name
 import com.svenjacobs.app.leon.shared.resources.sanitizer_short_link_name
 import com.svenjacobs.app.leon.shared.resources.sanitizer_yahoo_search_name
 import com.svenjacobs.app.leon.shared.resources.sanitizer_youtube_redirect_name
+import com.svenjacobs.app.leon.shared.resources.sanitizer_youtube_shorten_name
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -70,6 +71,7 @@ private val TRANSLATED_NAMES: Map<SanitizerId, TranslatedName> =
         SanitizerId("yahoo_search") to TranslatedName(Res.string.sanitizer_yahoo_search_name),
         SanitizerId("youtube_redirect") to
             TranslatedName(Res.string.sanitizer_youtube_redirect_name),
+        SanitizerId("youtube_shorten") to TranslatedName(Res.string.sanitizer_youtube_shorten_name),
     )
 
 // Kotlin does not allow `suspend fun displayName()` and `fun displayName()` to overload each other

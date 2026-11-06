@@ -46,6 +46,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.svenjacobs.app.leon.shared.resources.Res
 import com.svenjacobs.app.leon.shared.resources.sanitizer_short_link_hint
 import com.svenjacobs.app.leon.shared.resources.sanitizer_short_link_hint_disabled
+import com.svenjacobs.app.leon.shared.resources.sanitizer_shortener_hint
+import com.svenjacobs.app.leon.shared.resources.sanitizer_shortener_hint_disabled
 import com.svenjacobs.app.leon.shared.resources.sanitizers_description
 import com.svenjacobs.app.leon.shared.resources.sanitizers_no_results
 import com.svenjacobs.app.leon.shared.resources.sanitizers_search_clear
@@ -132,7 +134,9 @@ fun SettingsSanitizersScreen(
                                 name = sanitizer.name,
                                 isEnabled = sanitizer.enabled,
                                 resolvesShortLinks = sanitizer.resolvesShortLinks,
+                                shortens = sanitizer.shortens,
                                 resolveShortLinksEnabled = uiState.resolveShortLinksEnabled,
+                                shortenLinksEnabled = uiState.shortenLinksEnabled,
                                 onCheckedChange = { enabled ->
                                     viewModel.onSanitizerCheckedChange(sanitizer.id, enabled)
                                 },
@@ -151,23 +155,39 @@ internal fun SanitizerItem(
     isEnabled: Boolean,
     resolvesShortLinks: Boolean,
     resolveShortLinksEnabled: Boolean,
+    shortens: Boolean,
+    shortenLinksEnabled: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SwitchRow(
         modifier = modifier.padding(16.dp),
         text = name,
-        // A short link sanitizer is the only kind that contacts a server, so it says so. Its own
-        // switch only means something while resolving is turned on in the settings, hence it is
-        // shown disabled until then; the stored state is left as it is.
+        // A short link sanitizer is the only kind that contacts a server, so it says so. A
+        // shortener only ever runs while shortening is turned on. Either one's own switch only
+        // means something while its setting is on, hence it is shown disabled until then; the
+        // stored state is left as it is. A sanitizer is never both.
         supportingText =
             when {
-                !resolvesShortLinks -> null
-                resolveShortLinksEnabled -> stringResource(Res.string.sanitizer_short_link_hint)
-                else -> stringResource(Res.string.sanitizer_short_link_hint_disabled)
+                resolvesShortLinks ->
+                    stringResource(
+                        if (resolveShortLinksEnabled) Res.string.sanitizer_short_link_hint
+                        else Res.string.sanitizer_short_link_hint_disabled,
+                    )
+                shortens ->
+                    stringResource(
+                        if (shortenLinksEnabled) Res.string.sanitizer_shortener_hint
+                        else Res.string.sanitizer_shortener_hint_disabled,
+                    )
+                else -> null
             },
         checked = isEnabled,
         onCheckedChange = onCheckedChange,
-        enabled = !resolvesShortLinks || resolveShortLinksEnabled,
+        enabled =
+            when {
+                resolvesShortLinks -> resolveShortLinksEnabled
+                shortens -> shortenLinksEnabled
+                else -> true
+            },
     )
 }

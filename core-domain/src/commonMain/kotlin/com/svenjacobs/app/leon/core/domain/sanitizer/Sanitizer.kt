@@ -32,12 +32,20 @@ import kotlinx.collections.immutable.persistentListOf
  * @param match The URLs this sanitizer applies to. A URL matching *any* entry is sanitized; the
  *   default matches every URL, for sanitizers which remove a tracking product's parameters from
  *   wherever they appear.
+ * @param shortens Whether this sanitizer turns a URL into a shorter equivalent rather than removing
+ *   tracking from it. Such a sanitizer only runs when the caller asks for shortening, see
+ *   `Cleaner.clean`.
+ * @param supersedes The sanitizers this shortener reverses, such as an expander which turns the
+ *   short form back into the long one. They are skipped while this shortener is enabled and
+ *   shortening is requested, so that the two do not undo each other's work on every pass.
  */
 data class Sanitizer(
     val id: SanitizerId,
     val name: String,
     val rules: ImmutableList<Rule>,
     val match: ImmutableList<Match> = persistentListOf(Match()),
+    val shortens: Boolean = false,
+    val supersedes: ImmutableList<SanitizerId> = persistentListOf(),
 )
 
 /**

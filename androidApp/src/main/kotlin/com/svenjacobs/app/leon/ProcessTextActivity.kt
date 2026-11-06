@@ -133,7 +133,13 @@ class ProcessTextActivity : ComponentActivity() {
             }
 
         return appGraph.cleaner
-            .clean(text = text, decodeUrl = decodeUrl, resolved = resolved, remembered = remembered)
+            .clean(
+                text = text,
+                decodeUrl = decodeUrl,
+                resolved = resolved,
+                remembered = remembered,
+                shorten = appDataStoreManager.shortenLinksEnabled.first(),
+            )
             .cleanedText
     }
 
