@@ -1,5 +1,5 @@
 [versions]
-android-compose-screenshot = "0.0.1-alpha16"
+android-compose-screenshot = "0.0.1-alpha17"
 android-gradle-plugin = "9.5.0"
 androidx-activity = "1.13.0"
 androidx-compose-bom = "2026.09.00" # https://developer.android.com/jetpack/compose/bom/bom-mapping
