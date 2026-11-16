@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_main">Avaleht</string>
+    <string name="screen_settings">Seadistused</string>
+    <string name="screen_history">Ajalugu</string>
+    <string name="scaffold_title">Léon – Võrguaadresside puhastaja</string>
+    <string name="share">Jaga</string>
+    <string name="open">Ava</string>
+    <string name="copy">Kopeeri</string>
+    <string name="clipboard_message">Link on kopeeritud lõikelauale</string>
+    <string name="clipboard_empty_message">Lõikelaud on tühi</string>
+    <string name="cleaned_url">Puhastatud võrguaadress</string>
+    <string name="original_url">Algne võrguaadress</string>
+    <string name="do_nothing">Ära tee midagi</string>
+    <string name="open_share_menu">Ava jagamise menüü</string>
+    <string name="open_url">Ava võrguaadress</string>
+    <string name="copy_to_clipboard">Kopeeri lõikelauale</string>
+</resources>
