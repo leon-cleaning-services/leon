@@ -20,6 +20,36 @@ For the code conventions — sanitizers, ViewModels, tests, formatting — see
 ./gradlew spotlessApply
 ```
 
+### Screenshot Tests
+
+`androidApp` renders the `@PreviewTest` functions in `androidApp/src/screenshotTest` and compares
+them against the reference images in `androidApp/src/screenshotTestDefaultDebug/reference`. They
+run as an [AGP test suite](https://developer.android.com/studio/preview/compose-screenshot-testing-with-testsuites)
+on the JVM, through Layoutlib — no emulator or device is involved. CI runs them on every pull
+request.
+
+```bash
+# Compare the previews against the reference images
+./gradlew :androidApp:testDebugScreenshotTestDefaultTestSuite
+
+# Re-record the reference images
+./gradlew :androidApp:updateDebugScreenshotTestDefaultTestSuite
+```
+
+After an **intentional** UI change, re-record the reference images and commit them together with
+the change, or CI fails. Look at every changed image before committing it: the update task records
+whatever the previews render, regressions included. A new `@PreviewTest` likewise needs its
+reference image recorded and committed.
+
+When a test fails, the report at
+`androidApp/build/reports/tests/testDebugScreenshotTestDefaultTestSuite/index.html` shows the
+reference, the rendered image and their difference. On CI, the report and the rendered images are
+uploaded as the "Screenshot test report" artifact of the failed run.
+
+Previews containing an animation — an indeterminate progress indicator, for example — render a
+single frame of it. Which frame that is can change with the screenshot engine version, so expect
+such images to need re-recording after an engine update.
+
 ## Desktop
 
 Léon also runs as a Compose Desktop application, built from the `desktopApp` module against the

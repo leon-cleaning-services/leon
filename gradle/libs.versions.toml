@@ -1,5 +1,5 @@
 [versions]
-android-compose-screenshot = "0.0.1-alpha16"
+android-compose-screenshot = "0.0.1-alpha17"
 android-gradle-plugin = "9.5.1"
 androidx-activity = "1.13.0"
 androidx-compose-bom = "2026.09.00" # https://developer.android.com/jetpack/compose/bom/bom-mapping
@@ -102,7 +102,6 @@ androidx-compose = [
 
 [plugins]
 adarshr-test-logger = "com.adarshr.test-logger:4.0.0"
-android-compose-screenshot = { id = "com.android.compose.screenshot", version.ref = "android-compose-screenshot" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android-gradle-plugin" }
 ben-manes-versions = "io.github.ben-manes.versions:0.67.0"
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "mikepenz-aboutlibraries" }

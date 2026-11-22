@@ -25,7 +25,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.aboutlibraries)
-    alias(libs.plugins.android.compose.screenshot)
     alias(libs.plugins.metro)
 }
 
@@ -96,11 +95,21 @@ android {
         buildConfig = true
     }
 
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
-
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
+        }
+        // Required by the screenshot test suite, which renders previews with compiled resources.
+        unitTests.isIncludeAndroidResources = true
+
+        screenshotTests.create("screenshotTest") {
+            engineVersion = libs.versions.android.compose.screenshot.get()
+            targetVariants.add("debug")
+
+            dependencies {
+                implementation(libs.android.tools.screenshot.validation.api)
+                implementation(libs.androidx.compose.ui.tooling)
+            }
         }
     }
 
@@ -154,9 +163,6 @@ dependencies {
     implementation(libs.androidx.sqlite.framework)
 
     debugImplementation(libs.facebook.stetho)
-
-    screenshotTestImplementation(libs.android.tools.screenshot.validation.api)
-    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
