@@ -61,6 +61,7 @@ val AllSanitizers: SanitizersCollection =
         GoogleAnalytics,
         GoogleMaps,
         GoogleMapsShortLink,
+        GooglePlay,
         GoogleSearch,
         GoogleShare,
         GoogleShortLink,

@@ -29,6 +29,8 @@ import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerRepository
 import com.svenjacobs.app.leon.core.domain.sanitizer.Source
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.AllSanitizers
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleAnalytics
+import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GooglePlay
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.GoogleSearch
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.Tiktok
 import com.svenjacobs.app.leon.core.domain.sanitizer.catalog.TiktokShortLink
@@ -521,6 +523,177 @@ class CleanerTest :
                                 "https://x.example/?a=1&c=3&to=https%3A%2F%2Fy.example%2F%3Fb%3D2",
                             )
                             .cleanedText shouldBe "https://y.example/?b=2&a=1"
+                    }
+                }
+
+            "nested queries" should
+                {
+                    val playUrl =
+                        "https://play.google.com/store/apps/details?id=com.samruston.buzzkill" +
+                            "&referrer=utm_source=buzzkillapp.com%26utm_medium=referral" +
+                            "%26utm_campaign=home"
+                    val referrer =
+                        Url.Parameter(
+                            "referrer",
+                            "utm_source=buzzkillapp.com%26utm_medium=referral%26utm_campaign=home",
+                        )
+                    val emptyParameters =
+                        Sanitizer(
+                            id = SanitizerId("empty"),
+                            name = "empty",
+                            rules = persistentListOf(Rule.RemoveEmptyParameters),
+                        )
+
+                    "remove tracking parameters from a nested query" {
+                        Cleaner(sanitizers = persistentListOf(GoogleAnalytics))
+                            .clean(playUrl)
+                            .cleanedText shouldBe
+                            "https://play.google.com/store/apps/details?" +
+                                "id=com.samruston.buzzkill&referrer="
+                    }
+
+                    "leave nothing behind once empty parameters are removed" {
+                        Cleaner(sanitizers = persistentListOf(GoogleAnalytics, emptyParameters))
+                            .clean(playUrl)
+                            .cleanedText shouldBe
+                            "https://play.google.com/store/apps/details?id=com.samruston.buzzkill"
+                    }
+
+                    "keep the other segments of a nested query byte for byte" {
+                        Cleaner(sanitizers = persistentListOf(GoogleAnalytics))
+                            .clean("https://x.example/?r=a%3D1%26utm_source%3Dx")
+                            .cleanedText shouldBe "https://x.example/?r=a%3D1"
+
+                        Cleaner(sanitizers = persistentListOf(GoogleAnalytics))
+                            .clean("https://x.example/?r=a%3d1%26utm_source%3Dx%26b%3D2")
+                            .cleanedText shouldBe "https://x.example/?r=a%3d1%26b%3D2"
+                    }
+
+                    "not apply a declined nested change" {
+                        val change =
+                            Change(
+                                GoogleAnalytics.id,
+                                Change.Action.RemoveNestedParameter(
+                                    "referrer",
+                                    Url.Parameter("utm_source", "buzzkillapp.com"),
+                                ),
+                            )
+
+                        val result =
+                            Cleaner(sanitizers = persistentListOf(GoogleAnalytics))
+                                .clean(playUrl, declined = setOf(change))
+
+                        result.cleanedText shouldBe
+                            "https://play.google.com/store/apps/details?" +
+                                "id=com.samruston.buzzkill&referrer=utm_source=buzzkillapp.com"
+                        result.urls.single().available shouldContain change
+                    }
+
+                    "drop nested changes whose outer parameter is removed" {
+                        val cleaner =
+                            Cleaner(sanitizers = persistentListOf(GoogleAnalytics, GooglePlay))
+
+                        val result = cleaner.clean(playUrl).urls.single()
+
+                        result.cleaned.toString() shouldBe
+                            "https://play.google.com/store/apps/details?id=com.samruston.buzzkill"
+                        result.available.none {
+                            it.action is Change.Action.RemoveNestedParameter
+                        } shouldBe true
+                    }
+
+                    "bring nested changes back when the outer removal is declined" {
+                        val outer = Change(GooglePlay.id, Change.Action.RemoveParameter(referrer))
+
+                        val result =
+                            Cleaner(sanitizers = persistentListOf(GoogleAnalytics, GooglePlay))
+                                .clean(playUrl, declined = setOf(outer))
+                                .urls
+                                .single()
+
+                        result.cleaned.toString() shouldBe
+                            "https://play.google.com/store/apps/details?" +
+                                "id=com.samruston.buzzkill&referrer="
+                        result.available.count {
+                            it.action is Change.Action.RemoveNestedParameter
+                        } shouldBe 3
+                        result.available.count {
+                            (it.action as? Change.Action.RemoveParameter)?.parameter?.name ==
+                                "referrer"
+                        } shouldBe 1
+                    }
+
+                    "keep a declined outer parameter even with empty parameters removed" {
+                        val outer = Change(GooglePlay.id, Change.Action.RemoveParameter(referrer))
+
+                        Cleaner(
+                                sanitizers =
+                                    persistentListOf(GoogleAnalytics, GooglePlay, emptyParameters),
+                            )
+                            .clean(playUrl, declined = setOf(outer))
+                            .cleanedText shouldBe
+                            "https://play.google.com/store/apps/details?" +
+                                "id=com.samruston.buzzkill&referrer="
+                    }
+
+                    "leave the URL unchanged when the outer and all nested changes are declined" {
+                        val cleaner =
+                            Cleaner(sanitizers = persistentListOf(GoogleAnalytics, GooglePlay))
+                        val declined =
+                            cleaner.clean(playUrl).urls.single().available.toSet() +
+                                cleaner
+                                    .clean(
+                                        playUrl,
+                                        declined =
+                                            setOf(
+                                                Change(
+                                                    GooglePlay.id,
+                                                    Change.Action.RemoveParameter(referrer),
+                                                ),
+                                            ),
+                                    )
+                                    .urls
+                                    .single()
+                                    .available
+
+                        cleaner.clean(playUrl, declined = declined).cleanedText shouldBe playUrl
+                    }
+
+                    "not let a site-specific sanitizer touch a nested query" {
+                        val sanitizer =
+                            Sanitizer(
+                                id = SanitizerId("site"),
+                                name = "site",
+                                rules = persistentListOf(Rule.RemoveParameters("ref")),
+                                match = persistentListOf(Match(HostMatch.Domain("x.example"))),
+                            )
+
+                        Cleaner(sanitizers = persistentListOf(sanitizer))
+                            .clean("https://x.example/?r=ref%3D1%26a%3D2")
+                            .cleanedText shouldBe "https://x.example/?r=ref%3D1%26a%3D2"
+                    }
+
+                    "not let a negated rule touch a nested query" {
+                        Rule.RemoveParameters("keep", negate = true)
+                            .sanitizeNested(Url.Parameter("r", "a%3D1%26b%3D2"))
+                            .shouldBeEmpty()
+                    }
+
+                    "not treat a value holding a URL as a nested query" {
+                        val text =
+                            "https://x.example/?url=https%3A%2F%2Fy.example%2F%3Futm_source%3Dx"
+
+                        Cleaner(sanitizers = persistentListOf(GoogleAnalytics))
+                            .clean(text)
+                            .cleanedText shouldBe text
+                    }
+
+                    "not treat a value without a name and value pair as a nested query" {
+                        val text = "https://x.example/?r=a%26utm_source&s=%3Dx%26utm_source%3D1"
+
+                        Cleaner(sanitizers = persistentListOf(GoogleAnalytics))
+                            .clean(text)
+                            .cleanedText shouldBe text
                     }
                 }
         },

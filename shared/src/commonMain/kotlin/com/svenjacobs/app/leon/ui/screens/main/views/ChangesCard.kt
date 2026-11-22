@@ -132,6 +132,7 @@ private fun ChangeItem(
 private fun Change.Action.describe(): String =
     when (this) {
         is Change.Action.RemoveParameter -> parameter.toString()
+        is Change.Action.RemoveNestedParameter -> "$name › $parameter"
         is Change.Action.Replace -> to.toString()
         is Change.Action.SetComponent ->
             when (component) {

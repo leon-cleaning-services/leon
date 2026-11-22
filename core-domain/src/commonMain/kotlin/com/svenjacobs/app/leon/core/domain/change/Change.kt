@@ -18,7 +18,9 @@
 package com.svenjacobs.app.leon.core.domain.change
 
 import com.svenjacobs.app.leon.core.domain.sanitizer.SanitizerId
+import com.svenjacobs.app.leon.core.domain.url.NestedQuery
 import com.svenjacobs.app.leon.core.domain.url.Url
+import com.svenjacobs.app.leon.core.domain.url.nestedQuery
 import kotlinx.collections.immutable.toImmutableList
 
 /**
@@ -37,6 +39,16 @@ data class Change(val sanitizerId: SanitizerId?, val action: Action) {
 
         /** Removes the first remaining parameter equal to [parameter]. */
         data class RemoveParameter(val parameter: Url.Parameter) : Action
+
+        /**
+         * Removes [parameter] from the query nested in the value of the first parameter called
+         * [name] which still contains it, see [NestedQuery].
+         *
+         * The outer parameter is identified by its name rather than by its value, because removing
+         * one nested parameter changes that value: several removals from the same outer parameter
+         * all still apply. Two equal removals remove two occurrences, as [RemoveParameter] does.
+         */
+        data class RemoveNestedParameter(val name: String, val parameter: Url.Parameter) : Action
 
         /**
          * Sets [component] to [to].
@@ -63,6 +75,7 @@ fun Url.apply(actions: List<Change.Action>): Url =
     actions.fold(this) { url, action ->
         when (action) {
             is Change.Action.RemoveParameter -> url.removeParameter(action.parameter)
+            is Change.Action.RemoveNestedParameter -> url.removeNestedParameter(action)
             is Change.Action.Replace -> action.to
             is Change.Action.SetComponent ->
                 when (action.component) {
@@ -81,4 +94,25 @@ private fun Url.removeParameter(parameter: Url.Parameter): Url {
     val index = parameters.indexOf(parameter)
     if (index == -1) return this
     return copy(parameters = parameters.filterIndexed { i, _ -> i != index }.toImmutableList())
+}
+
+/**
+ * Removes the nested parameter [action] names from the first parameter called like that which
+ * contains it. A value which ends up empty stays, as `referrer=`; `Rule.RemoveEmptyParameters`
+ * removes it on the next pass when it is enabled.
+ */
+private fun Url.removeNestedParameter(action: Change.Action.RemoveNestedParameter): Url {
+    val index = parameters.indexOfFirst {
+        it.name == action.name && it.nestedQuery()?.contains(action.parameter) == true
+    }
+    if (index == -1) return this
+
+    val outer = parameters[index]
+    val value = outer.nestedQuery()?.without(action.parameter) ?: return this
+    return copy(
+        parameters =
+            parameters
+                .mapIndexed { i, p -> if (i == index) outer.copy(value = value) else p }
+                .toImmutableList(),
+    )
 }

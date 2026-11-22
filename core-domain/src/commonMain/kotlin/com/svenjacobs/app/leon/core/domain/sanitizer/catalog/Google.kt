@@ -41,6 +41,17 @@ val GoogleStore =
         match = persistentListOf(Match(HostMatch.Domain("store.google.com"))),
     )
 
+val GooglePlay =
+    Sanitizer(
+        id = SanitizerId("google_play"),
+        name = "Google Play",
+        rules = persistentListOf(Rule.RemoveParameters("referrer")),
+        match =
+            persistentListOf(
+                Match(HostMatch.Domain("play.google.com"), pathPrefix = "/store/apps/"),
+            ),
+    )
+
 val GoogleAds =
     Sanitizer(
         id = SanitizerId("google_ad_services"),

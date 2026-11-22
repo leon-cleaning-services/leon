@@ -230,6 +230,28 @@ class MainScreenViewModelTest :
                         }
                     }
 
+                    "restore a declined nested parameter" {
+                        runTest(UnconfinedTestDispatcher()) {
+                            val viewModel = realViewModel()
+                            backgroundScope.launch { viewModel.uiState.collect {} }
+
+                            viewModel.setText("https://example.com/?r=a%3D1%26utm_source%3Dx")
+                            val result = viewModel.uiState.value.result as Result.Success
+                            val row =
+                                result.changes.first {
+                                    it.action is Change.Action.RemoveNestedParameter
+                                }
+                            row.applied shouldBe true
+                            result.cleanedText shouldBe "https://example.com/?r=a%3D1"
+
+                            viewModel.onChangeToggled(row, apply = false)
+
+                            val restored = viewModel.uiState.value.result as Result.Success
+                            restored.cleanedText shouldBe
+                                "https://example.com/?r=a%3D1%26utm_source%3Dx"
+                        }
+                    }
+
                     "put a declined removal back into the cleaned URL" {
                         runTest(UnconfinedTestDispatcher()) {
                             val viewModel = realViewModel()
