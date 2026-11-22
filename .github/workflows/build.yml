@@ -41,6 +41,18 @@ jobs:
       - name: Build and test app
         run: ./gradlew check build
 
+      # Host-side Layoutlib rendering, so no emulator is needed. Not part of `check`.
+      - name: Screenshot tests
+        run: ./gradlew :androidApp:testDebugScreenshotTestDefaultTestSuite
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: Screenshot test report
+          path: |
+            androidApp/build/reports/tests/testDebugScreenshotTestDefaultTestSuite/
+            androidApp/build/intermediates/debug/testDebugScreenshotTestDefaultTestSuite/results/
+
       - uses: actions/upload-artifact@v7
         id: upload-artifact
         with:
