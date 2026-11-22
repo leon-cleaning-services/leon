@@ -460,8 +460,11 @@ style:
 # Run unit tests for the shared module (ViewModels, Room DAO), on the JVM
 ./gradlew :shared:desktopTest
 
-# Android screenshot tests
-./gradlew :androidApp:validateDebugScreenshotTest
+# Android screenshot tests (an AGP test suite; reference images in androidApp/src/screenshotTestDefaultDebug)
+./gradlew :androidApp:testDebugScreenshotTestDefaultTestSuite
+
+# Update the screenshot reference images after an intentional UI change
+./gradlew :androidApp:updateDebugScreenshotTestDefaultTestSuite
 
 # Run the desktop app locally
 ./gradlew :desktopApp:run
