@@ -38,6 +38,7 @@ import com.svenjacobs.app.leon.core.domain.shortlink.ShortLinkResolver
 import com.svenjacobs.app.leon.core.domain.url.Url
 import com.svenjacobs.app.leon.core.domain.url.decodeUrl
 import com.svenjacobs.app.leon.core.domain.url.decoded
+import com.svenjacobs.app.leon.core.domain.url.nestedQuery
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.collections.immutable.ImmutableList
@@ -52,7 +53,14 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-/** Performs cleaning of a URL taking all enabled [Sanitizers][Sanitizer] into account. */
+/**
+ * Performs cleaning of a URL taking all enabled [Sanitizers][Sanitizer] into account.
+ *
+ * Besides the parameters of the URL, the removals of the *global* sanitizers (those which apply to
+ * every URL) are also proposed for a query which is nested in the value of a parameter, such as
+ * `referrer=utm_source=x%26utm_medium=y`. Each is a change of its own, see
+ * [Change.Action.RemoveNestedParameter].
+ */
 class Cleaner(
     private val sanitizers: SanitizersCollection = AllSanitizers,
     private val repository: SanitizerRepository = AlwaysEnabled,
@@ -210,17 +218,44 @@ class Cleaner(
         val kept = mutableSetOf<Change>()
         val sites = mutableMapOf<Change, String>()
         var current = original
+        // Names of parameters whose removal the user declined or keeps. Editing a nested query
+        // changes such a parameter's value, which would make its removal a different change that
+        // is not declined. A later pass drops those variants, so that the choice holds. It is
+        // reset when the URL is replaced, since same-named parameters of the target are unrelated.
+        val held = mutableSetOf<String>()
 
         // `repeat` is deliberately not used here: its `return@repeat` would continue rather than
         // stop, and settling early is the whole point of the check below.
         for (pass in 1..MAX_ITERATION) {
             val site = current.site
             val preference = remembered[site]
-            val proposed = propose(current, resolved, preference, shorten)
+            val everything =
+                propose(current, resolved, preference, shorten).filterNot {
+                    val action = it.action
+                    action is Change.Action.RemoveParameter &&
+                        action.parameter.name in held &&
+                        it !in declined
+                }
+            val keep = everything.filter { preference.keeps(it) }
+            everything
+                .filter { it in declined || it in keep }
+                .mapNotNullTo(held) {
+                    (it.action as? Change.Action.RemoveParameter)?.parameter?.name
+                }
+
+            // A nested removal is pointless when its outer parameter is removed in the same pass,
+            // so it is neither listed nor applied. Declining the outer removal brings it back.
+            val removed =
+                everything
+                    .filterNot { it in declined || it in keep }
+                    .mapNotNull { (it.action as? Change.Action.RemoveParameter)?.parameter?.name }
+                    .toSet()
+            val proposed = everything.filterNot {
+                val action = it.action
+                action is Change.Action.RemoveNestedParameter && action.name in removed
+            }
             available += proposed
             proposed.forEach { sites.getOrPut(it) { site } }
-
-            val keep = proposed.filter { preference.keeps(it) }
             kept += keep
 
             val apply = proposed.filterNot { it in declined || it in keep }
@@ -232,6 +267,7 @@ class Cleaner(
             current =
                 current.apply(apply.map { it.action }.sortedBy { it is Change.Action.Replace })
             applied += apply
+            if (apply.any { it.action is Change.Action.Replace }) held.clear()
         }
 
         val extra = additional.filterNot { it in applied }
@@ -254,7 +290,8 @@ class Cleaner(
 
     /**
      * What every active sanitizer which applies to [url] would change about it, followed by the
-     * removals [preference] remembers for its site.
+     * removals the global sanitizers propose inside nested queries and those [preference] remembers
+     * for its site.
      */
     private suspend fun propose(
         url: Url,
@@ -278,12 +315,27 @@ class Cleaner(
                     sanitizer.sanitize(url, resolved).map { Change(sanitizer.id, it) }
                 }
 
+        // Only global sanitizers judge nested queries: their parameter names belong to a tracking
+        // product, whereas a site-specific one may use ordinary words such as `ref` or `from`.
+        val nested =
+            enabled
+                .filter { shorten || !it.shortens }
+                .filter { it.id !in superseded }
+                .filter { sanitizer -> sanitizer.match.any { it == Match() } }
+                .flatMap { sanitizer ->
+                    url.parameters.flatMap { outer ->
+                        sanitizer.rules
+                            .flatMap { it.sanitizeNested(outer) }
+                            .map { Change(sanitizer.id, it) }
+                    }
+                }
+
         val remembered =
             url.parameters
                 .filter { preference != null && it.name in preference.remove }
                 .map { Change(SanitizerId.Remembered, Change.Action.RemoveParameter(it)) }
 
-        return sanitized + remembered
+        return sanitized + nested + remembered
     }
 
     /** Whether the user keeps the parameter [change] would remove. */
@@ -400,6 +452,25 @@ internal fun Rule.sanitize(url: Url, resolved: Map<Url, Url> = emptyMap()): List
                 ?.let { listOf(Change.Action.Replace(from = url, to = it)) }
                 .orEmpty()
     }
+
+/**
+ * The changes this rule would perform on the parameters of the query nested in [outer], which are
+ * only removals: [Rule.RemoveParameters] (not negated, as a nested query holds parameters of
+ * somebody else's) and [Rule.RemoveEmptyParameters]. Remembered site preferences are not applied to
+ * nested parameters.
+ */
+internal fun Rule.sanitizeNested(outer: Url.Parameter): List<Change.Action> {
+    val nested = outer.nestedQuery()?.parameters ?: return emptyList()
+    val matching =
+        when (this) {
+            is Rule.RemoveParameters ->
+                if (negate) emptyList()
+                else Regex(name).let { r -> nested.filter { r.matches(it.name) } }
+            is Rule.RemoveEmptyParameters -> nested.filter { it.value?.isEmpty() == true }
+            else -> emptyList()
+        }
+    return matching.map { Change.Action.RemoveNestedParameter(outer.name, it) }
+}
 
 /** Whether this rule declares [url] a short link, which it does when its pattern fits the path. */
 internal fun Rule.Resolve.appliesTo(url: Url): Boolean = request(url) != null

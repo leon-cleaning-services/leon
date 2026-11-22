@@ -585,6 +585,10 @@ class MainScreenViewModel(
      * A [Change.Action.Replace] swaps out the whole URL, so it (and, by extension, everything a
      * cascading sanitizer proposes for the URL it reveals) sorts before anything else — it is, in
      * effect, the first thing that happens to the URL.
+     *
+     * A [Change.Action.RemoveNestedParameter] sorts right after the outer parameter it lives in.
+     * Each parameter owns a block of 1000 positions, of which the first is its own removal and the
+     * rest go to nested ones, ordered by where the nested parameter sits in the outer value.
      */
     private fun Cleaner.CleanedUrl.sortKey(action: Change.Action): Long =
         when (action) {
@@ -595,7 +599,21 @@ class MainScreenViewModel(
                     Change.Component.PATH -> 2L
                     Change.Component.FRAGMENT -> Long.MAX_VALUE
                 }
-            is Change.Action.RemoveParameter -> 3L + parameterIndex(action.parameter)
+            is Change.Action.RemoveParameter -> 3L + parameterIndex(action.parameter) * 1000L
+            is Change.Action.RemoveNestedParameter -> {
+                val outer = original.parameters.indexOfFirst { it.name == action.name }
+                val outerIndex =
+                    if (outer != -1) {
+                        outer
+                    } else {
+                        val cleanedIndex =
+                            cleaned.parameters.indexOfFirst { it.name == action.name }
+                        if (cleanedIndex == -1) 0 else original.parameters.size + cleanedIndex
+                    }
+                val value = original.parameters.getOrNull(outer)?.value.orEmpty()
+                val offset = value.indexOf(action.parameter.toString()).coerceIn(0, 998)
+                3L + outerIndex * 1000L + 1 + offset
+            }
         }
 
     /**

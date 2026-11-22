@@ -60,6 +60,16 @@ private fun ChangesCardPreview() {
                         site = "example.com",
                         remembered = true,
                     ),
+                    // Found inside the value of another parameter.
+                    ChangeRow(
+                        action =
+                            Change.Action.RemoveNestedParameter(
+                                "referrer",
+                                Url.Parameter("utm_source", "twitter"),
+                            ),
+                        sanitizerIds = persistentListOf(google),
+                        applied = true,
+                    ),
                     // Nothing proposed this one; the user may still remove it.
                     ChangeRow(
                         action = Change.Action.RemoveParameter(Url.Parameter("page", "2")),

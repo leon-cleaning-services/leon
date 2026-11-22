@@ -17,6 +17,7 @@
  */
 package com.svenjacobs.app.leon.core.domain.change
 
+import com.svenjacobs.app.leon.core.domain.change.Change.Action.RemoveNestedParameter
 import com.svenjacobs.app.leon.core.domain.change.Change.Action.RemoveParameter
 import com.svenjacobs.app.leon.core.domain.change.Change.Action.Replace
 import com.svenjacobs.app.leon.core.domain.change.Change.Action.SetComponent
@@ -60,6 +61,34 @@ class ChangeTest :
                         url("https://example.com/path?a=1#anchor")
                             .apply(listOf(RemoveParameter(Url.Parameter("a", "1"))))
                             .toString() shouldBe "https://example.com/path#anchor"
+                    }
+
+                    "remove several parameters from the same nested query" {
+                        url("https://example.com/?r=a%3D1%26b%3D2%26c%3D3&x=1")
+                            .apply(
+                                listOf(
+                                    RemoveNestedParameter("r", Url.Parameter("a", "1")),
+                                    RemoveNestedParameter("r", Url.Parameter("c", "3")),
+                                ),
+                            )
+                            .toString() shouldBe "https://example.com/?r=b%3D2&x=1"
+                    }
+
+                    "remove the only parameter of a nested query" {
+                        url("https://example.com/?r=a=1")
+                            .apply(listOf(RemoveNestedParameter("r", Url.Parameter("a", "1"))))
+                            .toString() shouldBe "https://example.com/?r="
+                    }
+
+                    "ignore removal from a nested query which is not present" {
+                        url("https://example.com/?r=a%3D1")
+                            .apply(
+                                listOf(
+                                    RemoveNestedParameter("missing", Url.Parameter("a", "1")),
+                                    RemoveNestedParameter("r", Url.Parameter("b", "2")),
+                                ),
+                            )
+                            .toString() shouldBe "https://example.com/?r=a%3D1"
                     }
 
                     "set the host" {
