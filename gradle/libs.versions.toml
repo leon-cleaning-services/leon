@@ -2,7 +2,7 @@
 android-compose-screenshot = "0.0.1-alpha17"
 android-gradle-plugin = "9.5.3"
 androidx-activity = "1.13.0"
-androidx-compose-bom = "2026.09.00" # https://developer.android.com/jetpack/compose/bom/bom-mapping
+androidx-compose-bom = "2026.11.01" # https://developer.android.com/jetpack/compose/bom/bom-mapping
 androidx-lifecycle = "2.11.1"
 androidx-navigation3 = "1.2.2"
 androidx-room3 = "3.0.3"
