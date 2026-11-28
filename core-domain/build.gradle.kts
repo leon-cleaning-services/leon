@@ -28,7 +28,9 @@ kotlin {
 
     android {
         namespace = "com.svenjacobs.app.leon.core.domain"
-        compileSdk = Android.compileSdk
+        compileSdk {
+            version = release(Android.compileSdk) { minorApiLevel = Android.compileSdkMinor }
+        }
         minSdk = Android.minSdk
     }
 

@@ -39,7 +39,9 @@ java {
 
 android {
     namespace = "com.svenjacobs.app.leon"
-    compileSdk = Android.compileSdk
+    compileSdk {
+        version = release(Android.compileSdk) { minorApiLevel = Android.compileSdkMinor }
+    }
 
     defaultConfig {
         applicationId = "com.svenjacobs.app.leon"

@@ -35,7 +35,9 @@ kotlin {
 
     android {
         namespace = "com.svenjacobs.app.leon.shared"
-        compileSdk = Android.compileSdk
+        compileSdk {
+            version = release(Android.compileSdk) { minorApiLevel = Android.compileSdkMinor }
+        }
         minSdk = Android.minSdk
 
         // CMP-9547: without this, Compose resources are silently missing from the APK.
